@@ -77,8 +77,8 @@ static NSString *const kMRAIDCommandResize = @"resize";
 
 @property (nonatomic, copy) void (^forceOrientationAfterAnimationBlock)(void);
 
-@property (nonatomic, strong) MPWebView *mraidWebView;
-@property (nonatomic, strong) MPViewabilityTracker *viewabilityTracker;
+@property (nonatomic, readwrite) MPViewabilityTracker *viewabilityTracker;
+@property (nonatomic, readwrite) MPWebView *mraidWebView;
 
 @end
 
@@ -162,13 +162,14 @@ static NSString *const kMRAIDCommandResize = @"resize";
         self.mraidAdView.closeButtonType = MPClosableViewCloseButtonTypeTappableWithImage;
     }
 
+    [self init3rdPartyViewabilityTrackers];
+
     // This load is guaranteed to never be called for a two-part expand so we know we need to load the HTML into the default web view.
     NSString *HTML = [configuration adResponseHTMLString];
     [self.mraidBridge loadHTMLString:HTML
                              baseURL:[NSURL URLWithString:[MPAPIEndpoints baseURL]]
      ];
 
-    [self init3rdPartyViewabilityTrackers];
 }
 
 - (void)handleMRAIDInterstitialDidPresentWithViewController:(MPMRAIDInterstitialViewController *)viewController
@@ -180,7 +181,7 @@ static NSString *const kMRAIDCommandResize = @"resize";
     // If viewability tracking has been deferred (i.e., if this is a non-banner ad), start tracking here now that the
     // ad has been presented. If viewability tracking was not deferred, we're already tracking and there's no need to
     // call start tracking.
-    if ([self shouldDeferViewability]) {
+    if (![self shouldStartViewabilityDuringInitialization]) {
         [self.viewabilityTracker startTracking];
     }
 }
@@ -252,11 +253,22 @@ static NSString *const kMRAIDCommandResize = @"resize";
     self.viewabilityTracker = [[MPViewabilityTracker alloc]
                                initWithAdView:self.mraidWebView
                                isVideo:self.isAdVastVideoPlayer
-                               startTrackingImmediately:![self shouldDeferViewability]];
+                               startTrackingImmediately:[self shouldStartViewabilityDuringInitialization]];
     [self.viewabilityTracker registerFriendlyObstructionView:self.mraidAdView.closeButton];
 }
 
-- (BOOL)shouldDeferViewability
+- (BOOL)shouldStartViewabilityDuringInitialization
+{
+    // If viewabile impression tracking experiment is enabled, we defer viewability trackers until
+    // ad view is at least x pixels on screen for y seconds, where x and y are configurable values defined in server.
+    if (self.adConfiguration.visibleImpressionTrackingEnabled) {
+        return NO;
+    }
+
+    return ![self isInterstitialAd];
+}
+
+- (BOOL)isInterstitialAd
 {
     return (self.placementType == MRAdViewPlacementTypeInterstitial);
 }

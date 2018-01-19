@@ -9,12 +9,12 @@
 #import "MPCoreInstanceProvider.h"
 #import "MPNativeAdConstants.h"
 #import "MPLogging.h"
-#import "MPStaticNativeAdImpressionTimer.h"
 #import "MOPUBNativeVideoAdConfigValues.h"
+#import "MPAdImpressionTimer.h"
 
-@interface MOPUBNativeVideoAdAdapter() <MPAdDestinationDisplayAgentDelegate, MPStaticNativeAdImpressionTimerDelegate>
+@interface MOPUBNativeVideoAdAdapter() <MPAdDestinationDisplayAgentDelegate, MPAdImpressionTimerDelegate>
 
-@property (nonatomic) MPStaticNativeAdImpressionTimer *staticImpressionTimer;
+@property (nonatomic) MPAdImpressionTimer *impressionTimer;
 @property (nonatomic, readonly) MPAdDestinationDisplayAgent *destinationDisplayAgent;
 
 @end
@@ -77,7 +77,7 @@
 
         _destinationDisplayAgent = [[MPCoreInstanceProvider sharedProvider] buildMPAdDestinationDisplayAgentWithDelegate:self];
 
-        _staticImpressionTimer = nil;
+        _impressionTimer = nil;
     }
 
     return self;
@@ -95,8 +95,8 @@
 
 - (void)removeStaticImpressionTimer
 {
-    _staticImpressionTimer.delegate = nil;
-    _staticImpressionTimer = nil;
+    _impressionTimer.delegate = nil;
+    _impressionTimer = nil;
 }
 
 #pragma mark - <MPNativeAdAdapter>
@@ -105,15 +105,21 @@
 {
     [self removeStaticImpressionTimer];
 
-    // Set up a static impression timer that will fire the mopub impression if the video fails to play prior to meeting the video impression tracking requirements.
+    // Set up an impression timer that will fire the mopub impression if the video fails to play prior to meeting the video impression tracking requirements.
     MOPUBNativeVideoAdConfigValues *nativeVideoAdConfig = [self.properties objectForKey:kNativeAdConfigKey];
 
-    // impressionMinVisiblePercent is an integer (a value of 50 means 50%) while the impression timer takes in a float (.50 means 50%) so we have to multiply it by .01f.
-    self.staticImpressionTimer = [[MPStaticNativeAdImpressionTimer alloc] initWithRequiredSecondsForImpression:nativeVideoAdConfig.impressionMinVisibleSeconds
-                                                                              requiredViewVisibilityPercentage:nativeVideoAdConfig.impressionMinVisiblePercent*0.01f];
-    self.staticImpressionTimer.delegate = self;
+    // If we have a valid pixel value, use it to track the impression. If not, use percentage instead.
+    if (nativeVideoAdConfig.isImpressionMinVisiblePixelsValid) {
+        self.impressionTimer = [[MPAdImpressionTimer alloc] initWithRequiredSecondsForImpression:nativeVideoAdConfig.impressionMinVisibleSeconds
+                                                                    requiredViewVisibilityPixels:nativeVideoAdConfig.impressionMinVisiblePixels];
+    } else {
+        // impressionMinVisiblePercent is an integer (a value of 50 means 50%) while the impression timer takes in a float (.50 means 50%) so we have to multiply it by .01f.
+        self.impressionTimer = [[MPAdImpressionTimer alloc] initWithRequiredSecondsForImpression:nativeVideoAdConfig.impressionMinVisibleSeconds
+                                                                requiredViewVisibilityPercentage:nativeVideoAdConfig.impressionMinVisiblePercent * 0.01f];
+    }
+    self.impressionTimer.delegate = self;
 
-    [self.staticImpressionTimer startTrackingView:view];
+    [self.impressionTimer startTrackingView:view];
 }
 
 - (void)displayContentForURL:(NSURL *)URL rootViewController:(UIViewController *)controller
@@ -151,13 +157,13 @@
 - (void)handleVideoHasProgressedToTime:(NSTimeInterval)playbackTime
 {
     // If the video makes progress, don't allow static impression tracking.
-    self.staticImpressionTimer.delegate = nil;
-    self.staticImpressionTimer = nil;
+    self.impressionTimer.delegate = nil;
+    self.impressionTimer = nil;
 }
 
-#pragma mark - <MPStaticNativeAdImpressionTimerDelegate>
+#pragma mark - <MPAdImpressionTimerDelegate>
 
-- (void)trackImpression
+- (void)adViewWillLogImpression:(UIView *)adView
 {
     // We'll fire a static impression if the video hasn't started playing by the time the static impression timer has met its requirements.
     [self.delegate nativeAdWillLogImpression:self];

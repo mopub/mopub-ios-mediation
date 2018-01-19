@@ -12,13 +12,15 @@
 
 - (instancetype)initWithPlayVisiblePercent:(NSInteger)playVisiblePercent
                        pauseVisiblePercent:(NSInteger)pauseVisiblePercent
+                impressionMinVisiblePixels:(CGFloat)impressionMinVisiblePixels
                impressionMinVisiblePercent:(NSInteger)impressionMinVisiblePercent
                impressionMinVisibleSeconds:(NSTimeInterval)impressionMinVisibleSeconds
                           maxBufferingTime:(NSTimeInterval)maxBufferingTime
                                   trackers:(NSDictionary *)trackers
 {
-    self = [super initWithImpressionMinVisiblePercent:impressionMinVisiblePercent
-                          impressionMinVisibleSeconds:impressionMinVisibleSeconds];
+    self = [super initWithImpressionMinVisiblePixels:impressionMinVisiblePixels
+                         impressionMinVisiblePercent:impressionMinVisiblePercent
+                         impressionMinVisibleSeconds:impressionMinVisibleSeconds];
     if (self) {
         _playVisiblePercent = playVisiblePercent;
         _pauseVisiblePercent = pauseVisiblePercent;
@@ -30,7 +32,7 @@
 
 - (BOOL)isValid
 {
-    return (self.isImpressionMinVisiblePercentValid &&
+    return ((self.isImpressionMinVisiblePixelsValid || self.isImpressionMinVisiblePercentValid) && // OR because we only need pixels or percent, not both
             self.isImpressionMinVisibleSecondsValid &&
             [self isValidPercentage:self.playVisiblePercent] &&
             [self isValidPercentage:self.pauseVisiblePercent] &&

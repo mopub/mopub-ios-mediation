@@ -84,10 +84,10 @@
     UIView *adView = [self.renderer retrieveViewWithAdapter:self.adAdapter error:error];
 
     if (adView) {
-        if (!self.hasAttachedToView) {
+        //if (!self.hasAttachedToView) {
             [self willAttachToView:self.associatedView withAdContentViews:adView.subviews];
-            self.hasAttachedToView = YES;
-        }
+          //  self.hasAttachedToView = YES;
+       // }
 
         adView.frame = self.associatedView.bounds;
         [self.associatedView addSubview:adView];

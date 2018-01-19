@@ -16,6 +16,7 @@
 
 - (instancetype)initWithPlayVisiblePercent:(NSInteger)playVisiblePercent
                        pauseVisiblePercent:(NSInteger)pauseVisiblePercent
+                impressionMinVisiblePixels:(CGFloat)impressionMinVisiblePixels
                impressionMinVisiblePercent:(NSInteger)impressionMinVisiblePercent
                impressionMinVisibleSeconds:(NSTimeInterval)impressionMinVisibleSeconds
                           maxBufferingTime:(NSTimeInterval)maxBufferingTime
@@ -23,7 +24,8 @@
 
 @property (nonatomic, readonly) BOOL isValid;
 
-- (instancetype)initWithImpressionMinVisiblePercent:(CGFloat)impressionMinVisiblePercent
-                        impressionMinVisibleSeconds:(NSTimeInterval)impressionMinVisibleSeconds __attribute__((unavailable("initWithImpressionMinVisiblePercent:impressionMinVisibleSeconds: not available")));
+- (instancetype)initWithImpressionMinVisiblePixels:(CGFloat)impressionMinVisiblePixels
+                       impressionMinVisiblePercent:(NSInteger)impressionMinVisiblePercent
+                       impressionMinVisibleSeconds:(NSTimeInterval)impressionMinVisibleSeconds __attribute__((unavailable("initWithImpressionMinVisiblePixels:impressionMinVisiblePercent:impressionMinVisibleSeconds: not available")));
 
 @end

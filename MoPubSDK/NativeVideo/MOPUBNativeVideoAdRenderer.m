@@ -52,7 +52,7 @@ static const CGFloat kAutoPlayTimerInterval = 0.25f;
     MPNativeAdRendererConfiguration *config = [[MPNativeAdRendererConfiguration alloc] init];
     config.rendererClass = [self class];
     config.rendererSettings = rendererSettings;
-    config.supportedCustomEvents = @[@"MOPUBNativeVideoCustomEvent"];
+    config.supportedCustomEvents = @[@"MOPUBNativeVideoCustomEvent",@"FacebookNativeCustomEvent"];
 
     return config;
 }

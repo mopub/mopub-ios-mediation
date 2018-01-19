@@ -8,17 +8,17 @@
 #import "MPNativeAdError.h"
 #import "MPAdDestinationDisplayAgent.h"
 #import "MPCoreInstanceProvider.h"
-#import "MPStaticNativeAdImpressionTimer.h"
 #import "MPNativeAdConstants.h"
 #import "MPGlobal.h"
 #import "MPNativeAdConfigValues.h"
+#import "MPAdImpressionTimer.h"
 
 static const NSTimeInterval kMoPubRequiredSecondsForImpression = 1.0;
 static const CGFloat kMoPubRequiredViewVisibilityPercentage = 0.5;
 
-@interface MPMoPubNativeAdAdapter () <MPAdDestinationDisplayAgentDelegate, MPStaticNativeAdImpressionTimerDelegate>
+@interface MPMoPubNativeAdAdapter () <MPAdDestinationDisplayAgentDelegate, MPAdImpressionTimerDelegate>
 
-@property (nonatomic) MPStaticNativeAdImpressionTimer *impressionTimer;
+@property (nonatomic, strong) MPAdImpressionTimer *impressionTimer;
 @property (nonatomic, readonly) MPAdDestinationDisplayAgent *destinationDisplayAgent;
 
 @end
@@ -73,8 +73,14 @@ static const CGFloat kMoPubRequiredViewVisibilityPercentage = 0.5;
         // and set up the timer.
         MPNativeAdConfigValues *config = properties[kNativeAdConfigKey];
         NSTimeInterval requiredSecondsForImpression = config.isImpressionMinVisibleSecondsValid ? config.impressionMinVisibleSeconds : kMoPubRequiredSecondsForImpression;
-        CGFloat requiredViewVisibilityPercentage = config.isImpressionMinVisiblePercentValid ? (config.impressionMinVisiblePercent / 100.0) : kMoPubRequiredViewVisibilityPercentage;
-        _impressionTimer = [[MPStaticNativeAdImpressionTimer alloc] initWithRequiredSecondsForImpression:requiredSecondsForImpression requiredViewVisibilityPercentage:requiredViewVisibilityPercentage];
+        if (config.isImpressionMinVisiblePixelsValid) {
+            _impressionTimer = [[MPAdImpressionTimer alloc] initWithRequiredSecondsForImpression:requiredSecondsForImpression
+                                                                          requiredViewVisibilityPixels:config.impressionMinVisiblePixels];
+        } else {
+            CGFloat requiredViewVisibilityPercentage = config.isImpressionMinVisiblePercentValid ? (config.impressionMinVisiblePercent / 100.0) : kMoPubRequiredViewVisibilityPercentage;
+            _impressionTimer = [[MPAdImpressionTimer alloc] initWithRequiredSecondsForImpression:requiredSecondsForImpression
+                                                                      requiredViewVisibilityPercentage:requiredViewVisibilityPercentage];
+        }
         _impressionTimer.delegate = self;
 
         [properties removeObjectsForKeys:@[kImpressionTrackerURLsKey, kClickTrackerURLKey, kDefaultActionURLKey, kNativeAdConfigKey]];
@@ -138,9 +144,9 @@ static const CGFloat kMoPubRequiredViewVisibilityPercentage = 0.5;
     [self.destinationDisplayAgent displayDestinationForURL:[NSURL URLWithString:kDAAIconTapDestinationURL]];
 }
 
-#pragma mark - <MPStaticNativeAdImpressionTimerDelegate>
+#pragma mark - <MPAdImpressionTimerDelegate>
 
-- (void)trackImpression
+- (void)adViewWillLogImpression:(UIView *)adView
 {
     [self.delegate nativeAdWillLogImpression:self];
 }

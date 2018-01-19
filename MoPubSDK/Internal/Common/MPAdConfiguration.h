@@ -59,6 +59,9 @@ extern NSString * const kClickthroughExperimentBrowserAgent;
 
 extern NSString * const kViewabilityDisableHeaderKey;
 
+extern NSString * const kBannerImpressionVisableMsHeaderKey;
+extern NSString * const kBannerImpressionMinPixelHeaderKey;
+
 @interface MPAdConfiguration : NSObject
 
 @property (nonatomic, assign) MPAdType adType;
@@ -87,7 +90,8 @@ extern NSString * const kViewabilityDisableHeaderKey;
 @property (nonatomic, copy) NSString *headerAdType;
 @property (nonatomic, assign) NSInteger nativeVideoPlayVisiblePercent;
 @property (nonatomic, assign) NSInteger nativeVideoPauseVisiblePercent;
-@property (nonatomic, assign) NSInteger nativeImpressionMinVisiblePercent;
+@property (nonatomic, assign) CGFloat nativeImpressionMinVisiblePixels;
+@property (nonatomic, assign) NSInteger nativeImpressionMinVisiblePercent; // The pixels header takes priority over percentage, but percentage is left for backwards compatibility
 @property (nonatomic, assign) NSTimeInterval nativeImpressionMinVisibleTimeInterval;
 @property (nonatomic, assign) NSTimeInterval nativeVideoMaxBufferingTime;
 @property (nonatomic) NSDictionary *nativeVideoTrackers;
@@ -96,6 +100,12 @@ extern NSString * const kViewabilityDisableHeaderKey;
 @property (nonatomic, copy) NSString *rewardedVideoCompletionUrl;
 @property (nonatomic, assign) NSTimeInterval rewardedPlayableDuration;
 @property (nonatomic, assign) BOOL rewardedPlayableShouldRewardOnClick;
+
+
+// viewable impression tracking experiment
+@property (nonatomic) NSTimeInterval impressionMinVisibleTimeInSec;
+@property (nonatomic) CGFloat impressionMinVisiblePixels;
+@property (nonatomic) BOOL visibleImpressionTrackingEnabled;
 
 - (id)initWithHeaders:(NSDictionary *)headers data:(NSData *)data;
 

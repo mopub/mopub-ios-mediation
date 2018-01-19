@@ -10,13 +10,15 @@
 
 @implementation MPNativeAdConfigValues
 
-- (instancetype)initWithImpressionMinVisiblePercent:(NSInteger)impressionMinVisiblePercent
-                        impressionMinVisibleSeconds:(NSTimeInterval)impressionMinVisibleSeconds {
+- (instancetype)initWithImpressionMinVisiblePixels:(CGFloat)impressionMinVisiblePixels
+                       impressionMinVisiblePercent:(NSInteger)impressionMinVisiblePercent
+                       impressionMinVisibleSeconds:(NSTimeInterval)impressionMinVisibleSeconds {
     if (self = [super init]) {
+        _impressionMinVisiblePixels = impressionMinVisiblePixels;
         _impressionMinVisiblePercent = impressionMinVisiblePercent;
         _impressionMinVisibleSeconds = impressionMinVisibleSeconds;
     }
-    
+
     return self;
 }
 
@@ -26,6 +28,10 @@
 
 - (BOOL)isImpressionMinVisiblePercentValid {
     return [self isValidPercentage:self.impressionMinVisiblePercent];
+}
+
+- (BOOL)isImpressionMinVisiblePixelsValid {
+    return [self isValidNumberOfPixels:self.impressionMinVisiblePixels];
 }
 
 @end

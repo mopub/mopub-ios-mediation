@@ -143,11 +143,12 @@
     [self.view mp_setScrollable:configuration.scrollable];
     [self.view disableJavaScriptDialogs];
 
+    // Initialize viewability trackers before loading self.view
+    [self init3rdPartyViewabilityTrackers];
+
     [self.view loadHTMLString:[configuration adResponseHTMLString]
                       baseURL:[NSURL URLWithString:[MPAPIEndpoints baseURL]]
      ];
-
-    [self init3rdPartyViewabilityTrackers];
 
     [self initAdAlertManager];
 }
@@ -156,9 +157,10 @@
 {
     switch (event) {
         case MPAdWebViewEventAdDidAppear:
-            // interstitial has been presented, start viewability trackers
-            if ([self shouldDeferViewability]) {
-                [self.viewabilityTracker startTracking];
+            // For banner, viewability tracker is handled right after adView is initialized (not here).
+            // For interstitial (handled here), we start tracking viewability if it's not started during adView initialization.
+            if (![self shouldStartViewabilityDuringInitialization]) {
+                [self startViewabilityTracker];
             }
 
             [self.view stringByEvaluatingJavaScriptFromString:@"webviewDidAppear();"];
@@ -169,6 +171,11 @@
         default:
             break;
     }
+}
+
+- (void)startViewabilityTracker
+{
+    [self.viewabilityTracker startTracking];
 }
 
 - (void)disableRequestHandling
@@ -297,10 +304,21 @@
 
 - (void)init3rdPartyViewabilityTrackers
 {
-    self.viewabilityTracker = [[MPViewabilityTracker alloc] initWithAdView:self.view isVideo:self.configuration.isVastVideoPlayer startTrackingImmediately:![self shouldDeferViewability]];
+    self.viewabilityTracker = [[MPViewabilityTracker alloc] initWithAdView:self.view isVideo:self.configuration.isVastVideoPlayer startTrackingImmediately:[self shouldStartViewabilityDuringInitialization]];
 }
 
-- (BOOL)shouldDeferViewability
+- (BOOL)shouldStartViewabilityDuringInitialization
+{
+    // If viewabile impression tracking experiment is enabled, we defer viewability trackers until
+    // ad view is at least x pixels on screen for y seconds, where x and y are configurable values defined in server.
+    if (self.adConfiguration.visibleImpressionTrackingEnabled) {
+        return NO;
+    }
+
+    return ![self isInterstitialAd];
+}
+
+- (BOOL)isInterstitialAd
 {
     return (self.configuration.adType == MPAdTypeInterstitial);
 }

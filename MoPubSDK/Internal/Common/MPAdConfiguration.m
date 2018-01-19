@@ -45,12 +45,16 @@ NSString * const kIsVastVideoPlayerKey = @"X-VastVideoPlayer";
 NSString * const kInterstitialAdTypeHeaderKey = @"X-Fulladtype";
 NSString * const kOrientationTypeHeaderKey = @"X-Orientation";
 
+NSString * const kNativeImpressionMinVisiblePixelsHeaderKey = @"X-Native-Impression-Min-Px"; // The pixels header takes priority over percentage, but percentage is left for backwards compatibility
 NSString * const kNativeImpressionMinVisiblePercentHeaderKey = @"X-Impression-Min-Visible-Percent";
 NSString * const kNativeImpressionVisibleMsHeaderKey = @"X-Impression-Visible-Ms";
 NSString * const kNativeVideoPlayVisiblePercentHeaderKey = @"X-Play-Visible-Percent";
 NSString * const kNativeVideoPauseVisiblePercentHeaderKey = @"X-Pause-Visible-Percent";
 NSString * const kNativeVideoMaxBufferingTimeMsHeaderKey = @"X-Max-Buffer-Ms";
 NSString * const kNativeVideoTrackersHeaderKey = @"X-Video-Trackers";
+
+NSString * const kBannerImpressionVisableMsHeaderKey = @"X-Banner-Impression-Min-Ms";
+NSString * const kBannerImpressionMinPixelHeaderKey = @"X-Banner-Impression-Min-Pixels";
 
 NSString * const kAdTypeHtml = @"html";
 NSString * const kAdTypeInterstitial = @"interstitial";
@@ -161,6 +165,8 @@ NSString * const kViewabilityDisableHeaderKey = @"X-Disable-Viewability";
 
         self.nativeVideoPauseVisiblePercent = [self percentFromHeaders:headers forKey:kNativeVideoPauseVisiblePercentHeaderKey];
 
+        self.nativeImpressionMinVisiblePixels = [[self adAmountFromHeaders:headers key:kNativeImpressionMinVisiblePixelsHeaderKey] floatValue];
+
         self.nativeImpressionMinVisiblePercent = [self percentFromHeaders:headers forKey:kNativeImpressionMinVisiblePercentHeaderKey];
 
         self.nativeImpressionMinVisibleTimeInterval = [self timeIntervalFromMsHeaders:headers forKey:kNativeImpressionVisibleMsHeaderKey];
@@ -170,6 +176,8 @@ NSString * const kViewabilityDisableHeaderKey = @"X-Disable-Viewability";
         self.nativeVideoTrackers = [self nativeVideoTrackersFromHeaders:headers key:kNativeVideoTrackersHeaderKey];
 #endif
 
+        self.impressionMinVisibleTimeInSec = [self timeIntervalFromMsHeaders:headers forKey:kBannerImpressionVisableMsHeaderKey];
+        self.impressionMinVisiblePixels = [[self adAmountFromHeaders:headers key:kBannerImpressionMinPixelHeaderKey] floatValue];
 
         // rewarded video
 
@@ -504,6 +512,14 @@ NSString * const kViewabilityDisableHeaderKey = @"X-Disable-Viewability";
     }
 
     return variant;
+}
+
+- (BOOL)visibleImpressionTrackingEnabled
+{
+    if (self.impressionMinVisibleTimeInSec < 0 || self.impressionMinVisiblePixels <= 0) {
+        return NO;
+    }
+    return YES;
 }
 
 @end

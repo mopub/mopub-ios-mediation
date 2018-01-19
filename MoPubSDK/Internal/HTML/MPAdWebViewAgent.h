@@ -37,6 +37,8 @@ typedef NSUInteger MPAdWebViewEvent;
 - (void)enableRequestHandling;
 - (void)disableRequestHandling;
 
+- (void)startViewabilityTracker;
+
 @end
 
 @protocol MPAdWebViewAgentDelegate <NSObject>

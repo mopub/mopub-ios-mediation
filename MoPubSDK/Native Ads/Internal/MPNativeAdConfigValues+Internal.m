@@ -19,4 +19,8 @@
     return timeInterval > 0.0;
 }
 
+- (BOOL)isValidNumberOfPixels:(CGFloat)pixels {
+    return pixels >= 0.0;
+}
+
 @end

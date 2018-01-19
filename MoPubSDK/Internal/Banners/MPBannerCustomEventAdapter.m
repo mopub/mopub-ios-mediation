@@ -11,13 +11,17 @@
 #import "MPBannerCustomEvent.h"
 #import "MPInstanceProvider.h"
 #import "MPLogging.h"
+#import "MPAdImpressionTimer.h"
+#import "MPBannerCustomEvent+Internal.h"
 
-@interface MPBannerCustomEventAdapter ()
+@interface MPBannerCustomEventAdapter () <MPAdImpressionTimerDelegate>
 
 @property (nonatomic, strong) MPBannerCustomEvent *bannerCustomEvent;
 @property (nonatomic, strong) MPAdConfiguration *configuration;
 @property (nonatomic, assign) BOOL hasTrackedImpression;
 @property (nonatomic, assign) BOOL hasTrackedClick;
+@property (nonatomic) MPAdImpressionTimer *impressionTimer;
+@property (nonatomic) UIView *adView;
 
 - (void)trackClickOnce;
 
@@ -65,12 +69,42 @@
 
 - (void)didDisplayAd
 {
-    if ([self.bannerCustomEvent enableAutomaticImpressionAndClickTracking] && !self.hasTrackedImpression) {
-        self.hasTrackedImpression = YES;
-        [self trackImpression];
+    if([self shouldTrackImpressionOnDisplay]) {
+        [self trackImpressionOnDisplay];
+    } else if (self.configuration.visibleImpressionTrackingEnabled) {
+        [self startViewableTrackingTimer];
+    } else {
+        // Mediated networks except Google AdMob
+        // no-op here.
     }
 
     [self.bannerCustomEvent didDisplayAd];
+}
+
+#pragma mark - 1px impression tracking methods
+
+- (void)trackImpressionOnDisplay
+{
+    self.hasTrackedImpression = YES;
+    [self trackImpression];
+}
+
+- (void)startViewableTrackingTimer
+{
+    self.impressionTimer = [[MPAdImpressionTimer alloc] initWithRequiredSecondsForImpression:self.configuration.impressionMinVisibleTimeInSec requiredViewVisibilityPixels:self.configuration.impressionMinVisiblePixels];
+    self.impressionTimer.delegate = self;
+    [self.impressionTimer startTrackingView:self.adView];
+}
+
+
+- (BOOL)shouldTrackImpressionOnDisplay {
+    if (self.configuration.visibleImpressionTrackingEnabled) {
+        return NO;
+    }
+    if([self.bannerCustomEvent enableAutomaticImpressionAndClickTracking] && !self.hasTrackedImpression) {
+        return YES;
+    }
+    return NO;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -101,6 +135,7 @@
 {
     [self didStopLoading];
     if (ad) {
+        self.adView = ad;
         [self.delegate adapter:self didFinishLoadingAd:ad];
     } else {
         [self.delegate adapter:self didFailToLoadAdWithError:nil];
@@ -136,6 +171,18 @@
         self.hasTrackedClick = YES;
         [self trackClick];
     }
+}
+
+#pragma mark - MPAdImpressionTimerDelegate
+
+- (void)adViewWillLogImpression:(UIView *)adView
+{
+    // Ads server impression
+    [self trackImpression];
+    // MPX and other trackers;
+    [self.bannerCustomEvent trackMPXAndThirdPartyImpressions];
+    // Start viewability tracking
+    [self.bannerCustomEvent startViewabilityTracker];
 }
 
 @end

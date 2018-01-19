@@ -93,9 +93,12 @@
 {
     // Don't allow the ad to be shown if it isn't ready.
     if (!self.ready) {
+        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdReady userInfo:@{ NSLocalizedDescriptionKey: @"Rewarded video ad view is not ready to be shown"}];
+
         // We don't want to remotely log this event -- it's simply for publisher troubleshooting -- so use NSLog
         // rather than MPLog.
-        NSLog(@"Rewarded video ad view is not ready to be shown");
+        NSLog(@"%@", error.localizedDescription);
+        [self.delegate rewardedVideoDidFailToPlayForAdManager:self error:error];
         return;
     }
 

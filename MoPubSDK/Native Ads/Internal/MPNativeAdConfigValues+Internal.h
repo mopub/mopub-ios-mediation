@@ -11,5 +11,6 @@
 
 - (BOOL)isValidPercentage:(NSInteger)percentage;
 - (BOOL)isValidTimeInterval:(NSTimeInterval)timeInterval;
+- (BOOL)isValidNumberOfPixels:(CGFloat)pixels;
 
 @end

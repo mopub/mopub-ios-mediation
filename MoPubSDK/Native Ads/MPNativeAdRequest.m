@@ -155,6 +155,7 @@
         if (configuration.customEventClass == [MOPUBNativeVideoCustomEvent class]) {
             classData[kNativeAdConfigKey] = [[MOPUBNativeVideoAdConfigValues alloc] initWithPlayVisiblePercent:configuration.nativeVideoPlayVisiblePercent
                                                                                            pauseVisiblePercent:configuration.nativeVideoPauseVisiblePercent
+                                                                                    impressionMinVisiblePixels:configuration.nativeImpressionMinVisiblePixels
                                                                                    impressionMinVisiblePercent:configuration.nativeImpressionMinVisiblePercent
                                                                                    impressionMinVisibleSeconds:configuration.nativeImpressionMinVisibleTimeInterval
                                                                                               maxBufferingTime:configuration.nativeVideoMaxBufferingTime
@@ -162,8 +163,9 @@
             MPAdConfigurationLogEventProperties *logEventProperties = [[MPAdConfigurationLogEventProperties alloc] initWithConfiguration:configuration];
             [classData setObject:logEventProperties forKey:kLogEventRequestPropertiesKey];
         } else if (configuration.customEventClass == [MPMoPubNativeCustomEvent class]) {
-            classData[kNativeAdConfigKey] = [[MPNativeAdConfigValues alloc] initWithImpressionMinVisiblePercent:configuration.nativeImpressionMinVisiblePercent
-                                                                                    impressionMinVisibleSeconds:configuration.nativeImpressionMinVisibleTimeInterval];
+            classData[kNativeAdConfigKey] = [[MPNativeAdConfigValues alloc] initWithImpressionMinVisiblePixels:configuration.nativeImpressionMinVisiblePixels
+                                                                                   impressionMinVisiblePercent:configuration.nativeImpressionMinVisiblePercent
+                                                                                   impressionMinVisibleSeconds:configuration.nativeImpressionMinVisibleTimeInterval];
         }
 
         configuration.customEventClassData = classData;
