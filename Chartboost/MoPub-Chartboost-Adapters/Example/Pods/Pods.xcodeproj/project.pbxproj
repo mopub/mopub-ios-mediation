@@ -1,0 +1,545 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		03795186AEF75DFE7EEACF4A6F485BCC /* MoPub-Chartboost-Adapters-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A6465EC2A30B6FFEA33A8AE71156EF3E /* MoPub-Chartboost-Adapters-dummy.m */; };
+		2FCB42784191DAD99C699320E492B8F2 /* ReplaceMe.m in Sources */ = {isa = PBXBuildFile; fileRef = 4ACEF60FD78D26877E107D87153995C9 /* ReplaceMe.m */; };
+		2FE28655349048A84BA4E96356039CC7 /* Pods-MoPub-Chartboost-Adapters_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = DF763BBA2AB57C3180E130A7A93C7105 /* Pods-MoPub-Chartboost-Adapters_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4E0314D88A9E1802556C8C4E22915053 /* Pods-MoPub-Chartboost-Adapters_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 0D4C3A4E04F79C70B05BD52990E9672C /* Pods-MoPub-Chartboost-Adapters_Tests-dummy.m */; };
+		58B71F583C15DB7DEB9E145E2BCF3E60 /* MoPub-Chartboost-Adapters-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 59CF2BFBF1A08A8029DE250C477BE64D /* MoPub-Chartboost-Adapters-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		6B8A10BDF195A6542BEACDFE57671E15 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */; };
+		D4075EEBD6B3F764A0A917E711F1771F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F8C8101F3606F0B3DD456DB1C2DEC749 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7C386520601D2BB35A8F2E47B1F8E42F;
+			remoteInfo = "MoPub-Chartboost-Adapters";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		0ADFACB526F64982485B6DAC3673637F /* MoPub-Chartboost-Adapters.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "MoPub-Chartboost-Adapters.xcconfig"; sourceTree = "<group>"; };
+		0D4C3A4E04F79C70B05BD52990E9672C /* Pods-MoPub-Chartboost-Adapters_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-MoPub-Chartboost-Adapters_Tests-dummy.m"; sourceTree = "<group>"; };
+		1D83C9ABE84E910BCAF5F13DFFBAAF55 /* Pods-MoPub-Chartboost-Adapters_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-MoPub-Chartboost-Adapters_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		23FDA6BB13959F33AB3F2DC6072E81CB /* Pods-MoPub-Chartboost-Adapters_Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-MoPub-Chartboost-Adapters_Tests-frameworks.sh"; sourceTree = "<group>"; };
+		289A629BA795E1DA2085BCE6C2901111 /* Pods-MoPub-Chartboost-Adapters_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-MoPub-Chartboost-Adapters_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		4ACEF60FD78D26877E107D87153995C9 /* ReplaceMe.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = ReplaceMe.m; path = "MoPub-Chartboost-Adapters/Classes/ReplaceMe.m"; sourceTree = "<group>"; };
+		4D161721D2C8745648BC377D2B3ED400 /* Pods-MoPub-Chartboost-Adapters_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = "Pods-MoPub-Chartboost-Adapters_Tests.modulemap"; sourceTree = "<group>"; };
+		57A843E517125877990FD788BC45F794 /* MoPub-Chartboost-Adapters.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = "MoPub-Chartboost-Adapters.modulemap"; sourceTree = "<group>"; };
+		59CF2BFBF1A08A8029DE250C477BE64D /* MoPub-Chartboost-Adapters-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "MoPub-Chartboost-Adapters-umbrella.h"; sourceTree = "<group>"; };
+		6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		6FBE1B2E84CAFC518DACEFC6D416AB52 /* Pods-MoPub-Chartboost-Adapters_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-MoPub-Chartboost-Adapters_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
+		8024A2FC716C21FD3B8F66DFCE2BA7AF /* Pods-MoPub-Chartboost-Adapters_Tests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-MoPub-Chartboost-Adapters_Tests-resources.sh"; sourceTree = "<group>"; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		96652A34AEC12B94E888FE1727EBDD92 /* Pods-MoPub-Chartboost-Adapters_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-MoPub-Chartboost-Adapters_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
+		A6465EC2A30B6FFEA33A8AE71156EF3E /* MoPub-Chartboost-Adapters-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "MoPub-Chartboost-Adapters-dummy.m"; sourceTree = "<group>"; };
+		BDEABD056FC742AD3C9B15EE6206DBD8 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		BFE3601BE5C4862C245FB8DD737A94EB /* MoPub_Chartboost_Adapters.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = MoPub_Chartboost_Adapters.framework; path = "MoPub-Chartboost-Adapters.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DF763BBA2AB57C3180E130A7A93C7105 /* Pods-MoPub-Chartboost-Adapters_Tests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-MoPub-Chartboost-Adapters_Tests-umbrella.h"; sourceTree = "<group>"; };
+		E95A4DB24E03272720289167D92471E1 /* MoPub-Chartboost-Adapters-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "MoPub-Chartboost-Adapters-prefix.pch"; sourceTree = "<group>"; };
+		F9533893724D3663109442805CDD0041 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FD45BE0FD267A30DF89BC0135163173E /* Pods_MoPub_Chartboost_Adapters_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_MoPub_Chartboost_Adapters_Tests.framework; path = "Pods-MoPub-Chartboost-Adapters_Tests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		399E978F4F1602C613B30AB3E92F75C5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6B8A10BDF195A6542BEACDFE57671E15 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F54FB3D93BB7B067D541661EB0056079 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D4075EEBD6B3F764A0A917E711F1771F /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		20FC1E5055A0C5471C5AA39A73FB62E0 /* Pods-MoPub-Chartboost-Adapters_Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F9533893724D3663109442805CDD0041 /* Info.plist */,
+				4D161721D2C8745648BC377D2B3ED400 /* Pods-MoPub-Chartboost-Adapters_Tests.modulemap */,
+				96652A34AEC12B94E888FE1727EBDD92 /* Pods-MoPub-Chartboost-Adapters_Tests-acknowledgements.markdown */,
+				6FBE1B2E84CAFC518DACEFC6D416AB52 /* Pods-MoPub-Chartboost-Adapters_Tests-acknowledgements.plist */,
+				0D4C3A4E04F79C70B05BD52990E9672C /* Pods-MoPub-Chartboost-Adapters_Tests-dummy.m */,
+				23FDA6BB13959F33AB3F2DC6072E81CB /* Pods-MoPub-Chartboost-Adapters_Tests-frameworks.sh */,
+				8024A2FC716C21FD3B8F66DFCE2BA7AF /* Pods-MoPub-Chartboost-Adapters_Tests-resources.sh */,
+				DF763BBA2AB57C3180E130A7A93C7105 /* Pods-MoPub-Chartboost-Adapters_Tests-umbrella.h */,
+				1D83C9ABE84E910BCAF5F13DFFBAAF55 /* Pods-MoPub-Chartboost-Adapters_Tests.debug.xcconfig */,
+				289A629BA795E1DA2085BCE6C2901111 /* Pods-MoPub-Chartboost-Adapters_Tests.release.xcconfig */,
+			);
+			name = "Pods-MoPub-Chartboost-Adapters_Tests";
+			path = "Target Support Files/Pods-MoPub-Chartboost-Adapters_Tests";
+			sourceTree = "<group>";
+		};
+		56DAD98815263F2CCB9B69D2EB291DA7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				BFE3601BE5C4862C245FB8DD737A94EB /* MoPub_Chartboost_Adapters.framework */,
+				FD45BE0FD267A30DF89BC0135163173E /* Pods_MoPub_Chartboost_Adapters_Tests.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5D1581F730194495E4171A62D7E178B8 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				BDEABD056FC742AD3C9B15EE6206DBD8 /* Info.plist */,
+				57A843E517125877990FD788BC45F794 /* MoPub-Chartboost-Adapters.modulemap */,
+				0ADFACB526F64982485B6DAC3673637F /* MoPub-Chartboost-Adapters.xcconfig */,
+				A6465EC2A30B6FFEA33A8AE71156EF3E /* MoPub-Chartboost-Adapters-dummy.m */,
+				E95A4DB24E03272720289167D92471E1 /* MoPub-Chartboost-Adapters-prefix.pch */,
+				59CF2BFBF1A08A8029DE250C477BE64D /* MoPub-Chartboost-Adapters-umbrella.h */,
+			);
+			name = "Support Files";
+			path = "Example/Pods/Target Support Files/MoPub-Chartboost-Adapters";
+			sourceTree = "<group>";
+		};
+		7DB346D0F39D3F0E887471402A8071AB = {
+			isa = PBXGroup;
+			children = (
+				93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */,
+				91A1B3930E248919DADDB16BD6A07AAF /* Development Pods */,
+				BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */,
+				56DAD98815263F2CCB9B69D2EB291DA7 /* Products */,
+				E45F23AB74F1DE4EF4EEB35D06AF93C8 /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		91A1B3930E248919DADDB16BD6A07AAF /* Development Pods */ = {
+			isa = PBXGroup;
+			children = (
+				A9CC1B6ED9737E40B905B6DAC173CB6A /* MoPub-Chartboost-Adapters */,
+			);
+			name = "Development Pods";
+			sourceTree = "<group>";
+		};
+		A9CC1B6ED9737E40B905B6DAC173CB6A /* MoPub-Chartboost-Adapters */ = {
+			isa = PBXGroup;
+			children = (
+				4ACEF60FD78D26877E107D87153995C9 /* ReplaceMe.m */,
+				5D1581F730194495E4171A62D7E178B8 /* Support Files */,
+			);
+			name = "MoPub-Chartboost-Adapters";
+			path = ../..;
+			sourceTree = "<group>";
+		};
+		BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D35AF013A5F0BAD4F32504907A52519E /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D35AF013A5F0BAD4F32504907A52519E /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		E45F23AB74F1DE4EF4EEB35D06AF93C8 /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				20FC1E5055A0C5471C5AA39A73FB62E0 /* Pods-MoPub-Chartboost-Adapters_Tests */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		46C5873BC83E1AF317D73A7459D70D73 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2FE28655349048A84BA4E96356039CC7 /* Pods-MoPub-Chartboost-Adapters_Tests-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E52E518C89F631F58EA1F5B25BB3D6E4 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				58B71F583C15DB7DEB9E145E2BCF3E60 /* MoPub-Chartboost-Adapters-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		39E8747DB982B97640A9DF0825B5A322 /* Pods-MoPub-Chartboost-Adapters_Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BC6ADEB036F69FB1039B54BA6E82B563 /* Build configuration list for PBXNativeTarget "Pods-MoPub-Chartboost-Adapters_Tests" */;
+			buildPhases = (
+				FC7FEF76BC4E5F5ACEB141093FA0660C /* Sources */,
+				F54FB3D93BB7B067D541661EB0056079 /* Frameworks */,
+				46C5873BC83E1AF317D73A7459D70D73 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				498B41AB7C179E1C4DA8A0ACD789B7EB /* PBXTargetDependency */,
+			);
+			name = "Pods-MoPub-Chartboost-Adapters_Tests";
+			productName = "Pods-MoPub-Chartboost-Adapters_Tests";
+			productReference = FD45BE0FD267A30DF89BC0135163173E /* Pods_MoPub_Chartboost_Adapters_Tests.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		7C386520601D2BB35A8F2E47B1F8E42F /* MoPub-Chartboost-Adapters */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 28463052000A475A24B6CC70A577496D /* Build configuration list for PBXNativeTarget "MoPub-Chartboost-Adapters" */;
+			buildPhases = (
+				C96768E1BDFC3BCE21580C32564C8784 /* Sources */,
+				399E978F4F1602C613B30AB3E92F75C5 /* Frameworks */,
+				E52E518C89F631F58EA1F5B25BB3D6E4 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "MoPub-Chartboost-Adapters";
+			productName = "MoPub-Chartboost-Adapters";
+			productReference = BFE3601BE5C4862C245FB8DD737A94EB /* MoPub_Chartboost_Adapters.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D41D8CD98F00B204E9800998ECF8427E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0830;
+				LastUpgradeCheck = 0700;
+			};
+			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
+			productRefGroup = 56DAD98815263F2CCB9B69D2EB291DA7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7C386520601D2BB35A8F2E47B1F8E42F /* MoPub-Chartboost-Adapters */,
+				39E8747DB982B97640A9DF0825B5A322 /* Pods-MoPub-Chartboost-Adapters_Tests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C96768E1BDFC3BCE21580C32564C8784 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03795186AEF75DFE7EEACF4A6F485BCC /* MoPub-Chartboost-Adapters-dummy.m in Sources */,
+				2FCB42784191DAD99C699320E492B8F2 /* ReplaceMe.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FC7FEF76BC4E5F5ACEB141093FA0660C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4E0314D88A9E1802556C8C4E22915053 /* Pods-MoPub-Chartboost-Adapters_Tests-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		498B41AB7C179E1C4DA8A0ACD789B7EB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "MoPub-Chartboost-Adapters";
+			target = 7C386520601D2BB35A8F2E47B1F8E42F /* MoPub-Chartboost-Adapters */;
+			targetProxy = F8C8101F3606F0B3DD456DB1C2DEC749 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		157AF0CD5E5AB2A2E74D3B8ECD865185 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				PROVISIONING_PROFILE_SPECIFIER = NO_SIGNING/;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		79004E7B7DE13077EE6205E732454688 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0ADFACB526F64982485B6DAC3673637F /* MoPub-Chartboost-Adapters.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/MoPub-Chartboost-Adapters/MoPub-Chartboost-Adapters-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/MoPub-Chartboost-Adapters/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/MoPub-Chartboost-Adapters/MoPub-Chartboost-Adapters.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = MoPub_Chartboost_Adapters;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		9140F9EC1B24C1AAF4AE0D8ECC224B29 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0ADFACB526F64982485B6DAC3673637F /* MoPub-Chartboost-Adapters.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/MoPub-Chartboost-Adapters/MoPub-Chartboost-Adapters-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/MoPub-Chartboost-Adapters/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/MoPub-Chartboost-Adapters/MoPub-Chartboost-Adapters.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = MoPub_Chartboost_Adapters;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		E7948B96FAC23BF3F0BA20AA6CA77776 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1D83C9ABE84E910BCAF5F13DFFBAAF55 /* Pods-MoPub-Chartboost-Adapters_Tests.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-MoPub-Chartboost-Adapters_Tests/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-MoPub-Chartboost-Adapters_Tests/Pods-MoPub-Chartboost-Adapters_Tests.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = Pods_MoPub_Chartboost_Adapters_Tests;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		EED546DBB23FC32035C9BDC4E22B30BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE_SPECIFIER = NO_SIGNING/;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		FE1D1D4D43BC2C8B236AA72B49CDBCC0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 289A629BA795E1DA2085BCE6C2901111 /* Pods-MoPub-Chartboost-Adapters_Tests.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-MoPub-Chartboost-Adapters_Tests/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-MoPub-Chartboost-Adapters_Tests/Pods-MoPub-Chartboost-Adapters_Tests.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = Pods_MoPub_Chartboost_Adapters_Tests;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		28463052000A475A24B6CC70A577496D /* Build configuration list for PBXNativeTarget "MoPub-Chartboost-Adapters" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				79004E7B7DE13077EE6205E732454688 /* Debug */,
+				9140F9EC1B24C1AAF4AE0D8ECC224B29 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EED546DBB23FC32035C9BDC4E22B30BD /* Debug */,
+				157AF0CD5E5AB2A2E74D3B8ECD865185 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		BC6ADEB036F69FB1039B54BA6E82B563 /* Build configuration list for PBXNativeTarget "Pods-MoPub-Chartboost-Adapters_Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E7948B96FAC23BF3F0BA20AA6CA77776 /* Debug */,
+				FE1D1D4D43BC2C8B236AA72B49CDBCC0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+}
