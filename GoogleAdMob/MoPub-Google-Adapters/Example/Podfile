@@ -1,0 +1,6 @@
+use_frameworks!
+target 'MoPub-Google-Adapters_Tests' do
+  pod 'MoPub-Google-Adapters', :path => '../'
+  
+  
+end

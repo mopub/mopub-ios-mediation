@@ -1,0 +1,22 @@
+{
+  "name": "MoPub-Google-Adapters",
+  "version": "0.1.0",
+  "summary": "A short description of MoPub-Google-Adapters.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/PoojaChirp/MoPub-Google-Adapters",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "PoojaChirp": "pshashidhar@twitter.com"
+  },
+  "source": {
+    "git": "https://github.com/PoojaChirp/MoPub-Google-Adapters.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source_files": "MoPub-Google-Adapters/Classes/**/*"
+}

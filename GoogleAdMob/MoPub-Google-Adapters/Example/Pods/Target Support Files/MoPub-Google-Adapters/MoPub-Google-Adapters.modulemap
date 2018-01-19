@@ -1,0 +1,6 @@
+framework module MoPub_Google_Adapters {
+  umbrella header "MoPub-Google-Adapters-umbrella.h"
+
+  export *
+  module * { export * }
+}

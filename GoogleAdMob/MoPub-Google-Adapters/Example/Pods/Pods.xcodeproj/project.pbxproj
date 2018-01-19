@@ -1,0 +1,545 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0EB8650DA5EE76F1007FFF7E5165F5E1 /* Pods-MoPub-Google-Adapters_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = A1EEE595E7B8985585BFEABF8CB1C3BC /* Pods-MoPub-Google-Adapters_Tests-dummy.m */; };
+		59F8E93D43F63B4AF4D33668726D556E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */; };
+		6500B61BD535915C1B5A33281F3DE575 /* ReplaceMe.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A4624B6EB5A07E138BA01C7C255A6E /* ReplaceMe.m */; };
+		90BB6AC05490410B9D022962783BD852 /* Pods-MoPub-Google-Adapters_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = C4454F19DFE59420210266A9FAC7E93B /* Pods-MoPub-Google-Adapters_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		96991CC3E9F7C833D0F0CB2AA243FA10 /* MoPub-Google-Adapters-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 705389882D7762B4E3BEEA11AE120DBA /* MoPub-Google-Adapters-dummy.m */; };
+		AAA42777EE4FDB081E0B19FF6187C717 /* MoPub-Google-Adapters-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = E65A7E5EC634D89BF6768DDEA8980DA0 /* MoPub-Google-Adapters-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C4AB6BCBE974FD3632803DF2089283F9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		05A8B4A240AA5BFE6BC4F7EE15B0AFC6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1E7BE6EB64A8832AE17E02D04A5302CE;
+			remoteInfo = "MoPub-Google-Adapters";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		1224E75451746DA01EDCB35084C15606 /* Pods-MoPub-Google-Adapters_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-MoPub-Google-Adapters_Tests.release.xcconfig"; sourceTree = "<group>"; };
+		298AA01F1BFF32BBB91AD8B1CCA3E363 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		4C12D05195DE2BC4A01C60EB471E94DF /* Pods-MoPub-Google-Adapters_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-MoPub-Google-Adapters_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		5269807B1FCD9511C34F4C0BD38A7D6B /* MoPub-Google-Adapters-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "MoPub-Google-Adapters-prefix.pch"; sourceTree = "<group>"; };
+		53A4624B6EB5A07E138BA01C7C255A6E /* ReplaceMe.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = ReplaceMe.m; path = "MoPub-Google-Adapters/Classes/ReplaceMe.m"; sourceTree = "<group>"; };
+		6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		705389882D7762B4E3BEEA11AE120DBA /* MoPub-Google-Adapters-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "MoPub-Google-Adapters-dummy.m"; sourceTree = "<group>"; };
+		93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		9CDF87EAF5E94E2A138E92B72F9A384F /* Pods-MoPub-Google-Adapters_Tests-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-MoPub-Google-Adapters_Tests-frameworks.sh"; sourceTree = "<group>"; };
+		A0DD5F488ED28473EF25B66A6F33530C /* Pods-MoPub-Google-Adapters_Tests-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-MoPub-Google-Adapters_Tests-resources.sh"; sourceTree = "<group>"; };
+		A1EEE595E7B8985585BFEABF8CB1C3BC /* Pods-MoPub-Google-Adapters_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-MoPub-Google-Adapters_Tests-dummy.m"; sourceTree = "<group>"; };
+		A56D61C27705C5EDC5EA7A3025815939 /* Pods-MoPub-Google-Adapters_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-MoPub-Google-Adapters_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
+		B0D0BBFC9CE8BCD4C2D1FA732D49469A /* Pods-MoPub-Google-Adapters_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-MoPub-Google-Adapters_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
+		B0F1BBEFB76ADFB85488B72D29DB7826 /* Pods-MoPub-Google-Adapters_Tests.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = "Pods-MoPub-Google-Adapters_Tests.modulemap"; sourceTree = "<group>"; };
+		B95F9FF877F1D497B3EEB6895F3D1CD0 /* MoPub-Google-Adapters.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "MoPub-Google-Adapters.xcconfig"; sourceTree = "<group>"; };
+		C4454F19DFE59420210266A9FAC7E93B /* Pods-MoPub-Google-Adapters_Tests-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-MoPub-Google-Adapters_Tests-umbrella.h"; sourceTree = "<group>"; };
+		C6C3369E0AA8A3C40A5FC8FB9CEA6B09 /* MoPub-Google-Adapters.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; path = "MoPub-Google-Adapters.modulemap"; sourceTree = "<group>"; };
+		D4CA2F867058EDD07C06408460E8092B /* Pods_MoPub_Google_Adapters_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_MoPub_Google_Adapters_Tests.framework; path = "Pods-MoPub-Google-Adapters_Tests.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB4DD30A005CFBA7E68C0016959E24DE /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E65A7E5EC634D89BF6768DDEA8980DA0 /* MoPub-Google-Adapters-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "MoPub-Google-Adapters-umbrella.h"; sourceTree = "<group>"; };
+		E99EAA30D8F130B08C2CEA90073A6508 /* MoPub_Google_Adapters.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = MoPub_Google_Adapters.framework; path = "MoPub-Google-Adapters.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		2D87168A65E50A7882E53B5C98AA9526 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C4AB6BCBE974FD3632803DF2089283F9 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D8AB5C835224EAADAADE7A68D1A8FE07 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				59F8E93D43F63B4AF4D33668726D556E /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		6771C422559BB845F13BAF82899378CF /* Development Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E2EC4E0B95854E8F7AD61DE52E7B3A15 /* MoPub-Google-Adapters */,
+			);
+			name = "Development Pods";
+			sourceTree = "<group>";
+		};
+		7DB346D0F39D3F0E887471402A8071AB = {
+			isa = PBXGroup;
+			children = (
+				93A4A3777CF96A4AAC1D13BA6DCCEA73 /* Podfile */,
+				6771C422559BB845F13BAF82899378CF /* Development Pods */,
+				BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */,
+				811DB6F9E5BA6DECA5CA6F949310D663 /* Products */,
+				EE5E08E72CE5A2EF37B5795A0FA86724 /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		811DB6F9E5BA6DECA5CA6F949310D663 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E99EAA30D8F130B08C2CEA90073A6508 /* MoPub_Google_Adapters.framework */,
+				D4CA2F867058EDD07C06408460E8092B /* Pods_MoPub_Google_Adapters_Tests.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8D2DCF711C2BE81DE2F9EF0E0E8162BA /* Pods-MoPub-Google-Adapters_Tests */ = {
+			isa = PBXGroup;
+			children = (
+				DB4DD30A005CFBA7E68C0016959E24DE /* Info.plist */,
+				B0F1BBEFB76ADFB85488B72D29DB7826 /* Pods-MoPub-Google-Adapters_Tests.modulemap */,
+				A56D61C27705C5EDC5EA7A3025815939 /* Pods-MoPub-Google-Adapters_Tests-acknowledgements.markdown */,
+				B0D0BBFC9CE8BCD4C2D1FA732D49469A /* Pods-MoPub-Google-Adapters_Tests-acknowledgements.plist */,
+				A1EEE595E7B8985585BFEABF8CB1C3BC /* Pods-MoPub-Google-Adapters_Tests-dummy.m */,
+				9CDF87EAF5E94E2A138E92B72F9A384F /* Pods-MoPub-Google-Adapters_Tests-frameworks.sh */,
+				A0DD5F488ED28473EF25B66A6F33530C /* Pods-MoPub-Google-Adapters_Tests-resources.sh */,
+				C4454F19DFE59420210266A9FAC7E93B /* Pods-MoPub-Google-Adapters_Tests-umbrella.h */,
+				4C12D05195DE2BC4A01C60EB471E94DF /* Pods-MoPub-Google-Adapters_Tests.debug.xcconfig */,
+				1224E75451746DA01EDCB35084C15606 /* Pods-MoPub-Google-Adapters_Tests.release.xcconfig */,
+			);
+			name = "Pods-MoPub-Google-Adapters_Tests";
+			path = "Target Support Files/Pods-MoPub-Google-Adapters_Tests";
+			sourceTree = "<group>";
+		};
+		970321EF6325C0BE21BE41B3988787F6 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				298AA01F1BFF32BBB91AD8B1CCA3E363 /* Info.plist */,
+				C6C3369E0AA8A3C40A5FC8FB9CEA6B09 /* MoPub-Google-Adapters.modulemap */,
+				B95F9FF877F1D497B3EEB6895F3D1CD0 /* MoPub-Google-Adapters.xcconfig */,
+				705389882D7762B4E3BEEA11AE120DBA /* MoPub-Google-Adapters-dummy.m */,
+				5269807B1FCD9511C34F4C0BD38A7D6B /* MoPub-Google-Adapters-prefix.pch */,
+				E65A7E5EC634D89BF6768DDEA8980DA0 /* MoPub-Google-Adapters-umbrella.h */,
+			);
+			name = "Support Files";
+			path = "Example/Pods/Target Support Files/MoPub-Google-Adapters";
+			sourceTree = "<group>";
+		};
+		BC3CA7F9E30CC8F7E2DD044DD34432FC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D35AF013A5F0BAD4F32504907A52519E /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D35AF013A5F0BAD4F32504907A52519E /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				6604A7D69453B4569E4E4827FB9155A9 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		E2EC4E0B95854E8F7AD61DE52E7B3A15 /* MoPub-Google-Adapters */ = {
+			isa = PBXGroup;
+			children = (
+				53A4624B6EB5A07E138BA01C7C255A6E /* ReplaceMe.m */,
+				970321EF6325C0BE21BE41B3988787F6 /* Support Files */,
+			);
+			name = "MoPub-Google-Adapters";
+			path = ../..;
+			sourceTree = "<group>";
+		};
+		EE5E08E72CE5A2EF37B5795A0FA86724 /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				8D2DCF711C2BE81DE2F9EF0E0E8162BA /* Pods-MoPub-Google-Adapters_Tests */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		97232EDDB08EDFD5FD7E26379533BA01 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				90BB6AC05490410B9D022962783BD852 /* Pods-MoPub-Google-Adapters_Tests-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AE264718F502B1AB6EBE27AD1C60C261 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AAA42777EE4FDB081E0B19FF6187C717 /* MoPub-Google-Adapters-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		1D6B70CCE9653D2900609C9BCE4571B4 /* Pods-MoPub-Google-Adapters_Tests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 24EABA33CA0511424A1E33E0D5BA9A4B /* Build configuration list for PBXNativeTarget "Pods-MoPub-Google-Adapters_Tests" */;
+			buildPhases = (
+				8269CBBB05E65366680102525CB3EE1B /* Sources */,
+				D8AB5C835224EAADAADE7A68D1A8FE07 /* Frameworks */,
+				97232EDDB08EDFD5FD7E26379533BA01 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E249BE5487BF27CB986BEF209194F029 /* PBXTargetDependency */,
+			);
+			name = "Pods-MoPub-Google-Adapters_Tests";
+			productName = "Pods-MoPub-Google-Adapters_Tests";
+			productReference = D4CA2F867058EDD07C06408460E8092B /* Pods_MoPub_Google_Adapters_Tests.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		1E7BE6EB64A8832AE17E02D04A5302CE /* MoPub-Google-Adapters */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 833EBF8AC4A1397E54847EB566F1BFD8 /* Build configuration list for PBXNativeTarget "MoPub-Google-Adapters" */;
+			buildPhases = (
+				04F9AFAFEF78604F3315C0C718A0B460 /* Sources */,
+				2D87168A65E50A7882E53B5C98AA9526 /* Frameworks */,
+				AE264718F502B1AB6EBE27AD1C60C261 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "MoPub-Google-Adapters";
+			productName = "MoPub-Google-Adapters";
+			productReference = E99EAA30D8F130B08C2CEA90073A6508 /* MoPub_Google_Adapters.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D41D8CD98F00B204E9800998ECF8427E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0830;
+				LastUpgradeCheck = 0700;
+			};
+			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
+			productRefGroup = 811DB6F9E5BA6DECA5CA6F949310D663 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1E7BE6EB64A8832AE17E02D04A5302CE /* MoPub-Google-Adapters */,
+				1D6B70CCE9653D2900609C9BCE4571B4 /* Pods-MoPub-Google-Adapters_Tests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		04F9AFAFEF78604F3315C0C718A0B460 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96991CC3E9F7C833D0F0CB2AA243FA10 /* MoPub-Google-Adapters-dummy.m in Sources */,
+				6500B61BD535915C1B5A33281F3DE575 /* ReplaceMe.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8269CBBB05E65366680102525CB3EE1B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0EB8650DA5EE76F1007FFF7E5165F5E1 /* Pods-MoPub-Google-Adapters_Tests-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E249BE5487BF27CB986BEF209194F029 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "MoPub-Google-Adapters";
+			target = 1E7BE6EB64A8832AE17E02D04A5302CE /* MoPub-Google-Adapters */;
+			targetProxy = 05A8B4A240AA5BFE6BC4F7EE15B0AFC6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		157AF0CD5E5AB2A2E74D3B8ECD865185 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_RELEASE=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				PROVISIONING_PROFILE_SPECIFIER = NO_SIGNING/;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		65E56D38AAA4AC78ECE9357E04DCB519 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B95F9FF877F1D497B3EEB6895F3D1CD0 /* MoPub-Google-Adapters.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/MoPub-Google-Adapters/MoPub-Google-Adapters-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/MoPub-Google-Adapters/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/MoPub-Google-Adapters/MoPub-Google-Adapters.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = MoPub_Google_Adapters;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		7197BEBC9DB8B9709E494505F486E70C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = B95F9FF877F1D497B3EEB6895F3D1CD0 /* MoPub-Google-Adapters.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREFIX_HEADER = "Target Support Files/MoPub-Google-Adapters/MoPub-Google-Adapters-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/MoPub-Google-Adapters/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MODULEMAP_FILE = "Target Support Files/MoPub-Google-Adapters/MoPub-Google-Adapters.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = MoPub_Google_Adapters;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		B9712042AD8B3F8291D1FC4B123CE474 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4C12D05195DE2BC4A01C60EB471E94DF /* Pods-MoPub-Google-Adapters_Tests.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-MoPub-Google-Adapters_Tests/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-MoPub-Google-Adapters_Tests/Pods-MoPub-Google-Adapters_Tests.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = Pods_MoPub_Google_Adapters_Tests;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		E9B63CE796E9454A214389C8FE492EDA /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1224E75451746DA01EDCB35084C15606 /* Pods-MoPub-Google-Adapters_Tests.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = "Target Support Files/Pods-MoPub-Google-Adapters_Tests/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-MoPub-Google-Adapters_Tests/Pods-MoPub-Google-Adapters_Tests.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = Pods_MoPub_Google_Adapters_Tests;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		EED546DBB23FC32035C9BDC4E22B30BD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_REQUIRED = NO;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_DEBUG=1",
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE_SPECIFIER = NO_SIGNING/;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		24EABA33CA0511424A1E33E0D5BA9A4B /* Build configuration list for PBXNativeTarget "Pods-MoPub-Google-Adapters_Tests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B9712042AD8B3F8291D1FC4B123CE474 /* Debug */,
+				E9B63CE796E9454A214389C8FE492EDA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EED546DBB23FC32035C9BDC4E22B30BD /* Debug */,
+				157AF0CD5E5AB2A2E74D3B8ECD865185 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		833EBF8AC4A1397E54847EB566F1BFD8 /* Build configuration list for PBXNativeTarget "MoPub-Google-Adapters" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				65E56D38AAA4AC78ECE9357E04DCB519 /* Debug */,
+				7197BEBC9DB8B9709E494505F486E70C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+}

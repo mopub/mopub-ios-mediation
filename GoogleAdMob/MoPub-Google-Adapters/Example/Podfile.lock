@@ -1,0 +1,16 @@
+PODS:
+  - MoPub-Google-Adapters (0.1.0)
+
+DEPENDENCIES:
+  - MoPub-Google-Adapters (from `../`)
+
+EXTERNAL SOURCES:
+  MoPub-Google-Adapters:
+    :path: ../
+
+SPEC CHECKSUMS:
+  MoPub-Google-Adapters: a3a54371e40bc645865a8460cfadecb9ce686a30
+
+PODFILE CHECKSUM: 7a2bf8f441633d6446d2244b3819388a19da7f35
+
+COCOAPODS: 1.3.1
