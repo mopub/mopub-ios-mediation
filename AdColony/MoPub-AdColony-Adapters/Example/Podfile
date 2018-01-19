@@ -1,6 +1,0 @@
-use_frameworks!
-target 'MoPub-AdColony-Adapters_Tests' do
-  pod 'MoPub-AdColony-Adapters', :path => '../'
-  
-  
-end

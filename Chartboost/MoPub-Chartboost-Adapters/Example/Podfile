@@ -1,6 +1,0 @@
-use_frameworks!
-target 'MoPub-Chartboost-Adapters_Tests' do
-  pod 'MoPub-Chartboost-Adapters', :path => '../'
-  
-  
-end

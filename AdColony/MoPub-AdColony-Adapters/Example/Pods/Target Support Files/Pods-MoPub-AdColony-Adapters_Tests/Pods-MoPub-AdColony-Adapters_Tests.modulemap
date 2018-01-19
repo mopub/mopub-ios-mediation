@@ -1,6 +1,0 @@
-framework module Pods_MoPub_AdColony_Adapters_Tests {
-  umbrella header "Pods-MoPub-AdColony-Adapters_Tests-umbrella.h"
-
-  export *
-  module * { export * }
-}

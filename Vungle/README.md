@@ -1,1 +1,0 @@
-# mopub-ios-mediation
