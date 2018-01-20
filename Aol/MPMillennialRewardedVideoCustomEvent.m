@@ -11,6 +11,7 @@
 #import <MMAdSDK/MMAd+Experimental.h>
 #import "MMAdapterVersion.h"
 #import <objc/runtime.h>
+#import "MPRewardedVideoCustomEvent+Caching.h"
 
 static NSString *const kMoPubMMAdapterAdUnit = @"adUnitID";
 static NSString *const kMoPubMMAdapterDCN = @"dcn";
@@ -71,10 +72,22 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
     return self;
 }
 
+- (void)initializeSdkWithParameters:(NSDictionary *)parameters {
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        MMSDK *mmSDK = [MMSDK sharedInstance];
+        if (![mmSDK isInitialized]) {
+            [mmSDK initializeWithSettings:[[MMAppSettings alloc] init]
+                         withUserSettings:nil];
+            MPLogDebug(@"Millennial adapter version: %@", self.version);
+        }
+    });
+}
+
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary<NSString *, id> *)info {
-    
+
     MMSDK *mmSDK = [MMSDK sharedInstance];
-    
+
     if (![mmSDK isInitialized]) {
         NSError *error = [NSError errorWithDomain:MMSDKErrorDomain
                                              code:MMSDKErrorNotInitialized
@@ -85,9 +98,9 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
         [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
         return;
     }
-    
+
     MPLogDebug(@"Requesting Millennial rewarded video with event info %@.", info);
-    
+
     NSString *placementId = info[kMoPubMMAdapterAdUnit];
     if (!placementId) {
         NSError *error = [NSError errorWithDomain:MMSDKErrorDomain
@@ -99,14 +112,17 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
         [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
         return; // Early return
     }
-    
+
+    // Cache the initialization parameters
+    [self setCachedInitializationParameters:info];
+
     [mmSDK appSettings].mediator = NSStringFromClass([MPMillennialRewardedVideoCustomEvent class]);
     if (info[kMoPubMMAdapterDCN]) {
         [mmSDK appSettings].siteId = info[kMoPubMMAdapterDCN];
     } else {
         [mmSDK appSettings].siteId = nil;
     }
-    
+
     // Create a new interstitial event for the reward video playback.
     self.interstitialEvent = [[MPMillennialInterstitialRewardCustomEvent alloc] init];
     self.interstitialEvent.delegate = self;

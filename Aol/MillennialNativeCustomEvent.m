@@ -44,7 +44,7 @@ static NSString *const kMoPubMMAdapterDCN = @"dcn";
 -(void)requestAdWithCustomEventInfo:(NSDictionary *)info {
     __strong __typeof__(self.delegate) delegate = self.delegate;
     MMSDK *mmSDK = [MMSDK sharedInstance];
-    
+
     if (![mmSDK isInitialized]) {
         NSError *error = [NSError errorWithDomain:MMSDKErrorDomain
                                              code:MMSDKErrorNotInitialized
@@ -55,7 +55,7 @@ static NSString *const kMoPubMMAdapterDCN = @"dcn";
         [delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
-    
+
     MPLogDebug(@"Requesting Millennial native ad with event info %@.", info);
 
     NSString *placementId = info[kMoPubMMAdapterAdUnit];
@@ -69,14 +69,14 @@ static NSString *const kMoPubMMAdapterDCN = @"dcn";
         [delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
-    
+
     [mmSDK appSettings].mediator = @"MillennialNativeCustomEvent";
     if (info[kMoPubMMAdapterDCN]) {
         mmSDK.appSettings.siteId = info[kMoPubMMAdapterDCN];
     } else {
         mmSDK.appSettings.siteId = nil;
     }
-    
+
     self.nativeAd = [[MMNativeAd alloc] initWithPlacementId:placementId supportedTypes:@[MMNativeAdTypeInline]];
     self.nativeAd.delegate = self;
     [self.nativeAd load:nil];

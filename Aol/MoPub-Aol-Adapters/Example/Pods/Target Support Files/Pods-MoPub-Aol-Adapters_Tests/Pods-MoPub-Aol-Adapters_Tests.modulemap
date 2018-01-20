@@ -1,0 +1,6 @@
+framework module Pods_MoPub_Aol_Adapters_Tests {
+  umbrella header "Pods-MoPub-Aol-Adapters_Tests-umbrella.h"
+
+  export *
+  module * { export * }
+}

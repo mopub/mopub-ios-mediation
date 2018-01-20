@@ -13,7 +13,7 @@
 #import <MMAdSDK/MMAdSDK.h>
 
 /*
- * For MMSDK version 6.4.0
+ * Certified with Millennial Media 6.6.0
  */
 @interface MPMillennialInterstitialCustomEvent : MPInterstitialCustomEvent <MMInterstitialDelegate>
 

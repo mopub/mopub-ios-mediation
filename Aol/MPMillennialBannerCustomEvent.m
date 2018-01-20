@@ -49,7 +49,7 @@ static NSString *const kMoPubMMAdapterDCN = @"dcn";
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info {
     __strong __typeof__(self.delegate) delegate = self.delegate;
     MMSDK *mmSDK = [MMSDK sharedInstance];
-    
+
     if (![mmSDK isInitialized]) {
         NSError *error = [NSError errorWithDomain:MMSDKErrorDomain
                                              code:MMSDKErrorNotInitialized
@@ -61,9 +61,9 @@ static NSString *const kMoPubMMAdapterDCN = @"dcn";
 
         return;
     }
-    
+
     MPLogDebug(@"Requesting Millennial banner with event info %@.", info);
-    
+
     NSString *placementId = info[kMoPubMMAdapterAdUnit];
     if (!placementId) {
         NSError *error = [NSError errorWithDomain:MMSDKErrorDomain

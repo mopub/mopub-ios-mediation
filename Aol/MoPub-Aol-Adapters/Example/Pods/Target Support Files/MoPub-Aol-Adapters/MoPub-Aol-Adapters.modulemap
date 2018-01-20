@@ -1,0 +1,6 @@
+framework module MoPub_Aol_Adapters {
+  umbrella header "MoPub-Aol-Adapters-umbrella.h"
+
+  export *
+  module * { export * }
+}

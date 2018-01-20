@@ -1,0 +1,6 @@
+use_frameworks!
+target 'MoPub-Aol-Adapters_Tests' do
+  pod 'MoPub-Aol-Adapters', :path => '../'
+  
+  
+end

@@ -59,10 +59,10 @@ static NSString *const kMoPubMMAdapterDCN = @"dcn";
 }
 
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary<NSString *, id> *)info {
-    
+
     MMSDK *mmSDK = [MMSDK sharedInstance];
     __strong __typeof__(self.delegate) delegate = self.delegate;
-    
+
     if (![mmSDK isInitialized]) {
         NSError *error = [NSError errorWithDomain:MMSDKErrorDomain
                                              code:MMSDKErrorNotInitialized
@@ -73,9 +73,9 @@ static NSString *const kMoPubMMAdapterDCN = @"dcn";
         [delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
-    
+
     MPLogDebug(@"Requesting Millennial interstitial with event info %@.", info);
-    
+
     NSString *placementId = info[kMoPubMMAdapterAdUnit];
     if (!placementId) {
         NSError *error = [NSError errorWithDomain:MMSDKErrorDomain
@@ -94,7 +94,7 @@ static NSString *const kMoPubMMAdapterDCN = @"dcn";
     } else {
         [mmSDK appSettings].siteId = nil;
     }
-    
+
     self.interstitial = [[MPInstanceProvider sharedProvider] buildMMInterstitialWithPlacementId:placementId];
     self.interstitial.delegate = self;
 

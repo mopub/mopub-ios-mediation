@@ -1,0 +1,16 @@
+PODS:
+  - MoPub-Aol-Adapters (0.1.0)
+
+DEPENDENCIES:
+  - MoPub-Aol-Adapters (from `../`)
+
+EXTERNAL SOURCES:
+  MoPub-Aol-Adapters:
+    :path: ../
+
+SPEC CHECKSUMS:
+  MoPub-Aol-Adapters: 1d8f8dba6de6083bd8e1299a860749af73ffbcd2
+
+PODFILE CHECKSUM: 0a03cb7dd0cc439590c73aee143c7e996fad61b7
+
+COCOAPODS: 1.3.1
