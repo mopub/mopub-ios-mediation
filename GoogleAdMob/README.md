@@ -8,3 +8,4 @@ Certified network SDK version - 7.27.0
 Certified MoPub SDK version - 4.19.0
 Certified adapter version - 7.27.0.0
 
+Changes introduced - None in the adapters.
