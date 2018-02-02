@@ -6,19 +6,16 @@
 //
 
 #if __has_include(<MoPub/MoPub.h>)
-    #import <MoPub/MoPub.h>
+#import <MoPub/MoPub.h>
 #else
-    #import "MPInterstitialCustomEvent.h"
-    #import "MPRealTimeTimer.h"
+#import "MPInterstitialCustomEvent.h"
+#import "MPRealTimeTimer.h"
 
 #endif
 
 /*
- * Certified with Facebook Audience Network 4.23
+ * Certified with Facebook Audience Network 4.26
  */
 @interface FacebookInterstitialCustomEvent : MPInterstitialCustomEvent
-
-
-
 
 @end

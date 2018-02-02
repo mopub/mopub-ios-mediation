@@ -12,7 +12,7 @@
 #import "MPLogging.h"
 
 //Timer to record the expiration interval
-#define FB_ADS_EXPIRATION_INTERVAL  15//3600
+#define FB_ADS_EXPIRATION_INTERVAL  3600
 
 
 @interface MPInstanceProvider (FacebookInterstitials)
@@ -53,13 +53,13 @@
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:nil];
         return;
     }
-
+    
     MPLogInfo(@"Requesting Facebook interstitial ad");
-
+    
     self.fbInterstitialAd =
     [[MPInstanceProvider sharedProvider] buildFBInterstitialAdWithPlacementID:[info objectForKey:@"placement_id"]
                                                                      delegate:self];
-
+    [FBAdSettings setMediationService:[NSString stringWithFormat:@"MOPUB_%@", MP_SDK_VERSION]];
     [self.fbInterstitialAd loadAd];
 }
 
@@ -88,18 +88,18 @@
     MPLogInfo(@"Facebook intersitital ad was loaded. Can present now");
     [self.delegate interstitialCustomEvent:self didLoadAd:interstitialAd];
     
-    // introduce timer for 1 hour as per caching logic introduced by FB//FB_ADS_EXPIRATION_INTERVAL
+    // introduce timer for 1 hour as per caching logic introduced by FB
     
     __weak __typeof__(self) weakSelf = self;
     self.expirationTimer = [[MPRealTimeTimer alloc] initWithInterval:FB_ADS_EXPIRATION_INTERVAL block:^(MPRealTimeTimer *timer){
-    __strong __typeof__(weakSelf) strongSelf = weakSelf;
-    if (strongSelf && !strongSelf.hasTrackedImpression)
-    {
-        [self.delegate interstitialCustomEventDidExpire:self];
-        MPLogInfo(@"Facebook intersitital ad expired as per the audience network's caching policy");
-        self.delegate = nil;
-    }
-    [strongSelf.expirationTimer invalidate];
+        __strong __typeof__(weakSelf) strongSelf = weakSelf;
+        if (strongSelf && !strongSelf.hasTrackedImpression) {
+            [self.delegate interstitialCustomEventDidExpire:self];
+            MPLogInfo(@"Facebook intersitital ad expired as per the audience network's caching policy");
+            //Delete the cached objects
+            self.fbInterstitialAd = nil;
+        }
+        [strongSelf.expirationTimer invalidate];
     }];
     [self.expirationTimer scheduleNow];
     
@@ -115,7 +115,7 @@
 
 - (void)interstitialAd:(FBInterstitialAd *)interstitialAd didFailWithError:(NSError *)error
 {
-    MPLogInfo(@"Facebook intersitital ad failed to load with error: %@", error.description);
+    MPLogInfo(@"Facebook intersitital ad failed to load with error: %@", error.localizedDescription);
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:nil];
 }
 

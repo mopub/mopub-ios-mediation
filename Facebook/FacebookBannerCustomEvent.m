@@ -96,7 +96,7 @@
     CGRect fbAdFrame = self.fbAdView.frame;
     fbAdFrame.size = size;
     self.fbAdView.frame = fbAdFrame;
-
+    [FBAdSettings setMediationService:[NSString stringWithFormat:@"MOPUB_%@", MP_SDK_VERSION]];
     [self.fbAdView loadAd];
 }
 
@@ -109,7 +109,7 @@
 
 - (void)adView:(FBAdView *)adView didFailWithError:(NSError *)error
 {
-    MPLogInfo(@"Facebook banner failed to load with error: %@", error.description);
+    MPLogInfo(@"Facebook banner failed to load with error: %@", error.localizedDescription);
     [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
 }
 

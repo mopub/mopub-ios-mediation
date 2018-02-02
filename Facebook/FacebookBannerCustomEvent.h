@@ -12,7 +12,7 @@
 #endif
 
 /*
- * Certified with Facebook Audience Network 4.23
+ * Certified with Facebook Audience Network 4.26.1
  */
 @interface FacebookBannerCustomEvent : MPBannerCustomEvent
 

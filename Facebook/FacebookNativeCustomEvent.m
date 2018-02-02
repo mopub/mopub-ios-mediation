@@ -4,7 +4,6 @@
 //
 //  Copyright (c) 2014 MoPub. All rights reserved.
 //
-
 #import <FBAudienceNetwork/FBAudienceNetwork.h>
 #import "FacebookNativeCustomEvent.h"
 #import "FacebookNativeAdAdapter.h"
@@ -32,6 +31,9 @@ static BOOL gVideoEnabled = NO;
 
 - (void)requestAdWithCustomEventInfo:(NSDictionary *)info
 {
+    //test mode on
+    NSString *testDeviceHash = FBAdSettings.testDeviceHash;
+    [FBAdSettings addTestDevice: testDeviceHash];
     NSString *placementID = [info objectForKey:@"placement_id"];
 
     if ([info objectForKey:kFBVideoAdsEnabledKey] == nil) {
@@ -43,6 +45,7 @@ static BOOL gVideoEnabled = NO;
     if (placementID) {
         _fbNativeAd = [[FBNativeAd alloc] initWithPlacementID:placementID];
         self.fbNativeAd.delegate = self;
+        [FBAdSettings setMediationService:[NSString stringWithFormat:@"MOPUB_%@", MP_SDK_VERSION]];
         [self.fbNativeAd loadAd];
     } else {
         [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidAdServerResponse(@"Invalid Facebook placement ID")];
@@ -75,8 +78,6 @@ static BOOL gVideoEnabled = NO;
             [self.delegate nativeCustomEvent:self didLoadAd:interfaceAd];
         }
     }];
-    
-  //   MPNativeAd *nextAd = [adQueue dequeueAdWithMaxAge:60];
 }
 
 - (void)nativeAd:(FBNativeAd *)nativeAd didFailWithError:(NSError *)error

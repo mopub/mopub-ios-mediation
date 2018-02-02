@@ -9,15 +9,12 @@
     #import <MoPub/MoPub.h>
 #else
     #import "MPNativeCustomEvent.h"
-    #import "MPNativeAd.h"
 #endif
 
 /*
- * Certified with Facebook Audience Network 4.23
+ * Certified with Facebook Audience Network 4.26.1
  */
 @interface FacebookNativeCustomEvent : MPNativeCustomEvent
-
-
 
 
 /**
@@ -29,7 +26,5 @@
  */
 
 + (void)setVideoEnabled:(BOOL)enabled;
-
-- (MPNativeAd *)dequeueAdWithMaxAge:(NSTimeInterval)age;
 
 @end
