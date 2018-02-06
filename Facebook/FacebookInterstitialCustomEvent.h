@@ -9,7 +9,6 @@
 #import <MoPub/MoPub.h>
 #else
 #import "MPInterstitialCustomEvent.h"
-#import "MPRealTimeTimer.h"
 
 #endif
 

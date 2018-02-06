@@ -10,6 +10,7 @@
 
 #import "MPInstanceProvider.h"
 #import "MPLogging.h"
+#import "MPRealTimeTimer.h"
 
 //Timer to record the expiration interval
 #define FB_ADS_EXPIRATION_INTERVAL  3600
