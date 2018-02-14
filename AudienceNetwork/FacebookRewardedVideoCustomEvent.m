@@ -52,18 +52,30 @@
 }
 
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info {
+    [self requestRewardedVideoWithCustomEventInfo:info adMarkup:nil];
+}
+
+- (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     if (![info objectForKey:@"placement_id"]) {
         MPLogError(@"Placement ID is required for Facebook Rewarded Video ad");
         [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:nil];
         return;
     }
-    MPLogInfo(@"Requesting Facebook Rewarded Video ad");
     
     self.fbRewardedVideoAd =
     [[MPInstanceProvider sharedProvider] buildFBRewardedVideoAdWithPlacementID: [info objectForKey:@"placement_id"] delegate:self];
     
     [FBAdSettings setMediationService:[NSString stringWithFormat:@"MOPUB_%@", MP_SDK_VERSION]];
-    [self.fbRewardedVideoAd loadAd];
+    // Load the advanced bid payload.
+    if (adMarkup != nil) {
+        MPLogInfo(@"Loading Facebook rewarded video ad markup");
+        [self.fbRewardedVideoAd loadAdWithBidPayload:adMarkup];
+    }
+    // Request a rewarded video ad.
+    else {
+        MPLogInfo(@"Requesting Facebook rewarded video ad");
+        [self.fbRewardedVideoAd loadAd];
+    }
 }
 
 //Verify that the rewarded video is precached
