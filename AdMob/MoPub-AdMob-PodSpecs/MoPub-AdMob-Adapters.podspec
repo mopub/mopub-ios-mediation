@@ -17,7 +17,7 @@ s.license          = { :type => 'New BSD', :file => 'LICENSE' }
 s.author           = { 'PoojaChirp' => 'pshashidhar@twitter.com' }
 s.source           = { :git => 'https://github.com/mopub/mopub-ios-mediation.git', :tag => 'master' }
 s.ios.deployment_target = '8.0'
-s.source_files = 'GoogleAdMob/*.{h,m}'
+s.source_files = 'AdMob/*.{h,m}'
 s.dependency 'mopub-ios-sdk', '~> 4.19.0'
 s.dependency 'Google-Mobile-Ads-SDK', '~> 7.0'
 end
