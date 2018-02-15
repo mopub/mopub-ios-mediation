@@ -15,7 +15,7 @@ DESC
 s.homepage         = 'https://github.com/mopub/mopub-ios-mediation';
 s.license          = { :type => 'New BSD', :file => 'LICENSE' }
 s.author           = { 'PoojaChirp' => 'pshashidhar@twitter.com' }
-s.source           = { :git => 'https://github.com/mopub/mopub-ios-mediation.git';, :tag => 'master' }
+s.source           = { :git => 'https://github.com/mopub/mopub-ios-mediation.git', :tag => 'master' }
 s.ios.deployment_target = '8.0'
 s.source_files = 'Aol/*.{h,m}'
 s.exclude_files = 'MPStaticNativeAdImpressionTimer.{h,m}'
