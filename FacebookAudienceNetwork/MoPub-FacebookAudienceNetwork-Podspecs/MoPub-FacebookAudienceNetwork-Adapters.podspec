@@ -18,6 +18,6 @@ s.author           = { 'PoojaChirp' => 'pshashidhar@twitter.com' }
 s.source           = { :git => 'https://github.com/mopub/mopub-ios-mediation.git', :tag => 'master' }
 s.ios.deployment_target = '8.0'
 s.source_files = 'FacebookAudienceNetwork/*.{h,m}'
-s.dependency 'mopub-ios-sdk', '~> 4.0'
+s.dependency 'mopub-ios-sdk', '~> 4.19.0'
 s.dependency 'FBAudienceNetwork', '~> 4.0'
 end
