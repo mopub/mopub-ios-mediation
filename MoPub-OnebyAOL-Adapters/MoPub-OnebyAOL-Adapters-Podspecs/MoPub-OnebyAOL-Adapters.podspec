@@ -1,11 +1,11 @@
 #
-# Be sure to run 'pod lib lint MoPub-Aol-Adapters.podspec' to ensure this is a
+# Be sure to run 'pod lib lint MoPub-OnebyAOL-Adapters.podspec' to ensure this is a
 # valid spec before submitting.
 #
 
 Pod::Spec.new do |s|
-s.name             = 'MoPub-AOL-Adapters'
-s.version          = '6.6.0.3'
+s.name             = 'MoPub-OnebyAOL-Adapters'
+s.version          = '6.6.0.4'
 s.summary          = 'Aol Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats: Banner, Interstitial, Rewarded Video, Native.\n
