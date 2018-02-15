@@ -19,6 +19,6 @@ s.source           = { :git => 'https://github.com/mopub/mopub-ios-mediation.git
 s.ios.deployment_target = '8.0'
 s.source_files = 'Aol/*.{h,m}'
 s.exclude_files = 'MPStaticNativeAdImpressionTimer.{h,m}'
-s.dependency 'mopub-ios-sdk', '~> 4.0'
+s.dependency 'mopub-ios-sdk', '~> 4.19.0'
 s.dependency 'MMAdSDK', '~> 6.0'
 end
