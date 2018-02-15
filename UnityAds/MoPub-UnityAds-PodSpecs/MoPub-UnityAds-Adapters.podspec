@@ -17,7 +17,7 @@ s.license          = { :type => 'New BSD', :file => 'LICENSE' }
 s.author           = { 'PoojaChirp' => 'pshashidhar@twitter.com' }
 s.source           = { :git => 'https://github.com/mopub/mopub-ios-mediation.git', :tag => 'master' }
 s.ios.deployment_target = '8.0'
-s.source_files = 'Unity/*.{h,m}'
+s.source_files = 'UnityAds/*.{h,m}'
 s.dependency 'mopub-ios-sdk', '~> 4.19.0'
 s.dependency 'UnityAds', '~> 2.0'
 end
