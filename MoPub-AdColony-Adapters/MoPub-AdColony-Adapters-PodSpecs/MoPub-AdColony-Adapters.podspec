@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'MoPub-AdColony-Adapters'
-  s.version          = '3.2.1.1'
+  s.version          = '3.2.1.2'
   s.summary          = 'AdColony Adapters for mediating through MoPub.'
   s.description      = <<-DESC
 Supported ad formats: Interstitial, Rewarded Video.\n
