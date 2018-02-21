@@ -31,6 +31,11 @@ static BOOL gVideoEnabled = NO;
 
 - (void)requestAdWithCustomEventInfo:(NSDictionary *)info
 {
+    [self requestAdWithCustomEventInfo:info adMarkup:nil];
+}
+
+- (void)requestAdWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
+{
     NSString *placementID = [info objectForKey:@"placement_id"];
 
     if ([info objectForKey:kFBVideoAdsEnabledKey] == nil) {
@@ -43,7 +48,17 @@ static BOOL gVideoEnabled = NO;
         _fbNativeAd = [[FBNativeAd alloc] initWithPlacementID:placementID];
         self.fbNativeAd.delegate = self;
         [FBAdSettings setMediationService:[NSString stringWithFormat:@"MOPUB_%@", MP_SDK_VERSION]];
-        [self.fbNativeAd loadAd];
+        
+        // Load the advanced bid payload.
+        if (adMarkup != nil) {
+            MPLogInfo(@"Loading Facebook native ad markup");
+            [self.fbNativeAd loadAdWithBidPayload:adMarkup];
+        }
+        // Request a banner ad.
+        else {
+            MPLogInfo(@"Requesting Facebook native ad");
+            [self.fbNativeAd loadAd];
+        }
     } else {
         [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidAdServerResponse(@"Invalid Facebook placement ID")];
     }

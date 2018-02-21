@@ -51,14 +51,17 @@
 
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info
 {
+    [self requestAdWithSize:size customEventInfo:info adMarkup:nil];
+}
+
+- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
+{
     /**
      * Facebook Banner ads can accept arbitrary widths for given heights of 50 and 90. We convert these sizes
      * to Facebook's constants and set the fbAdView's size to the intended size ("size" passed to this method).
      */
     FBAdSize fbAdSize;
-    if (CGSizeEqualToSize(size, kFBAdSize320x50.size)) {
-        fbAdSize = kFBAdSize320x50;
-    } else if (size.height == kFBAdSizeHeight250Rectangle.size.height) {
+    if (size.height == kFBAdSizeHeight250Rectangle.size.height) {
         fbAdSize = kFBAdSizeHeight250Rectangle;
     } else if (size.height == kFBAdSizeHeight90Banner.size.height) {
         fbAdSize = kFBAdSizeHeight90Banner;
@@ -97,7 +100,17 @@
     fbAdFrame.size = size;
     self.fbAdView.frame = fbAdFrame;
     [FBAdSettings setMediationService:[NSString stringWithFormat:@"MOPUB_%@", MP_SDK_VERSION]];
-    [self.fbAdView loadAd];
+    
+    // Load the advanced bid payload.
+    if (adMarkup != nil) {
+        MPLogInfo(@"Loading Facebook banner ad markup");
+        [self.fbAdView loadAdWithBidPayload:adMarkup];
+    }
+    // Request a banner ad.
+    else {
+        MPLogInfo(@"Requesting Facebook banner ad");
+        [self.fbAdView loadAd];
+    }
 }
 
 - (void)dealloc
