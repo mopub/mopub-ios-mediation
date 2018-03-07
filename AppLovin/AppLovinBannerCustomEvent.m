@@ -40,6 +40,8 @@ static NSString *const kALMoPubMediationErrorDomain = @"com.applovin.sdk.mediati
 
 static const CGFloat kALBannerHeightOffsetTolerance = 10.0f;
 static const CGFloat kALBannerStandardHeight = 50.0f;
+static const CGFloat kALLeaderHeightOffsetTolerance = 16.0f;
+static const CGFloat kALLeaderStandardHeight = 90.0f;
 
 // A dictionary of Zone -> AdView to be shared by instances of the custom event.
 static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
@@ -155,10 +157,17 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
     else
     {
         // Assume fluid width, and check for height with offset tolerance
-        CGFloat offset = ABS(kALBannerStandardHeight - size.height);
-        if ( offset <= kALBannerHeightOffsetTolerance )
+        
+        CGFloat bannerOffset = ABS(kALBannerStandardHeight - size.height);
+        CGFloat leaderOffset = ABS(kALLeaderStandardHeight - size.height);
+        
+        if ( bannerOffset <= kALBannerHeightOffsetTolerance )
         {
             return [ALAdSize sizeBanner];
+        }
+        else if ( leaderOffset <= kALLeaderHeightOffsetTolerance )
+        {
+            return [ALAdSize sizeLeader];
         }
     }
     
