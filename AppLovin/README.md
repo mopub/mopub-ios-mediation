@@ -4,6 +4,6 @@
 * For inquiries and support, please utilize [the support center](https://support-developer.applovin.com/hc/en-us).
 
 ## Adapter integration
-* To integrate adapters, please visit our [integration tutorial](https://developers.mopub.com/docs/android/integrating-networks/).
+* To integrate adapters, please visit our [integration tutorial](https://developers.mopub.com/docs/ios/integrating-networks/).
 
 
