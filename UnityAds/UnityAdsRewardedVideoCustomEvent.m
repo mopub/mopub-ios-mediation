@@ -33,7 +33,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 - (void)initializeSdkWithParameters:(NSDictionary *)parameters {
     NSString *gameId = [parameters objectForKey:kMPUnityRewardedVideoGameId];
     if (gameId == nil) {
-        NSLog(@"Initialization parameters did not contain gameId.");
+        MPLogInfo(@"Initialization parameters did not contain gameId.");
         return;
     }
 
@@ -160,7 +160,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 {
     [self.delegate rewardedVideoWillAppearForCustomEvent:self];
     [self.delegate rewardedVideoDidAppearForCustomEvent:self];
-     MPLogInfo(@"Unity Ads to appear on your display");
+     MPLogInfo(@"Unity Ads rewarded video ad did appear");
 }
 
 - (void) unityAdsDidFinish:(NSString *)placementId withFinishState:(UnityAdsFinishState)state
@@ -171,7 +171,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     }
     [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
     [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
-    MPLogInfo(@"Unity Ads to disappear from your display");
+    MPLogInfo(@"Unity Ads rewarded video ad did disappear");
 }
 
 - (void) unityAdsDidClick:(NSString *)placementId
@@ -182,8 +182,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 - (void)unityAdsDidFailWithError:(NSError *)error
 {
     [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
-    MPLogInfo(@"Unity ads failed to load with the following error: %@", error);
+    MPLogInfo(@"Unity ads failed to load with the following error: %@", error.localizedDescription);
 }
 
 @end
-
