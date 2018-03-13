@@ -93,14 +93,14 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 {
     [self.delegate interstitialCustomEventWillAppear:self];
     [self.delegate interstitialCustomEventDidAppear:self];
-    MPLogInfo(@"Unity Interstitial Ad did appear");
+    MPLogInfo(@"Unity Ads Interstitial Ad did appear");
 }
 
 - (void) unityAdsDidFinish:(NSString *)placementId withFinishState:(UnityAdsFinishState)state
 {
     [self.delegate interstitialCustomEventWillDisappear:self];
     [self.delegate interstitialCustomEventDidDisappear:self];
-    MPLogInfo(@"Unity Interstitial Ad did disappear");
+    MPLogInfo(@"Unity Ads Interstitial Ad did disappear");
 }
 
 - (void) unityAdsDidClick:(NSString *)placementId
