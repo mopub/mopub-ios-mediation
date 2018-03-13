@@ -37,7 +37,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     }
     if (self.placementId == nil) {
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:nil];
-        MPLogInfo(@" PlacementId is nil, place check the values set in the UI");
+        MPLogInfo(@" PlacementId is nil, please check the values set in the UI");
     } else {
         [[MPUnityRouter sharedRouter] requestVideoAdWithGameId:gameId placementId:self.placementId delegate:self];
     }
