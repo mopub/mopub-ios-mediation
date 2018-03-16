@@ -6,13 +6,13 @@
 //
 
 #if __has_include(<MoPub/MoPub.h>)
-#import <MoPub/MoPub.h>
+    #import <MoPub/MoPub.h>
 #else
-#import "MPInterstitialCustomEvent.h"
+    #import "MPInterstitialCustomEvent.h"
 #endif
 
 /*
- * Certified with Vungle 5.3.2
+ * Certified with Vungle 5.4.0
  *
  * The Vungle SDK does not provide an "application will leave" callback, thus this custom event
  * will not invoke the interstitialCustomEventWillLeaveApplication: delegate method.

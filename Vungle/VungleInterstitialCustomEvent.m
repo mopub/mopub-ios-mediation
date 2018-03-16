@@ -29,15 +29,7 @@
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info
 {
     self.placementId = [info objectForKey:kVunglePlacementIdKey];
-    
-    NSMutableDictionary *options = [NSMutableDictionary dictionary];
-    
-    id flexViewAutoDismissSeconds = info[kVungleFlexViewAutoDismissSeconds];
-    if ([flexViewAutoDismissSeconds isKindOfClass:[NSNumber class]])
-        options[VunglePlayAdOptionKeyFlexViewAutoDismissSeconds] = flexViewAutoDismissSeconds;
-    
-    self.options = options.count ? options : nil;
-    
+
     self.handledAdAvailable = NO;
     [[MPVungleRouter sharedRouter] requestInterstitialAdWithCustomEventInfo:info delegate:self];
 }
@@ -45,6 +37,41 @@
 - (void)showInterstitialFromRootViewController:(UIViewController *)rootViewController
 {
     if ([[MPVungleRouter sharedRouter] isAdAvailableForPlacementId:self.placementId]) {
+        
+        if (self.options) {
+            // In the event that options have been updated
+            self.options = nil;
+        }
+        
+        NSMutableDictionary *options = [NSMutableDictionary dictionary];
+        
+        // VunglePlayAdOptionKeyUser
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:kVungleUserId]) {
+            NSString *userID = [[NSUserDefaults standardUserDefaults] objectForKey:kVungleUserId];
+            if (userID.length > 0) {
+                options[VunglePlayAdOptionKeyUser] = userID;
+            }
+        }
+        
+        // Ordinal
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:kVungleOrdinal]) {
+            NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[[[NSUserDefaults standardUserDefaults] objectForKey:kVungleOrdinal] longLongValue]];
+            NSUInteger ordinal = ordinalPlaceholder.unsignedIntegerValue;
+            if (ordinal > 0) {
+                options[VunglePlayAdOptionKeyOrdinal] = @(ordinal);
+            }
+        }
+        
+        // FlexVieAutoDismissSeconds
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:kVungleFlexViewAutoDismissSeconds]) {
+            NSTimeInterval flexDismissTime = [[[NSUserDefaults standardUserDefaults] objectForKey:kVungleFlexViewAutoDismissSeconds] floatValue];
+            if (flexDismissTime > 0) {
+                options[VunglePlayAdOptionKeyFlexViewAutoDismissSeconds] = @(flexDismissTime);
+            }
+        }
+
+        self.options = options.count ? options : nil;
+        
         [[MPVungleRouter sharedRouter] presentInterstitialAdFromViewController:rootViewController options:self.options forPlacementId:self.placementId];
     } else {
         MPLogInfo(@"Failed to show Vungle video interstitial: Vungle now claims that there is no available video ad.");
@@ -60,7 +87,7 @@
 - (void)handleVungleAdViewWillClose
 {
     MPLogInfo(@"Vungle video interstitial will disappear");
-    
+
     [self.delegate interstitialCustomEventWillDisappear:self];
     [self.delegate interstitialCustomEventDidDisappear:self];
 }
@@ -78,7 +105,7 @@
 - (void)vungleAdWillAppear
 {
     MPLogInfo(@"Vungle video interstitial will appear");
-    
+
     [self.delegate interstitialCustomEventWillAppear:self];
     [self.delegate interstitialCustomEventDidAppear:self];
 }

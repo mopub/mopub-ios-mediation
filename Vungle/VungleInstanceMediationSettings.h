@@ -8,9 +8,9 @@
 #import <Foundation/Foundation.h>
 
 #if __has_include(<MoPub/MoPub.h>)
-#import <MoPub/MoPub.h>
+    #import <MoPub/MoPub.h>
 #else
-#import "MPMediationSettingsProtocol.h"
+    #import "MPMediationSettingsProtocol.h"
 #endif
 
 /*

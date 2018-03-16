@@ -12,12 +12,14 @@
 #import "MPRewardedVideoError.h"
 #import "MPRewardedVideo.h"
 
-static NSString *const VunglePluginVersion = @"5.3.2";
+static NSString *const VunglePluginVersion = @"5.4.0";
 
 static NSString *const kVungleAppIdKey = @"appId";
 NSString *const kVunglePlacementIdKey = @"pid";
 static NSString *const kVunglePlacementIdsKey = @"pids";
 NSString *const kVungleFlexViewAutoDismissSeconds = @"flexViewAutoDismissSeconds";
+NSString *const kVungleUserId = @"userId";
+NSString *const kVungleOrdinal = @"ordinal";
 
 typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     SDKInitializeStateNotInitialized,
@@ -42,7 +44,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
 - (instancetype)init {
     if (self = [super init]) {
         self.sdkInitializeState = SDKInitializeStateNotInitialized;
-        
+
         self.delegatesDic = [NSMutableDictionary dictionary];
         self.waitingListDic = [NSMutableDictionary dictionary];
         self.isAdPlaying = NO;
@@ -59,17 +61,17 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     if (!self.vungleAppID) {
         self.vungleAppID = appId;
     }
-    
+
     NSString *placementIdsString = [[info objectForKey:kVunglePlacementIdsKey] stringByReplacingOccurrencesOfString:@" " withString:@""];
     NSArray *placementIdsArray = [placementIdsString componentsSeparatedByString:@","];
-    
+
     static dispatch_once_t vungleInitToken;
     dispatch_once(&vungleInitToken, ^{
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
         [[VungleSDK sharedSDK] performSelector:@selector(setPluginName:version:) withObject:@"mopub" withObject:VunglePluginVersion];
 #pragma clang diagnostic pop
-        
+
         self.sdkInitializeState = SDKInitializeStateInitializing;
         NSError * error = nil;
         [[VungleSDK sharedSDK] startWithAppId:appId placements:placementIdsArray error:&error];
@@ -116,10 +118,10 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
 
 - (void)requestAdWithCustomEventInfo:(NSDictionary *)info delegate:(id<MPVungleRouterDelegate>)delegate {
     [self initializeSdkWithInfo:info];
-    
+
     NSString *placementId = [info objectForKey:kVunglePlacementIdKey];
     [self.delegatesDic setObject:delegate forKey:placementId];
-    
+
     NSError *error = nil;
     if ([[VungleSDK sharedSDK] loadPlacementWithID:placementId error:&error]) {
         NSLog(@"Vungle: Start to load an ad for Placement ID :%@", placementId);
@@ -154,19 +156,14 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
         NSMutableDictionary *options = [NSMutableDictionary dictionary];
         if (customerId.length > 0) {
             options[VunglePlayAdOptionKeyUser] = customerId;
-        } else if (settings && [settings.userIdentifier length]) {
+        } else if (settings && settings.userIdentifier.length > 0) {
             options[VunglePlayAdOptionKeyUser] = settings.userIdentifier;
         }
-        id flexViewAutoDismissSeconds = [info objectForKey:kVungleFlexViewAutoDismissSeconds];
-        NSLog(@"flex value passed is: %@",flexViewAutoDismissSeconds);
-        if ([flexViewAutoDismissSeconds isKindOfClass:[NSNumber class]])
-            options[VunglePlayAdOptionKeyFlexViewAutoDismissSeconds] = flexViewAutoDismissSeconds;
-        
-        if (settings.ordinal)
+        if (settings.ordinal > 0)
             options[VunglePlayAdOptionKeyOrdinal] = @(settings.ordinal);
-        if (settings.flexViewAutoDismissSeconds)
+        if (settings.flexViewAutoDismissSeconds > 0)
             options[VunglePlayAdOptionKeyFlexViewAutoDismissSeconds] = @(settings.flexViewAutoDismissSeconds);
-        
+
         BOOL success = [[VungleSDK sharedSDK] playAd:viewController options:options placementID:placementId error:nil];
         if (!success) {
             [[self.delegatesDic objectForKey:placementId] vungleAdDidFailToPlay:nil];
@@ -183,7 +180,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
 
 - (BOOL)validateInfoData:(NSDictionary *)info {
     BOOL isValid = YES;
-    
+
     NSString *appId = [info objectForKey:kVungleAppIdKey];
     if ([appId length] == 0) {
         isValid = NO;
@@ -195,13 +192,13 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
             MPLogError(@"Vungle: AppID is different from the one used for initialization. Make sure you set the same network App ID for all AdUnits in this application on MoPub dashboard.");
         }
     }
-    
+
     NSString *placementId = [info objectForKey:kVunglePlacementIdKey];
     if ([placementId length] == 0) {
         isValid = NO;
         MPLogError(@"Vungle: PlacementID is empty. Setup placementID on MoPub dashboard.");
     }
-    
+
     NSString *placementIdsString = [[info objectForKey:kVunglePlacementIdsKey] stringByReplacingOccurrencesOfString:@" " withString:@""];
     NSArray *placementIdsArray = [placementIdsString componentsSeparatedByString:@","];
     if (placementIdsArray.count == 0) {
@@ -220,11 +217,11 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
             MPLogError(@"Vungle: PlacementID:%@ is not found in PlacmentIDs. Add this placementID in placementIDs data in network setting on MoPub dashboard.", placementId);
         }
     }
-    
+
     if (isValid) {
         MPLogInfo(@"Vungle: Info data for the Ad Unit is valid.");
     }
-    
+
     return isValid;
 }
 
@@ -238,7 +235,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     for (id key in self.waitingListDic) {
         id<MPVungleRouterDelegate> delegateInstance = [self.waitingListDic objectForKey:key];
         [self.delegatesDic setObject:delegateInstance forKey:key];
-        
+
         NSError *error = nil;
         if ([[VungleSDK sharedSDK] loadPlacementWithID:key error:&error]) {
             MPLogInfo(@"Vungle: Start to load an ad for Placement ID :%@", key);
@@ -249,7 +246,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
             }
         }
     }
-    
+
     [self.waitingListDic removeAllObjects];
 }
 
@@ -258,18 +255,23 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
 
 - (void) vungleSDKDidInitialize {
     MPLogInfo(@"Vungle: the SDK has been initialized successfully.");
-    
+
     self.sdkInitializeState = SDKInitializeStateInitialized;
     [self clearWaitingList];
 }
 
-- (void)vungleAdPlayabilityUpdate:(BOOL)isAdPlayable placementID:(NSString *)placementID {
+- (void)vungleAdPlayabilityUpdate:(BOOL)isAdPlayable placementID:(NSString *)placementID error:(NSError *)error {
     if (isAdPlayable) {
         [[self.delegatesDic objectForKey:placementID] vungleAdDidLoad];
     }
     else {
+        NSError *playabilityError;
+        if (error) {
+            MPLogInfo(@"Vungle: Ad playability update returned error for Placement ID: %@, Error: %@", placementID, error.localizedDescription);
+            playabilityError = error;
+        }
         if (!self.isAdPlaying) {
-            [[self.delegatesDic objectForKey:placementID] vungleAdDidFailToLoad:nil];
+            [[self.delegatesDic objectForKey:placementID] vungleAdDidFailToLoad:playabilityError];
         }
     }
 }
@@ -282,11 +284,11 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     if ([info.didDownload isEqual:@YES]) {
         [[self.delegatesDic objectForKey:placementID] vungleAdWasTapped];
     }
-    
+
     if ([info.completedView boolValue] && [[self.delegatesDic objectForKey:placementID] respondsToSelector:@selector(vungleAdShouldRewardUser)]) {
         [[self.delegatesDic objectForKey:placementID] vungleAdShouldRewardUser];
     }
-    
+
     [[self.delegatesDic objectForKey:placementID] vungleAdWillDisappear];
     self.isAdPlaying = NO;
 }

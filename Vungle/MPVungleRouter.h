@@ -10,6 +10,8 @@
 
 extern NSString *const kVunglePlacementIdKey;
 extern NSString *const kVungleFlexViewAutoDismissSeconds;
+extern NSString *const kVungleUserId;
+extern NSString *const kVungleOrdinal;
 
 @protocol MPVungleRouterDelegate;
 @class VungleInstanceMediationSettings;
