@@ -37,6 +37,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     }
     if (self.placementId == nil) {
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:nil];
+        MPLogInfo(@" PlacementId is nil, please check the values set in the UI");
     } else {
         [[MPUnityRouter sharedRouter] requestVideoAdWithGameId:gameId placementId:self.placementId delegate:self];
     }
@@ -78,24 +79,28 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     if (self.loadRequested) {
         [self.delegate interstitialCustomEvent:self didLoadAd:placementId];
         self.loadRequested = NO;
+        MPLogInfo(@"Loading an Unity Ad");
     }
 }
 
 - (void)unityAdsDidError:(UnityAdsError)error withMessage:(NSString *)message
 {
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:nil];
+    MPLogInfo(@"Unity ads failed to load with an error message %@", message);
 }
 
 - (void) unityAdsDidStart:(NSString *)placementId
 {
     [self.delegate interstitialCustomEventWillAppear:self];
     [self.delegate interstitialCustomEventDidAppear:self];
+    MPLogInfo(@"Unity Ads Interstitial Ad did appear");
 }
 
 - (void) unityAdsDidFinish:(NSString *)placementId withFinishState:(UnityAdsFinishState)state
 {
     [self.delegate interstitialCustomEventWillDisappear:self];
     [self.delegate interstitialCustomEventDidDisappear:self];
+    MPLogInfo(@"Unity Ads Interstitial Ad did disappear");
 }
 
 - (void) unityAdsDidClick:(NSString *)placementId
@@ -106,6 +111,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 - (void)unityAdsDidFailWithError:(NSError *)error
 {
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+    MPLogInfo(@"Unity Ads failed with an error %@", error.localizedDescription);
 }
 
 @end
