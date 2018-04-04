@@ -14,7 +14,7 @@ For inquiries and support, please utilize the support center: https://developer.
 DESC
 s.homepage         = 'https://github.com/mopub/mopub-ios-mediation'
 s.license          = { :type => 'New BSD', :file => 'LICENSE' }
-s.author           = { 'PoojaChirp' => 'pshashidhar@twitter.com' }
+s.author           = { 'MoPub' => 'support@mopub.com' }
 s.source           = { :git => 'https://github.com/mopub/mopub-ios-mediation.git', :commit => 'master' }
 s.ios.deployment_target = '8.0'
 s.static_framework = true
