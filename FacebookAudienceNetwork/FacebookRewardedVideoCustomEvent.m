@@ -198,6 +198,12 @@
     [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:[[MPRewardedVideoReward alloc] initWithCurrencyAmount:@(kMPRewardedVideoRewardCurrencyAmountUnspecified)]];
 }
 
+//FBAudienceNetwork4.28 method name changed from rewardedVideoAdComplete to rewardedVideoAdComplete.
+//Fix bugs that won't receive rewards
+- (void)rewardedVideoAdVideoComplete:(FBRewardedVideoAd *)rewardedVideoAd{
+    [self rewardedVideoAdComplete:rewardedVideoAd];
+}
+
 /*!
  @method
  
