@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Yahoo, Inc. All rights reserved.
 //
 
+#import "Flurry.h"
 #import "FlurryMPConfig.h"
 
 @implementation FlurryMPConfig

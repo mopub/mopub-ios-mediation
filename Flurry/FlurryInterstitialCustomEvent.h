@@ -6,7 +6,6 @@
 //  Copyright (c) 2015 Yahoo, Inc. All rights reserved.
 //
 
-#import "FlurryAdInterstitialDelegate.h"
 #if __has_include(<MoPub/MoPub.h>)
 #import <MoPub/MoPub.h>
 #else
@@ -16,6 +15,6 @@
 /*
  * Certified with Flurry 8.2.2
  */
-@interface FlurryInterstitialCustomEvent : MPInterstitialCustomEvent<FlurryAdInterstitialDelegate>
+@interface FlurryInterstitialCustomEvent : MPInterstitialCustomEvent
 
 @end

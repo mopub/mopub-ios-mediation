@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Yahoo, Inc. All rights reserved.
 //
 
+#import "FlurryAdInterstitialDelegate.h"
 #import "FlurryInterstitialCustomEvent.h"
 #import "FlurryAdInterstitial.h"
 #import "FlurryAdError.h"
@@ -14,7 +15,7 @@
 #import "MPInstanceProvider.h"
 #import "MPLogging.h"
 
-@interface MPInstanceProvider (FlurryInterstitials)
+@interface MPInstanceProvider (FlurryInterstitials) <FlurryAdInterstitialDelegate>
 
 - (FlurryAdInterstitial *)interstitialForSpace:(NSString *)adSpace delegate:(id<FlurryAdInterstitialDelegate>)delegate;
 
