@@ -1,4 +1,4 @@
-#if __has_include(<MoPub / MoPub.h>)
+#if __has_include(<MoPub/MoPub.h>)
 #import <MoPub/MoPub.h>
 #else
 #import "MPNativeAdAdapter.h"
