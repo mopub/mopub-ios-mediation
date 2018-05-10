@@ -1,5 +1,8 @@
 ## Changelog
-  * 2.7.0
+  * 6.7.8.0
+    * This version of the adapters has been certified with IronSource 6.7.8.
+
+  * 6.7.5.0
     * This version of the adapters has been certified with IronSource 6.7.5.
 
   * Initial Commit

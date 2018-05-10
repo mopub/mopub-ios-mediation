@@ -190,7 +190,7 @@
  
  @param rewardedVideoAd An FBRewardedVideoAd object sending the message.
  */
-- (void)rewardedVideoAdComplete:(FBRewardedVideoAd *)rewardedVideoAd
+- (void)rewardedVideoAdVideoComplete:(FBRewardedVideoAd *)rewardedVideoAd
 {
     MPLogInfo(@"Facebook rewarded video ad has finished playing successfully");
     

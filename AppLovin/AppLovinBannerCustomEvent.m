@@ -1,12 +1,6 @@
 //
 //  AppLovinBannerCustomEvent.m
 //
-//
-//  Created by Thomas So on 7/6/17.
-//
-//
-
-
 #import "AppLovinBannerCustomEvent.h"
 #import "MPConstants.h"
 #import "MPError.h"
@@ -64,7 +58,7 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
     if ( adSize )
     {
         self.sdk = [self SDKFromCustomEventInfo: info];
-        [self.sdk setPluginVersion: @"MoPub-Certified-2.1.0"];
+        [self.sdk setPluginVersion: @"MoPub-Certified-2.1.1"];
         
         // Zones support is available on AppLovin SDK 4.5.0 and higher
         NSString *zoneIdentifier = info[@"zone_id"];

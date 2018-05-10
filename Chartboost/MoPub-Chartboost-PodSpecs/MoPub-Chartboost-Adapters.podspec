@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'MoPub-Chartboost-Adapters'
-s.version          = '7.0.4.3'
+s.version          = '7.1.2.1'
 s.summary          = 'Chartboost Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats: Interstitial, Rewarded Video.\n
@@ -14,11 +14,11 @@ For inquiries and support, please reach out to https://answers.chartboost.com/en
 DESC
 s.homepage         = 'https://github.com/mopub/mopub-ios-mediation'
 s.license          = { :type => 'New BSD', :file => 'LICENSE' }
-s.author           = { 'PoojaChirp' => 'pshashidhar@twitter.com' }
+s.author           = { 'MoPub' => 'support@mopub.com' }
 s.source           = { :git => 'https://github.com/mopub/mopub-ios-mediation.git', :commit => 'master' }
 s.ios.deployment_target = '8.0'
 s.static_framework = true
 s.source_files = 'Chartboost/*.{h,m}'
 s.dependency 'mopub-ios-sdk', '~> 4.0'
-s.dependency 'ChartboostSDK', '~> 7.0.4'
+s.dependency 'ChartboostSDK', '7.1.2'
 end

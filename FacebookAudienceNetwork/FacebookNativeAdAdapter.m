@@ -31,25 +31,11 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
         _fbNativeAd = fbNativeAd;
         _fbNativeAd.delegate = self;
 
-        NSNumber *starRating = nil;
-
-        // Normalize star rating to 5 stars.
-        if (fbNativeAd.starRating.scale != 0) {
-            CGFloat ratio = 0.0f;
-            ratio = kUniversalStarRatingScale/fbNativeAd.starRating.scale;
-            starRating = [NSNumber numberWithFloat:ratio*fbNativeAd.starRating.value];
-        }
-
         NSMutableDictionary *properties;
         if (adProps) {
             properties = [NSMutableDictionary dictionaryWithDictionary:adProps];
         } else {
             properties = [NSMutableDictionary dictionary];
-        }
-
-
-        if (starRating) {
-            [properties setObject:starRating forKey:kAdStarRatingKey];
         }
 
         if (fbNativeAd.title) {

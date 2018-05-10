@@ -1,10 +1,6 @@
 //
 //  AppLovinInterstitialCustomEvent.m
 //
-//
-//  Created by Thomas So on 5/21/17.
-//
-//
 
 #import "AppLovinInterstitialCustomEvent.h"
 #import "MPError.h"
@@ -54,7 +50,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
     [self log: @"Requesting AppLovin interstitial with info: %@", info];
     
     self.sdk = [self SDKFromCustomEventInfo: info];
-    [self.sdk setPluginVersion: @"MoPub-Certified-2.1.0"];
+    [self.sdk setPluginVersion: @"MoPub-Certified-2.1.1"];
     
     // Zones support is available on AppLovin SDK 4.5.0 and higher
     if ( HAS_ZONES_SUPPORT(self.sdk) && info[@"zone_id"] )
@@ -122,7 +118,9 @@ static NSObject *ALGlobalInterstitialAdsLock;
     
     [[self class] enqueueAd: ad forZoneIdentifier: self.zoneIdentifier];
     
-    [self.delegate interstitialCustomEvent: self didLoadAd: ad];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.delegate interstitialCustomEvent: self didLoadAd: ad];
+    });
 }
 
 - (void)adService:(ALAdService *)adService didFailToLoadAdWithError:(int)code
@@ -132,7 +130,10 @@ static NSObject *ALGlobalInterstitialAdsLock;
     NSError *error = [NSError errorWithDomain: kALMoPubMediationErrorDomain
                                          code: [self toMoPubErrorCode: code]
                                      userInfo: nil];
-    [self.delegate interstitialCustomEvent: self didFailToLoadAdWithError: error];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.delegate interstitialCustomEvent: self didFailToLoadAdWithError: error];
+    });
 }
 
 #pragma mark - Ad Display Delegate
