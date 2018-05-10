@@ -26,6 +26,8 @@ extern NSString *const kVungleOrdinal;
 - (BOOL)isAdAvailableForPlacementId:(NSString *)placementId;
 - (void)presentInterstitialAdFromViewController:(UIViewController *)viewController options:(NSDictionary *)options forPlacementId:(NSString *)placementId;
 - (void)presentRewardedVideoAdFromViewController:(UIViewController *)viewController customerId:(NSString *)customerId settings:(VungleInstanceMediationSettings *)settings forPlacementId:(NSString *)placementId eventInfo:(NSDictionary *)info;
+- (void)updateConsentStatus:(VungleConsentStatus)status;
+- (VungleConsentStatus) getCurrentConsentStatus;
 - (void)clearDelegateForPlacementId:(NSString *)placementId;
 
 @end
@@ -35,6 +37,7 @@ extern NSString *const kVungleOrdinal;
 - (void)vungleAdDidLoad;
 - (void)vungleAdWillAppear;
 - (void)vungleAdWillDisappear;
+- (void)vungleAdDidDisappear;
 - (void)vungleAdWasTapped;
 - (void)vungleAdDidFailToPlay:(NSError *)error;
 - (void)vungleAdDidFailToLoad:(NSError *)error;

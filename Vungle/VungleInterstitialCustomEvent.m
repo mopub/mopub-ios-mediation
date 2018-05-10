@@ -84,14 +84,6 @@
     [[MPVungleRouter sharedRouter] clearDelegateForPlacementId:self.placementId];
 }
 
-- (void)handleVungleAdViewWillClose
-{
-    MPLogInfo(@"Vungle video interstitial will disappear");
-
-    [self.delegate interstitialCustomEventWillDisappear:self];
-    [self.delegate interstitialCustomEventDidDisappear:self];
-}
-
 #pragma mark - MPVungleRouterDelegate
 
 - (void)vungleAdDidLoad
@@ -112,7 +104,14 @@
 
 - (void)vungleAdWillDisappear
 {
-    [self handleVungleAdViewWillClose];
+    MPLogInfo(@"Vungle video interstitial will disappear");
+    [self.delegate interstitialCustomEventWillDisappear:self];
+}
+
+- (void)vungleAdDidDisappear
+{
+    MPLogInfo(@"Vungle video interstitial did disappear");
+    [self.delegate interstitialCustomEventDidDisappear:self];
 }
 
 - (void)vungleAdWasTapped
