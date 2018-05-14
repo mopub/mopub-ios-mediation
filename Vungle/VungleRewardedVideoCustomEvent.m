@@ -82,6 +82,10 @@
 - (void)vungleAdWillDisappear
 {
     [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
+}
+
+- (void)vungleAdDidDisappear
+{
     [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
 }
 
