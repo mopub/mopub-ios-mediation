@@ -50,7 +50,7 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info
 {
     // Collect and pass the user's consent from MoPub onto the AppLovin SDK
-    if ( [[MoPub sharedInstance] isGDPRApplicable] ) {
+    if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
         BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
         [ALPrivacySettings setHasUserConsent: canCollectPersonalInfo];
     }

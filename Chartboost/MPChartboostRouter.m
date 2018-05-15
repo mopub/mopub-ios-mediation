@@ -55,7 +55,7 @@
          */
         
         // Collect and pass the user's consent from MoPub onto the Chartboost SDK
-        if ( [[MoPub sharedInstance] isGDPRApplicable] ) {
+        if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
             BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
             [Chartboost restrictDataCollection:!canCollectPersonalInfo];
         }

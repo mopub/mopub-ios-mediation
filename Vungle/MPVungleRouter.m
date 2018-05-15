@@ -60,7 +60,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
 - (void)initializeSdkWithInfo:(NSDictionary *)info {
     
     // Collect and pass the user's consent from MoPub onto the Vungle SDK
-    if ( [[MoPub sharedInstance] isGDPRApplicable]) {
+    if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
         BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
         [[VungleSDK sharedSDK] updateConsentStatus:(canCollectPersonalInfo) ? VungleConsentAccepted : VungleConsentDenied];
     }
