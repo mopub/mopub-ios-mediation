@@ -44,10 +44,13 @@ static NSString *const kMoPubMMAdapterDCN = @"dcn";
             }
             
             // Collect and pass the user's consent from MoPub onto the Yahoo! Flurry SDK
+            [mmSDK setConsentRequired: [[MoPub sharedInstance] isGDPRApplicable]];
             BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
-            [mmSDK setConsentRequired: canCollectPersonalInfo];
-            [mmSDK setConsentDataValue:canCollectPersonalInfo==true ? @"1" : @"0" forKey:@"MoPub"];
             
+            if (canCollectPersonalInfo) {
+                [mmSDK setConsentDataValue: @"1" forKey:@"MoPub"];
+            }
+
         } else {
             self = nil; // No support below minimum OS.
         }

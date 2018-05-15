@@ -108,11 +108,6 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
         return;
     }
 
-    // Collect and pass the user's consent from MoPub onto the Yahoo! Flurry SDK
-    BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
-    NSDictionary *flurryConsentStrings = [[NSDictionary alloc] initWithObjectsAndKeys:canCollectPersonalInfo==TRUE ? @"1": @"0", @"MoPub", nil];
-    
-    
     MPLogDebug(@"Requesting Millennial rewarded video with event info %@.", info);
 
     NSString *placementId = info[kMoPubMMAdapterAdUnit];

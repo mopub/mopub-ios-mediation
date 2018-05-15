@@ -30,10 +30,9 @@ NSString *const kFlurryAdSpaceName = @"adSpaceName";
 {
     // Collect and pass the user's consent from MoPub onto the Yahoo! Flurry SDK
     BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
-    NSDictionary *flurryConsentStrings = [[NSDictionary alloc] initWithObjectsAndKeys:canCollectPersonalInfo==TRUE ? @"1": @"0", @"MoPub", nil];
+    NSDictionary *flurryConsentStrings = [[NSDictionary alloc] initWithObjectsAndKeys:@{@"MoPub": (canCollectPersonalInfo ? @"1": @"0") }, nil];
     FlurryConsent *consent = [[FlurryConsent alloc] initWithGDPRScope:!canCollectPersonalInfo andConsentStrings:flurryConsentStrings];
     FlurrySessionBuilder* builder = [[FlurrySessionBuilder new] withConsent:consent];
-
 
     MPLogInfo(@"Requesting Flurry native ad");
     NSString *apiKey = [info objectForKey:kFlurryApiKey];

@@ -10,6 +10,7 @@
 #import "MPInstanceProvider+Chartboost.h"
 #import "ChartboostRewardedVideoCustomEvent.h"
 #import "ChartboostInterstitialCustomEvent.h"
+#import "MoPub.h"
 
 @interface ChartboostRewardedVideoCustomEvent (ChartboostRouter) <ChartboostDelegate>
 @end
@@ -36,6 +37,7 @@
 
 - (id)init
 {
+    
     self = [super init];
     if (self) {
         self.interstitialEvents = [NSMutableDictionary dictionary];
@@ -51,6 +53,11 @@
          * for click tracking, is to ensure that the event is still available after dismissal, but
          * is marked as free to be released.
          */
+        
+        // Collect and pass the user's consent from MoPub onto the Chartboost SDK
+        BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
+        [Chartboost restrictDataCollection:!canCollectPersonalInfo];
+        
         self.activeInterstitialLocations = [NSMutableSet set];
     }
     return self;

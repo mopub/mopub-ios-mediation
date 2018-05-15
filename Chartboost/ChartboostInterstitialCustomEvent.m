@@ -65,10 +65,6 @@ static NSString *gAppSignature = nil;
     NSString *location = [info objectForKey:@"location"];
     self.location = location ? location : @"Default";
 
-    // Collect and pass the user's consent from MoPub onto the Yahoo! Flurry SDK
-    BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
-    [Chartboost restrictDataCollection:canCollectPersonalInfo];
-    
     MPLogInfo(@"Requesting Chartboost interstitial.");
     [[MPChartboostRouter sharedRouter] cacheInterstitialWithAppId:appId
                                                      appSignature:appSignature
