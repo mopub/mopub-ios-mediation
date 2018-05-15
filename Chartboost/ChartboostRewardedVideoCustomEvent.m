@@ -34,6 +34,10 @@
         return;
     }
 
+    // Collect and pass the user's consent from MoPub onto the Yahoo! Flurry SDK
+    BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
+    [Chartboost restrictDataCollection:canCollectPersonalInfo];
+
     [[MPChartboostRouter sharedRouter] startWithAppId:appId appSignature:appSignature];
 }
 

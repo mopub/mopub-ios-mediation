@@ -65,6 +65,15 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
                              withUserSettings:nil];
                 MPLogDebug(@"Millennial adapter version: %@", self.version);
             }
+            
+            // Collect and pass the user's consent from MoPub onto the One by AOL SDK
+            [mmSDK setConsentRequired: [[MoPub sharedInstance] isGDPRApplicable]];
+            BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
+            
+            if (canCollectPersonalInfo) {
+                [mmSDK setConsentDataValue: @"1" forKey:@"MoPub"];
+            }
+            
         } else {
             self = nil; // No support below minimum OS.
         }
@@ -87,7 +96,7 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary<NSString *, id> *)info {
 
     MMSDK *mmSDK = [MMSDK sharedInstance];
-
+    
     if (![mmSDK isInitialized]) {
         NSError *error = [NSError errorWithDomain:MMSDKErrorDomain
                                              code:MMSDKErrorNotInitialized
@@ -99,6 +108,11 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
         return;
     }
 
+    // Collect and pass the user's consent from MoPub onto the Yahoo! Flurry SDK
+    BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
+    NSDictionary *flurryConsentStrings = [[NSDictionary alloc] initWithObjectsAndKeys:canCollectPersonalInfo==TRUE ? @"1": @"0", @"MoPub", nil];
+    
+    
     MPLogDebug(@"Requesting Millennial rewarded video with event info %@.", info);
 
     NSString *placementId = info[kMoPubMMAdapterAdUnit];

@@ -5,6 +5,7 @@
 #import "AppLovinInterstitialCustomEvent.h"
 #import "MPError.h"
 #import "MPLogging.h"
+#import "MoPub.h"
 
 #if __has_include(<AppLovinSDK/AppLovinSDK.h>)
     #import <AppLovinSDK/AppLovinSDK.h>
@@ -47,6 +48,10 @@ static NSObject *ALGlobalInterstitialAdsLock;
 
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info
 {
+    // Collect and pass the user's consent from MoPub onto the AppLovin SDK
+    BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
+    [ALPrivacySettings setHasUserConsent: canCollectPersonalInfo];
+
     [self log: @"Requesting AppLovin interstitial with info: %@", info];
     
     self.sdk = [self SDKFromCustomEventInfo: info];
