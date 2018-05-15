@@ -13,7 +13,6 @@
 
 #import "MPInstanceProvider.h"
 #import "MPLogging.h"
-#import "MoPub.h"
 
 @interface MPInstanceProvider (FlurryInterstitials)
 
@@ -45,12 +44,6 @@
 
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info
 {
-    // Collect and pass the user's consent from MoPub onto the Yahoo! Flurry SDK
-    BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
-    NSDictionary *flurryConsentStrings = [[NSDictionary alloc] initWithObjectsAndKeys:@{@"MoPub": (canCollectPersonalInfo ? @"1": @"0") }, nil];
-    FlurryConsent *consent = [[FlurryConsent alloc] initWithGDPRScope:!canCollectPersonalInfo andConsentStrings:flurryConsentStrings];
-    FlurrySessionBuilder* builder = [[FlurrySessionBuilder new] withConsent:consent];
-    
     MPLogInfo(@"Requesting Flurry interstitial ad");
     NSString *apiKey = [info objectForKey:@"apiKey"];
     NSString *adSpaceName = [info objectForKey:@"adSpaceName"];
@@ -68,7 +61,6 @@
     self.adInterstitial = [[MPInstanceProvider sharedProvider] interstitialForSpace:adSpaceName delegate:self];
     [self.adInterstitial fetchAd];
 }
-
 
 
 - (void)showInterstitialFromRootViewController:(UIViewController *)rootViewController

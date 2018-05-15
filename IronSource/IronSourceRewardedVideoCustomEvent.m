@@ -33,9 +33,11 @@ static BOOL initRewardedVideoSuccessfully = NO;
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info {
     [self parseCredentials:info];
     
-    // Collect and pass the user's consent from MoPub onto the Yahoo! Flurry SDK
-    BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
-    [IronSource setConsent:canCollectPersonalInfo];
+    // Collect and pass the user's consent from MoPub onto the ironSource SDK
+    if ( [[MoPub sharedInstance] isGDPRApplicable]) {
+        BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
+        [IronSource setConsent:canCollectPersonalInfo];
+    }
 
     [self logInfo:@"Requesting IronSource Rewarded Video ad"];
     NSString *appKey = [info objectForKey:kIronSourceAppKey];

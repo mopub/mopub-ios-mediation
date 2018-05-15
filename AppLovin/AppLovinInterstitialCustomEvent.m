@@ -49,9 +49,11 @@ static NSObject *ALGlobalInterstitialAdsLock;
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info
 {
     // Collect and pass the user's consent from MoPub onto the AppLovin SDK
-    BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
-    [ALPrivacySettings setHasUserConsent: canCollectPersonalInfo];
-
+    if ( [[MoPub sharedInstance] isGDPRApplicable] ) {
+        BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
+        [ALPrivacySettings setHasUserConsent: canCollectPersonalInfo];
+    }
+    
     [self log: @"Requesting AppLovin interstitial with info: %@", info];
     
     self.sdk = [self SDKFromCustomEventInfo: info];

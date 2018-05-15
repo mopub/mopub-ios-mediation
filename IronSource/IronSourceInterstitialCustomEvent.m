@@ -22,9 +22,11 @@ static BOOL initInterstitialSuccessfully;
 
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info {
     
-    // Collect and pass the user's consent from MoPub onto the Yahoo! Flurry SDK
-    BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
-    [IronSource setConsent:canCollectPersonalInfo];
+    // Collect and pass the user's consent from MoPub onto the ironSource SDK
+    if ( [[MoPub sharedInstance] isGDPRApplicable]) {
+        BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
+        [IronSource setConsent:canCollectPersonalInfo];
+    }
 
     NSString *applicationKey = @"";
     _instanceId = @"0";

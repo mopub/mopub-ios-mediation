@@ -32,14 +32,14 @@ static NSString *const kMoPubMMAdapterDCN = @"dcn";
                 [mmSDK initializeWithSettings:appSettings withUserSettings:nil];
                 MPLogDebug(@"Millennial adapter version: %@", self.version);
             }
-            // Collect and pass the user's consent from MoPub onto the Yahoo! Flurry SDK
-            [mmSDK setConsentRequired: [[MoPub sharedInstance] isGDPRApplicable]];
-            BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
             
-            if (canCollectPersonalInfo) {
+            // Collect and pass the user's consent from MoPub onto the One by AOL SDK
+            [mmSDK setConsentRequired: [[MoPub sharedInstance] isGDPRApplicable]];
+            
+            if ( [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusConsented ) {
                 [mmSDK setConsentDataValue: @"1" forKey:@"MoPub"];
             }
-
+            
         } else {
             self = nil; // No support below minimum OS.
         }

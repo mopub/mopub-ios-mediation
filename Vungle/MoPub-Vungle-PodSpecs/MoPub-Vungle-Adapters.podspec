@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'MoPub-Vungle-Adapters'
-s.version          = '5.4.0.1'
+s.version          = '6.2.0.0'
 s.summary          = 'Vungle Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats: Interstitial, Rewarded Video.\n
@@ -19,6 +19,6 @@ s.source           = { :git => 'https://github.com/mopub/mopub-ios-mediation.git
 s.ios.deployment_target = '8.0'
 s.static_framework = true
 s.source_files ='Vungle/*.{h,m}'
-s.dependency 'mopub-ios-sdk', '~> 4.0'
-s.dependency 'VungleSDK-iOS', '5.4.0'
+s.dependency 'mopub-ios-sdk', '~> 5.0'
+s.dependency 'VungleSDK-iOS', '6.2.0'
 end

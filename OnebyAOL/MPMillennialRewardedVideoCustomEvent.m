@@ -68,9 +68,8 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
             
             // Collect and pass the user's consent from MoPub onto the One by AOL SDK
             [mmSDK setConsentRequired: [[MoPub sharedInstance] isGDPRApplicable]];
-            BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
-            
-            if (canCollectPersonalInfo) {
+        
+            if ( [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusConsented ) {
                 [mmSDK setConsentDataValue: @"1" forKey:@"MoPub"];
             }
             
