@@ -19,6 +19,6 @@ For inquiries and support, please visit https://www.applovin.com/support \n
   s.ios.deployment_target = '8.0'
   s.static_framework = true
   s.source_files = 'Applovin/*.{h,m}'
-  s.dependency 'mopub-ios-sdk', '~> 4.0'
+  s.dependency 'mopub-ios-sdk', '4.20.1'
   s.dependency 'AppLovinSDK', '4.8.4'
 end
