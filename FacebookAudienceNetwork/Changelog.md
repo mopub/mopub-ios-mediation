@@ -1,10 +1,13 @@
 ## Changelog
 
- * 4.28.1.1
-    * Rename delegate method rewardedVideoAdComplete to rewardedVideoAdVideoComplete per Facebook Audience Network change.
+* 4.28.1.2
+    * This version of the adapters has been certified with Facebook Audience Network 4.28.1.
     * Enables advanced bidding for all adapters and adds FacebookAdvancedBidder.
-
- * 4.28.1.0
+    
+* 4.28.1.1
+    * This version of the adapters has been certified with Facebook Audience Network 4.28.1.
+    * Rename delegate method rewardedVideoAdComplete to rewardedVideoAdVideoComplete per Facebook Audience Network change.
+* 4.28.1.0
     * This version of the adapters has been certified with Facebook Audience Network 4.28.1.
 
   * 4.28.0.1
