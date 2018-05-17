@@ -46,6 +46,13 @@
 
 - (void)requestVideoAdWithGameId:(NSString *)gameId placementId:(NSString *)placementId delegate:(id<MPUnityRouterDelegate>)delegate;
 {
+    // Collect and pass the user's consent from MoPub to the Unity Ads SDK
+    UADSMetaData *gdprConsentMetaData = [[UADSMetaData alloc] init];
+    if ([[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusConsented) {
+        [gdprConsentMetaData set:@"gdpr.consent" value:@YES];
+        [gdprConsentMetaData commit];
+    }
+
     if (!self.isAdPlaying) {
         [self.delegateMap setObject:delegate forKey:placementId];
         [self initializeWithGameId:gameId];
