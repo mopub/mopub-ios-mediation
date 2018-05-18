@@ -7,7 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
+#if __has_include(<MoPub/MoPub.h>)
+#import <MoPub/MoPub.h>
+#else
 #import "MPNativeAdRenderer.h"
+#endif
 
 @class MPNativeAdRendererConfiguration;
 @class MPStaticNativeAdRendererSettings;

@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Yahoo, Inc. All rights reserved.
 //
 
+#import "FlurryAdNative.h"
 #import "FlurryNativeAdAdapter.h"
 #import "FlurryAdNativeDelegate.h"
 #import "MPNativeAdConstants.h"
