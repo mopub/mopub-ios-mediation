@@ -40,7 +40,7 @@ static NSString *const kMoPubMMAdapterDCN = @"dcn";
                 [mmSDK setConsentRequired: FALSE];
             
             if ( [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusConsented ) {
-                [mmSDK setConsentDataValue: @"1" forKey:@"MoPub"];
+                [mmSDK setConsentDataValue: @"1" forKey:@"mopub"];
             }
             
         } else {
