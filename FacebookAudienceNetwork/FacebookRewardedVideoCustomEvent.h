@@ -10,9 +10,6 @@
 #import "MPRewardedVideoCustomEvent.h"
 #endif
 
-/*
- * Certified with Facebook Audience Network 4.26.1
- */
 @interface FacebookRewardedVideoCustomEvent : MPRewardedVideoCustomEvent
 
 @end

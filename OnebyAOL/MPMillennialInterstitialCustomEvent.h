@@ -12,9 +12,6 @@
 
 #import <MMAdSDK/MMAdSDK.h>
 
-/*
- * Certified with Millennial Media 6.6.0
- */
 @interface MPMillennialInterstitialCustomEvent : MPInterstitialCustomEvent <MMInterstitialDelegate>
 
 @property (nonatomic, readonly) MMInterstitialAd *interstitial;

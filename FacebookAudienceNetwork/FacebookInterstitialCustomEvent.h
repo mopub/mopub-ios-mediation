@@ -12,9 +12,6 @@
 
 #endif
 
-/*
- * Certified with Facebook Audience Network 4.26
- */
 @interface FacebookInterstitialCustomEvent : MPInterstitialCustomEvent
 
 @end

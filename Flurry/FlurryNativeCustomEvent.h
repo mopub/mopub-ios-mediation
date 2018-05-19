@@ -12,9 +12,7 @@
 #import "MPNativeCustomEvent.h"
 #endif
 
-/*
- * Certified with Flurry 8.2.2
- */
+
 @interface FlurryNativeCustomEvent : MPNativeCustomEvent
 
 @end

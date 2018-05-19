@@ -13,9 +13,6 @@
 
 #import <MMAdSDK/MMAdSDK.h>
 
-/*
- * Certified with Millennial Media 6.6.0
- */
 @interface MPMillennialRewardedVideoCustomEvent : MPRewardedVideoCustomEvent
 
 @property (nonatomic, readonly) MMCreativeInfo* creativeInfo;

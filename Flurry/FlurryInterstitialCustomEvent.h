@@ -13,9 +13,7 @@
 #import "MPInterstitialCustomEvent.h"
 #endif
 
-/*
- * Certified with Flurry 8.2.2
- */
+
 @interface FlurryInterstitialCustomEvent : MPInterstitialCustomEvent<FlurryAdInterstitialDelegate>
 
 @end

@@ -11,9 +11,6 @@
     #import "MPRewardedVideoCustomEvent.h"
 #endif
 
-/*
- * Certified with Chartboost 6.6.3
- */
 @interface ChartboostRewardedVideoCustomEvent : MPRewardedVideoCustomEvent
 
 /**
