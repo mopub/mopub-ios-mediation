@@ -62,7 +62,7 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
                 options.testMode = instance.testModeEnabled;
 
                 [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
-                [options setOption:kAdColonyConsentResponse withNumericValue:MoPub.sharedInstance.canCollectPersonalInfo];
+                [options setOption:kAdColonyConsentResponse withNumericValue:@(MoPub.sharedInstance.canCollectPersonalInfo)];
 
                 [AdColony configureWithAppID:appId zoneIDs:allZoneIds options:options completion:^(NSArray<AdColonyZone *> * _Nonnull zones) {
                     @synchronized (instance) {
@@ -130,7 +130,7 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
     BOOL canCollectPersonalInfo = [notification.userInfo[kMPConsentChangedInfoCanCollectPersonalInfoKey] boolValue];
     AdColonyAppOptions *options = [AdColony getAppOptions];
     [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
-    [options setOption:kAdColonyConsentResponse withNumericValue:canCollectPersonalInfo];
+    [options setOption:kAdColonyConsentResponse withNumericValue:@(canCollectPersonalInfo)];
     [AdColony setAppOptions:options];
 }
 
