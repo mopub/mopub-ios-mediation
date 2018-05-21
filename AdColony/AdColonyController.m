@@ -18,6 +18,9 @@ typedef enum {
     INIT_STATE_INITIALIZING
 } InitState;
 
+NSString *const kAdColonyExplicitConsentGiven = @"explicit_consent_given";
+NSString *const kAdColonyConsentResponse = @"consent_response";
+
 @interface AdColonyController()
 
 @property (atomic, assign) InitState initState;
@@ -57,7 +60,10 @@ typedef enum {
                 
                 instance.currentAllZoneIds = allZoneIdsSet;
                 options.testMode = instance.testModeEnabled;
-                
+
+                [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
+                [options setOption:kAdColonyConsentResponse withNumericValue:MoPub.sharedInstance.canCollectPersonalInfo];
+
                 [AdColony configureWithAppID:appId zoneIDs:allZoneIds options:options completion:^(NSArray<AdColonyZone *> * _Nonnull zones) {
                     @synchronized (instance) {
                         instance.initState = INIT_STATE_INITIALIZED;
@@ -112,8 +118,24 @@ typedef enum {
     if (self = [super init]) {
         _initState = INIT_STATE_UNKNOWN;
         _callbacks = @[];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(consentStatusDidChange:)
+                                                     name:kMPConsentChangedNotification
+                                                   object:nil];
     }
     return self;
+}
+
+- (void)consentStatusDidChange:(NSNotification *)notification {
+    BOOL canCollectPersonalInfo = [notification.userInfo[kMPConsentChangedInfoCanCollectPersonalInfoKey] boolValue];
+    AdColonyAppOptions *options = [AdColony getAppOptions];
+    [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
+    [options setOption:kAdColonyConsentResponse withNumericValue:canCollectPersonalInfo];
+    [AdColony setAppOptions:options];
+}
+
+- (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end
