@@ -103,7 +103,7 @@ static BOOL initRewardedVideoSuccessfully = NO;
         
         if (!initRewardedVideoSuccessfully) {
             [self logInfo:@"IronSource SDK initialization complete"];
-            [IronSource setMediationType:kIronSourceMediationName];
+            [IronSource setMediationType:[NSString stringWithFormat:@"%@%@",kIronSourceMediationName,kIronSourceMediationVersion]];
             [IronSource initISDemandOnly:applicationKey adUnits:@[IS_REWARDED_VIDEO]];
         }
     } else {
