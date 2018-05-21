@@ -50,8 +50,10 @@
     UADSMetaData *gdprConsentMetaData = [[UADSMetaData alloc] init];
     if ([[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusConsented) {
         [gdprConsentMetaData set:@"gdpr.consent" value:@YES];
-        [gdprConsentMetaData commit];
+    } else {
+        [gdprConsentMetaData set:@"gdpr.consent" value:@NO];
     }
+    [gdprConsentMetaData commit];
 
     if (!self.isAdPlaying) {
         [self.delegateMap setObject:delegate forKey:placementId];
