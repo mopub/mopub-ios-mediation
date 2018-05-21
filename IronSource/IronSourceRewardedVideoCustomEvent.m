@@ -104,7 +104,7 @@ static BOOL initRewardedVideoSuccessfully = NO;
         if (!initRewardedVideoSuccessfully) {
             [self logInfo:@"IronSource SDK initialization complete"];
             [IronSource setMediationType:[NSString stringWithFormat:@"%@%@",kIronSourceMediationName,kIronSourceMediationVersion]];
-            [IronSource initISDemandOnly:applicationKey adUnits:@[IS_REWARDED_VIDEO]];
+            [IronSource initISDemandOnly:applicationKey adUnits:@[IS_INTERSTITIAL,IS_REWARDED_VIDEO]];
         }
     } else {
         [self logError:@"IronSource Adapter failed to request RewardedVideo, 'applicationKey' parameter is missing. make sure that 'applicationKey' server parameter is added"];
