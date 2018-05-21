@@ -83,7 +83,7 @@ static BOOL initInterstitialSuccessfully;
     if (!initInterstitialSuccessfully) {
         [self logInfo:@"IronSource SDK initialization complete"];
         
-        [IronSource setMediationType:kIronSourceMediationName];
+        [IronSource setMediationType:[NSString stringWithFormat:@"%@%@",kIronSourceMediationName,kIronSourceMediationVersion]];
         [IronSource initISDemandOnly:appKey adUnits:@[IS_INTERSTITIAL]];
         
         initInterstitialSuccessfully = YES;
