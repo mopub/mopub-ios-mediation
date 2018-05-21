@@ -36,6 +36,8 @@
         [connectOptions setObject:@(enableDebug) forKey:TJC_OPTION_ENABLE_LOGGING];
         [self setupListeners];
 
+        [self fetchMoPubGDPRSettings];
+        
         [Tapjoy connect:sdkKey options:connectOptions];
 
         self.isConnecting = YES;
@@ -67,6 +69,8 @@
 }
 
 - (void)requestPlacementContent {
+    [self fetchMoPubGDPRSettings];
+
     if (self.placementName) {
         self.placement = [TJPlacement placementWithName:self.placementName mediationAgent:@"mopub" mediationId:nil delegate:self];
         self.placement.adapterVersion = MP_SDK_VERSION;
@@ -131,6 +135,29 @@
     MPLogInfo(@"Tapjoy connect Failed");
     self.isConnecting = NO;
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+// Collect latest MoPub GDPR settings and pass them to Tapjoy
+-(void)fetchMoPubGDPRSettings
+{
+    // If the GDPR applies setting is unknown, assume it has been skipped/unset
+    MPBool gdprApplies = [MoPub sharedInstance].isGDPRApplicable;
+    if (gdprApplies != MPBoolUnknown )
+    {
+        //Turn the MPBool into a proper bool
+        if(gdprApplies == MPBoolYes) {
+            [Tapjoy subjectToGDPR:YES];
+            
+            if([[MoPub sharedInstance] canCollectPersonalInfo]) {
+                [Tapjoy setUserConsent:@"1"];
+            } else {
+                [Tapjoy setUserConsent:@"0"];
+            }
+        } else {
+            [Tapjoy subjectToGDPR:NO];
+            [Tapjoy setUserConsent:@"-1"];
+        }
+    }
 }
 
 @end
