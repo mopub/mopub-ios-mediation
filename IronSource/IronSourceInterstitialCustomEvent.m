@@ -92,12 +92,7 @@ static BOOL initInterstitialSuccessfully;
 
 - (void)loadInterstitial {
     [self logInfo:[NSString stringWithFormat:@"Load IronSource interstitial ad for instance %@",_instanceId]];
-    
-    if([IronSource hasISDemandOnlyInterstitial:_instanceId]) {
-        [self.delegate interstitialCustomEvent:self didLoadAd:self];
-    } else {
-        [IronSource loadISDemandOnlyInterstitial:_instanceId];
-    }
+    [IronSource loadISDemandOnlyInterstitial:_instanceId];
 }
 
 #pragma mark Utiles Methods
@@ -205,6 +200,8 @@ static BOOL initInterstitialSuccessfully;
  */
 - (void)interstitialDidFailToShowWithError:(NSError *)error instanceId:(NSString *)instanceId {
     [self logError:[NSString stringWithFormat:@"IronSource interstitial ad did fail to show with error for instance %@",instanceId]];
+    [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+
 }
 
 /*!
