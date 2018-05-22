@@ -34,35 +34,37 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
 
 + (void)initializeAdColonyCustomEventWithAppId:(NSString *)appId allZoneIds:(NSArray *)allZoneIds userId:(NSString *)userId callback:(void(^)())callback {
     AdColonyController *instance = [AdColonyController sharedInstance];
-    
+
     @synchronized (instance) {
         NSSet * allZoneIdsSet = [NSSet setWithArray:allZoneIds];
         BOOL zoneIdsSame = [instance.currentAllZoneIds isEqualToSet:allZoneIdsSet];
-        
+
         if (instance.initState == INIT_STATE_INITIALIZED && zoneIdsSame) {
             if (callback) {
                 callback();
             }
         } else {
             instance.callbacks = [instance.callbacks arrayByAddingObject:callback];
-            
+
             if (instance.initState != INIT_STATE_INITIALIZING) {
                 instance.initState = INIT_STATE_INITIALIZING;
-                
+
                 AdColonyGlobalMediationSettings *settings = [[MoPub sharedInstance] globalMediationSettingsForClass:[AdColonyGlobalMediationSettings class]];
                 AdColonyAppOptions *options = [AdColonyAppOptions new];
-                
+
                 if (userId && userId.length > 0) {
                     options.userID = userId;
                 } else if (settings && settings.customId.length > 0) {
                     options.userID = settings.customId;
                 }
-                
+
                 instance.currentAllZoneIds = allZoneIdsSet;
                 options.testMode = instance.testModeEnabled;
 
-                [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
-                [options setOption:kAdColonyConsentResponse withNumericValue:@(MoPub.sharedInstance.canCollectPersonalInfo)];
+                if (MoPub.sharedInstance.isGDPRApplicable == MPBoolYes) {
+                    [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
+                    [options setOption:kAdColonyConsentResponse withNumericValue:@(MoPub.sharedInstance.canCollectPersonalInfo)];
+                }
 
                 [AdColony configureWithAppID:appId zoneIDs:allZoneIds options:options completion:^(NSArray<AdColonyZone *> * _Nonnull zones) {
                     @synchronized (instance) {
@@ -79,10 +81,10 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
 
 + (void)enableClientSideTestMode {
     AdColonyController *instance = [AdColonyController sharedInstance];
-    
+
     @synchronized (instance) {
         instance.testModeEnabled = YES;
-        
+
         if (instance.initState == INIT_STATE_INITIALIZED || instance.initState == INIT_STATE_INITIALIZING) {
             AdColonyAppOptions *options = [AdColony getAppOptions];
             options.testMode = YES;
@@ -93,10 +95,10 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
 
 + (void)disableClientSideTestMode {
     AdColonyController *instance = [AdColonyController sharedInstance];
-    
+
     @synchronized (instance) {
         instance.testModeEnabled = NO;
-        
+
         if (instance.initState == INIT_STATE_INITIALIZED || instance.initState == INIT_STATE_INITIALIZING) {
             AdColonyAppOptions *options = [AdColony getAppOptions];
             options.testMode = NO;
@@ -118,24 +120,8 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
     if (self = [super init]) {
         _initState = INIT_STATE_UNKNOWN;
         _callbacks = @[];
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(consentStatusDidChange:)
-                                                     name:kMPConsentChangedNotification
-                                                   object:nil];
     }
     return self;
-}
-
-- (void)consentStatusDidChange:(NSNotification *)notification {
-    BOOL canCollectPersonalInfo = [notification.userInfo[kMPConsentChangedInfoCanCollectPersonalInfoKey] boolValue];
-    AdColonyAppOptions *options = [AdColony getAppOptions];
-    [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
-    [options setOption:kAdColonyConsentResponse withNumericValue:@(canCollectPersonalInfo)];
-    [AdColony setAppOptions:options];
-}
-
-- (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end
