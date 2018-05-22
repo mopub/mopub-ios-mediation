@@ -208,11 +208,8 @@
         if(gdprApplies == MPBoolYes) {
             [Tapjoy subjectToGDPR:YES];
             
-            if([[MoPub sharedInstance] canCollectPersonalInfo]) {
-                [Tapjoy setUserConsent:@"1"];
-            } else {
-                [Tapjoy setUserConsent:@"0"];
-            }
+            NSString *consentString = [[MoPub sharedInstance] canCollectPersonalInfo] ? @"1" : @"0";
+            [Tapjoy setUserConsent: consentString];
         } else {
             [Tapjoy subjectToGDPR:NO];
             [Tapjoy setUserConsent:@"-1"];

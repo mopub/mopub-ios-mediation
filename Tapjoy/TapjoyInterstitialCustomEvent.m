@@ -35,8 +35,6 @@
         NSMutableDictionary *connectOptions = [[NSMutableDictionary alloc] init];
         [connectOptions setObject:@(enableDebug) forKey:TJC_OPTION_ENABLE_LOGGING];
         [self setupListeners];
-
-        [self fetchMoPubGDPRSettings];
         
         [Tapjoy connect:sdkKey options:connectOptions];
 
@@ -57,6 +55,8 @@
         return;
     }
 
+    [self fetchMoPubGDPRSettings];
+    
     // Attempt to establish a connection to Tapjoy
     if (![Tapjoy isConnected]) {
         [self initializeWithCustomNetworkInfo:info];
@@ -69,8 +69,6 @@
 }
 
 - (void)requestPlacementContent {
-    [self fetchMoPubGDPRSettings];
-
     if (self.placementName) {
         self.placement = [TJPlacement placementWithName:self.placementName mediationAgent:@"mopub" mediationId:nil delegate:self];
         self.placement.adapterVersion = MP_SDK_VERSION;
@@ -148,11 +146,8 @@
         if(gdprApplies == MPBoolYes) {
             [Tapjoy subjectToGDPR:YES];
             
-            if([[MoPub sharedInstance] canCollectPersonalInfo]) {
-                [Tapjoy setUserConsent:@"1"];
-            } else {
-                [Tapjoy setUserConsent:@"0"];
-            }
+            NSString *consentString = [[MoPub sharedInstance] canCollectPersonalInfo] ? @"1" : @"0";
+            [Tapjoy setUserConsent: consentString];
         } else {
             [Tapjoy subjectToGDPR:NO];
             [Tapjoy setUserConsent:@"-1"];
