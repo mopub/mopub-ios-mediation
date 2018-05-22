@@ -50,8 +50,6 @@
         NSMutableDictionary *connectOptions = [[NSMutableDictionary alloc] init];
         [connectOptions setObject:@(enableDebug) forKey:TJC_OPTION_ENABLE_LOGGING];
         [self setupListeners];
-
-        [self fetchMoPubGDPRSettings];
         
         [Tapjoy connect:sdkKey options:connectOptions];
 
@@ -66,6 +64,7 @@
 - (void)initializeSdkWithParameters:(NSDictionary *)parameters {
     // Attempt to establish a connection to Tapjoy
     if (![Tapjoy isConnected]) {
+        [self fetchMoPubGDPRSettings];
         [self initializeWithCustomNetworkInfo:parameters];
     }
 }
@@ -81,6 +80,8 @@
     if (self.isConnecting) {
         return;
     }
+    
+    [self fetchMoPubGDPRSettings];
 
     // Attempt to establish a connection to Tapjoy
     if (![Tapjoy isConnected]) {
@@ -94,7 +95,6 @@
 }
 
 - (void)requestPlacementContent {
-    [self fetchMoPubGDPRSettings];
     if (self.placementName) {
         self.placement = [TJPlacement placementWithName:self.placementName mediationAgent:@"mopub" mediationId:nil delegate:self];
         self.placement.adapterVersion = MP_SDK_VERSION;
