@@ -6,16 +6,11 @@
 //
 
 #import "MPVungleRouter.h"
-#if __has_include(<MoPub/MoPub.h>)
+#if __has_include("MoPub.h")
     #import "MPLogging.h"
     #import "MPRewardedVideoError.h"
     #import "MPRewardedVideo.h"
     #import "MoPub.h"
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-    #import <MoPubSDKFramework/MPLogging.h>
-    #import <MoPubSDKFramework/MPRewardedVideoError.h>
-    #import <MoPubSDKFramework/MPRewardedVideo.h>
-    #import <MoPubSDKFramework/MoPub.h>
 #endif
 #import "VungleInstanceMediationSettings.h"
 

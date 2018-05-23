@@ -7,10 +7,8 @@
 
 #import <VungleSDK/VungleSDK.h>
 #import "VungleInterstitialCustomEvent.h"
-#if __has_include(<MoPub/MoPub.h>)
+#if __has_include("MoPub.h")
     #import "MPLogging.h"
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-    #import <MoPubSDKFramework/MPLogging.h>
 #endif
 #import "MPVungleRouter.h"
 

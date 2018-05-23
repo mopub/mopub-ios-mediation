@@ -6,19 +6,12 @@
 #import <FBAudienceNetwork/FBAudienceNetwork.h>
 #import "FacebookRewardedVideoCustomEvent.h"
 
-#if __has_include(<MoPub/MoPub.h>)
+#if __has_include("MoPub.h")
     #import "MPLogging.h"
     #import "MoPub.h"
     #import "MPRewardedVideoReward.h"
     #import "MPRewardedVideoReward.h"
     #import "MPRealTimeTimer.h"
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-    #import <MoPubSDKFramework/MPLogging.h>
-    #import <MoPubSDKFramework/MoPub.h>
-    #import <MoPubSDKFramework/MPRewardedVideoReward.h>
-    #import <MoPubSDKFramework/MPRewardedVideoReward.h>
-// TODO: enable this import (and disabled code below) after MPRealTimeTimer.h has been added to MoPubSDKFramework
-//    #import <MoPubSDKFramework/MPRealTimeTimer.h>
 #endif
 
 //Timer to record the expiration interval
@@ -27,6 +20,7 @@
 @interface FacebookRewardedVideoCustomEvent () <FBRewardedVideoAdDelegate>
 
 @property (nonatomic, strong) FBRewardedVideoAd *fbRewardedVideoAd;
+// TODO: enable this related code below after MPRealTimeTimer.h has been added to MoPubSDKFramework
 //@property (nonatomic, strong) MPRealTimeTimer *expirationTimer;
 @property (nonatomic, assign) BOOL hasTrackedImpression;
 
@@ -119,24 +113,24 @@
  
  @param rewardedVideoAd An FBRewardedVideoAd object sending the message.
  */
-//- (void)rewardedVideoAdDidLoad:(FBRewardedVideoAd *)rewardedVideoAd
-//{
-//    MPLogInfo(@"Facebook rewarded video ad was loaded. Can present now.");
-//    [self.delegate rewardedVideoDidLoadAdForCustomEvent:self ];
-//
-//    // introduce timer for 1 hour as per caching logic introduced by FB
-//    __weak __typeof__(self) weakSelf = self;
-//    self.expirationTimer = [[MPRealTimeTimer alloc] initWithInterval:FB_ADS_EXPIRATION_INTERVAL block:^(MPRealTimeTimer *timer){
-//        __strong __typeof__(weakSelf) strongSelf = weakSelf;
-//        if (strongSelf && !strongSelf.hasTrackedImpression) {
-//            [strongSelf.delegate rewardedVideoDidExpireForCustomEvent:strongSelf];
-//            MPLogInfo(@"Facebook Rewarded Video ad expired as per the audience network's caching policy");
-//            strongSelf.fbRewardedVideoAd = nil;
-//        }
-//        [strongSelf.expirationTimer invalidate];
-//    }];
-//    [self.expirationTimer scheduleNow];
-//}
+- (void)rewardedVideoAdDidLoad:(FBRewardedVideoAd *)rewardedVideoAd
+{
+    MPLogInfo(@"Facebook rewarded video ad was loaded. Can present now.");
+    [self.delegate rewardedVideoDidLoadAdForCustomEvent:self ];
+
+    // introduce timer for 1 hour as per caching logic introduced by FB
+    //__weak __typeof__(self) weakSelf = self;
+    //self.expirationTimer = [[MPRealTimeTimer alloc] initWithInterval:FB_ADS_EXPIRATION_INTERVAL block:^(MPRealTimeTimer *timer){
+    //    __strong __typeof__(weakSelf) strongSelf = weakSelf;
+    //    if (strongSelf && !strongSelf.hasTrackedImpression) {
+    //        [strongSelf.delegate rewardedVideoDidExpireForCustomEvent:strongSelf];
+    //        MPLogInfo(@"Facebook Rewarded Video ad expired as per the audience network's caching policy");
+    //        strongSelf.fbRewardedVideoAd = nil;
+    //    }
+    //    [strongSelf.expirationTimer invalidate];
+    //}];
+    //[self.expirationTimer scheduleNow];
+}
 
 /*!
  @method

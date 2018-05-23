@@ -7,16 +7,11 @@
 #import <FBAudienceNetwork/FBAudienceNetwork.h>
 #import "FacebookNativeCustomEvent.h"
 #import "FacebookNativeAdAdapter.h"
-#if __has_include(<MoPub/MoPub.h>)
+#if __has_include("MoPub.h")
     #import "MPNativeAd.h"
     #import "MPLogging.h"
     #import "MPNativeAdError.h"
     #import "MPNativeAdConstants.h"
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-    #import <MoPubSDKFramework/MPNativeAd.h>
-    #import <MoPubSDKFramework/MPLogging.h>
-    #import <MoPubSDKFramework/MPNativeAdError.h>
-    #import <MoPubSDKFramework/MPNativeAdConstants.h>
 #endif
 
 static const NSInteger FacebookNoFillErrorCode = 1001;

@@ -8,13 +8,9 @@
 #import <FBAudienceNetwork/FBAudienceNetwork.h>
 #import "FacebookInterstitialCustomEvent.h"
 
-#if __has_include(<MoPub/MoPub.h>)
+#if __has_include("MoPub.h")
     #import "MPLogging.h"
     #import "MPRealTimeTimer.h"
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-    #import <MoPubSDKFramework/MPLogging.h>
-// TODO: enable this import (and disabled code below) after MPRealTimeTimer.h has been added to MoPubSDKFramework
-//    #import <MoPubSDKFramework/MPRealTimeTimer.h>
 #endif
 
 //Timer to record the expiration interval
@@ -23,6 +19,7 @@
 @interface FacebookInterstitialCustomEvent () <FBInterstitialAdDelegate>
 
 @property (nonatomic, strong) FBInterstitialAd *fbInterstitialAd;
+// TODO: enable this and related code after MPRealTimeTimer.h has been added to MoPubSDKFramework
 //@property (nonatomic, strong) MPRealTimeTimer *expirationTimer;
 @property (nonatomic, assign) BOOL hasTrackedImpression;
 
@@ -80,36 +77,36 @@
 }
 
 #pragma mark FBInterstitialAdDelegate methods
-//
-//- (void)interstitialAdDidLoad:(FBInterstitialAd *)interstitialAd
-//{
-//    MPLogInfo(@"Facebook intersitital ad was loaded. Can present now");
-//    [self.delegate interstitialCustomEvent:self didLoadAd:interstitialAd];
-//
-//    // introduce timer for 1 hour as per caching logic introduced by FB
-//
-//    __weak __typeof__(self) weakSelf = self;
-//    self.expirationTimer = [[MPRealTimeTimer alloc] initWithInterval:FB_ADS_EXPIRATION_INTERVAL block:^(MPRealTimeTimer *timer){
-//        __strong __typeof__(weakSelf) strongSelf = weakSelf;
-//        if (strongSelf && !strongSelf.hasTrackedImpression) {
-//            [strongSelf.delegate interstitialCustomEventDidExpire:strongSelf];
-//            MPLogInfo(@"Facebook intersitital ad expired as per the audience network's caching policy");
-//            //Delete the cached objects
-//            strongSelf.fbInterstitialAd = nil;
-//        }
-//        [strongSelf.expirationTimer invalidate];
-//    }];
-//    [self.expirationTimer scheduleNow];
-//
-//}
-//
-//- (void)interstitialAdWillLogImpression:(FBInterstitialAd *)interstitialAd
-//{
-//    MPLogInfo(@"Facebook intersitital ad is logging impressions for interstitials");
-//    //set the tracker to true when the ad is shown on the screen. So that the timer is invalidated.
-//    _hasTrackedImpression = true;
-//    [self.expirationTimer invalidate];
-//}
+
+- (void)interstitialAdDidLoad:(FBInterstitialAd *)interstitialAd
+{
+    MPLogInfo(@"Facebook intersitital ad was loaded. Can present now");
+    [self.delegate interstitialCustomEvent:self didLoadAd:interstitialAd];
+
+    // introduce timer for 1 hour as per caching logic introduced by FB
+
+    //__weak __typeof__(self) weakSelf = self;
+    //self.expirationTimer = [[MPRealTimeTimer alloc] initWithInterval:FB_ADS_EXPIRATION_INTERVAL block:^(MPRealTimeTimer *timer){
+    //    __strong __typeof__(weakSelf) strongSelf = weakSelf;
+    //    if (strongSelf && !strongSelf.hasTrackedImpression) {
+    //        [strongSelf.delegate interstitialCustomEventDidExpire:strongSelf];
+    //        MPLogInfo(@"Facebook intersitital ad expired as per the audience network's caching policy");
+    //        //Delete the cached objects
+    //        strongSelf.fbInterstitialAd = nil;
+    //    }
+    //    [strongSelf.expirationTimer invalidate];
+    //}];
+    //[self.expirationTimer scheduleNow];
+
+}
+
+- (void)interstitialAdWillLogImpression:(FBInterstitialAd *)interstitialAd
+{
+    MPLogInfo(@"Facebook intersitital ad is logging impressions for interstitials");
+    //set the tracker to true when the ad is shown on the screen. So that the timer is invalidated.
+    _hasTrackedImpression = true;
+    //[self.expirationTimer invalidate];
+}
 
 - (void)interstitialAd:(FBInterstitialAd *)interstitialAd didFailWithError:(NSError *)error
 {
