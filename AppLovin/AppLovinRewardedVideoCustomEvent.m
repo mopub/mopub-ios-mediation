@@ -264,25 +264,25 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
     MPLogDebug(@"AppLovinRewardedVideoCustomEvent: %@", message);
 }
 
-- (MOPUBErrorCode)toMoPubErrorCode:(int)appLovinErrorCode
-{
-    if ( appLovinErrorCode == kALErrorCodeNoFill )
-    {
-        return MOPUBErrorAdapterHasNoInventory;
-    }
-    else if ( appLovinErrorCode == kALErrorCodeAdRequestNetworkTimeout )
-    {
-        return MOPUBErrorNetworkTimedOut;
-    }
-    else if ( appLovinErrorCode == kALErrorCodeInvalidResponse )
-    {
-        return MOPUBErrorServerError;
-    }
-    else
-    {
-        return MOPUBErrorUnknown;
-    }
-}
+//- (MOPUBErrorCode)toMoPubErrorCode:(int)appLovinErrorCode
+//{
+//    if ( appLovinErrorCode == kALErrorCodeNoFill )
+//    {
+//        return MOPUBErrorAdapterHasNoInventory;
+//    }
+//    else if ( appLovinErrorCode == kALErrorCodeAdRequestNetworkTimeout )
+//    {
+//        return MOPUBErrorNetworkTimedOut;
+//    }
+//    else if ( appLovinErrorCode == kALErrorCodeInvalidResponse )
+//    {
+//        return MOPUBErrorServerError;
+//    }
+//    else
+//    {
+//        return MOPUBErrorUnknown;
+//    }
+//}
 
 - (ALSdk *)SDKFromCustomEventInfo:(NSDictionary *)info
 {
