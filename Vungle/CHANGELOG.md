@@ -1,6 +1,7 @@
 ## Changelog
   * 6.2.0.1  
     * update adapters to remove dependency on MPInstanceProvider
+    * Update import statements for MoPub frameworks
 
   * 6.2.0.0
     * This version of the adapters has been certified with Vungle 6.2.0.

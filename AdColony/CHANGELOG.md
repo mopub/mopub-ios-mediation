@@ -1,4 +1,7 @@
 ## Changelog
+  * 3.3.0.5
+  	* Update import statements for MoPub frameworks
+
   * 3.3.0.4
   	* Updated the adapter's cocoapods dependency to MoPub version 5.0
   
