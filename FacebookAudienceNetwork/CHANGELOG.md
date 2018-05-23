@@ -1,4 +1,6 @@
 ## Changelog
+* 4.28.1.3
+      * update adapters to remove dependency on MPInstanceProvider
 
 * 4.28.1.2
     * This version of the adapters has been certified with Facebook Audience Network 4.28.1.
