@@ -13,8 +13,6 @@
 #import "MPMediationSettingsProtocol.h"
 #endif
 
-#import <AdColony/AdColony.h>
-
 /*
  * `AdColonyGlobalMediationSettings` allows the application to provide constant global properties
  * to configure aspects of AdColony. See `MPMediationSettingsProtocol` to see how mediation settings
