@@ -64,7 +64,6 @@
 - (void)initializeSdkWithParameters:(NSDictionary *)parameters {
     // Attempt to establish a connection to Tapjoy
     if (![Tapjoy isConnected]) {
-        [self fetchMoPubGDPRSettings];
         [self initializeWithCustomNetworkInfo:parameters];
     }
 }
@@ -81,8 +80,6 @@
         return;
     }
     
-    [self fetchMoPubGDPRSettings];
-
     // Attempt to establish a connection to Tapjoy
     if (![Tapjoy isConnected]) {
         [self initializeWithCustomNetworkInfo:info];
@@ -186,6 +183,7 @@
 - (void)tjcConnectSuccess:(NSNotification*)notifyObj {
     MPLogInfo(@"Tapjoy connect Succeeded");
     self.isConnecting = NO;
+    [self fetchMoPubGDPRSettings];
     [self requestPlacementContent];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -198,12 +196,10 @@
 }
 
 // Collect latest MoPub GDPR settings and pass them to Tapjoy
--(void)fetchMoPubGDPRSettings
-{
+-(void)fetchMoPubGDPRSettings {
     // If the GDPR applies setting is unknown, assume it has been skipped/unset
     MPBool gdprApplies = [MoPub sharedInstance].isGDPRApplicable;
-    if (gdprApplies != MPBoolUnknown )
-    {
+    if (gdprApplies != MPBoolUnknown ) {
         //Turn the MPBool into a proper bool
         if(gdprApplies == MPBoolYes) {
             [Tapjoy subjectToGDPR:YES];
