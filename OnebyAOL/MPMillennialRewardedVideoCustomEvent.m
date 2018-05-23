@@ -7,12 +7,9 @@
 
 #import "MPMillennialRewardedVideoCustomEvent.h"
 #import "MPMillennialInterstitialCustomEvent.h"
-#if __has_include(<MoPub/MoPub.h>)
+#if __has_include("MoPub.h")
     #import "MPLogging.h"
     #import "MPRewardedVideoCustomEvent+Caching.h"
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-    #import <MoPubSDKFramework/MPLogging.h>
-    #import <MoPubSDKFramework/MPRewardedVideoCustomEvent+Caching.h>
 #endif
 #import <MMAdSDK/MMAd+Experimental.h>
 #import "MMAdapterVersion.h"
