@@ -6,7 +6,6 @@
 //
 
 #import "MPVungleRouter.h"
-#import "MPInstanceProvider+Vungle.h"
 #import "MPLogging.h"
 #import "VungleInstanceMediationSettings.h"
 #import "MPRewardedVideoError.h"
@@ -54,7 +53,12 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
 }
 
 + (MPVungleRouter *)sharedRouter {
-    return [[MPInstanceProvider sharedProvider] sharedMPVungleRouter];
+    static MPVungleRouter * sharedRouter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedRouter = [[MPVungleRouter alloc] init];
+    });
+    return sharedRouter;
 }
 
 - (void)initializeSdkWithInfo:(NSDictionary *)info {

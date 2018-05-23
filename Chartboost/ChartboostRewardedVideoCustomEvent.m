@@ -7,7 +7,6 @@
 
 #import "ChartboostRewardedVideoCustomEvent.h"
 #import "MPChartboostRouter.h"
-#import "MPInstanceProvider+Chartboost.h"
 #import "MPLogging.h"
 #import "MPRewardedVideoReward.h"
 #import <Chartboost/Chartboost.h>

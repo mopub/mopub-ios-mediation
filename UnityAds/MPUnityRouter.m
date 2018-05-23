@@ -8,7 +8,6 @@
 #import "MoPub.h"
 #import "MPUnityRouter.h"
 #import "UnityAdsInstanceMediationSettings.h"
-#import "MPInstanceProvider+Unity.h"
 #import "MPRewardedVideoError.h"
 #import "MPRewardedVideo.h"
 
@@ -29,7 +28,12 @@
 
 + (MPUnityRouter *)sharedRouter
 {
-    return [[MPInstanceProvider sharedProvider] sharedMPUnityRouter];
+    static MPUnityRouter * sharedRouter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedRouter = [[MPUnityRouter alloc] init];
+    });
+    return sharedRouter;
 }
 
 - (void)initializeWithGameId:(NSString *)gameId

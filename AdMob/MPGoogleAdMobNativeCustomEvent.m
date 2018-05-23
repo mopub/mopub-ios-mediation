@@ -1,6 +1,5 @@
 #import "MPGoogleAdMobNativeAdAdapter.h"
 #import "MPGoogleAdMobNativeCustomEvent.h"
-#import "MPInstanceProvider.h"
 #import "MPLogging.h"
 #import "MPNativeAd.h"
 #import "MPNativeAdConstants.h"

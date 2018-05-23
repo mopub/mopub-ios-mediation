@@ -8,7 +8,6 @@
 #import "ChartboostInterstitialCustomEvent.h"
 #import "MPLogging.h"
 #import "MPChartboostRouter.h"
-#import "MPInstanceProvider+Chartboost.h"
 #import <Chartboost/Chartboost.h>
 
 static NSString *gAppId = nil;

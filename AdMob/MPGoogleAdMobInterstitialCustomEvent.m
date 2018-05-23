@@ -10,31 +10,7 @@
 #import "MPInterstitialAdController.h"
 #import "MPLogging.h"
 #import "MPAdConfiguration.h"
-#import "MPInstanceProvider.h"
 #import <CoreLocation/CoreLocation.h>
-
-@interface MPInstanceProvider (AdMobInterstitials)
-
-- (GADInterstitial *)buildGADInterstitialAd;
-- (GADRequest *)buildGADInterstitialRequest;
-
-@end
-
-@implementation MPInstanceProvider (AdMobInterstitials)
-
-- (GADInterstitial *)buildGADInterstitialAd
-{
-    return [[GADInterstitial alloc] init];
-}
-
-- (GADRequest *)buildGADInterstitialRequest
-{
-    return [GADRequest request];
-}
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @interface MPGoogleAdMobInterstitialCustomEvent () <GADInterstitialDelegate>
 
@@ -51,12 +27,12 @@
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info
 {
     MPLogInfo(@"Requesting Google AdMob interstitial");
-    self.interstitial = [[MPInstanceProvider sharedProvider] buildGADInterstitialAd];
+    self.interstitial = [[GADInterstitial alloc] init];
 
     self.interstitial.adUnitID = [info objectForKey:@"adUnitID"];
     self.interstitial.delegate = self;
 
-    GADRequest *request = [[MPInstanceProvider sharedProvider] buildGADInterstitialRequest];
+    GADRequest *request = [GADRequest request];
 
     CLLocation *location = self.delegate.location;
     if (location) {
