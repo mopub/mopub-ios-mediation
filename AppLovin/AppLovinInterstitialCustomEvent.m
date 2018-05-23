@@ -132,18 +132,18 @@ static NSObject *ALGlobalInterstitialAdsLock;
     });
 }
 
-//- (void)adService:(ALAdService *)adService didFailToLoadAdWithError:(int)code
-//{
-//    [self log: @"Interstitial failed to load with error: %d", code];
-//
-//    NSError *error = [NSError errorWithDomain: kALMoPubMediationErrorDomain
-//                                         code: [self toMoPubErrorCode: code]
-//                                     userInfo: nil];
-//
-//    dispatch_async(dispatch_get_main_queue(), ^{
-//        [self.delegate interstitialCustomEvent: self didFailToLoadAdWithError: error];
-//    });
-//}
+- (void)adService:(ALAdService *)adService didFailToLoadAdWithError:(int)code
+{
+    [self log: @"Interstitial failed to load with error: %d", code];
+
+    NSError *error = [NSError errorWithDomain: kALMoPubMediationErrorDomain
+                                         code: code // [self toMoPubErrorCode: code]
+                                     userInfo: nil];
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self.delegate interstitialCustomEvent: self didFailToLoadAdWithError: error];
+    });
+}
 
 #pragma mark - Ad Display Delegate
 
