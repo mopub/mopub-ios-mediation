@@ -6,7 +6,7 @@
 //
 
 #import "UnityAdsInterstitialCustomEvent.h"
-#if __has_import("MoPub.h")
+#if __has_include("MoPub.h")
     #import "MPLogging.h"
 #endif
 #import "UnityAdsInstanceMediationSettings.h"
