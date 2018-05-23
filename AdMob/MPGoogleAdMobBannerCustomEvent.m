@@ -43,14 +43,14 @@
     self.adBannerView.adUnitID = [info objectForKey:@"adUnitID"];
     self.adBannerView.rootViewController = [self.delegate viewControllerForPresentingModalView];
 
-    AdMobGlobalMediationSettings *mediationSettings = [[MoPub sharedInstance] globalMediationSettingsForClass:[AdMobGlobalMediationSettings class]];
-    
-    NSString *adPersonalizationPref = mediationSettings.adPersonalizationPref;
-    
+    NSString *npaPref = [[NSUserDefaults standardUserDefaults] stringForKey:@"npaPref"];
     GADRequest *request = [GADRequest request];
-    GADExtras *extras = [[GADExtras alloc] init];
-    extras.additionalParameters = @{@"npa": adPersonalizationPref};
-    [request registerAdNetworkExtras:extras];
+    
+    if (npaPref != nil) {
+        GADExtras *extras = [[GADExtras alloc] init];
+        extras.additionalParameters = @{@"npa": npaPref};
+        [request registerAdNetworkExtras:extras];
+    }
     
     CLLocation *location = self.delegate.location;
     if (location) {

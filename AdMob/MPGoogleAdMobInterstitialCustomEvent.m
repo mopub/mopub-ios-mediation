@@ -32,7 +32,14 @@
     self.interstitial.adUnitID = [info objectForKey:@"adUnitID"];
     self.interstitial.delegate = self;
 
+    NSString *npaPref = [[NSUserDefaults standardUserDefaults] stringForKey:@"npaPref"];
     GADRequest *request = [GADRequest request];
+    
+    if (npaPref != nil) {
+        GADExtras *extras = [[GADExtras alloc] init];
+        extras.additionalParameters = @{@"npa": npaPref};
+        [request registerAdNetworkExtras:extras];
+    }
 
     CLLocation *location = self.delegate.location;
     if (location) {

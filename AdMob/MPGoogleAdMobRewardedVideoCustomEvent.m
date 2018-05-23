@@ -38,7 +38,14 @@
     return;
   }
 
+  NSString *npaPref = [[NSUserDefaults standardUserDefaults] stringForKey:@"npaPref"];
   GADRequest *request = [GADRequest request];
+    
+  if (npaPref != nil) {
+    GADExtras *extras = [[GADExtras alloc] init];
+    extras.additionalParameters = @{@"npa": npaPref};
+    [request registerAdNetworkExtras:extras];
+  }
   request.requestAgent = @"MoPub";
 
   [GADRewardBasedVideoAd sharedInstance].delegate = self;

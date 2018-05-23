@@ -8,10 +8,12 @@
 #import "MPMediationSettingsProtocol.h"
 #endif
 
-@interface AdMobGlobalMediationSettings : NSObject <MPMediationSettingsProtocol>
+@interface AdMobGlobalMediationSettings : NSObject
 
 /* The "npa" field set by the publisher.
- * "-1" if the user would like to opt out of ad personalization from AdMob
+ * "1" if the user would like to opt out of ad personalization from AdMob.
+ * Publishers must set this in their app implementation, and the adapter will
+ * forward the preference onto AdMob.
  */
-@property (nonatomic,copy) NSString *adPersonalizationPref;
+@property (nonatomic,copy) NSString *npaPref;
 @end
