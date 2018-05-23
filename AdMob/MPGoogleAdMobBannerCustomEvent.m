@@ -8,6 +8,8 @@
 #import <GoogleMobileAds/GoogleMobileAds.h>
 #import "MPGoogleAdMobBannerCustomEvent.h"
 #import "MPLogging.h"
+#import "AdMobGlobalMediationSettings.h"
+#import "MoPub.h"
 
 @interface MPGoogleAdMobBannerCustomEvent () <GADBannerViewDelegate>
 
@@ -41,8 +43,15 @@
     self.adBannerView.adUnitID = [info objectForKey:@"adUnitID"];
     self.adBannerView.rootViewController = [self.delegate viewControllerForPresentingModalView];
 
+    AdMobGlobalMediationSettings *mediationSettings = [[MoPub sharedInstance] globalMediationSettingsForClass:[AdMobGlobalMediationSettings class]];
+    
+    NSString *adPersonalizationPref = mediationSettings.adPersonalizationPref;
+    
     GADRequest *request = [GADRequest request];
-
+    GADExtras *extras = [[GADExtras alloc] init];
+    extras.additionalParameters = @{@"npa": adPersonalizationPref};
+    [request registerAdNetworkExtras:extras];
+    
     CLLocation *location = self.delegate.location;
     if (location) {
         [request setLocationWithLatitude:location.coordinate.latitude
