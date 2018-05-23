@@ -1,6 +1,7 @@
+
 ## Changelog
-* 2.2.0.3
-    * update adapters to remove dependency on MPInstanceProvider
+* 2.2.0.4
+    * Notify Unity Ads even when the user does not consent
 
 * 2.2.0.3
     * This version of the adapters has been certified with UnityAds 2.2.0
