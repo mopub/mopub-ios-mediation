@@ -3,15 +3,10 @@
 //
 
 #import "AppLovinInterstitialCustomEvent.h"
-#if __has_include(<MoPub/MoPub.h>)
+#if __has_include("MoPub.h")
     #import "MPError.h"
     #import "MPLogging.h"
     #import "MoPub.h"
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-// TODO: enable this import (and disabled code below) after MPError.h has been added to MoPubSDKFramework
-//    #import <MoPubSDKFramework/MPError.h>
-    #import <MoPubSDKFramework/MPLogging.h>
-    #import <MoPubSDKFramework/MoPub.h>
 #endif
 
 #if __has_include(<AppLovinSDK/AppLovinSDK.h>)
@@ -142,7 +137,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
     [self log: @"Interstitial failed to load with error: %d", code];
     
     NSError *error = [NSError errorWithDomain: kALMoPubMediationErrorDomain
-                                         code: [self toMoPubErrorCode: code]
+                                         code: code //[self toMoPubErrorCode: code]
                                      userInfo: nil];
     
     dispatch_async(dispatch_get_main_queue(), ^{

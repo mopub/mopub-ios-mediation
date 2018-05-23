@@ -5,11 +5,18 @@
 //  Copyright (c) 2016 MoPub. All rights reserved.
 //
 
-#import "MoPub.h"
 #import "MPUnityRouter.h"
 #import "UnityAdsInstanceMediationSettings.h"
-#import "MPRewardedVideoError.h"
-#import "MPRewardedVideo.h"
+
+#if __has_include(<MoPub/MoPub.h>)
+    #import <MoPub/MoPub.h>
+#elif __has_include(<MoPubSDKFramework/MoPub.h>)
+    #import <MoPubSDKFramework/MoPub.h>
+#else
+    #import "MoPub.h"
+    #import "MPRewardedVideoError.h"
+    #import "MPRewardedVideo.h"
+#endif
 
 @interface MPUnityRouter ()
 

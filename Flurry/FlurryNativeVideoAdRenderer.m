@@ -8,20 +8,22 @@
 
 #import "FlurryNativeAdAdapter.h"
 #import "FlurryNativeVideoAdRenderer.h"
-#import "MOPUBNativeVideoAdRendererSettings.h"
-#import "MPNativeAdRendererConfiguration.h"
-#import "MPNativeAdRenderer.h"
-#import "MPNativeAdRendering.h"
-#import "MPNativeAdAdapter.h"
-#import "MPNativeAdConstants.h"
-#import "MPNativeAdError.h"
-#import "MPNativeAdRendererImageHandler.h"
-#import "MPNativeAdRenderingImageLoader.h"
+#if __has_include("MoPub.h")
+    #import "MOPUBNativeVideoAdRendererSettings.h"
+    #import "MPNativeAdRendererConfiguration.h"
+    #import "MPNativeAdRenderer.h"
+    #import "MPNativeAdRendering.h"
+    #import "MPNativeAdAdapter.h"
+    #import "MPNativeAdConstants.h"
+    #import "MPNativeAdError.h"
+    #import "MPNativeAdRendererImageHandler.h"
+    #import "MPNativeAdRenderingImageLoader.h"
+#endif
 
 /**
  * Renderer that supports both static and video Flurry native ads
  */
-@interface FlurryNativeVideoAdRenderer () <MPNativeAdRendererImageHandlerDelegate>
+@interface FlurryNativeVideoAdRenderer () //<MPNativeAdRendererImageHandlerDelegate>
 
 @property (nonatomic) UIView<MPNativeAdRendering> *adView;
 @property (nonatomic) FlurryNativeAdAdapter<MPNativeAdAdapter> *adapter;
@@ -52,8 +54,8 @@
         MOPUBNativeVideoAdRendererSettings *settings = (MOPUBNativeVideoAdRendererSettings *)rendererSettings;
         _renderingViewClass = settings.renderingViewClass;
         _viewSizeHandler = [settings.viewSizeHandler copy];
-        _rendererImageHandler = [MPNativeAdRendererImageHandler new];
-        _rendererImageHandler.delegate = self;
+        _rendererImageHandler = nil; //[MPNativeAdRendererImageHandler new];
+        //_rendererImageHandler.delegate = self;
     }
     
     return self;
@@ -116,12 +118,12 @@
     
     if (superview) {
         if ([self.adapter.properties objectForKey:kAdIconImageKey] && [self.adView respondsToSelector:@selector(nativeIconImageView)]) {
-            [self.rendererImageHandler loadImageForURL:[NSURL URLWithString:[self.adapter.properties objectForKey:kAdIconImageKey]] intoImageView:self.adView.nativeIconImageView];
+            //[self.rendererImageHandler loadImageForURL:[NSURL URLWithString:[self.adapter.properties objectForKey:kAdIconImageKey]] intoImageView:self.adView.nativeIconImageView];
         }
         
         if (!([self.adapter respondsToSelector:@selector(mainMediaView)] && [self.adapter mainMediaView])) {
             if ([self.adapter.properties objectForKey:kAdMainImageKey] && [self.adView respondsToSelector:@selector(nativeMainImageView)]) {
-                [self.rendererImageHandler loadImageForURL:[NSURL URLWithString:[self.adapter.properties objectForKey:kAdMainImageKey]] intoImageView:self.adView.nativeMainImageView];
+                //[self.rendererImageHandler loadImageForURL:[NSURL URLWithString:[self.adapter.properties objectForKey:kAdMainImageKey]] intoImageView:self.adView.nativeMainImageView];
             }
         }
         

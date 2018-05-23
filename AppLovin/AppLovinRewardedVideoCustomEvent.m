@@ -3,10 +3,12 @@
 //
 
 #import "AppLovinRewardedVideoCustomEvent.h"
-#import "MPRewardedVideoReward.h"
-#import "MPError.h"
-#import "MPLogging.h"
-#import "MoPub.h"
+#if __has_include("MoPub.h")
+    #import "MPRewardedVideoReward.h"
+    #import "MPError.h"
+    #import "MPLogging.h"
+    #import "MoPub.h"
+#endif
 
 #if __has_include(<AppLovinSDK/AppLovinSDK.h>)
     #import <AppLovinSDK/AppLovinSDK.h>
@@ -140,7 +142,7 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
     [self log: @"Rewarded video failed to load with error: %d", code];
     
     NSError *error = [NSError errorWithDomain: kALMoPubMediationErrorDomain
-                                         code: [self toMoPubErrorCode: code]
+                                         code: code //[self toMoPubErrorCode: code]
                                      userInfo: nil];
     
     dispatch_async(dispatch_get_main_queue(), ^{

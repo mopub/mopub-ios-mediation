@@ -7,10 +7,11 @@
 //
 
 #import "FlurryNativeAdAdapter.h"
-#import "FlurryAdNativeDelegate.h"
-#import "MPNativeAdConstants.h"
-#import "MPNativeAdError.h"
-#import "MPLogging.h"
+#if __has_include("MoPub.h")
+    #import "MPNativeAdConstants.h"
+    #import "MPNativeAdError.h"
+    #import "MPLogging.h"
+#endif
 
 @interface FlurryNativeAdAdapter() <FlurryAdNativeDelegate>
 

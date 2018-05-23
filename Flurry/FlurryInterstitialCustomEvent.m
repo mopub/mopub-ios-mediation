@@ -7,11 +7,11 @@
 //
 
 #import "FlurryInterstitialCustomEvent.h"
-#import "FlurryAdInterstitial.h"
-#import "FlurryAdError.h"
 #import "FlurryMPConfig.h"
 
-#import "MPLogging.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+#endif
 
 @interface  FlurryInterstitialCustomEvent()
 
