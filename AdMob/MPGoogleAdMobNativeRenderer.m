@@ -1,6 +1,6 @@
 #import "MPGoogleAdMobNativeRenderer.h"
 
-#if __has_include(<MoPub/MoPub.h>)
+#if __has_include("MoPub.h")
     #import "MPAdDestinationDisplayAgent.h"
     #import "MPLogging.h"
     #import "MPNativeAdAdapter.h"
@@ -13,20 +13,6 @@
     #import "MPNativeCache.h"
     #import "MPNativeView.h"
     #import "MPStaticNativeAdRendererSettings.h"
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-// TODO: enable the imports (and code) below after the headers have been added to MoPubSDKFramework
-//    #import <MoPubSDKFramework/MPAdDestinationDisplayAgent.h>
-    #import <MoPubSDKFramework/MPLogging.h>
-    #import <MoPubSDKFramework/MPNativeAdAdapter.h>
-    #import <MoPubSDKFramework/MPNativeAdConstants.h>
-    #import <MoPubSDKFramework/MPNativeAdError.h>
-    #import <MoPubSDKFramework/MPNativeAdRendererConfiguration.h>
-//    #import <MoPubSDKFramework/MPNativeAdRendererImageHandler.h>
-    #import <MoPubSDKFramework/MPNativeAdRendering.h>
-    #import <MoPubSDKFramework/MPNativeAdRenderingImageLoader.h>
-//    #import <MoPubSDKFramework/MPNativeCache.h>
-//    #import <MoPubSDKFramework/MPNativeView.h>
-    #import <MoPubSDKFramework/MPStaticNativeAdRendererSettings.h>
 #endif
 #import "MPGoogleAdMobNativeAdAdapter.h"
 #import "UIView+MPGoogleAdMobAdditions.h"

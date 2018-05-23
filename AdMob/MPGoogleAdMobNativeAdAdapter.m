@@ -1,16 +1,10 @@
 #import "MPGoogleAdMobNativeAdAdapter.h"
 
-#if __has_include(<MoPub/MoPub.h>)
+#if __has_include("MoPub.h")
     #import "MPCoreInstanceProvider.h"
     #import "MPLogging.h"
     #import "MPNativeAdConstants.h"
     #import "MPNativeAdError.h"
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-// TODO: enable this import after MPCoreInstanceProvider has been added to MoPubSDKFramework
-//    #import <MoPubSDKFramework/MPCoreInstanceProvider.h>
-    #import <MoPubSDKFramework/MPLogging.h>
-    #import <MoPubSDKFramework/MPNativeAdConstants.h>
-    #import <MoPubSDKFramework/MPNativeAdError.h>
 #endif
 
 static NSString *const kGADMAdvertiserKey = @"advertiser";

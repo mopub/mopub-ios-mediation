@@ -7,15 +7,10 @@
 
 #import <GoogleMobileAds/GoogleMobileAds.h>
 #import "MPGoogleAdMobInterstitialCustomEvent.h"
-#if __has_include(<MoPub/MoPub.h>)
+#if __has_include("MoPub.h")
     #import "MPInterstitialAdController.h"
     #import "MPLogging.h"
     #import "MPAdConfiguration.h"
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-    #import <MoPubSDKFramework/MPInterstitialAdController.h>
-    #import <MoPubSDKFramework/MPLogging.h>
-// TODO: enable this import after MPAdConfiguration.h has been added to MoPubSDKFramework
-//    #import <MoPubSDKFramework/MPAdConfiguration.h>
 #endif
 #import <CoreLocation/CoreLocation.h>
 

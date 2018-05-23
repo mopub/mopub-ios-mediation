@@ -1,18 +1,11 @@
 #import "MPGoogleAdMobNativeAdAdapter.h"
 #import "MPGoogleAdMobNativeCustomEvent.h"
-#if __has_include(<MoPub/MoPub.h>)
+#if __has_include("MoPub.h")
     #import "MPLogging.h"
     #import "MPNativeAd.h"
     #import "MPNativeAdConstants.h"
     #import "MPNativeAdError.h"
     #import "MPNativeAdUtils.h"
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-    #import <MoPubSDKFramework/MPLogging.h>
-    #import <MoPubSDKFramework/MPNativeAd.h>
-    #import <MoPubSDKFramework/MPNativeAdConstants.h>
-    #import <MoPubSDKFramework/MPNativeAdError.h>
-// TODO: enable this import (and disabled code below) after MPNativeAdUtils.h has been added to MoPubSDKFramework
-//    #import <MoPubSDKFramework/MPNativeAdUtils.h>
 #endif
 
 static void MPGoogleLogInfo(NSString *message) {

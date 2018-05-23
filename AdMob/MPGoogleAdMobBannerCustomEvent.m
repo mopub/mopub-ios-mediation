@@ -5,14 +5,12 @@
 //  Copyright (c) 2013 MoPub. All rights reserved.
 //
 
+#import <CoreLocation/CoreLocation.h>
+
 #import <GoogleMobileAds/GoogleMobileAds.h>
 #import "MPGoogleAdMobBannerCustomEvent.h"
-#if __has_include(<MoPub/MoPub.h>)
+#if __has_include("MoPub.h")
     #import "MPLogging.h"
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-// TODO: is this still needed after MPCoreInstanceProvider has been added to MoPubSDKFramework?
-    #import <CoreLocation/CLLocation.h>
-    #import <MoPubSDKFramework/MPLogging.h>
 #endif
 
 @interface MPGoogleAdMobBannerCustomEvent () <GADBannerViewDelegate>
