@@ -8,7 +8,11 @@
 #import <FBAudienceNetwork/FBAudienceNetwork.h>
 #import "FacebookBannerCustomEvent.h"
 
-#import "MPLogging.h"
+#if __has_include(<MoPub/MoPub.h>)
+    #import "MPLogging.h"
+#elif __has_include(<MoPubSDKFramework/MoPub.h>)
+    #import <MoPubSDKFramework/MPLogging.h>
+#endif
 
 @interface FacebookBannerCustomEvent () <FBAdViewDelegate>
 

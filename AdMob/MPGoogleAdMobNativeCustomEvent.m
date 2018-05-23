@@ -1,10 +1,19 @@
 #import "MPGoogleAdMobNativeAdAdapter.h"
 #import "MPGoogleAdMobNativeCustomEvent.h"
-#import "MPLogging.h"
-#import "MPNativeAd.h"
-#import "MPNativeAdConstants.h"
-#import "MPNativeAdError.h"
-#import "MPNativeAdUtils.h"
+#if __has_include(<MoPub/MoPub.h>)
+    #import "MPLogging.h"
+    #import "MPNativeAd.h"
+    #import "MPNativeAdConstants.h"
+    #import "MPNativeAdError.h"
+    #import "MPNativeAdUtils.h"
+#elif __has_include(<MoPubSDKFramework/MoPub.h>)
+    #import <MoPubSDKFramework/MPLogging.h>
+    #import <MoPubSDKFramework/MPNativeAd.h>
+    #import <MoPubSDKFramework/MPNativeAdConstants.h>
+    #import <MoPubSDKFramework/MPNativeAdError.h>
+// TODO: enable this import (and disabled code below) after MPNativeAdUtils.h has been added to MoPubSDKFramework
+//    #import <MoPubSDKFramework/MPNativeAdUtils.h>
+#endif
 
 static void MPGoogleLogInfo(NSString *message) {
   message = [[NSString alloc] initWithFormat:@"<Google Adapter> - %@", message];
@@ -101,21 +110,21 @@ static GADAdChoicesPosition adChoicesPosition;
 
   NSMutableArray *imageURLs = [NSMutableArray array];
 
-  if ([moPubNativeAd.properties[kAdIconImageKey] length]) {
-    if (![MPNativeAdUtils addURLString:moPubNativeAd.properties[kAdIconImageKey]
-                            toURLArray:imageURLs]) {
-      [self.delegate nativeCustomEvent:self
-              didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
-    }
-  }
-
-  if ([moPubNativeAd.properties[kAdMainImageKey] length]) {
-    if (![MPNativeAdUtils addURLString:moPubNativeAd.properties[kAdMainImageKey]
-                            toURLArray:imageURLs]) {
-      [self.delegate nativeCustomEvent:self
-              didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
-    }
-  }
+//  if ([moPubNativeAd.properties[kAdIconImageKey] length]) {
+//    if (![MPNativeAdUtils addURLString:moPubNativeAd.properties[kAdIconImageKey]
+//                            toURLArray:imageURLs]) {
+//      [self.delegate nativeCustomEvent:self
+//              didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
+//    }
+//  }
+//
+//  if ([moPubNativeAd.properties[kAdMainImageKey] length]) {
+//    if (![MPNativeAdUtils addURLString:moPubNativeAd.properties[kAdMainImageKey]
+//                            toURLArray:imageURLs]) {
+//      [self.delegate nativeCustomEvent:self
+//              didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
+//    }
+//  }
 
   [super precacheImagesWithURLs:imageURLs
                 completionBlock:^(NSArray *errors) {
@@ -146,21 +155,21 @@ static GADAdChoicesPosition adChoicesPosition;
 
   NSMutableArray *imageURLs = [NSMutableArray array];
 
-  if ([interfaceAd.properties[kAdIconImageKey] length]) {
-    if (![MPNativeAdUtils addURLString:interfaceAd.properties[kAdIconImageKey]
-                            toURLArray:imageURLs]) {
-      [self.delegate nativeCustomEvent:self
-              didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
-    }
-  }
-
-  if ([interfaceAd.properties[kAdMainImageKey] length]) {
-    if (![MPNativeAdUtils addURLString:interfaceAd.properties[kAdMainImageKey]
-                            toURLArray:imageURLs]) {
-      [self.delegate nativeCustomEvent:self
-              didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
-    }
-  }
+//  if ([interfaceAd.properties[kAdIconImageKey] length]) {
+//    if (![MPNativeAdUtils addURLString:interfaceAd.properties[kAdIconImageKey]
+//                            toURLArray:imageURLs]) {
+//      [self.delegate nativeCustomEvent:self
+//              didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
+//    }
+//  }
+//
+//  if ([interfaceAd.properties[kAdMainImageKey] length]) {
+//    if (![MPNativeAdUtils addURLString:interfaceAd.properties[kAdMainImageKey]
+//                            toURLArray:imageURLs]) {
+//      [self.delegate nativeCustomEvent:self
+//              didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
+//    }
+//  }
 
   [super precacheImagesWithURLs:imageURLs
                 completionBlock:^(NSArray *errors) {

@@ -6,11 +6,18 @@
 //
 
 #import "MPVungleRouter.h"
-#import "MPLogging.h"
+#if __has_include(<MoPub/MoPub.h>)
+    #import "MPLogging.h"
+    #import "MPRewardedVideoError.h"
+    #import "MPRewardedVideo.h"
+    #import "MoPub.h"
+#elif __has_include(<MoPubSDKFramework/MoPub.h>)
+    #import <MoPubSDKFramework/MPLogging.h>
+    #import <MoPubSDKFramework/MPRewardedVideoError.h>
+    #import <MoPubSDKFramework/MPRewardedVideo.h>
+    #import <MoPubSDKFramework/MoPub.h>
+#endif
 #import "VungleInstanceMediationSettings.h"
-#import "MPRewardedVideoError.h"
-#import "MPRewardedVideo.h"
-#import "MoPub.h"
 
 static NSString *const VunglePluginVersion = @"6.2.0";
 

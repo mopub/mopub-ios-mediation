@@ -5,7 +5,11 @@
 //
 
 #import "MPMillennialInterstitialCustomEvent.h"
-#import "MPLogging.h"
+#if __has_include(<MoPub/MoPub.h>)
+    #import "MPLogging.h"
+#elif __has_include(<MoPubSDKFramework/MoPub.h>)
+    #import <MoPubSDKFramework/MPLogging.h>
+#endif
 #import "MMAdapterVersion.h"
 
 static NSString *const kMoPubMMAdapterAdUnit = @"adUnitID";

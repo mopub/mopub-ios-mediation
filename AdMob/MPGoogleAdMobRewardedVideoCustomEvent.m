@@ -1,10 +1,17 @@
 #import "MPGoogleAdMobRewardedVideoCustomEvent.h"
 
 #import <GoogleMobileAds/GoogleMobileAds.h>
-#import "MPLogging.h"
-#import "MPRewardedVideoError.h"
-#import "MPRewardedVideoReward.h"
-#import "MPRewardedVideoCustomEvent+Caching.h"
+#if __has_include(<MoPub/MoPub.h>)
+    #import "MPLogging.h"
+    #import "MPRewardedVideoError.h"
+    #import "MPRewardedVideoReward.h"
+    #import "MPRewardedVideoCustomEvent+Caching.h"
+#elif __has_include(<MoPubSDKFramework/MoPub.h>)
+    #import <MoPubSDKFramework/MPLogging.h>
+    #import <MoPubSDKFramework/MPRewardedVideoError.h>
+    #import <MoPubSDKFramework/MPRewardedVideoReward.h>
+    #import <MoPubSDKFramework/MPRewardedVideoCustomEvent+Caching.h>
+#endif
 
 @interface MPGoogleAdMobRewardedVideoCustomEvent () <GADRewardBasedVideoAdDelegate>
 

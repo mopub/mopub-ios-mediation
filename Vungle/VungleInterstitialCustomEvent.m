@@ -7,7 +7,11 @@
 
 #import <VungleSDK/VungleSDK.h>
 #import "VungleInterstitialCustomEvent.h"
-#import "MPLogging.h"
+#if __has_include(<MoPub/MoPub.h>)
+    #import "MPLogging.h"
+#elif __has_include(<MoPubSDKFramework/MoPub.h>)
+    #import <MoPubSDKFramework/MPLogging.h>
+#endif
 #import "MPVungleRouter.h"
 
 // If you need to play ads with vungle options, you may modify playVungleAdFromRootViewController and create an options dictionary and call the playAd:withOptions: method on the vungle SDK.

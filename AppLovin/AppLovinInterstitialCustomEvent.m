@@ -3,9 +3,16 @@
 //
 
 #import "AppLovinInterstitialCustomEvent.h"
-#import "MPError.h"
-#import "MPLogging.h"
-#import "MoPub.h"
+#if __has_include(<MoPub/MoPub.h>)
+    #import "MPError.h"
+    #import "MPLogging.h"
+    #import "MoPub.h"
+#elif __has_include(<MoPubSDKFramework/MoPub.h>)
+// TODO: enable this import (and disabled code below) after MPError.h has been added to MoPubSDKFramework
+//    #import <MoPubSDKFramework/MPError.h>
+    #import <MoPubSDKFramework/MPLogging.h>
+    #import <MoPubSDKFramework/MoPub.h>
+#endif
 
 #if __has_include(<AppLovinSDK/AppLovinSDK.h>)
     #import <AppLovinSDK/AppLovinSDK.h>
@@ -130,18 +137,18 @@ static NSObject *ALGlobalInterstitialAdsLock;
     });
 }
 
-- (void)adService:(ALAdService *)adService didFailToLoadAdWithError:(int)code
-{
-    [self log: @"Interstitial failed to load with error: %d", code];
-    
-    NSError *error = [NSError errorWithDomain: kALMoPubMediationErrorDomain
-                                         code: [self toMoPubErrorCode: code]
-                                     userInfo: nil];
-    
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.delegate interstitialCustomEvent: self didFailToLoadAdWithError: error];
-    });
-}
+//- (void)adService:(ALAdService *)adService didFailToLoadAdWithError:(int)code
+//{
+//    [self log: @"Interstitial failed to load with error: %d", code];
+//
+//    NSError *error = [NSError errorWithDomain: kALMoPubMediationErrorDomain
+//                                         code: [self toMoPubErrorCode: code]
+//                                     userInfo: nil];
+//
+//    dispatch_async(dispatch_get_main_queue(), ^{
+//        [self.delegate interstitialCustomEvent: self didFailToLoadAdWithError: error];
+//    });
+//}
 
 #pragma mark - Ad Display Delegate
 
@@ -227,25 +234,25 @@ static NSObject *ALGlobalInterstitialAdsLock;
     MPLogDebug(@"AppLovinInterstitialCustomEvent : %@", message);
 }
 
-- (MOPUBErrorCode)toMoPubErrorCode:(int)appLovinErrorCode
-{
-    if ( appLovinErrorCode == kALErrorCodeNoFill )
-    {
-        return MOPUBErrorAdapterHasNoInventory;
-    }
-    else if ( appLovinErrorCode == kALErrorCodeAdRequestNetworkTimeout )
-    {
-        return MOPUBErrorNetworkTimedOut;
-    }
-    else if ( appLovinErrorCode == kALErrorCodeInvalidResponse )
-    {
-        return MOPUBErrorServerError;
-    }
-    else
-    {
-        return MOPUBErrorUnknown;
-    }
-}
+//- (MOPUBErrorCode)toMoPubErrorCode:(int)appLovinErrorCode
+//{
+//    if ( appLovinErrorCode == kALErrorCodeNoFill )
+//    {
+//        return MOPUBErrorAdapterHasNoInventory;
+//    }
+//    else if ( appLovinErrorCode == kALErrorCodeAdRequestNetworkTimeout )
+//    {
+//        return MOPUBErrorNetworkTimedOut;
+//    }
+//    else if ( appLovinErrorCode == kALErrorCodeInvalidResponse )
+//    {
+//        return MOPUBErrorServerError;
+//    }
+//    else
+//    {
+//        return MOPUBErrorUnknown;
+//    }
+//}
 
 - (ALSdk *)SDKFromCustomEventInfo:(NSDictionary *)info
 {
