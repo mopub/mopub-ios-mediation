@@ -7,7 +7,6 @@
 
 #import <VungleSDK/VungleSDK.h>
 #import "VungleInterstitialCustomEvent.h"
-#import "MPInstanceProvider.h"
 #import "MPLogging.h"
 #import "MPVungleRouter.h"
 

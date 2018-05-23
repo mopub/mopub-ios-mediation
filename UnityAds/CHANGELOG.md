@@ -1,3 +1,4 @@
+
 ## Changelog
 * 2.2.0.4
     * Notify Unity Ads even when the user does not consent

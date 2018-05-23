@@ -5,11 +5,11 @@
     
   * 11.12.0.2
     * Update import statements for MoPub frameworks
-    
- * 11.12.0.1
+
+  * 11.12.0.1
    	* Updated the adapter's cocoapods dependency to MoPub version 5.0
 
- * 11.12.0.0
+  * 11.12.0.0
     * This version of the adapters has been certified with Tapjoy 11.12.0.
 
   * 11.11.1.2

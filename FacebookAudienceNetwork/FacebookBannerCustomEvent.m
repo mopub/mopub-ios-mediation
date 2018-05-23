@@ -8,33 +8,7 @@
 #import <FBAudienceNetwork/FBAudienceNetwork.h>
 #import "FacebookBannerCustomEvent.h"
 
-#import "MPInstanceProvider.h"
 #import "MPLogging.h"
-
-@interface MPInstanceProvider (FacebookBanners)
-
-- (FBAdView *)buildFBAdViewWithPlacementID:(NSString *)placementID
-                                      size:(FBAdSize)size
-                        rootViewController:(UIViewController *)controller
-                                  delegate:(id<FBAdViewDelegate>)delegate;
-@end
-
-@implementation MPInstanceProvider (FacebookBanners)
-
-- (FBAdView *)buildFBAdViewWithPlacementID:(NSString *)placementID
-                                      size:(FBAdSize)size
-                        rootViewController:(UIViewController *)controller
-                                  delegate:(id<FBAdViewDelegate>)delegate
-{
-    FBAdView *adView = [[FBAdView alloc] initWithPlacementID:placementID
-                                                      adSize:size
-                                          rootViewController:controller];
-    adView.delegate = delegate;
-    [adView disableAutoRefresh];
-    return adView;
-}
-
-@end
 
 @interface FacebookBannerCustomEvent () <FBAdViewDelegate>
 
@@ -80,11 +54,12 @@
     }
 
     MPLogInfo(@"Requesting Facebook banner ad");
-    self.fbAdView =
-        [[MPInstanceProvider sharedProvider] buildFBAdViewWithPlacementID:[info objectForKey:@"placement_id"]
-                                                                     size:fbAdSize
-                                                       rootViewController:[self.delegate viewControllerForPresentingModalView]
-                                                                 delegate:self];
+    
+    self.fbAdView = [[FBAdView alloc] initWithPlacementID:[info objectForKey:@"placement_id"]
+                                                   adSize:fbAdSize
+                                       rootViewController:[self.delegate viewControllerForPresentingModalView]];
+    self.fbAdView.delegate = self;
+    [self.fbAdView disableAutoRefresh];
 
     if (!self.fbAdView) {
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nil];
