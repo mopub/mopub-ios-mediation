@@ -3,11 +3,12 @@
 //
 
 #if __has_include(<MoPub/MoPub.h>)
+    #import <MoPub/MoPub.h>
+#elif __has_include(<MoPubSDKFramework/MoPub.h>)
+    #import <MoPubSDKFramework/MoPub.h>
+#else
     #import "MPRewardedVideoReward.h"
     #import "MPRewardedVideoCustomEvent.h"
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-    #import <MoPubSDKFramework/MPRewardedVideoReward.h>
-    #import <MoPubSDKFramework/MPRewardedVideoCustomEvent.h>
 #endif
 #import <IronSource/IronSource.h>
 

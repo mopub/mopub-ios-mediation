@@ -2,18 +2,12 @@
 #import "TapjoyRewardedVideoCustomEvent.h"
 #import <Tapjoy/Tapjoy.h>
 #import <Tapjoy/TJPlacement.h>
-#if __has_include(<MoPub/MoPub.h>)
+#if __has_include("MoPub.h")
     #import "MPRewardedVideoError.h"
     #import "MPLogging.h"
     #import "MPRewardedVideoReward.h"
     #import "MoPub.h"
     #import "MPRewardedVideoCustomEvent+Caching.h"
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-    #import <MoPubSDKFramework/MPRewardedVideoError.h>
-    #import <MoPubSDKFramework/MPLogging.h>
-    #import <MoPubSDKFramework/MPRewardedVideoReward.h>
-    #import <MoPubSDKFramework/MoPub.h>
-    #import <MoPubSDKFramework/MPRewardedVideoCustomEvent+Caching.h>
 #endif
 #import "TapjoyGlobalMediationSettings.h"
 
