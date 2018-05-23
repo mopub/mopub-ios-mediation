@@ -89,7 +89,13 @@
     // Sending rewardedVideoDidExpireForCustomEvent: callback because the reward-based video ad will
     // not be available once its been presented.
     [self.delegate rewardedVideoDidExpireForCustomEvent:self];
+    [self resetNpaPref];
   }
+}
+
+- (void)resetNpaPref {
+    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"npaPref"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 #pragma mark - GADRewardBasedVideoAdDelegate methods
@@ -105,6 +111,7 @@
 - (void)rewardBasedVideoAd:(GADRewardBasedVideoAd *)rewardBasedVideoAd
     didFailToLoadWithError:(NSError *)error {
   [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+  [self resetNpaPref];
 }
 
 - (void)rewardBasedVideoAdDidReceiveAd:(GADRewardBasedVideoAd *)rewardBasedVideoAd {
@@ -126,6 +133,7 @@
 - (void)rewardBasedVideoAdDidClose:(GADRewardBasedVideoAd *)rewardBasedVideoAd {
   [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
   [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
+  [self resetNpaPref];
 }
 
 - (void)rewardBasedVideoAdWillLeaveApplication:(GADRewardBasedVideoAd *)rewardBasedVideoAd {

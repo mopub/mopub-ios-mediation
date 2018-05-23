@@ -34,6 +34,7 @@
 - (void)dealloc
 {
     self.adBannerView.delegate = nil;
+    [self resetNpaPref];
 }
 
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info
@@ -68,6 +69,11 @@
     [self.adBannerView loadRequest:request];
 }
 
+- (void)resetNpaPref {
+    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"npaPref"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
+
 - (CGRect)frameForCustomEventInfo:(NSDictionary *)info
 {
     CGFloat width = [[info objectForKey:@"adWidth"] floatValue];
@@ -94,6 +100,7 @@ didFailToReceiveAdWithError:(GADRequestError *)error
 {
     MPLogInfo(@"Google AdMob Banner failed to load with error: %@", error.localizedDescription);
     [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+    [self resetNpaPref];
 }
 
 - (void)adViewWillPresentScreen:(GADBannerView *)bannerView

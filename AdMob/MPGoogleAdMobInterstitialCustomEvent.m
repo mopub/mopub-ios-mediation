@@ -65,6 +65,12 @@
 - (void)dealloc
 {
     self.interstitial.delegate = nil;
+    [self resetNpaPref];
+}
+
+- (void)resetNpaPref {
+    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"npaPref"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 #pragma mark - GADInterstitialDelegate
@@ -79,6 +85,7 @@
 {
     MPLogInfo(@"Google AdMob Interstitial failed to load with error: %@", error.localizedDescription);
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+    [self resetNpaPref];
 }
 
 - (void)interstitialWillPresentScreen:(GADInterstitial *)interstitial
