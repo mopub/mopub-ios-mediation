@@ -14,7 +14,6 @@ NSString * const kAdMainImageViewKey = @"mmmainimage";
 NSString * const kAdIconImageViewKey = @"mmiconimage";
 NSString * const kDisclaimerKey = @"mmdisclaimer";
 
-
 @interface MillennialNativeAdAdapter() <MPAdImpressionTimerDelegate>
 
 @property (nonatomic) MPAdImpressionTimer *impressionTimer;
@@ -98,4 +97,3 @@ NSString * const kDisclaimerKey = @"mmdisclaimer";
 }
 
 @end
-

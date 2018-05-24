@@ -103,21 +103,21 @@ static GADAdChoicesPosition adChoicesPosition;
 
   NSMutableArray *imageURLs = [NSMutableArray array];
 
- if ([moPubNativeAd.properties[kAdIconImageKey] length]) {
-   if (![MPNativeAdUtils addURLString:moPubNativeAd.properties[kAdIconImageKey]
-                           toURLArray:imageURLs]) {
-     [self.delegate nativeCustomEvent:self
-             didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
-   }
- }
+  if ([moPubNativeAd.properties[kAdIconImageKey] length]) {
+    if (![MPNativeAdUtils addURLString:moPubNativeAd.properties[kAdIconImageKey]
+                            toURLArray:imageURLs]) {
+      [self.delegate nativeCustomEvent:self
+              didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
+    }
+  }
 
- if ([moPubNativeAd.properties[kAdMainImageKey] length]) {
-   if (![MPNativeAdUtils addURLString:moPubNativeAd.properties[kAdMainImageKey]
-                           toURLArray:imageURLs]) {
-     [self.delegate nativeCustomEvent:self
-             didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
-   }
- }
+  if ([moPubNativeAd.properties[kAdMainImageKey] length]) {
+    if (![MPNativeAdUtils addURLString:moPubNativeAd.properties[kAdMainImageKey]
+                            toURLArray:imageURLs]) {
+      [self.delegate nativeCustomEvent:self
+              didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
+    }
+  }
 
   [super precacheImagesWithURLs:imageURLs
                 completionBlock:^(NSArray *errors) {
@@ -148,21 +148,21 @@ static GADAdChoicesPosition adChoicesPosition;
 
   NSMutableArray *imageURLs = [NSMutableArray array];
 
- if ([interfaceAd.properties[kAdIconImageKey] length]) {
-   if (![MPNativeAdUtils addURLString:interfaceAd.properties[kAdIconImageKey]
-                           toURLArray:imageURLs]) {
-     [self.delegate nativeCustomEvent:self
-             didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
-   }
- }
+  if ([interfaceAd.properties[kAdIconImageKey] length]) {
+    if (![MPNativeAdUtils addURLString:interfaceAd.properties[kAdIconImageKey]
+                            toURLArray:imageURLs]) {
+      [self.delegate nativeCustomEvent:self
+              didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
+    }
+  }
 
- if ([interfaceAd.properties[kAdMainImageKey] length]) {
-   if (![MPNativeAdUtils addURLString:interfaceAd.properties[kAdMainImageKey]
-                           toURLArray:imageURLs]) {
-     [self.delegate nativeCustomEvent:self
-             didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
-   }
- }
+  if ([interfaceAd.properties[kAdMainImageKey] length]) {
+    if (![MPNativeAdUtils addURLString:interfaceAd.properties[kAdMainImageKey]
+                            toURLArray:imageURLs]) {
+      [self.delegate nativeCustomEvent:self
+              didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
+    }
+  }
 
   [super precacheImagesWithURLs:imageURLs
                 completionBlock:^(NSArray *errors) {

@@ -10,7 +10,6 @@
     #import "MPLogging.h"
     #import "MoPub.h"
     #import "MPRewardedVideoReward.h"
-    #import "MPRewardedVideoReward.h"
     #import "MPRealTimeTimer.h"
 #endif
 
@@ -116,17 +115,17 @@
 {
     MPLogInfo(@"Facebook rewarded video ad was loaded. Can present now.");
     [self.delegate rewardedVideoDidLoadAdForCustomEvent:self ];
-
+    
     // introduce timer for 1 hour as per caching logic introduced by FB
     __weak __typeof__(self) weakSelf = self;
     self.expirationTimer = [[MPRealTimeTimer alloc] initWithInterval:FB_ADS_EXPIRATION_INTERVAL block:^(MPRealTimeTimer *timer){
-       __strong __typeof__(weakSelf) strongSelf = weakSelf;
-       if (strongSelf && !strongSelf.hasTrackedImpression) {
-           [strongSelf.delegate rewardedVideoDidExpireForCustomEvent:strongSelf];
-           MPLogInfo(@"Facebook Rewarded Video ad expired as per the audience network's caching policy");
-           strongSelf.fbRewardedVideoAd = nil;
-       }
-       [strongSelf.expirationTimer invalidate];
+        __strong __typeof__(weakSelf) strongSelf = weakSelf;
+        if (strongSelf && !strongSelf.hasTrackedImpression) {
+            [strongSelf.delegate rewardedVideoDidExpireForCustomEvent:strongSelf];
+            MPLogInfo(@"Facebook Rewarded Video ad expired as per the audience network's caching policy");
+            strongSelf.fbRewardedVideoAd = nil;
+        }
+        [strongSelf.expirationTimer invalidate];
     }];
     [self.expirationTimer scheduleNow];
 }
@@ -205,7 +204,7 @@
     MPLogInfo(@"Facebook rewarded video has started playing and hence logging impression");
     //set the tracker to true when the ad is shown on the screen. So that the timer is invalidated.
     _hasTrackedImpression = true;
-   [self.expirationTimer invalidate];
+    [self.expirationTimer invalidate];
 }
 
 @end

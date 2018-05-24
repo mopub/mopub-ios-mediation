@@ -86,14 +86,14 @@
 
     __weak __typeof__(self) weakSelf = self;
     self.expirationTimer = [[MPRealTimeTimer alloc] initWithInterval:FB_ADS_EXPIRATION_INTERVAL block:^(MPRealTimeTimer *timer){
-       __strong __typeof__(weakSelf) strongSelf = weakSelf;
-       if (strongSelf && !strongSelf.hasTrackedImpression) {
-           [strongSelf.delegate interstitialCustomEventDidExpire:strongSelf];
-           MPLogInfo(@"Facebook intersitital ad expired as per the audience network's caching policy");
-           //Delete the cached objects
-           strongSelf.fbInterstitialAd = nil;
-       }
-       [strongSelf.expirationTimer invalidate];
+        __strong __typeof__(weakSelf) strongSelf = weakSelf;
+        if (strongSelf && !strongSelf.hasTrackedImpression) {
+            [strongSelf.delegate interstitialCustomEventDidExpire:strongSelf];
+            MPLogInfo(@"Facebook intersitital ad expired as per the audience network's caching policy");
+            //Delete the cached objects
+            strongSelf.fbInterstitialAd = nil;
+        }
+        [strongSelf.expirationTimer invalidate];
     }];
     [self.expirationTimer scheduleNow];
 
