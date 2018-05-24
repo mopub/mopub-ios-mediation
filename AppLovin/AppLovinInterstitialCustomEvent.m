@@ -135,11 +135,11 @@ static NSObject *ALGlobalInterstitialAdsLock;
 - (void)adService:(ALAdService *)adService didFailToLoadAdWithError:(int)code
 {
     [self log: @"Interstitial failed to load with error: %d", code];
-
+    
     NSError *error = [NSError errorWithDomain: kALMoPubMediationErrorDomain
                                          code: [self toMoPubErrorCode: code]
                                      userInfo: nil];
-
+    
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.delegate interstitialCustomEvent: self didFailToLoadAdWithError: error];
     });
@@ -231,22 +231,22 @@ static NSObject *ALGlobalInterstitialAdsLock;
 
 - (MOPUBErrorCode)toMoPubErrorCode:(int)appLovinErrorCode
 {
-   if ( appLovinErrorCode == kALErrorCodeNoFill )
-   {
-       return MOPUBErrorAdapterHasNoInventory;
-   }
-   else if ( appLovinErrorCode == kALErrorCodeAdRequestNetworkTimeout )
-   {
-       return MOPUBErrorNetworkTimedOut;
-   }
-   else if ( appLovinErrorCode == kALErrorCodeInvalidResponse )
-   {
-       return MOPUBErrorServerError;
-   }
-   else
-   {
-       return MOPUBErrorUnknown;
-   }
+    if ( appLovinErrorCode == kALErrorCodeNoFill )
+    {
+        return MOPUBErrorAdapterHasNoInventory;
+    }
+    else if ( appLovinErrorCode == kALErrorCodeAdRequestNetworkTimeout )
+    {
+        return MOPUBErrorNetworkTimedOut;
+    }
+    else if ( appLovinErrorCode == kALErrorCodeInvalidResponse )
+    {
+        return MOPUBErrorServerError;
+    }
+    else
+    {
+        return MOPUBErrorUnknown;
+    }
 }
 
 - (ALSdk *)SDKFromCustomEventInfo:(NSDictionary *)info

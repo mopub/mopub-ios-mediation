@@ -189,22 +189,22 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 
 - (MOPUBErrorCode)toMoPubErrorCode:(int)appLovinErrorCode
 {
-   if ( appLovinErrorCode == kALErrorCodeNoFill )
-   {
-       return MOPUBErrorAdapterHasNoInventory;
-   }
-   else if ( appLovinErrorCode == kALErrorCodeAdRequestNetworkTimeout )
-   {
-       return MOPUBErrorNetworkTimedOut;
-   }
-   else if ( appLovinErrorCode == kALErrorCodeInvalidResponse )
-   {
-       return MOPUBErrorServerError;
-   }
-   else
-   {
-       return MOPUBErrorUnknown;
-   }
+    if ( appLovinErrorCode == kALErrorCodeNoFill )
+    {
+        return MOPUBErrorAdapterHasNoInventory;
+    }
+    else if ( appLovinErrorCode == kALErrorCodeAdRequestNetworkTimeout )
+    {
+        return MOPUBErrorNetworkTimedOut;
+    }
+    else if ( appLovinErrorCode == kALErrorCodeInvalidResponse )
+    {
+        return MOPUBErrorServerError;
+    }
+    else
+    {
+        return MOPUBErrorUnknown;
+    }
 }
 
 - (ALSdk *)SDKFromCustomEventInfo:(NSDictionary *)info
