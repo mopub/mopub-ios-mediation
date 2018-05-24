@@ -1,7 +1,7 @@
 ## Changelog
   * 7.30.0.2
     * update adapters to remove dependency on MPInstanceProvider
-    * Update import statements for MoPub frameworks
+    * Update adapters to be compatible with MoPub iOS SDK framework
 
   * 7.30.0.1
   	* Updated the adapter's cocoapods dependency to MoPub version 5.0

@@ -1,7 +1,7 @@
 ## Changelog
 * 4.28.1.3
       * update adapters to remove dependency on MPInstanceProvider
-      * Update import statements for MoPub frameworks
+      * Update adapters to be compatible with MoPub iOS SDK framework
 
 * 4.28.1.2
     * This version of the adapters has been certified with Facebook Audience Network 4.28.1.

@@ -1,7 +1,7 @@
 ## Changelog
 * 6.8.1.3
     * update adapters to remove dependency on MPInstanceProvider
-    * Update import statements for MoPub frameworks
+    * Update adapters to be compatible with MoPub iOS SDK framework
 
 * 6.8.1.2
   * Removed support for OnebyAOL SDK dependency and added the support back for adapter pods.
