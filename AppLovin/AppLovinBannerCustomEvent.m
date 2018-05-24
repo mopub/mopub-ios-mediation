@@ -187,25 +187,25 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
     MPLogDebug(@"AppLovinBannerCustomEvent : %@", message);
 }
 
-//- (MOPUBErrorCode)toMoPubErrorCode:(int)appLovinErrorCode
-//{
-//    if ( appLovinErrorCode == kALErrorCodeNoFill )
-//    {
-//        return MOPUBErrorAdapterHasNoInventory;
-//    }
-//    else if ( appLovinErrorCode == kALErrorCodeAdRequestNetworkTimeout )
-//    {
-//        return MOPUBErrorNetworkTimedOut;
-//    }
-//    else if ( appLovinErrorCode == kALErrorCodeInvalidResponse )
-//    {
-//        return MOPUBErrorServerError;
-//    }
-//    else
-//    {
-//        return MOPUBErrorUnknown;
-//    }
-//}
+- (MOPUBErrorCode)toMoPubErrorCode:(int)appLovinErrorCode
+{
+   if ( appLovinErrorCode == kALErrorCodeNoFill )
+   {
+       return MOPUBErrorAdapterHasNoInventory;
+   }
+   else if ( appLovinErrorCode == kALErrorCodeAdRequestNetworkTimeout )
+   {
+       return MOPUBErrorNetworkTimedOut;
+   }
+   else if ( appLovinErrorCode == kALErrorCodeInvalidResponse )
+   {
+       return MOPUBErrorServerError;
+   }
+   else
+   {
+       return MOPUBErrorUnknown;
+   }
+}
 
 - (ALSdk *)SDKFromCustomEventInfo:(NSDictionary *)info
 {
@@ -254,7 +254,7 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
         [self.parentCustomEvent log: @"Banner failed to load with error: %d", code];
         
         NSError *error = [NSError errorWithDomain: kALMoPubMediationErrorDomain
-                                             code: code //[self.parentCustomEvent toMoPubErrorCode: code]
+                                             code: [self.parentCustomEvent toMoPubErrorCode: code]
                                          userInfo: nil];
         [self.parentCustomEvent.delegate bannerCustomEvent: self.parentCustomEvent didFailToLoadAdWithError: error];
     });
@@ -314,7 +314,7 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
     [self.parentCustomEvent log: @"Banner failed to display: %ld", code];
     
     NSError *error = [NSError errorWithDomain: kALMoPubMediationErrorDomain
-                                         code: code //[self.parentCustomEvent toMoPubErrorCode: code]
+                                         code: [self.parentCustomEvent toMoPubErrorCode: code]
                                      userInfo: @{NSLocalizedFailureReasonErrorKey : @"Adaptor failed to display banner"}];
     [self.parentCustomEvent.delegate bannerCustomEvent: self.parentCustomEvent didFailToLoadAdWithError: error];
 }

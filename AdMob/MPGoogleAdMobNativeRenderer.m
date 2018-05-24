@@ -17,7 +17,7 @@
 #import "MPGoogleAdMobNativeAdAdapter.h"
 #import "UIView+MPGoogleAdMobAdditions.h"
 
-@interface MPGoogleAdMobNativeRenderer () //<MPNativeAdRendererImageHandlerDelegate>
+@interface MPGoogleAdMobNativeRenderer () <MPNativeAdRendererImageHandlerDelegate>
 
 /// Publisher adView which is rendering.
 @property(nonatomic, strong) UIView<MPNativeAdRendering> *adView;
@@ -63,8 +63,8 @@
         (MPStaticNativeAdRendererSettings *)rendererSettings;
         _renderingViewClass = settings.renderingViewClass;
         viewSizeHandler = [settings.viewSizeHandler copy];
-        _rendererImageHandler = nil; //[MPNativeAdRendererImageHandler new];
-        //_rendererImageHandler.delegate = self;
+        _rendererImageHandler = [MPNativeAdRendererImageHandler new];
+        _rendererImageHandler.delegate = self;
     }
 
     return self;
@@ -275,9 +275,9 @@
         // We'll start asychronously loading the native ad images now.
         if (self.adapter.properties[kAdIconImageKey] &&
             [self.adView respondsToSelector:@selector(nativeIconImageView)]) {
-            //[self.rendererImageHandler
-            // loadImageForURL:[NSURL URLWithString:self.adapter.properties[kAdIconImageKey]]
-            // intoImageView:self.adView.nativeIconImageView];
+            [self.rendererImageHandler
+            loadImageForURL:[NSURL URLWithString:self.adapter.properties[kAdIconImageKey]]
+            intoImageView:self.adView.nativeIconImageView];
         }
 
         // Only handle the loading of the main image if the adapter doesn't already have a view for it.
@@ -285,9 +285,9 @@
               [self.adapter mainMediaView])) {
             if (self.adapter.properties[kAdMainImageKey] &&
                 [self.adView respondsToSelector:@selector(nativeMainImageView)]) {
-                //[self.rendererImageHandler
-                // loadImageForURL:[NSURL URLWithString:self.adapter.properties[kAdMainImageKey]]
-                // intoImageView:self.adView.nativeMainImageView];
+                [self.rendererImageHandler
+                loadImageForURL:[NSURL URLWithString:self.adapter.properties[kAdMainImageKey]]
+                intoImageView:self.adView.nativeMainImageView];
             }
         }
 

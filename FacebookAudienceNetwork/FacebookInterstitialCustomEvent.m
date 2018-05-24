@@ -19,8 +19,7 @@
 @interface FacebookInterstitialCustomEvent () <FBInterstitialAdDelegate>
 
 @property (nonatomic, strong) FBInterstitialAd *fbInterstitialAd;
-// TODO: enable this and related code after MPRealTimeTimer.h has been added to MoPubSDKFramework
-//@property (nonatomic, strong) MPRealTimeTimer *expirationTimer;
+@property (nonatomic, strong) MPRealTimeTimer *expirationTimer;
 @property (nonatomic, assign) BOOL hasTrackedImpression;
 
 @end
@@ -85,18 +84,18 @@
 
     // introduce timer for 1 hour as per caching logic introduced by FB
 
-    //__weak __typeof__(self) weakSelf = self;
-    //self.expirationTimer = [[MPRealTimeTimer alloc] initWithInterval:FB_ADS_EXPIRATION_INTERVAL block:^(MPRealTimeTimer *timer){
-    //    __strong __typeof__(weakSelf) strongSelf = weakSelf;
-    //    if (strongSelf && !strongSelf.hasTrackedImpression) {
-    //        [strongSelf.delegate interstitialCustomEventDidExpire:strongSelf];
-    //        MPLogInfo(@"Facebook intersitital ad expired as per the audience network's caching policy");
-    //        //Delete the cached objects
-    //        strongSelf.fbInterstitialAd = nil;
-    //    }
-    //    [strongSelf.expirationTimer invalidate];
-    //}];
-    //[self.expirationTimer scheduleNow];
+    __weak __typeof__(self) weakSelf = self;
+    self.expirationTimer = [[MPRealTimeTimer alloc] initWithInterval:FB_ADS_EXPIRATION_INTERVAL block:^(MPRealTimeTimer *timer){
+       __strong __typeof__(weakSelf) strongSelf = weakSelf;
+       if (strongSelf && !strongSelf.hasTrackedImpression) {
+           [strongSelf.delegate interstitialCustomEventDidExpire:strongSelf];
+           MPLogInfo(@"Facebook intersitital ad expired as per the audience network's caching policy");
+           //Delete the cached objects
+           strongSelf.fbInterstitialAd = nil;
+       }
+       [strongSelf.expirationTimer invalidate];
+    }];
+    [self.expirationTimer scheduleNow];
 
 }
 
@@ -105,7 +104,7 @@
     MPLogInfo(@"Facebook intersitital ad is logging impressions for interstitials");
     //set the tracker to true when the ad is shown on the screen. So that the timer is invalidated.
     _hasTrackedImpression = true;
-    //[self.expirationTimer invalidate];
+    [self.expirationTimer invalidate];
 }
 
 - (void)interstitialAd:(FBInterstitialAd *)interstitialAd didFailWithError:(NSError *)error

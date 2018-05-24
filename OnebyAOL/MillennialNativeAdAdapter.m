@@ -14,11 +14,10 @@ NSString * const kAdMainImageViewKey = @"mmmainimage";
 NSString * const kAdIconImageViewKey = @"mmiconimage";
 NSString * const kDisclaimerKey = @"mmdisclaimer";
 
-// TODO: reenable once MPAdImpressionTimer.h has been added to MoPubSDKFramework
 
-@interface MillennialNativeAdAdapter() //<MPAdImpressionTimerDelegate>
+@interface MillennialNativeAdAdapter() <MPAdImpressionTimerDelegate>
 
-//@property (nonatomic) MPAdImpressionTimer *impressionTimer;
+@property (nonatomic) MPAdImpressionTimer *impressionTimer;
 @property (nonatomic, strong) MMNativeAd *mmNativeAd;
 @property (nonatomic, strong) NSDictionary<NSString *, id> *mmAdProperties;
 
@@ -62,8 +61,8 @@ NSString * const kDisclaimerKey = @"mmdisclaimer";
         _mmAdProperties = properties;
 
         // Impression tracking
-        //_impressionTimer = [[MPAdImpressionTimer alloc] initWithRequiredSecondsForImpression:0.0 requiredViewVisibilityPercentage:0.5];
-        //_impressionTimer.delegate = self;
+        _impressionTimer = [[MPAdImpressionTimer alloc] initWithRequiredSecondsForImpression:0.0 requiredViewVisibilityPercentage:0.5];
+        _impressionTimer.delegate = self;
 
     }
     return self;
@@ -88,7 +87,7 @@ NSString * const kDisclaimerKey = @"mmdisclaimer";
 #pragma mark - Impression tracking
 
 - (void)willAttachToView:(UIView *)view {
-    //[self.impressionTimer startTrackingView:view];
+    [self.impressionTimer startTrackingView:view];
 }
 
 - (void)adViewWillLogImpression:(UIView *)adView {
