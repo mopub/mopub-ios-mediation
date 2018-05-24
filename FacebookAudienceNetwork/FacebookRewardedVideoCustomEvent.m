@@ -6,10 +6,12 @@
 #import <FBAudienceNetwork/FBAudienceNetwork.h>
 #import "FacebookRewardedVideoCustomEvent.h"
 
-#import "MPLogging.h"
-#import "MoPub.h"
-#import "MPRewardedVideoReward.h"
-#import "MPRealTimeTimer.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+    #import "MoPub.h"
+    #import "MPRewardedVideoReward.h"
+    #import "MPRealTimeTimer.h"
+#endif
 
 //Timer to record the expiration interval
 #define FB_ADS_EXPIRATION_INTERVAL  3600

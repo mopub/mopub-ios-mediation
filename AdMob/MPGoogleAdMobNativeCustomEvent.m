@@ -1,10 +1,12 @@
 #import "MPGoogleAdMobNativeAdAdapter.h"
 #import "MPGoogleAdMobNativeCustomEvent.h"
-#import "MPLogging.h"
-#import "MPNativeAd.h"
-#import "MPNativeAdConstants.h"
-#import "MPNativeAdError.h"
-#import "MPNativeAdUtils.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+    #import "MPNativeAd.h"
+    #import "MPNativeAdConstants.h"
+    #import "MPNativeAdError.h"
+    #import "MPNativeAdUtils.h"
+#endif
 
 static void MPGoogleLogInfo(NSString *message) {
   message = [[NSString alloc] initWithFormat:@"<Google Adapter> - %@", message];

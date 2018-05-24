@@ -1,11 +1,13 @@
 //
-//  MOPUBISAdapterIronSource.m
+//  IronSourceInterstitialCustomEvent.m
 //
 
 #import "IronSourceInterstitialCustomEvent.h"
-#import "MPLogging.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+    #import "MoPub.h"
+#endif
 #import "IronSourceConstants.h"
-#import "MoPub.h"
 
 @interface IronSourceInterstitialCustomEvent()
 @property (nonatomic, strong) NSString *placementName;

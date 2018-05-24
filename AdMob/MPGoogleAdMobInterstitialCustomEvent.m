@@ -7,9 +7,11 @@
 
 #import <GoogleMobileAds/GoogleMobileAds.h>
 #import "MPGoogleAdMobInterstitialCustomEvent.h"
-#import "MPInterstitialAdController.h"
-#import "MPLogging.h"
-#import "MPAdConfiguration.h"
+#if __has_include("MoPub.h")
+    #import "MPInterstitialAdController.h"
+    #import "MPLogging.h"
+    #import "MPAdConfiguration.h"
+#endif
 #import <CoreLocation/CoreLocation.h>
 
 @interface MPGoogleAdMobInterstitialCustomEvent () <GADInterstitialDelegate>

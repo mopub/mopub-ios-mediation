@@ -5,9 +5,13 @@
 //  Copyright (c) 2013 MoPub. All rights reserved.
 //
 
+#import <CoreLocation/CoreLocation.h>
+
 #import <GoogleMobileAds/GoogleMobileAds.h>
 #import "MPGoogleAdMobBannerCustomEvent.h"
-#import "MPLogging.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+#endif
 
 @interface MPGoogleAdMobBannerCustomEvent () <GADBannerViewDelegate>
 

@@ -6,10 +6,12 @@
 //
 
 #import "MPChartboostRouter.h"
-#import "MPLogging.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+    #import "MoPub.h"
+#endif
 #import "ChartboostRewardedVideoCustomEvent.h"
 #import "ChartboostInterstitialCustomEvent.h"
-#import "MoPub.h"
 
 @interface ChartboostRewardedVideoCustomEvent (ChartboostRouter) <ChartboostDelegate>
 @end

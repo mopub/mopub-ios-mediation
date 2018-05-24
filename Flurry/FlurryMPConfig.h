@@ -7,7 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "Flurry.h"
+
+#if __has_include(<Flurry_iOS_SDK/Flurry.h>)
+    #import <Flurry_iOS_SDK/Flurry.h>
+    #import <Flurry_iOS_SDK/FlurryAdError.h>
+#else
+    #import "Flurry.h"
+    #import "FlurryAdError.h"
+#endif
 
 #define FlurryMediationOrigin @"Flurry_Mopub_iOS"
 #define FlurryAdapterVersion @"7.6.4"

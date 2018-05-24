@@ -2,12 +2,14 @@
 #import "TapjoyRewardedVideoCustomEvent.h"
 #import <Tapjoy/Tapjoy.h>
 #import <Tapjoy/TJPlacement.h>
-#import "MPRewardedVideoError.h"
-#import "MPLogging.h"
-#import "MPRewardedVideoReward.h"
+#if __has_include("MoPub.h")
+    #import "MPRewardedVideoError.h"
+    #import "MPLogging.h"
+    #import "MPRewardedVideoReward.h"
+    #import "MoPub.h"
+    #import "MPRewardedVideoCustomEvent+Caching.h"
+#endif
 #import "TapjoyGlobalMediationSettings.h"
-#import "MoPub.h"
-#import "MPRewardedVideoCustomEvent+Caching.h"
 
 @interface TapjoyRewardedVideoCustomEvent () <TJPlacementDelegate, TJCVideoAdDelegate>
 @property (nonatomic, strong) TJPlacement *placement;

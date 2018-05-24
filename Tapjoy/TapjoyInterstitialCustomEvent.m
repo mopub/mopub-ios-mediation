@@ -2,8 +2,10 @@
 #import "TapjoyInterstitialCustomEvent.h"
 #import <Tapjoy/TJPlacement.h>
 #import <Tapjoy/Tapjoy.h>
-#import "MPLogging.h"
-#import "MoPub.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+    #import "MoPub.h"
+#endif
 
 @interface TapjoyInterstitialCustomEvent () <TJPlacementDelegate>
 @property (nonatomic, strong) TJPlacement *placement;

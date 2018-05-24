@@ -7,9 +7,11 @@
 
 #import <FBAudienceNetwork/FBAudienceNetwork.h>
 #import "FacebookNativeAdAdapter.h"
-#import "MPNativeAdConstants.h"
-#import "MPNativeAdError.h"
-#import "MPLogging.h"
+#if __has_include("MoPub.h")
+    #import "MPNativeAdConstants.h"
+    #import "MPNativeAdError.h"
+    #import "MPLogging.h"
+#endif
 
 NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
 
