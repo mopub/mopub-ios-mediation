@@ -46,6 +46,7 @@ static GADAdChoicesPosition adChoicesPosition;
     [self.delegate nativeCustomEvent:self
             didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidAdServerResponse(
                                          @"Ad unit ID cannot be nil.")];
+    [self resetNpaPref];
     return;
   }
 
@@ -54,7 +55,15 @@ static GADAdChoicesPosition adChoicesPosition;
   while (rootViewController.presentedViewController) {
     rootViewController = rootViewController.presentedViewController;
   }
+  NSString *npaPref = [[NSUserDefaults standardUserDefaults] stringForKey:@"npaPref"];
   GADRequest *request = [GADRequest request];
+    
+  if (npaPref != nil) {
+    GADExtras *extras = [[GADExtras alloc] init];
+    extras.additionalParameters = @{@"npa": npaPref};
+    [request registerAdNetworkExtras:extras];
+  }
+
   request.requestAgent = @"MoPub";
   GADNativeAdImageAdLoaderOptions *nativeAdImageLoaderOptions =
       [[GADNativeAdImageAdLoaderOptions alloc] init];
@@ -92,6 +101,7 @@ static GADAdChoicesPosition adChoicesPosition;
     [self.delegate nativeCustomEvent:self
             didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidAdServerResponse(
                                          @"Missing one or more required assets.")];
+    [self resetNpaPref];
     return;
   }
 
@@ -106,6 +116,7 @@ static GADAdChoicesPosition adChoicesPosition;
                             toURLArray:imageURLs]) {
       [self.delegate nativeCustomEvent:self
               didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
+      [self resetNpaPref];
     }
   }
 
@@ -114,6 +125,7 @@ static GADAdChoicesPosition adChoicesPosition;
                             toURLArray:imageURLs]) {
       [self.delegate nativeCustomEvent:self
               didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
+      [self resetNpaPref];
     }
   }
 
@@ -122,6 +134,7 @@ static GADAdChoicesPosition adChoicesPosition;
                   if (errors) {
                     [self.delegate nativeCustomEvent:self
                             didFailToLoadAdWithError:MPNativeAdNSErrorForImageDownloadFailure()];
+                    [self resetNpaPref];
                   } else {
                     [self.delegate nativeCustomEvent:self didLoadAd:moPubNativeAd];
                   }
@@ -137,6 +150,7 @@ static GADAdChoicesPosition adChoicesPosition;
     [self.delegate nativeCustomEvent:self
             didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidAdServerResponse(
                                          @"Missing one or more required assets.")];
+    [self resetNpaPref];
     return;
   }
 
@@ -151,6 +165,7 @@ static GADAdChoicesPosition adChoicesPosition;
                             toURLArray:imageURLs]) {
       [self.delegate nativeCustomEvent:self
               didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
+      [self resetNpaPref];
     }
   }
 
@@ -159,6 +174,7 @@ static GADAdChoicesPosition adChoicesPosition;
                             toURLArray:imageURLs]) {
       [self.delegate nativeCustomEvent:self
               didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
+      [self resetNpaPref];
     }
   }
 
@@ -167,10 +183,16 @@ static GADAdChoicesPosition adChoicesPosition;
                   if (errors) {
                     [self.delegate nativeCustomEvent:self
                             didFailToLoadAdWithError:MPNativeAdNSErrorForImageDownloadFailure()];
+                    [self resetNpaPref];
                   } else {
                     [self.delegate nativeCustomEvent:self didLoadAd:interfaceAd];
                   }
                 }];
+}
+
+- (void)resetNpaPref {
+    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"npaPref"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 #pragma mark - Private Methods

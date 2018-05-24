@@ -8,6 +8,8 @@
 #import <GoogleMobileAds/GoogleMobileAds.h>
 #import "MPGoogleAdMobBannerCustomEvent.h"
 #import "MPLogging.h"
+#import "AdMobGlobalMediationSettings.h"
+#import "MoPub.h"
 
 @interface MPGoogleAdMobBannerCustomEvent () <GADBannerViewDelegate>
 
@@ -32,6 +34,7 @@
 - (void)dealloc
 {
     self.adBannerView.delegate = nil;
+    [self resetNpaPref];
 }
 
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info
@@ -41,8 +44,15 @@
     self.adBannerView.adUnitID = [info objectForKey:@"adUnitID"];
     self.adBannerView.rootViewController = [self.delegate viewControllerForPresentingModalView];
 
+    NSString *npaPref = [[NSUserDefaults standardUserDefaults] stringForKey:@"npaPref"];
     GADRequest *request = [GADRequest request];
-
+    
+    if (npaPref != nil) {
+        GADExtras *extras = [[GADExtras alloc] init];
+        extras.additionalParameters = @{@"npa": npaPref};
+        [request registerAdNetworkExtras:extras];
+    }
+    
     CLLocation *location = self.delegate.location;
     if (location) {
         [request setLocationWithLatitude:location.coordinate.latitude
@@ -57,6 +67,11 @@
     request.requestAgent = @"MoPub";
 
     [self.adBannerView loadRequest:request];
+}
+
+- (void)resetNpaPref {
+    [[NSUserDefaults standardUserDefaults] removePersistentDomainForName:@"npaPref"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (CGRect)frameForCustomEventInfo:(NSDictionary *)info
@@ -85,6 +100,7 @@ didFailToReceiveAdWithError:(GADRequestError *)error
 {
     MPLogInfo(@"Google AdMob Banner failed to load with error: %@", error.localizedDescription);
     [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+    [self resetNpaPref];
 }
 
 - (void)adViewWillPresentScreen:(GADBannerView *)bannerView
