@@ -1,4 +1,8 @@
 ## Changelog
+ * 6.7.9.1.1
+    * Notify MoPub when the ironSource `interstitialDidFailToShowWithError` delegate fires
+    * Improve ironSource SDK initialization
+
  * 6.7.9.1.0
     * This version of the adapters has been certified with IronSource 6.7.9.1 
 
