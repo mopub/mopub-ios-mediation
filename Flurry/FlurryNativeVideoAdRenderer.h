@@ -13,7 +13,7 @@
 #elif __has_include(<MoPubSDKFramework/MoPub.h>)
     #import <MoPubSDKFramework/MoPub.h>
 #else
-    #import "MPNativeAdRenderer"
+    #import "MPNativeAdRenderer.h"
 #endif
 
 
