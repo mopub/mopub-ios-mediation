@@ -1,18 +1,20 @@
 #import "MPGoogleAdMobNativeRenderer.h"
 
-#import "MPAdDestinationDisplayAgent.h"
+#if __has_include("MoPub.h")
+    #import "MPAdDestinationDisplayAgent.h"
+    #import "MPLogging.h"
+    #import "MPNativeAdAdapter.h"
+    #import "MPNativeAdConstants.h"
+    #import "MPNativeAdError.h"
+    #import "MPNativeAdRendererConfiguration.h"
+    #import "MPNativeAdRendererImageHandler.h"
+    #import "MPNativeAdRendering.h"
+    #import "MPNativeAdRenderingImageLoader.h"
+    #import "MPNativeCache.h"
+    #import "MPNativeView.h"
+    #import "MPStaticNativeAdRendererSettings.h"
+#endif
 #import "MPGoogleAdMobNativeAdAdapter.h"
-#import "MPLogging.h"
-#import "MPNativeAdAdapter.h"
-#import "MPNativeAdConstants.h"
-#import "MPNativeAdError.h"
-#import "MPNativeAdRendererConfiguration.h"
-#import "MPNativeAdRendererImageHandler.h"
-#import "MPNativeAdRendering.h"
-#import "MPNativeAdRenderingImageLoader.h"
-#import "MPNativeCache.h"
-#import "MPNativeView.h"
-#import "MPStaticNativeAdRendererSettings.h"
 #import "UIView+MPGoogleAdMobAdditions.h"
 
 @interface MPGoogleAdMobNativeRenderer ()<MPNativeAdRendererImageHandlerDelegate>

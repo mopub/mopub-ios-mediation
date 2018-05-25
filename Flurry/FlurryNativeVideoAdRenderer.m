@@ -8,15 +8,17 @@
 
 #import "FlurryNativeAdAdapter.h"
 #import "FlurryNativeVideoAdRenderer.h"
-#import "MOPUBNativeVideoAdRendererSettings.h"
-#import "MPNativeAdRendererConfiguration.h"
-#import "MPNativeAdRenderer.h"
-#import "MPNativeAdRendering.h"
-#import "MPNativeAdAdapter.h"
-#import "MPNativeAdConstants.h"
-#import "MPNativeAdError.h"
-#import "MPNativeAdRendererImageHandler.h"
-#import "MPNativeAdRenderingImageLoader.h"
+#if __has_include("MoPub.h")
+    #import "MOPUBNativeVideoAdRendererSettings.h"
+    #import "MPNativeAdRendererConfiguration.h"
+    #import "MPNativeAdRenderer.h"
+    #import "MPNativeAdRendering.h"
+    #import "MPNativeAdAdapter.h"
+    #import "MPNativeAdConstants.h"
+    #import "MPNativeAdError.h"
+    #import "MPNativeAdRendererImageHandler.h"
+    #import "MPNativeAdRenderingImageLoader.h"
+#endif
 
 /**
  * Renderer that supports both static and video Flurry native ads

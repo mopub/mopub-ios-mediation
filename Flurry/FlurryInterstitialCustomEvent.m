@@ -7,29 +7,11 @@
 //
 
 #import "FlurryInterstitialCustomEvent.h"
-#import "FlurryAdInterstitial.h"
-#import "FlurryAdError.h"
 #import "FlurryMPConfig.h"
 
-#import "MPInstanceProvider.h"
-#import "MPLogging.h"
-
-@interface MPInstanceProvider (FlurryInterstitials)
-
-- (FlurryAdInterstitial *)interstitialForSpace:(NSString *)adSpace delegate:(id<FlurryAdInterstitialDelegate>)delegate;
-
-@end
-
-@implementation MPInstanceProvider (FlurryInterstitials)
-
-- (FlurryAdInterstitial *)interstitialForSpace:(NSString *)adSpace delegate:(id<FlurryAdInterstitialDelegate>)delegate
-{
-    FlurryAdInterstitial *interstitial = [[FlurryAdInterstitial alloc] initWithSpace:adSpace];
-    interstitial.adDelegate = delegate;
-    return interstitial;
-}
-
-@end
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+#endif
 
 @interface  FlurryInterstitialCustomEvent()
 
@@ -58,7 +40,8 @@
     
     [FlurryMPConfig startSessionWithApiKey:apiKey];
     
-    self.adInterstitial = [[MPInstanceProvider sharedProvider] interstitialForSpace:adSpaceName delegate:self];
+    self.adInterstitial = [[FlurryAdInterstitial alloc] initWithSpace:adSpaceName];
+    self.adInterstitial.adDelegate = self;
     [self.adInterstitial fetchAd];
 }
 

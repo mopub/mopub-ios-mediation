@@ -5,8 +5,10 @@
 //
 
 #import "MillennialNativeAdAdapter.h"
-#import "MPNativeAdConstants.h"
-#import "MPAdImpressionTimer.h"
+#if __has_include("MoPub.h")
+    #import "MPNativeAdConstants.h"
+    #import "MPAdImpressionTimer.h"
+#endif
 
 NSString * const kAdMainImageViewKey = @"mmmainimage";
 NSString * const kAdIconImageViewKey = @"mmiconimage";

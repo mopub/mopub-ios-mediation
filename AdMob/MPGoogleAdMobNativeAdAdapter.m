@@ -1,9 +1,11 @@
 #import "MPGoogleAdMobNativeAdAdapter.h"
 
-#import "MPCoreInstanceProvider.h"
-#import "MPLogging.h"
-#import "MPNativeAdConstants.h"
-#import "MPNativeAdError.h"
+#if __has_include("MoPub.h")
+    #import "MPCoreInstanceProvider.h"
+    #import "MPLogging.h"
+    #import "MPNativeAdConstants.h"
+    #import "MPNativeAdError.h"
+#endif
 
 static NSString *const kGADMAdvertiserKey = @"advertiser";
 static NSString *const kGADMPriceKey = @"price";

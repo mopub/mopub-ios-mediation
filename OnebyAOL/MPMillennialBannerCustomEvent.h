@@ -6,15 +6,14 @@
 
 #if __has_include(<MoPub/MoPub.h>)
     #import <MoPub/MoPub.h>
+#elif __has_include(<MoPubSDKFramework/MoPub.h>)
+    #import <MoPubSDKFramework/MoPub.h>
 #else
     #import "MoPub.h"
 #endif
 
 #import <MMAdSDK/MMAdSDK.h>
 
-/*
- * Certified with Millennial Media 6.6.0
- */
 @interface MPMillennialBannerCustomEvent : MPBannerCustomEvent <MMInlineDelegate>
 
 @property (nonatomic, readonly) MMCreativeInfo* creativeInfo;

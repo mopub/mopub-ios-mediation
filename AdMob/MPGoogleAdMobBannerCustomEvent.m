@@ -5,33 +5,13 @@
 //  Copyright (c) 2013 MoPub. All rights reserved.
 //
 
+#import <CoreLocation/CoreLocation.h>
+
 #import <GoogleMobileAds/GoogleMobileAds.h>
 #import "MPGoogleAdMobBannerCustomEvent.h"
-#import "MPLogging.h"
-#import "MPInstanceProvider.h"
-
-@interface MPInstanceProvider (AdMobBanners)
-
-- (GADBannerView *)buildGADBannerViewWithFrame:(CGRect)frame;
-- (GADRequest *)buildGADBannerRequest;
-
-@end
-
-@implementation MPInstanceProvider (AdMobBanners)
-
-- (GADBannerView *)buildGADBannerViewWithFrame:(CGRect)frame
-{
-    return [[GADBannerView alloc] initWithFrame:frame];
-}
-
-- (GADRequest *)buildGADBannerRequest
-{
-    return [GADRequest request];
-}
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+#endif
 
 @interface MPGoogleAdMobBannerCustomEvent () <GADBannerViewDelegate>
 
@@ -47,7 +27,7 @@
     self = [super init];
     if (self)
     {
-        self.adBannerView = [[MPInstanceProvider sharedProvider] buildGADBannerViewWithFrame:CGRectZero];
+        self.adBannerView = [[GADBannerView alloc] initWithFrame:CGRectZero];
         self.adBannerView.delegate = self;
     }
     return self;
@@ -65,7 +45,7 @@
     self.adBannerView.adUnitID = [info objectForKey:@"adUnitID"];
     self.adBannerView.rootViewController = [self.delegate viewControllerForPresentingModalView];
 
-    GADRequest *request = [[MPInstanceProvider sharedProvider] buildGADBannerRequest];
+    GADRequest *request = [GADRequest request];
 
     CLLocation *location = self.delegate.location;
     if (location) {

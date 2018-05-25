@@ -7,11 +7,13 @@
 
 #import "MPMillennialRewardedVideoCustomEvent.h"
 #import "MPMillennialInterstitialCustomEvent.h"
-#import "MPLogging.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+    #import "MPRewardedVideoCustomEvent+Caching.h"
+#endif
 #import <MMAdSDK/MMAd+Experimental.h>
 #import "MMAdapterVersion.h"
 #import <objc/runtime.h>
-#import "MPRewardedVideoCustomEvent+Caching.h"
 
 static NSString *const kMoPubMMAdapterAdUnit = @"adUnitID";
 static NSString *const kMoPubMMAdapterDCN = @"dcn";

@@ -1,11 +1,13 @@
 //
-//  MOPUBRVAdapterIronSource.m
+//  IronSourceRewardedVideoCustomEvent.m
 //
 
 #import "IronSourceRewardedVideoCustomEvent.h"
 #import "IronSourceConstants.h"
-#import "MPLogging.h"
-#import "MoPub.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+    #import "MoPub.h"
+#endif
 
 @interface IronSourceRewardedVideoCustomEvent()
 

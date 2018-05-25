@@ -7,14 +7,14 @@
 //
 
 #if __has_include(<MoPub/MoPub.h>)
-#import <MoPub/MoPub.h>
+    #import <MoPub/MoPub.h>
+#elif __has_include(<MoPubSDKFramework/MoPub.h>)
+    #import <MoPubSDKFramework/MoPub.h>
 #else
-#import "MPNativeCustomEvent.h"
+    #import "MPNativeCustomEvent.h"
 #endif
 
-/*
- * Certified with Flurry 8.2.2
- */
+
 @interface FlurryNativeCustomEvent : MPNativeCustomEvent
 
 @end

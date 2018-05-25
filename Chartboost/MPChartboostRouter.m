@@ -6,11 +6,12 @@
 //
 
 #import "MPChartboostRouter.h"
-#import "MPLogging.h"
-#import "MPInstanceProvider+Chartboost.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+    #import "MoPub.h"
+#endif
 #import "ChartboostRewardedVideoCustomEvent.h"
 #import "ChartboostInterstitialCustomEvent.h"
-#import "MoPub.h"
 
 @interface ChartboostRewardedVideoCustomEvent (ChartboostRouter) <ChartboostDelegate>
 @end
@@ -32,7 +33,12 @@
 
 + (MPChartboostRouter *)sharedRouter
 {
-    return [[MPInstanceProvider sharedProvider] sharedMPChartboostRouter];
+    static MPChartboostRouter * sharedRouter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedRouter = [[MPChartboostRouter alloc] init];
+    });
+    return sharedRouter;
 }
 
 - (id)init

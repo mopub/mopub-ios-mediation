@@ -5,20 +5,13 @@
 //
 
 #import "MPMillennialInterstitialCustomEvent.h"
-#import "MPInstanceProvider.h"
-#import "MPLogging.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+#endif
 #import "MMAdapterVersion.h"
 
 static NSString *const kMoPubMMAdapterAdUnit = @"adUnitID";
 static NSString *const kMoPubMMAdapterDCN = @"dcn";
-
-@implementation MPInstanceProvider (MillennialInterstitials)
-
-- (MMInterstitialAd *)buildMMInterstitialWithPlacementId:(NSString *)placementId {
-    return [[MMInterstitialAd alloc] initWithPlacementId:placementId];
-}
-
-@end
 
 @interface MPMillennialInterstitialCustomEvent ()
 
@@ -106,7 +99,7 @@ static NSString *const kMoPubMMAdapterDCN = @"dcn";
         [mmSDK appSettings].siteId = nil;
     }
 
-    self.interstitial = [[MPInstanceProvider sharedProvider] buildMMInterstitialWithPlacementId:placementId];
+    self.interstitial = [[MMInterstitialAd alloc] initWithPlacementId:placementId];
     self.interstitial.delegate = self;
 
     [self.interstitial load:nil];

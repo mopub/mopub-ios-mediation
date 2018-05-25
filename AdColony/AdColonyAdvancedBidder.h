@@ -1,5 +1,5 @@
 //
-//  FacebookAdvancedBidder.h
+//  AdColonyAdvancedBidder.h
 //  MoPubSDK
 //
 //  Copyright © 2017 MoPub. All rights reserved.
@@ -14,8 +14,7 @@
     #import "MPAdvancedBidder.h"
 #endif
 
-
-@interface FacebookAdvancedBidder : NSObject<MPAdvancedBidder>
+@interface AdColonyAdvancedBidder : NSObject<MPAdvancedBidder>
 @property (nonatomic, copy, readonly) NSString * creativeNetworkName;
 @property (nonatomic, copy, readonly) NSString * token;
 @end
