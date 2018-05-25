@@ -42,7 +42,17 @@
 
   GADRequest *request = [GADRequest request];
   request.requestAgent = @"MoPub";
-
+    
+  // Consent collected from the MoPub’s consent dialogue should not be used to set up Google's personalization preference. Publishers should work with Google to be GDPR-compliant.
+    
+  MPGoogleGlobalMediationSettings *medSettings = [[MoPub sharedInstance] globalMediationSettingsForClass:[MPGoogleGlobalMediationSettings class]];
+    
+  if (medSettings.npa) {
+      GADExtras *extras = [[GADExtras alloc] init];
+      extras.additionalParameters = @{@"npa": medSettings.npa};
+      [request registerAdNetworkExtras:extras];
+  }
+    
   [GADRewardBasedVideoAd sharedInstance].delegate = self;
   [[GADRewardBasedVideoAd sharedInstance] loadRequest:request withAdUnitID:adUnitID];
 }

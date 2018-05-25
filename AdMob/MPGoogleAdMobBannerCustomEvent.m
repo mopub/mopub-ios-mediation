@@ -5,8 +5,8 @@
 //  Copyright (c) 2013 MoPub. All rights reserved.
 //
 
+#import "MPGoogleAdMobBannerCustomEvent.h"
 #import <CoreLocation/CoreLocation.h>
-
 #import <GoogleMobileAds/GoogleMobileAds.h>
 #import "MPGoogleAdMobBannerCustomEvent.h"
 #if __has_include("MoPub.h")
@@ -57,9 +57,18 @@
     // Here, you can specify a list of device IDs that will receive test ads.
     // Running in the simulator will automatically show test ads.
     request.testDevices = @[/*more UDIDs here*/];
-
     request.requestAgent = @"MoPub";
 
+    // Consent collected from the MoPub’s consent dialogue should not be used to set up Google's personalization preference. Publishers should work with Google to be GDPR-compliant.
+    
+    MPGoogleGlobalMediationSettings *medSettings = [[MoPub sharedInstance] globalMediationSettingsForClass:[MPGoogleGlobalMediationSettings class]];
+    
+    if (medSettings.npa) {
+        GADExtras *extras = [[GADExtras alloc] init];
+        extras.additionalParameters = @{@"npa": medSettings.npa};
+        [request registerAdNetworkExtras:extras];
+    }
+    
     [self.adBannerView loadRequest:request];
 }
 

@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'MoPub-AdMob-Adapters'
-s.version          = '7.30.0.2'
+s.version          = '7.30.0.3'
 s.summary          = 'Google Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats: Banner, Interstitial, Rewarded Video, Native.\n

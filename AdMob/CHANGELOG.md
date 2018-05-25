@@ -1,4 +1,7 @@
 ## Changelog
+  * 7.30.0.3
+    * Append user's ad personalization preference via MoPub's GlobalMediationSettings to AdMob's ad requests. Publishers should work with Google to be GDPR-compliant and Google's personalization preference does not MoPub's consent.
+
   * 7.30.0.2
     * update adapters to remove dependency on MPInstanceProvider
     * Update adapters to be compatible with MoPub iOS SDK framework
