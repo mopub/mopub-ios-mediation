@@ -20,6 +20,7 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
 @property (nonatomic, readonly) FBNativeAd *fbNativeAd;
 @property (nonatomic, readonly) FBAdChoicesView *adChoicesView;
 @property (nonatomic, readonly) FBMediaView *mediaView;
+@property (nonatomic, readonly) FBAdIconView *iconView;
 
 @end
 
@@ -32,6 +33,9 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
     if (self = [super init]) {
         _fbNativeAd = fbNativeAd;
         _fbNativeAd.delegate = self;
+        _mediaView = [[FBMediaView alloc] init];
+        [_mediaView setNativeAd:_fbNativeAd];
+        _iconView = [[FBAdIconView alloc] init];
 
         NSMutableDictionary *properties;
         if (adProps) {
@@ -40,21 +44,20 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
             properties = [NSMutableDictionary dictionary];
         }
 
-        if (fbNativeAd.title) {
-            [properties setObject:fbNativeAd.title forKey:kAdTitleKey];
+        if (fbNativeAd.headline) {
+            [properties setObject:fbNativeAd.headline forKey:kAdTitleKey];
         }
 
-        if (fbNativeAd.body) {
-            [properties setObject:fbNativeAd.body forKey:kAdTextKey];
+        if (fbNativeAd.bodyText) {
+            [properties setObject:fbNativeAd.bodyText forKey:kAdTextKey];
         }
 
         if (fbNativeAd.callToAction) {
             [properties setObject:fbNativeAd.callToAction forKey:kAdCTATextKey];
         }
-
-        if (fbNativeAd.icon.url.absoluteString) {
-            [properties setObject:fbNativeAd.icon.url.absoluteString forKey:kAdIconImageKey];
-        }
+        
+        [properties setObject:_iconView forKey:kAdIconImageViewKey];
+        [properties setObject:_mediaView forKey:kAdMainMediaViewKey];
 
         if (fbNativeAd.placementID) {
             [properties setObject:fbNativeAd.placementID forKey:@"placementID"];
@@ -68,15 +71,6 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
 
         _adChoicesView = [[FBAdChoicesView alloc] initWithNativeAd:fbNativeAd];
         _adChoicesView.backgroundShown = NO;
-
-        // If video ad is enabled, use mediaView, otherwise use coverImage.
-        if ([[_properties objectForKey:kFBVideoAdsEnabledKey] boolValue]) {
-            _mediaView = [[FBMediaView alloc] initWithNativeAd:fbNativeAd];
-        } else {
-            if (fbNativeAd.coverImage.url.absoluteString) {
-                [properties setObject:fbNativeAd.coverImage.url.absoluteString forKey:kAdMainImageKey];
-            }
-        }
     }
 
     return self;
@@ -97,13 +91,13 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
 
 - (void)willAttachToView:(UIView *)view
 {
-    [self.fbNativeAd registerViewForInteraction:view withViewController:[self.delegate viewControllerForPresentingModalView]];
+    [self.fbNativeAd registerViewForInteraction:view mediaView:self.mediaView iconView:self.iconView viewController:[self.delegate viewControllerForPresentingModalView]];
 }
 
 - (void)willAttachToView:(UIView *)view withAdContentViews:(NSArray *)adContentViews
 {
     if ( adContentViews.count > 0 ) {
-        [self.fbNativeAd registerViewForInteraction:view withViewController:[self.delegate viewControllerForPresentingModalView] withClickableViews:adContentViews];
+        [self.fbNativeAd registerViewForInteraction:view mediaView:self.mediaView iconView:self.iconView viewController:[self.delegate viewControllerForPresentingModalView] clickableViews:adContentViews];
     } else {
         [self willAttachToView:view];
     }

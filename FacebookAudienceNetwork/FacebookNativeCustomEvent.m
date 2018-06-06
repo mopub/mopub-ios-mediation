@@ -72,26 +72,7 @@ static BOOL gVideoEnabled = NO;
 {
     FacebookNativeAdAdapter *adAdapter = [[FacebookNativeAdAdapter alloc] initWithFBNativeAd:nativeAd adProperties:@{kFBVideoAdsEnabledKey:@(self.videoEnabled)}];
     MPNativeAd *interfaceAd = [[MPNativeAd alloc] initWithAdAdapter:adAdapter];
-
-    NSMutableArray *imageURLs = [NSMutableArray array];
-
-    if (nativeAd.icon.url) {
-        [imageURLs addObject:nativeAd.icon.url];
-    }
-
-    // If video is enabled, no need to load coverImage.
-    if (!self.videoEnabled && nativeAd.coverImage.url) {
-        [imageURLs addObject:nativeAd.coverImage.url];
-    }
-
-    [super precacheImagesWithURLs:imageURLs completionBlock:^(NSArray *errors) {
-        if (errors) {
-            MPLogDebug(@"%@", errors);
-            [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:MPNativeAdNSErrorForImageDownloadFailure()];
-        } else {
-            [self.delegate nativeCustomEvent:self didLoadAd:interfaceAd];
-        }
-    }];
+    [self.delegate nativeCustomEvent:self didLoadAd:interfaceAd];
 }
 
 - (void)nativeAd:(FBNativeAd *)nativeAd didFailWithError:(NSError *)error
