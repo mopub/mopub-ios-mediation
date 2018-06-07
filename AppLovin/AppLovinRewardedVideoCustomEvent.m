@@ -14,6 +14,7 @@
     #import <AppLovinSDK/AppLovinSDK.h>
 #else
     #import "ALIncentivizedInterstitialAd.h"
+    #import "ALPrivacySettings.h"
 #endif
 
 // Convenience macro for checking if AppLovin SDK has support for zones

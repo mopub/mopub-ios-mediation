@@ -13,6 +13,7 @@
     #import <AppLovinSDK/AppLovinSDK.h>
 #else
     #import "ALAdView.h"
+    #import "ALPrivacySettings.h"
 #endif
 
 // Convenience macro for checking if AppLovin SDK has support for zones
