@@ -1,5 +1,7 @@
 ## Changelog
-  
+  * 7.2.0.2  
+      * Minor bug fixes to the import statements
+
   * 7.2.0.1
       * update adapters to remove dependency on MPInstanceProvider
       * Update adapters to be compatible with MoPub iOS SDK framework

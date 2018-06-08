@@ -1,5 +1,8 @@
 ## Changelog
   * 7.30.0.3
+    * Minor bug fixes to the import statements
+    
+  * 7.30.0.3
     * Append user's ad personalization preference via MoPub's GlobalMediationSettings to AdMob's ad requests. Publishers should work with Google to be GDPR-compliant and Google's personalization preference does not MoPub's consent.
 
   * 7.30.0.2

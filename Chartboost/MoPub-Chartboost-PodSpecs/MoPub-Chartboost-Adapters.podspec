@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'MoPub-Chartboost-Adapters'
-s.version          = '7.2.0.1'
+s.version          = '7.2.0.2'
 s.summary          = 'Chartboost Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats: Interstitial, Rewarded Video.\n

@@ -1,4 +1,7 @@
 ## Changelog
+   * 5.0.1.2
+     * Minor bug fixes to the import statements
+
    * 5.0.1.1
 	  * Update adapters to be compatible with MoPub iOS SDK framework
 
