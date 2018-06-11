@@ -113,6 +113,11 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
     return self.mediaView;
 }
 
+- (UIView *)iconMediaView
+{
+    return self.iconView;
+}
+
 #pragma mark - FBNativeAdDelegate
 
 - (void)nativeAdWillLogImpression:(FBNativeAd *)nativeAd
