@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'MoPub-AdMob-Adapters'
-s.version          = '7.30.0.4'
+s.version          = '7.31.0.0'
 s.summary          = 'Google Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats: Banner, Interstitial, Rewarded Video, Native.\n
@@ -20,5 +20,5 @@ s.ios.deployment_target = '8.0'
 s.static_framework = true
 s.source_files = 'AdMob/*.{h,m}'
 s.dependency 'mopub-ios-sdk', '~> 5.0'
-s.dependency 'Google-Mobile-Ads-SDK', '7.30.0'
+s.dependency 'Google-Mobile-Ads-SDK', '7.31.0'
 end
