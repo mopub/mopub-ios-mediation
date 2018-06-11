@@ -1,4 +1,7 @@
 ## Changelog
+  * 7.2.0.3
+      * Override Chartboost's didDismissRewardedVideo callback 
+
   * 7.2.0.2  
       * Minor bug fixes to the import statements
 
