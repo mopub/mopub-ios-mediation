@@ -106,6 +106,12 @@
     [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:nil];
 }
 
+- (void)didDismissRewardedVideo:(CBLocation)location
+{
+    [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
+    [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
+}
+
 - (void)didCloseRewardedVideo:(CBLocation)location
 {
     [self.delegate rewardedVideoWillDisappearForCustomEvent:self];

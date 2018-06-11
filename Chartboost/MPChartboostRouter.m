@@ -233,6 +233,13 @@
     [[self rewardedVideoEventForLocation:location] didFailToLoadRewardedVideo:location withError:CBLoadErrorInternal];
 }
 
+- (void)didDismissRewardedVideo:(CBLocation)location
+{
+    [[self rewardedVideoEventForLocation:location] didDismissRewardedVideo:location];
+    [self.rewardedVideoEvents removeObjectForKey:location];
+    [Chartboost cacheRewardedVideo:location];
+}
+
 - (void)didCloseRewardedVideo:(CBLocation)location
 {
     [[self rewardedVideoEventForLocation:location] didCloseRewardedVideo:location];
