@@ -6,7 +6,6 @@
     #import "MPLogging.h"
     #import "MoPub.h"
 #endif
-#import "TapjoyAdvancedBiddingConstants.h"
 
 @interface TapjoyInterstitialCustomEvent () <TJPlacementDelegate>
 @property (nonatomic, strong) TJPlacement *placement;
@@ -78,15 +77,8 @@
         if (adMarkup != nil) {
             // Convert the JSON string into a dictionary.
             NSData * jsonData = [adMarkup dataUsingEncoding:NSUTF8StringEncoding];
-            NSDictionary * adMarkupJson = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:nil];
-            if (adMarkupJson != nil) {
-                NSDictionary * auctionData = @{
-                                               TJ_AUCTION_DATA: adMarkupJson[kTJBiddingAuctionData],
-                                               TJ_AUCTION_ID: adMarkupJson[kTJBiddingAuctionId],
-                                               TJ_AUCTION_TYPE: adMarkupJson[kTJBiddingAuctionType],
-                                               TJ_AUCTION_CLEARING_PRICE: adMarkupJson[kTJBiddingAuctionClearingPrice]
-                                               };
-                
+            NSDictionary * auctionData = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:nil];
+            if (auctionData != nil) {
                 [self.placement setAuctionData:auctionData];
             }
         }
