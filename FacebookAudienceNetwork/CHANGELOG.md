@@ -1,7 +1,11 @@
 ## Changelog
+* 4.99.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 4.99.0.
+    * This version of the Audience Network SDK deprecates several existing native ad APIs used in the existing adapters. As a result, existing native ad adapters do not compile. Publishers are recommended to disable their native ad integration in that case, and re-enable it when updated native ad adapters are released.
+
 * 4.28.1.3
-      * update adapters to remove dependency on MPInstanceProvider
-      * Update adapters to be compatible with MoPub iOS SDK framework
+    * Update adapters to remove dependency on MPInstanceProvider
+    * Update adapters to be compatible with MoPub iOS SDK framework
 
 * 4.28.1.2
     * This version of the adapters has been certified with Facebook Audience Network 4.28.1.
