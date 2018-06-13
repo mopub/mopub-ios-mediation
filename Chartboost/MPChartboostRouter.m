@@ -6,8 +6,10 @@
 //
 
 #import "MPChartboostRouter.h"
-#import "MPLogging.h"
-#import "MPInstanceProvider+Chartboost.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+    #import "MoPub.h"
+#endif
 #import "ChartboostRewardedVideoCustomEvent.h"
 #import "ChartboostInterstitialCustomEvent.h"
 
@@ -31,11 +33,17 @@
 
 + (MPChartboostRouter *)sharedRouter
 {
-    return [[MPInstanceProvider sharedProvider] sharedMPChartboostRouter];
+    static MPChartboostRouter * sharedRouter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedRouter = [[MPChartboostRouter alloc] init];
+    });
+    return sharedRouter;
 }
 
 - (id)init
 {
+    
     self = [super init];
     if (self) {
         self.interstitialEvents = [NSMutableDictionary dictionary];
@@ -51,6 +59,13 @@
          * for click tracking, is to ensure that the event is still available after dismissal, but
          * is marked as free to be released.
          */
+        
+        // Collect and pass the user's consent from MoPub onto the Chartboost SDK
+        if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
+            BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
+            [Chartboost restrictDataCollection:!canCollectPersonalInfo];
+        }
+        
         self.activeInterstitialLocations = [NSMutableSet set];
     }
     return self;
@@ -62,6 +77,7 @@
     dispatch_once(&once, ^{
         [Chartboost startWithAppId:appId appSignature:appSignature delegate:self];
         [Chartboost setMediation:CBMediationMoPub withVersion:MP_SDK_VERSION];
+        [Chartboost setAutoCacheAds:FALSE];
     });
 }
 
@@ -216,6 +232,13 @@
 - (void)didFailToLoadRewardedVideo:(CBLocation)location withError:(CBLoadError)error
 {
     [[self rewardedVideoEventForLocation:location] didFailToLoadRewardedVideo:location withError:CBLoadErrorInternal];
+}
+
+- (void)didDismissRewardedVideo:(CBLocation)location
+{
+    [[self rewardedVideoEventForLocation:location] didDismissRewardedVideo:location];
+    [self.rewardedVideoEvents removeObjectForKey:location];
+    [Chartboost cacheRewardedVideo:location];
 }
 
 - (void)didCloseRewardedVideo:(CBLocation)location

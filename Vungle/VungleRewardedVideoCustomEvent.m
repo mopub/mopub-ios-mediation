@@ -6,13 +6,15 @@
 //
 
 #import "VungleRewardedVideoCustomEvent.h"
-#import "MPLogging.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+    #import "MPRewardedVideoReward.h"
+    #import "MPRewardedVideoError.h"
+    #import "MPRewardedVideoCustomEvent+Caching.h"
+#endif
 #import <VungleSDK/VungleSDK.h>
-#import "MPRewardedVideoReward.h"
 #import "MPVungleRouter.h"
-#import "MPRewardedVideoError.h"
 #import "VungleInstanceMediationSettings.h"
-#import "MPRewardedVideoCustomEvent+Caching.h"
 
 @interface VungleRewardedVideoCustomEvent ()  <MPVungleRouterDelegate>
 

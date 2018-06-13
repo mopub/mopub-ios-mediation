@@ -5,20 +5,13 @@
 //
 
 #import "MPMillennialInterstitialCustomEvent.h"
-#import "MPInstanceProvider.h"
-#import "MPLogging.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+#endif
 #import "MMAdapterVersion.h"
 
 static NSString *const kMoPubMMAdapterAdUnit = @"adUnitID";
 static NSString *const kMoPubMMAdapterDCN = @"dcn";
-
-@implementation MPInstanceProvider (MillennialInterstitials)
-
-- (MMInterstitialAd *)buildMMInterstitialWithPlacementId:(NSString *)placementId {
-    return [[MMInterstitialAd alloc] initWithPlacementId:placementId];
-}
-
-@end
 
 @interface MPMillennialInterstitialCustomEvent ()
 
@@ -42,6 +35,17 @@ static NSString *const kMoPubMMAdapterDCN = @"dcn";
                 [mmSDK initializeWithSettings:appSettings withUserSettings:nil];
                 MPLogDebug(@"Millennial adapter version: %@", self.version);
             }
+            
+            // Collect and pass the user's consent from MoPub onto the One by AOL SDK
+            if ( [MoPub sharedInstance].isGDPRApplicable == MPBoolYes )
+                [mmSDK setConsentRequired: TRUE];
+            else
+                [mmSDK setConsentRequired: FALSE];
+            
+            if ( [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusConsented ) {
+                [mmSDK setConsentDataValue: @"1" forKey:@"mopub"];
+            }
+            
         } else {
             self = nil; // No support below minimum OS.
         }
@@ -95,7 +99,7 @@ static NSString *const kMoPubMMAdapterDCN = @"dcn";
         [mmSDK appSettings].siteId = nil;
     }
 
-    self.interstitial = [[MPInstanceProvider sharedProvider] buildMMInterstitialWithPlacementId:placementId];
+    self.interstitial = [[MMInterstitialAd alloc] initWithPlacementId:placementId];
     self.interstitial.delegate = self;
 
     [self.interstitial load:nil];

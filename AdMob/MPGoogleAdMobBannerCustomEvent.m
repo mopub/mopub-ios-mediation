@@ -5,33 +5,13 @@
 //  Copyright (c) 2013 MoPub. All rights reserved.
 //
 
+#import "MPGoogleAdMobBannerCustomEvent.h"
+#import <CoreLocation/CoreLocation.h>
 #import <GoogleMobileAds/GoogleMobileAds.h>
 #import "MPGoogleAdMobBannerCustomEvent.h"
-#import "MPLogging.h"
-#import "MPInstanceProvider.h"
-
-@interface MPInstanceProvider (AdMobBanners)
-
-- (GADBannerView *)buildGADBannerViewWithFrame:(CGRect)frame;
-- (GADRequest *)buildGADBannerRequest;
-
-@end
-
-@implementation MPInstanceProvider (AdMobBanners)
-
-- (GADBannerView *)buildGADBannerViewWithFrame:(CGRect)frame
-{
-    return [[GADBannerView alloc] initWithFrame:frame];
-}
-
-- (GADRequest *)buildGADBannerRequest
-{
-    return [GADRequest request];
-}
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+#endif
 
 @interface MPGoogleAdMobBannerCustomEvent () <GADBannerViewDelegate>
 
@@ -47,7 +27,7 @@
     self = [super init];
     if (self)
     {
-        self.adBannerView = [[MPInstanceProvider sharedProvider] buildGADBannerViewWithFrame:CGRectZero];
+        self.adBannerView = [[GADBannerView alloc] initWithFrame:CGRectZero];
         self.adBannerView.delegate = self;
     }
     return self;
@@ -65,7 +45,7 @@
     self.adBannerView.adUnitID = [info objectForKey:@"adUnitID"];
     self.adBannerView.rootViewController = [self.delegate viewControllerForPresentingModalView];
 
-    GADRequest *request = [[MPInstanceProvider sharedProvider] buildGADBannerRequest];
+    GADRequest *request = [GADRequest request];
 
     CLLocation *location = self.delegate.location;
     if (location) {
@@ -77,9 +57,18 @@
     // Here, you can specify a list of device IDs that will receive test ads.
     // Running in the simulator will automatically show test ads.
     request.testDevices = @[/*more UDIDs here*/];
-
     request.requestAgent = @"MoPub";
 
+    // Consent collected from the MoPub’s consent dialogue should not be used to set up Google's personalization preference. Publishers should work with Google to be GDPR-compliant.
+    
+    MPGoogleGlobalMediationSettings *medSettings = [[MoPub sharedInstance] globalMediationSettingsForClass:[MPGoogleGlobalMediationSettings class]];
+    
+    if (medSettings.npa) {
+        GADExtras *extras = [[GADExtras alloc] init];
+        extras.additionalParameters = @{@"npa": medSettings.npa};
+        [request registerAdNetworkExtras:extras];
+    }
+    
     [self.adBannerView loadRequest:request];
 }
 

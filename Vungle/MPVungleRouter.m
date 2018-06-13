@@ -6,11 +6,13 @@
 //
 
 #import "MPVungleRouter.h"
-#import "MPInstanceProvider+Vungle.h"
-#import "MPLogging.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+    #import "MPRewardedVideoError.h"
+    #import "MPRewardedVideo.h"
+    #import "MoPub.h"
+#endif
 #import "VungleInstanceMediationSettings.h"
-#import "MPRewardedVideoError.h"
-#import "MPRewardedVideo.h"
 
 static NSString *const VunglePluginVersion = @"6.2.0";
 
@@ -53,10 +55,22 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
 }
 
 + (MPVungleRouter *)sharedRouter {
-    return [[MPInstanceProvider sharedProvider] sharedMPVungleRouter];
+    static MPVungleRouter * sharedRouter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedRouter = [[MPVungleRouter alloc] init];
+    });
+    return sharedRouter;
 }
 
 - (void)initializeSdkWithInfo:(NSDictionary *)info {
+    
+    // Collect and pass the user's consent from MoPub onto the Vungle SDK
+    if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
+        BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
+        [[VungleSDK sharedSDK] updateConsentStatus:(canCollectPersonalInfo) ? VungleConsentAccepted : VungleConsentDenied];
+    }
+    
     NSString *appId = [info objectForKey:kVungleAppIdKey];
     if (!self.vungleAppID) {
         self.vungleAppID = appId;

@@ -5,12 +5,18 @@
 //  Copyright (c) 2016 MoPub. All rights reserved.
 //
 
-#import "MoPub.h"
 #import "MPUnityRouter.h"
 #import "UnityAdsInstanceMediationSettings.h"
-#import "MPInstanceProvider+Unity.h"
-#import "MPRewardedVideoError.h"
-#import "MPRewardedVideo.h"
+
+#if __has_include(<MoPub/MoPub.h>)
+    #import <MoPub/MoPub.h>
+#elif __has_include(<MoPubSDKFramework/MoPub.h>)
+    #import <MoPubSDKFramework/MoPub.h>
+#else
+    #import "MoPub.h"
+    #import "MPRewardedVideoError.h"
+    #import "MPRewardedVideo.h"
+#endif
 
 @interface MPUnityRouter ()
 
@@ -29,7 +35,12 @@
 
 + (MPUnityRouter *)sharedRouter
 {
-    return [[MPInstanceProvider sharedProvider] sharedMPUnityRouter];
+    static MPUnityRouter * sharedRouter;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedRouter = [[MPUnityRouter alloc] init];
+    });
+    return sharedRouter;
 }
 
 - (void)initializeWithGameId:(NSString *)gameId
@@ -46,6 +57,15 @@
 
 - (void)requestVideoAdWithGameId:(NSString *)gameId placementId:(NSString *)placementId delegate:(id<MPUnityRouterDelegate>)delegate;
 {
+    // Collect and pass the user's consent from MoPub to the Unity Ads SDK
+    UADSMetaData *gdprConsentMetaData = [[UADSMetaData alloc] init];
+    if ([[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusConsented) {
+        [gdprConsentMetaData set:@"gdpr.consent" value:@YES];
+    } else {
+        [gdprConsentMetaData set:@"gdpr.consent" value:@NO];
+    }
+    [gdprConsentMetaData commit];
+
     if (!self.isAdPlaying) {
         [self.delegateMap setObject:delegate forKey:placementId];
         [self initializeWithGameId:gameId];

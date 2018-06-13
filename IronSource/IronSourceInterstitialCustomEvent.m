@@ -1,9 +1,12 @@
 //
-//  MOPUBISAdapterIronSource.m
+//  IronSourceInterstitialCustomEvent.m
 //
 
 #import "IronSourceInterstitialCustomEvent.h"
-#import "MPLogging.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+    #import "MoPub.h"
+#endif
 #import "IronSourceConstants.h"
 
 @interface IronSourceInterstitialCustomEvent()
@@ -21,6 +24,12 @@ static BOOL initInterstitialSuccessfully;
 
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info {
     
+    // Collect and pass the user's consent from MoPub onto the ironSource SDK
+    if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
+        BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
+        [IronSource setConsent:canCollectPersonalInfo];
+    }
+
     NSString *applicationKey = @"";
     _instanceId = @"0";
     
@@ -76,7 +85,7 @@ static BOOL initInterstitialSuccessfully;
     if (!initInterstitialSuccessfully) {
         [self logInfo:@"IronSource SDK initialization complete"];
         
-        [IronSource setMediationType:kIronSourceMediationName];
+        [IronSource setMediationType:[NSString stringWithFormat:@"%@%@",kIronSourceMediationName,kIronSourceMediationVersion]];
         [IronSource initISDemandOnly:appKey adUnits:@[IS_INTERSTITIAL]];
         
         initInterstitialSuccessfully = YES;
@@ -85,12 +94,7 @@ static BOOL initInterstitialSuccessfully;
 
 - (void)loadInterstitial {
     [self logInfo:[NSString stringWithFormat:@"Load IronSource interstitial ad for instance %@",_instanceId]];
-    
-    if([IronSource hasISDemandOnlyInterstitial:_instanceId]) {
-        [self.delegate interstitialCustomEvent:self didLoadAd:self];
-    } else {
-        [IronSource loadISDemandOnlyInterstitial:_instanceId];
-    }
+    [IronSource loadISDemandOnlyInterstitial:_instanceId];
 }
 
 #pragma mark Utiles Methods
@@ -198,6 +202,8 @@ static BOOL initInterstitialSuccessfully;
  */
 - (void)interstitialDidFailToShowWithError:(NSError *)error instanceId:(NSString *)instanceId {
     [self logError:[NSString stringWithFormat:@"IronSource interstitial ad did fail to show with error for instance %@",instanceId]];
+    [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+
 }
 
 /*!

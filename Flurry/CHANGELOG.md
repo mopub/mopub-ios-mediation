@@ -1,4 +1,11 @@
 ## Changelog
+  * 8.4.0.3  
+    * update adapters to remove dependency on MPInstanceProvider
+    * Update adapters to be compatible with MoPub iOS SDK framework
+
+  * 8.4.0.2
+  	* Updated the adapter's cocoapods dependency to MoPub version 5.0
+
   * 8.4.0.1
     * This version of the adapters has been certified with Flurry 8.4.0.
     * Podspec version bumped in order to pin the network SDK version.

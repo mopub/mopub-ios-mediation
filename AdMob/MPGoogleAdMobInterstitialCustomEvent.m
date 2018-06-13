@@ -7,34 +7,12 @@
 
 #import <GoogleMobileAds/GoogleMobileAds.h>
 #import "MPGoogleAdMobInterstitialCustomEvent.h"
-#import "MPInterstitialAdController.h"
-#import "MPLogging.h"
-#import "MPAdConfiguration.h"
-#import "MPInstanceProvider.h"
+#if __has_include("MoPub.h")
+    #import "MPInterstitialAdController.h"
+    #import "MPLogging.h"
+    #import "MPAdConfiguration.h"
+#endif
 #import <CoreLocation/CoreLocation.h>
-
-@interface MPInstanceProvider (AdMobInterstitials)
-
-- (GADInterstitial *)buildGADInterstitialAd;
-- (GADRequest *)buildGADInterstitialRequest;
-
-@end
-
-@implementation MPInstanceProvider (AdMobInterstitials)
-
-- (GADInterstitial *)buildGADInterstitialAd
-{
-    return [[GADInterstitial alloc] init];
-}
-
-- (GADRequest *)buildGADInterstitialRequest
-{
-    return [GADRequest request];
-}
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
 
 @interface MPGoogleAdMobInterstitialCustomEvent () <GADInterstitialDelegate>
 
@@ -51,12 +29,12 @@
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info
 {
     MPLogInfo(@"Requesting Google AdMob interstitial");
-    self.interstitial = [[MPInstanceProvider sharedProvider] buildGADInterstitialAd];
+    self.interstitial = [[GADInterstitial alloc] init];
 
     self.interstitial.adUnitID = [info objectForKey:@"adUnitID"];
     self.interstitial.delegate = self;
 
-    GADRequest *request = [[MPInstanceProvider sharedProvider] buildGADInterstitialRequest];
+    GADRequest *request = [GADRequest request];
 
     CLLocation *location = self.delegate.location;
     if (location) {
@@ -70,6 +48,16 @@
     request.testDevices = @[/*more UDIDs here*/];
 
     request.requestAgent = @"MoPub";
+    
+    // Consent collected from the MoPub’s consent dialogue should not be used to set up Google's personalization preference. Publishers should work with Google to be GDPR-compliant.
+    
+    MPGoogleGlobalMediationSettings *medSettings = [[MoPub sharedInstance] globalMediationSettingsForClass:[MPGoogleGlobalMediationSettings class]];
+        
+    if (medSettings.npa) {
+        GADExtras *extras = [[GADExtras alloc] init];
+        extras.additionalParameters = @{@"npa": medSettings.npa};
+        [request registerAdNetworkExtras:extras];
+    }
 
     [self.interstitial loadRequest:request];
 }

@@ -7,11 +7,12 @@
 //
 
 #import "FlurryNativeCustomEvent.h"
-#import "FlurryAdNative.h"
 #import "FlurryNativeAdAdapter.h"
-#import "MPNativeAd.h"
-#import "MPNativeAdError.h"
-#import "MPLogging.h"
+#if __has_include("MoPub.h")
+    #import "MPNativeAd.h"
+    #import "MPNativeAdError.h"
+    #import "MPLogging.h"
+#endif
 #import "FlurryMPConfig.h"
 
 

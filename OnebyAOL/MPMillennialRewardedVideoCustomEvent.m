@@ -7,11 +7,13 @@
 
 #import "MPMillennialRewardedVideoCustomEvent.h"
 #import "MPMillennialInterstitialCustomEvent.h"
-#import "MPLogging.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+    #import "MPRewardedVideoCustomEvent+Caching.h"
+#endif
 #import <MMAdSDK/MMAd+Experimental.h>
 #import "MMAdapterVersion.h"
 #import <objc/runtime.h>
-#import "MPRewardedVideoCustomEvent+Caching.h"
 
 static NSString *const kMoPubMMAdapterAdUnit = @"adUnitID";
 static NSString *const kMoPubMMAdapterDCN = @"dcn";
@@ -65,6 +67,17 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
                              withUserSettings:nil];
                 MPLogDebug(@"Millennial adapter version: %@", self.version);
             }
+            
+            // Collect and pass the user's consent from MoPub onto the One by AOL SDK
+            if ( [MoPub sharedInstance].isGDPRApplicable == MPBoolYes )
+                [mmSDK setConsentRequired: TRUE];
+            else
+                [mmSDK setConsentRequired: FALSE];
+            
+            if ( [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusConsented ) {
+                [mmSDK setConsentDataValue: @"1" forKey:@"mopub"];
+            }
+            
         } else {
             self = nil; // No support below minimum OS.
         }
@@ -87,7 +100,7 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary<NSString *, id> *)info {
 
     MMSDK *mmSDK = [MMSDK sharedInstance];
-
+    
     if (![mmSDK isInitialized]) {
         NSError *error = [NSError errorWithDomain:MMSDKErrorDomain
                                              code:MMSDKErrorNotInitialized

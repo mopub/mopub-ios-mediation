@@ -9,10 +9,12 @@
 #import "AdColonyRewardedVideoCustomEvent.h"
 #import "AdColonyInstanceMediationSettings.h"
 #import "AdColonyController.h"
-#import "MoPub.h"
-#import "MPLogging.h"
-#import "MPRewardedVideoReward.h"
-#import "MPRewardedVideoCustomEvent+Caching.h"
+#if __has_include("MoPub.h")
+    #import "MoPub.h"
+    #import "MPLogging.h"
+    #import "MPRewardedVideoReward.h"
+    #import "MPRewardedVideoCustomEvent+Caching.h"
+#endif
 
 #define ADCOLONY_INITIALIZATION_TIMEOUT dispatch_time(DISPATCH_TIME_NOW, 30 * NSEC_PER_SEC)
 

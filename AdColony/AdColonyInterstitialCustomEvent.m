@@ -7,7 +7,9 @@
 
 #import <AdColony/AdColony.h>
 #import "AdColonyInterstitialCustomEvent.h"
-#import "MPLogging.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+#endif
 #import "AdColonyController.h"
 
 @interface AdColonyInterstitialCustomEvent ()

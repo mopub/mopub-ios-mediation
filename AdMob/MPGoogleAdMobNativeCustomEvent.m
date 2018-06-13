@@ -1,11 +1,12 @@
 #import "MPGoogleAdMobNativeAdAdapter.h"
 #import "MPGoogleAdMobNativeCustomEvent.h"
-#import "MPInstanceProvider.h"
-#import "MPLogging.h"
-#import "MPNativeAd.h"
-#import "MPNativeAdConstants.h"
-#import "MPNativeAdError.h"
-#import "MPNativeAdUtils.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+    #import "MPNativeAd.h"
+    #import "MPNativeAdConstants.h"
+    #import "MPNativeAdError.h"
+    #import "MPNativeAdUtils.h"
+#endif
 
 static void MPGoogleLogInfo(NSString *message) {
   message = [[NSString alloc] initWithFormat:@"<Google Adapter> - %@", message];
@@ -75,6 +76,17 @@ static GADAdChoicesPosition adChoicesPosition;
                  adTypes:@[ kGADAdLoaderAdTypeNativeAppInstall, kGADAdLoaderAdTypeNativeContent ]
                  options:@[ nativeAdImageLoaderOptions, nativeAdViewAdOptions ]];
   self.adLoader.delegate = self;
+    
+  // Consent collected from the MoPub’s consent dialogue should not be used to set up Google's personalization preference. Publishers should work with Google to be GDPR-compliant.
+    
+  MPGoogleGlobalMediationSettings *medSettings = [[MoPub sharedInstance] globalMediationSettingsForClass:[MPGoogleGlobalMediationSettings class]];
+    
+  if (medSettings.npa) {
+      GADExtras *extras = [[GADExtras alloc] init];
+      extras.additionalParameters = @{@"npa": medSettings.npa};
+      [request registerAdNetworkExtras:extras];
+  }
+    
   [self.adLoader loadRequest:request];
 }
 

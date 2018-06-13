@@ -6,9 +6,10 @@
 //
 
 #import "ChartboostInterstitialCustomEvent.h"
-#import "MPLogging.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+#endif
 #import "MPChartboostRouter.h"
-#import "MPInstanceProvider+Chartboost.h"
 #import <Chartboost/Chartboost.h>
 
 static NSString *gAppId = nil;

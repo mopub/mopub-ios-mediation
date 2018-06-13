@@ -7,13 +7,12 @@
 
 #if __has_include(<MoPub/MoPub.h>)
     #import <MoPub/MoPub.h>
+#elif __has_include(<MoPubSDKFramework/MoPub.h>)
+    #import <MoPubSDKFramework/MoPub.h>
 #else
     #import "MPRewardedVideoCustomEvent.h"
 #endif
 
-/*
- * Certified with Chartboost 6.6.3
- */
 @interface ChartboostRewardedVideoCustomEvent : MPRewardedVideoCustomEvent
 
 /**

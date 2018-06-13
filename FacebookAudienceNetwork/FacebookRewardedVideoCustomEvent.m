@@ -6,34 +6,15 @@
 #import <FBAudienceNetwork/FBAudienceNetwork.h>
 #import "FacebookRewardedVideoCustomEvent.h"
 
-#import "MPInstanceProvider.h"
-#import "MPLogging.h"
-#import "MoPub.h"
-#import "MPRewardedVideoReward.h"
-#import "MPRealTimeTimer.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+    #import "MoPub.h"
+    #import "MPRewardedVideoReward.h"
+    #import "MPRealTimeTimer.h"
+#endif
 
 //Timer to record the expiration interval
 #define FB_ADS_EXPIRATION_INTERVAL  3600
-
-@interface MPInstanceProvider (FacebookRewardedVideos)
-
-- (FBRewardedVideoAd *)buildFBRewardedVideoAdWithPlacementID:(NSString *)placementID
-                                                    delegate:(id<FBRewardedVideoAdDelegate>)delegate;
-
-@end
-
-@implementation MPInstanceProvider (FacebookRewardedVideos)
-
-- (FBRewardedVideoAd *)buildFBRewardedVideoAdWithPlacementID:(NSString *)placementID
-                                                    delegate:(id<FBRewardedVideoAdDelegate>)delegate
-{
-    FBRewardedVideoAd *rewardedVideoAd = [[FBRewardedVideoAd alloc] initWithPlacementID:placementID];
-    rewardedVideoAd.delegate = delegate;
-    return rewardedVideoAd;
-}
-
-@end
-
 
 @interface FacebookRewardedVideoCustomEvent () <FBRewardedVideoAdDelegate>
 
@@ -52,18 +33,30 @@
 }
 
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info {
+    [self requestRewardedVideoWithCustomEventInfo:info adMarkup:nil];
+}
+
+- (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     if (![info objectForKey:@"placement_id"]) {
         MPLogError(@"Placement ID is required for Facebook Rewarded Video ad");
         [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:nil];
         return;
     }
-    MPLogInfo(@"Requesting Facebook Rewarded Video ad");
     
-    self.fbRewardedVideoAd =
-    [[MPInstanceProvider sharedProvider] buildFBRewardedVideoAdWithPlacementID: [info objectForKey:@"placement_id"] delegate:self];
+    self.fbRewardedVideoAd = [[FBRewardedVideoAd alloc] initWithPlacementID:[info objectForKey:@"placement_id"]];
+    self.fbRewardedVideoAd.delegate = self;
     
     [FBAdSettings setMediationService:[NSString stringWithFormat:@"MOPUB_%@", MP_SDK_VERSION]];
-    [self.fbRewardedVideoAd loadAd];
+    // Load the advanced bid payload.
+    if (adMarkup != nil) {
+        MPLogInfo(@"Loading Facebook rewarded video ad markup");
+        [self.fbRewardedVideoAd loadAdWithBidPayload:adMarkup];
+    }
+    // Request a rewarded video ad.
+    else {
+        MPLogInfo(@"Requesting Facebook rewarded video ad");
+        [self.fbRewardedVideoAd loadAd];
+    }
 }
 
 //Verify that the rewarded video is precached
@@ -91,7 +84,7 @@
 }
 
 -(void)dealloc{
-    _fbRewardedVideoAd.delegate = nil;
+    self.fbRewardedVideoAd.delegate = nil;
 }
 
 #pragma mark FBRewardedVideoAdDelegate methods
@@ -128,9 +121,9 @@
     self.expirationTimer = [[MPRealTimeTimer alloc] initWithInterval:FB_ADS_EXPIRATION_INTERVAL block:^(MPRealTimeTimer *timer){
         __strong __typeof__(weakSelf) strongSelf = weakSelf;
         if (strongSelf && !strongSelf.hasTrackedImpression) {
-            [self.delegate rewardedVideoDidExpireForCustomEvent:self];
+            [strongSelf.delegate rewardedVideoDidExpireForCustomEvent:strongSelf];
             MPLogInfo(@"Facebook Rewarded Video ad expired as per the audience network's caching policy");
-            self.fbRewardedVideoAd = nil;
+            strongSelf.fbRewardedVideoAd = nil;
         }
         [strongSelf.expirationTimer invalidate];
     }];
