@@ -9,7 +9,6 @@
     #import "MPNativeAdRendererImageHandler.h"
     #import "MPNativeAdRendering.h"
     #import "MPNativeAdRenderingImageLoader.h"
-    #import "MPNativeCache.h"
     #import "MPNativeView.h"
     #import "MPStaticNativeAdRendererSettings.h"
 #endif
