@@ -7,7 +7,6 @@
 #import "MPMillennialBannerCustomEvent.h"
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
-    #import "MPAdConfiguration.h"
 #endif
 #import "MMAdapterVersion.h"
 
