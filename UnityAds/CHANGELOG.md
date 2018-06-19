@@ -1,5 +1,8 @@
 
 ## Changelog
+* 2.2.0.6
+  * Pass explicit consent to Unity Ads (with revision).
+
 * 2.2.0.5
   * Update adapters to be compatible with MoPub iOS SDK framework
 
