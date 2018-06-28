@@ -1,7 +1,7 @@
 
 ## Changelog
 * 2.2.0.6
-  * Pass explicit consent to Unity Ads (with revision).
+  * Update to share consent with Unity Ads only when user provides an explicit yes/no. In all other cases, Unity Ads SDK will collect its own consent per the guidelines [here][https://unity3d.com/legal/gdpr]
 
 * 2.2.0.5
   * Update adapters to be compatible with MoPub iOS SDK framework
