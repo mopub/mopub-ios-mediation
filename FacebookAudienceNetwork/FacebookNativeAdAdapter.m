@@ -34,7 +34,6 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
         _fbNativeAd = fbNativeAd;
         _fbNativeAd.delegate = self;
         _mediaView = [[FBMediaView alloc] init];
-        [_mediaView setNativeAd:_fbNativeAd];
         _iconView = [[FBAdIconView alloc] init];
 
         NSMutableDictionary *properties;
