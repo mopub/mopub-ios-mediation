@@ -11,7 +11,10 @@
     #import <MoPubSDKFramework/MoPub.h>
 #else
     #import "MPBannerCustomEvent.h"
+    #import "MoPub.h"
 #endif
+
+#import "MPGoogleGlobalMediationSettings.h"
 
 /*
  * Please reference the Supported Mediation Partner page at http://bit.ly/2mqsuFH for the

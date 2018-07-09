@@ -7,7 +7,7 @@
 #endif
 
 #import <GoogleMobileAds/GoogleMobileAds.h>
-
+#import "MPGoogleGlobalMediationSettings.h"
 
 @interface MPGoogleAdMobNativeCustomEvent : MPNativeCustomEvent
 

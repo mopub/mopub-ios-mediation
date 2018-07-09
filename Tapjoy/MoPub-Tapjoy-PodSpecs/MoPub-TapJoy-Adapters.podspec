@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'MoPub-TapJoy-Adapters'
-s.version          = '11.12.2.0'
+s.version          = '11.12.2.1'
 s.summary          = 'TapJoy Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats: Interstitial, Rewarded Video.\n

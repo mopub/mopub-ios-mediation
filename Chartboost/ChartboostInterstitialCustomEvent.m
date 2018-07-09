@@ -6,7 +6,9 @@
 //
 
 #import "ChartboostInterstitialCustomEvent.h"
-#import "MPLogging.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+#endif
 #import "MPChartboostRouter.h"
 #import <Chartboost/Chartboost.h>
 

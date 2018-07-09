@@ -5,8 +5,9 @@
 //
 
 #import "MPMillennialBannerCustomEvent.h"
-#import "MPLogging.h"
-#import "MPAdConfiguration.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+#endif
 #import "MMAdapterVersion.h"
 
 static NSString *const kMoPubMMAdapterAdUnit = @"adUnitID";

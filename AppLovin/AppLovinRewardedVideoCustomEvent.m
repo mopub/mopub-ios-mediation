@@ -3,15 +3,18 @@
 //
 
 #import "AppLovinRewardedVideoCustomEvent.h"
-#import "MPRewardedVideoReward.h"
-#import "MPError.h"
-#import "MPLogging.h"
-#import "MoPub.h"
+#if __has_include("MoPub.h")
+    #import "MPRewardedVideoReward.h"
+    #import "MPError.h"
+    #import "MPLogging.h"
+    #import "MoPub.h"
+#endif
 
 #if __has_include(<AppLovinSDK/AppLovinSDK.h>)
     #import <AppLovinSDK/AppLovinSDK.h>
 #else
     #import "ALIncentivizedInterstitialAd.h"
+    #import "ALPrivacySettings.h"
 #endif
 
 // Convenience macro for checking if AppLovin SDK has support for zones

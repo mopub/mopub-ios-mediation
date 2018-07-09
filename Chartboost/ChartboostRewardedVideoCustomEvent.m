@@ -7,11 +7,13 @@
 
 #import "ChartboostRewardedVideoCustomEvent.h"
 #import "MPChartboostRouter.h"
-#import "MPLogging.h"
-#import "MPRewardedVideoReward.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+    #import "MPRewardedVideoReward.h"
+    #import "MPRewardedVideoError.h"
+    #import "MPRewardedVideoCustomEvent+Caching.h"
+#endif
 #import <Chartboost/Chartboost.h>
-#import "MPRewardedVideoError.h"
-#import "MPRewardedVideoCustomEvent+Caching.h"
 
 @interface ChartboostRewardedVideoCustomEvent () <ChartboostDelegate>
 @end
@@ -102,6 +104,12 @@
                          withError:(CBLoadError)error
 {
     [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:nil];
+}
+
+- (void)didDismissRewardedVideo:(CBLocation)location
+{
+    [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
+    [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
 }
 
 - (void)didCloseRewardedVideo:(CBLocation)location

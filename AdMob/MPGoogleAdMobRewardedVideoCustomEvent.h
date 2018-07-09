@@ -5,6 +5,7 @@
 #else
     #import "MPRewardedVideoCustomEvent.h"
 #endif
+#import "MPGoogleGlobalMediationSettings.h"
 
 @interface MPGoogleAdMobRewardedVideoCustomEvent : MPRewardedVideoCustomEvent
 

@@ -1,11 +1,13 @@
 //
-//  MOPUBRVAdapterIronSource.m
+//  IronSourceRewardedVideoCustomEvent.m
 //
 
 #import "IronSourceRewardedVideoCustomEvent.h"
 #import "IronSourceConstants.h"
-#import "MPLogging.h"
-#import "MoPub.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+    #import "MoPub.h"
+#endif
 
 @interface IronSourceRewardedVideoCustomEvent()
 
@@ -103,8 +105,8 @@ static BOOL initRewardedVideoSuccessfully = NO;
         
         if (!initRewardedVideoSuccessfully) {
             [self logInfo:@"IronSource SDK initialization complete"];
-            [IronSource setMediationType:kIronSourceMediationName];
-            [IronSource initISDemandOnly:applicationKey adUnits:@[IS_REWARDED_VIDEO]];
+            [IronSource setMediationType:[NSString stringWithFormat:@"%@%@",kIronSourceMediationName,kIronSourceMediationVersion]];
+            [IronSource initISDemandOnly:applicationKey adUnits:@[IS_INTERSTITIAL,IS_REWARDED_VIDEO]];
         }
     } else {
         [self logError:@"IronSource Adapter failed to request RewardedVideo, 'applicationKey' parameter is missing. make sure that 'applicationKey' server parameter is added"];

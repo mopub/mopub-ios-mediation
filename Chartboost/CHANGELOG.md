@@ -1,8 +1,14 @@
 ## Changelog
-  
+  * 7.2.0.3
+      * Override Chartboost's didDismissRewardedVideo callback 
+      * Adapters now explicitly cache ads instead of calling Chartboost SDK's `setAutoCacheAds` to avoid request tracking issues.
+
+  * 7.2.0.2  
+      * Minor bug fixes to the import statements
+
   * 7.2.0.1
       * update adapters to remove dependency on MPInstanceProvider
-      * Update import statements for MoPub frameworks
+      * Update adapters to be compatible with MoPub iOS SDK framework
 
   * 7.2.0.0
     * This version of the adapters has been certified with Chartboost 7.2.0

@@ -6,7 +6,14 @@
 //  Copyright (c) 2015 Yahoo, Inc. All rights reserved.
 //
 
-#import "FlurryAdInterstitialDelegate.h"
+#if __has_include(<Flurry_iOS_SDK/FlurryAdInterstitial.h>)
+    #import <Flurry_iOS_SDK/FlurryAdInterstitial.h>
+    #import <Flurry_iOS_SDK/FlurryAdInterstitialDelegate.h>
+#else
+    #import "FlurryAdInterstitial.h"
+    #import "FlurryAdInterstitialDelegate.h"
+#endif
+
 #if __has_include(<MoPub/MoPub.h>)
     #import <MoPub/MoPub.h>
 #elif __has_include(<MoPubSDKFramework/MoPub.h>)

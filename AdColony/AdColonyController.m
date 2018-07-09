@@ -9,8 +9,10 @@
 #import <AdColony/AdColony.h>
 #import "AdColonyController.h"
 #import "AdColonyGlobalMediationSettings.h"
-#import "MoPub.h"
-#import "MPRewardedVideo.h"
+#if __has_include("MoPub.h")
+    #import "MoPub.h"
+    #import "MPRewardedVideo.h"
+#endif
 
 typedef enum {
     INIT_STATE_UNKNOWN,
