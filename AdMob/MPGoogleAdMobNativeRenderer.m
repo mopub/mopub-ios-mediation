@@ -1,7 +1,6 @@
 #import "MPGoogleAdMobNativeRenderer.h"
 
 #if __has_include("MoPub.h")
-    #import "MPAdDestinationDisplayAgent.h"
     #import "MPLogging.h"
     #import "MPNativeAdAdapter.h"
     #import "MPNativeAdConstants.h"
@@ -10,7 +9,6 @@
     #import "MPNativeAdRendererImageHandler.h"
     #import "MPNativeAdRendering.h"
     #import "MPNativeAdRenderingImageLoader.h"
-    #import "MPNativeCache.h"
     #import "MPNativeView.h"
     #import "MPStaticNativeAdRendererSettings.h"
 #endif
