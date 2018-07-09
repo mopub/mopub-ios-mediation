@@ -1,4 +1,7 @@
 ## Changelog
+  * 3.3.5
+    * Update adapters to be compatible with MoPub iOS SDK framework
+
   * 3.3.4.1
     * Update adapters to be compatible with MoPub iOS SDK framework
     
