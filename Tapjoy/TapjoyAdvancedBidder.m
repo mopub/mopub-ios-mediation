@@ -19,7 +19,7 @@
 }
 
 - (NSString *)token {
-    return [Tapjoy getUserToken];
+    return @"1";
 }
 
 @end
