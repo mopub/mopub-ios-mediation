@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'MoPub-AdColony-Adapters'
-  s.version          = '3.3.4.1'
+  s.version          = '3.3.5.0'
   s.summary          = 'AdColony Adapters for mediating through MoPub.'
   s.description      = <<-DESC
 Supported ad formats: Interstitial, Rewarded Video.\n
@@ -20,5 +20,5 @@ For inquiries and support, please email support@adcolony.com. \n
   s.static_framework = true
   s.source_files = 'AdColony/*.{h,m}'
   s.dependency 'mopub-ios-sdk', '~> 5.0'
-  s.dependency 'AdColony', '3.3.4'
+  s.dependency 'AdColony', '3.3.5'
 end

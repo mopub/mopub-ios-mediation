@@ -1,4 +1,7 @@
 ## Changelog
+  * 3.3.5.0
+    * This version of the adapters has been certified with AdColony 3.3.5.
+
   * 3.3.4.1
     * Update adapters to be compatible with MoPub iOS SDK framework
     
