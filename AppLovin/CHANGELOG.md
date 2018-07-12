@@ -1,4 +1,7 @@
 ## Changelog
+   * 5.0.2.0
+     * This version of the adapters has been certified with AppLovin SDK 5.0.2
+
    * 5.0.1.2
      * Minor bug fixes to the import statements
 
