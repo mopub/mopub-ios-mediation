@@ -19,7 +19,8 @@
 }
 
 - (NSString *)token {
-    return @"1";
+    NSString *token = [Tapjoy getUserToken];
+    return (token.length > 0 ? token : @"1");
 }
 
 @end
