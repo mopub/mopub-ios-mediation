@@ -1,4 +1,7 @@
 ## Changelog
+* 4.99.2.0
+    * This version of the adapters has been certified with Facebook Audience Network 4.99.2.
+
 * 4.99.1.0
     * This version of the adapters has been certified with Facebook Audience Network 4.99.1 for all ad formats. Publishers must use the latest native ad adapters for compatibility.
 
