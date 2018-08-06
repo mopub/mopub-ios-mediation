@@ -16,9 +16,9 @@
 #import <Foundation/Foundation.h>
 
 // <MPNativeAdRendering> custom asset properties.
-extern NSString * const kAdMainImageViewKey;    // UIImageView *
-extern NSString * const kAdIconImageViewKey;    // UIImageView *
-extern NSString * const kDisclaimerKey;         // NSString *
+extern NSString * const kAdMainImageViewKey;      // UIImageView *
+extern NSString * const kMMAdIconImageViewKey;    // UIImageView *
+extern NSString * const kDisclaimerKey;           // NSString *
 
 @interface MillennialNativeAdAdapter : NSObject <MPNativeAdAdapter>
 

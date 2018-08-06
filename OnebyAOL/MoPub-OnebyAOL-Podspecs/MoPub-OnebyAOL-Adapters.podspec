@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'MoPub-OnebyAOL-Adapters'
-s.version          = '6.8.1.3'
+s.version          = '6.8.1.4'
 s.summary          = 'Aol Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats: Banner, Interstitial, Rewarded Video, Native.\n

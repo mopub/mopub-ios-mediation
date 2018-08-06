@@ -1,4 +1,8 @@
 ## Changelog
+* 6.8.1.4
+    * Roll back GDPR consent passing per AOL's request.
+    * Fix a duplicate symbol issue in the native ad adapter.
+    
 * 6.8.1.3
     * update adapters to remove dependency on MPInstanceProvider
     * Update adapters to be compatible with MoPub iOS SDK framework
