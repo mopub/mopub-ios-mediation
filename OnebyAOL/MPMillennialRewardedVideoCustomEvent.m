@@ -67,17 +67,6 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
                              withUserSettings:nil];
                 MPLogDebug(@"Millennial adapter version: %@", self.version);
             }
-            
-            // Collect and pass the user's consent from MoPub onto the One by AOL SDK
-            if ( [MoPub sharedInstance].isGDPRApplicable == MPBoolYes )
-                [mmSDK setConsentRequired: TRUE];
-            else
-                [mmSDK setConsentRequired: FALSE];
-            
-            if ( [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusConsented ) {
-                [mmSDK setConsentDataValue: @"1" forKey:@"mopub"];
-            }
-            
         } else {
             self = nil; // No support below minimum OS.
         }

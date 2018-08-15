@@ -11,7 +11,7 @@
 #endif
 
 NSString * const kAdMainImageViewKey = @"mmmainimage";
-NSString * const kAdIconImageViewKey = @"mmiconimage";
+NSString * const kMMAdIconImageViewKey = @"mmiconimage";
 NSString * const kDisclaimerKey = @"mmdisclaimer";
 
 @interface MillennialNativeAdAdapter() <MPAdImpressionTimerDelegate>
@@ -49,7 +49,7 @@ NSString * const kDisclaimerKey = @"mmdisclaimer";
         }
 
         if (ad.iconImageView.image) {
-            properties[kAdIconImageViewKey] = ad.iconImageView;
+            properties[kMMAdIconImageViewKey] = ad.iconImageView;
         }
 
         if (ad.disclaimer.text) {
