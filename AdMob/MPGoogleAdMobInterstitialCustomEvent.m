@@ -71,6 +71,11 @@
     self.interstitial.delegate = nil;
 }
 
+- (BOOL)enableAutomaticImpressionAndClickTracking
+{
+    return NO;
+}
+
 #pragma mark - GADInterstitialDelegate
 
 - (void)interstitialDidReceiveAd:(GADInterstitial *)interstitial
@@ -90,6 +95,7 @@
     MPLogInfo(@"Google AdMob Interstitial will present");
     [self.delegate interstitialCustomEventWillAppear:self];
     [self.delegate interstitialCustomEventDidAppear:self];
+    [self.delegate trackImpression];
 }
 
 - (void)interstitialWillDismissScreen:(GADInterstitial *)ad
