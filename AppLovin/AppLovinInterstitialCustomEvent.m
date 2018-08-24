@@ -47,6 +47,11 @@ static NSObject *ALGlobalInterstitialAdsLock;
     ALGlobalInterstitialAdsLock = [[NSObject alloc] init];
 }
 
+- (BOOL)enableAutomaticImpressionAndClickTracking
+{
+    return NO;
+}
+
 #pragma mark - MPInterstitialCustomEvent Overridden Methods
 
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info
@@ -154,6 +159,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
     
     [self.delegate interstitialCustomEventWillAppear: self];
     [self.delegate interstitialCustomEventDidAppear: self];
+    [self.delegate trackImpression];
 }
 
 - (void)ad:(ALAd *)ad wasHiddenIn:(UIView *)view

@@ -1,4 +1,8 @@
 ## Changelog
+   * 5.1.0.1
+    * Align MoPub's interstitial impression tracking to that of AppLovin.
+        * Automatic impression tracking is disabled, and AppLovin's `wasDisplayedIn` is used to fire MoPub impressions.
+
    * 5.1.0.0
      * This version of the adapters has been certified with AppLovin SDK 5.1.0
 
