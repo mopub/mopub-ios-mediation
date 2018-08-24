@@ -75,6 +75,11 @@
     self.fbInterstitialAd.delegate = nil;
 }
 
+- (BOOL)enableAutomaticImpressionAndClickTracking
+{
+    return NO;
+}
+
 #pragma mark FBInterstitialAdDelegate methods
 
 - (void)interstitialAdDidLoad:(FBInterstitialAd *)interstitialAd
@@ -105,6 +110,7 @@
     //set the tracker to true when the ad is shown on the screen. So that the timer is invalidated.
     _hasTrackedImpression = true;
     [self.expirationTimer invalidate];
+    [self.delegate trackImpression];
 }
 
 - (void)interstitialAd:(FBInterstitialAd *)interstitialAd didFailWithError:(NSError *)error

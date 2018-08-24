@@ -1,4 +1,8 @@
 ## Changelog
+* 4.99.2.1
+    * Align MoPub's interstitial impression tracking to that of Facebook Audience Network.
+        * Automatic impression tracking is disabled, and Facebook's `interstitialAdWillLogImpression` is used to fire MoPub impressions.
+
 * 4.99.2.0
     * This version of the adapters has been certified with Facebook Audience Network 4.99.2.
 
