@@ -1,4 +1,7 @@
 ## Changelog
+  * 7.32.0.0
+    * This version of the adapters has been certified with AdMob 7.32.0.
+
   * 7.31.0.2
     * Add the `trackClick` delegate to complete 7.31.0.1.
 
