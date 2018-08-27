@@ -123,6 +123,7 @@
 {
     MPLogInfo(@"Facebook interstitial ad was clicked");
     [self.delegate interstitialCustomEventDidReceiveTapEvent:self];
+    [self.delegate trackClick];
 }
 
 - (void)interstitialAdDidClose:(FBInterstitialAd *)interstitialAd
