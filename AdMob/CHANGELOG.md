@@ -1,4 +1,7 @@
 ## Changelog
+  * 7.31.0.2
+    * Add the `trackClick` delegate to complete 7.31.0.1.
+
   * 7.31.0.1
     * Align MoPub's interstitial impression tracking to that of AdMob.
         * Automatic impression tracking is disabled, and AdMob's `interstitialWillPresentScreen` is used to fire MoPub impressions.
