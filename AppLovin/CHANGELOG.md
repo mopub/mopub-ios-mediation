@@ -1,4 +1,7 @@
 ## Changelog
+   * 5.1.0.2
+    * Add the `trackClick` delegate for interstitial to complete 5.1.0.1. 
+
    * 5.1.0.1
     * Align MoPub's interstitial impression tracking to that of AppLovin.
         * Automatic impression tracking is disabled, and AppLovin's `wasDisplayedIn` is used to fire MoPub impressions.

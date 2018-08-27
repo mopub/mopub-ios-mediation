@@ -178,6 +178,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
     
     [self.delegate interstitialCustomEventDidReceiveTapEvent: self];
     [self.delegate interstitialCustomEventWillLeaveApplication: self];
+    [self.delegate trackClick];
 }
 
 #pragma mark - Video Playback Delegate
