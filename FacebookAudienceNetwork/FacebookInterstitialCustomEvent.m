@@ -109,8 +109,8 @@
     MPLogInfo(@"Facebook intersitital ad is logging impressions for interstitials");
     //set the tracker to true when the ad is shown on the screen. So that the timer is invalidated.
     _hasTrackedImpression = true;
-    [self.expirationTimer invalidate];
     [self.delegate trackImpression];
+    [self.expirationTimer invalidate];
 }
 
 - (void)interstitialAd:(FBInterstitialAd *)interstitialAd didFailWithError:(NSError *)error
@@ -122,8 +122,8 @@
 - (void)interstitialAdDidClick:(FBInterstitialAd *)interstitialAd
 {
     MPLogInfo(@"Facebook interstitial ad was clicked");
-    [self.delegate interstitialCustomEventDidReceiveTapEvent:self];
     [self.delegate trackClick];
+    [self.delegate interstitialCustomEventDidReceiveTapEvent:self];
 }
 
 - (void)interstitialAdDidClose:(FBInterstitialAd *)interstitialAd
