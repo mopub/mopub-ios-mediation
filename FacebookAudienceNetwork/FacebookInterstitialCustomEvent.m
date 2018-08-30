@@ -75,6 +75,11 @@
     self.fbInterstitialAd.delegate = nil;
 }
 
+- (BOOL)enableAutomaticImpressionAndClickTracking
+{
+    return NO;
+}
+
 #pragma mark FBInterstitialAdDelegate methods
 
 - (void)interstitialAdDidLoad:(FBInterstitialAd *)interstitialAd
@@ -104,6 +109,7 @@
     MPLogInfo(@"Facebook intersitital ad is logging impressions for interstitials");
     //set the tracker to true when the ad is shown on the screen. So that the timer is invalidated.
     _hasTrackedImpression = true;
+    [self.delegate trackImpression];
     [self.expirationTimer invalidate];
 }
 
@@ -116,6 +122,7 @@
 - (void)interstitialAdDidClick:(FBInterstitialAd *)interstitialAd
 {
     MPLogInfo(@"Facebook interstitial ad was clicked");
+    [self.delegate trackClick];
     [self.delegate interstitialCustomEventDidReceiveTapEvent:self];
 }
 
