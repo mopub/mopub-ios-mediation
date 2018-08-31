@@ -17,7 +17,7 @@ static void MPGoogleLogInfo(NSString *message) {
 static GADAdChoicesPosition adChoicesPosition;
 
 @interface MPGoogleAdMobNativeCustomEvent () <
-    GADAdLoaderDelegate, GADNativeAppInstallAdLoaderDelegate, GADNativeContentAdLoaderDelegate>
+    GADAdLoaderDelegate, GADUnifiedNativeAdLoaderDelegate>
 
 /// GADAdLoader instance.
 @property(nonatomic, strong) GADAdLoader *adLoader;
@@ -96,11 +96,11 @@ static GADAdChoicesPosition adChoicesPosition;
   [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
 }
 
-#pragma mark GADNativeAppInstallAdLoaderDelegate implementation
+#pragma mark GADUnifiedNativeAdLoaderDelegate implementation
 
 - (void)adLoader:(GADAdLoader *)adLoader
-    didReceiveNativeAppInstallAd:(GADNativeAppInstallAd *)nativeAppInstallAd {
-  if (![self isValidAppInstallAd:nativeAppInstallAd]) {
+    didReceiveUnifiedNativeAd:(GADUnifiedNativeAd *)nativeAd {
+  if (![self isValidUnifiedNativeAd:nativeAd]) {
     MPGoogleLogInfo(@"App install ad is missing one or more required assets, failing the request");
     [self.delegate nativeCustomEvent:self
             didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidAdServerResponse(
@@ -109,7 +109,7 @@ static GADAdChoicesPosition adChoicesPosition;
   }
 
   MPGoogleAdMobNativeAdAdapter *adapter =
-      [[MPGoogleAdMobNativeAdAdapter alloc] initWithAdMobNativeAppInstallAd:nativeAppInstallAd];
+      [[MPGoogleAdMobNativeAdAdapter alloc] initWithAdMobUnifiedNativeAd:nativeAd];
   MPNativeAd *moPubNativeAd = [[MPNativeAd alloc] initWithAdAdapter:adapter];
 
   NSMutableArray *imageURLs = [NSMutableArray array];
@@ -141,62 +141,12 @@ static GADAdChoicesPosition adChoicesPosition;
                 }];
 }
 
-#pragma mark GADNativeContentAdLoaderDelegate implementation
-
-- (void)adLoader:(GADAdLoader *)adLoader
-    didReceiveNativeContentAd:(GADNativeContentAd *)nativeContentAd {
-  if (![self isValidContentAd:nativeContentAd]) {
-    MPGoogleLogInfo(@"Content ad is missing one or more required assets, failing the request");
-    [self.delegate nativeCustomEvent:self
-            didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidAdServerResponse(
-                                         @"Missing one or more required assets.")];
-    return;
-  }
-
-  MPGoogleAdMobNativeAdAdapter *adapter =
-      [[MPGoogleAdMobNativeAdAdapter alloc] initWithAdMobNativeContentAd:nativeContentAd];
-  MPNativeAd *interfaceAd = [[MPNativeAd alloc] initWithAdAdapter:adapter];
-
-  NSMutableArray *imageURLs = [NSMutableArray array];
-
-  if ([interfaceAd.properties[kAdIconImageKey] length]) {
-    if (![MPNativeAdUtils addURLString:interfaceAd.properties[kAdIconImageKey]
-                            toURLArray:imageURLs]) {
-      [self.delegate nativeCustomEvent:self
-              didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
-    }
-  }
-
-  if ([interfaceAd.properties[kAdMainImageKey] length]) {
-    if (![MPNativeAdUtils addURLString:interfaceAd.properties[kAdMainImageKey]
-                            toURLArray:imageURLs]) {
-      [self.delegate nativeCustomEvent:self
-              didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
-    }
-  }
-
-  [super precacheImagesWithURLs:imageURLs
-                completionBlock:^(NSArray *errors) {
-                  if (errors) {
-                    [self.delegate nativeCustomEvent:self
-                            didFailToLoadAdWithError:MPNativeAdNSErrorForImageDownloadFailure()];
-                  } else {
-                    [self.delegate nativeCustomEvent:self didLoadAd:interfaceAd];
-                  }
-                }];
-}
-
 #pragma mark - Private Methods
 
-/// Checks the app install ad has required assets or not.
-- (BOOL)isValidAppInstallAd:(GADNativeAppInstallAd *)appInstallAd {
-  return (appInstallAd.headline && appInstallAd.body && appInstallAd.icon &&
-          appInstallAd.images.count && appInstallAd.callToAction);
+/// Checks the unified native ad has required assets or not.
+- (BOOL)isValidUnifiedNativeAd:(GADUnifiedNativeAd *)nativeAd {
+  return (nativeAd.headline && nativeAd.body && nativeAd.icon &&
+          nativeAd.images.count && nativeAd.callToAction);
 }
 
-/// Checks the content ad has required assets or not.
-- (BOOL)isValidContentAd:(GADNativeContentAd *)contentAd {
-  return (contentAd.headline && contentAd.body && contentAd.logo && contentAd.images.count &&
-          contentAd.callToAction);
-}
 @end
