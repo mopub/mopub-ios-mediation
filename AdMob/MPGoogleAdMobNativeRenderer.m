@@ -32,8 +32,8 @@
 /// Class of renderingViewClass.
 @property(nonatomic, strong) Class renderingViewClass;
 
-/// GADNativeAppInstallAdView instance.
-@property(nonatomic, strong) GADNativeAppInstallAdView *appInstallAdView;
+/// GADUnifiedNativeAdView instance.
+@property(nonatomic, strong) GADUnifiedNativeAdView *nativeAdView;
 
 @end
 
@@ -90,31 +90,28 @@
     
     self.adView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     
-    if (self.adapter.adMobNativeAppInstallAd) {
-        [self renderAppInstallAdViewWithAdapter:self.adapter];
-    } else {
-        [self renderContentAdViewWithAdapter:self.adapter];
-    }
+    [self renderUnifiedNativeAdViewWithAdapter:self.adapter];
     
     return self.adView;
 }
 
-/// Creates native app install ad view with adapter. We added GADNativeAppInstallAdView assets on
+/// Creates unified native ad view with adapter. We added GADUnifiedNativeAdView assets on
 /// top of MoPub's adView, to track impressions & clicks.
-- (void)renderAppInstallAdViewWithAdapter:(id<MPNativeAdAdapter>)adapter {
-    // We only load text here. We're creating the GADNativeAppInstallAdView and preparing text
+- (void)renderUnifiedNativeAdViewWithAdapter:(id<MPNativeAdAdapter>)adapter {
+    // We only load text here. We're creating the GADUnifiedNativeAdView and preparing text
     // assets.
-    GADNativeAppInstallAdView *gadAppInstallAdView = [[GADNativeAppInstallAdView alloc] init];
-    [self.adView addSubview:gadAppInstallAdView];
-    [gadAppInstallAdView gad_fillSuperview];
+    GADUnifiedNativeAdView *gadUnifiedNativeAdView = [[GADUnifiedNativeAdView alloc] init];
+    [self.adView addSubview:gadUnifiedNativeAdView];
+    [gadUnifiedNativeAdView gad_fillSuperview];
     
-    gadAppInstallAdView.adChoicesView = (GADAdChoicesView *)[self.adapter privacyInformationIconView];
-    gadAppInstallAdView.nativeAppInstallAd = self.adapter.adMobNativeAppInstallAd;
+    gadUnifiedNativeAdView.adChoicesView = (GADAdChoicesView *)[self.adapter privacyInformationIconView];
+    gadUnifiedNativeAdView.nativeAd = self.adapter.adMobUnifiedNativeAd;
+    
     if ([self.adView respondsToSelector:@selector(nativeTitleTextLabel)]) {
         UILabel *headlineView = [[UILabel alloc] initWithFrame:CGRectZero];
-        headlineView.text = self.adapter.adMobNativeAppInstallAd.headline;
+        headlineView.text = self.adapter.adMobUnifiedNativeAd.headline;
         headlineView.textColor = [UIColor clearColor];
-        gadAppInstallAdView.headlineView = headlineView;
+        gadUnifiedNativeAdView.headlineView = headlineView;
         [self.adView.nativeTitleTextLabel addSubview:headlineView];
         [headlineView gad_fillSuperview];
         self.adView.nativeTitleTextLabel.text = adapter.properties[kAdTitleKey];
@@ -122,9 +119,9 @@
     
     if ([self.adView respondsToSelector:@selector(nativeMainTextLabel)]) {
         UILabel *bodyView = [[UILabel alloc] initWithFrame:CGRectZero];
-        bodyView.text = self.adapter.adMobNativeAppInstallAd.body;
+        bodyView.text = self.adapter.adMobUnifiedNativeAd.body;
         bodyView.textColor = [UIColor clearColor];
-        gadAppInstallAdView.bodyView = bodyView;
+        gadUnifiedNativeAdView.bodyView = bodyView;
         [self.adView.nativeMainTextLabel addSubview:bodyView];
         [bodyView gad_fillSuperview];
         self.adView.nativeMainTextLabel.text = adapter.properties[kAdTextKey];
@@ -133,9 +130,9 @@
     if ([self.adView respondsToSelector:@selector(nativeCallToActionTextLabel)] &&
         self.adView.nativeCallToActionTextLabel) {
         UILabel *callToActionView = [[UILabel alloc] initWithFrame:CGRectZero];
-        callToActionView.text = self.adapter.adMobNativeAppInstallAd.callToAction;
+        callToActionView.text = self.adapter.adMobUnifiedNativeAd.callToAction;
         callToActionView.textColor = [UIColor clearColor];
-        gadAppInstallAdView.callToActionView = callToActionView;
+        gadUnifiedNativeAdView.callToActionView = callToActionView;
         [self.adView.nativeCallToActionTextLabel addSubview:callToActionView];
         [callToActionView gad_fillSuperview];
         self.adView.nativeCallToActionTextLabel.text = adapter.properties[kAdCTATextKey];
@@ -150,7 +147,7 @@
         [[GADNativeAdImage alloc] initWithURL:[NSURL URLWithString:mainImageURLString] scale:1];
         UIImageView *mainMediaImageView = [[UIImageView alloc] initWithFrame:CGRectZero];
         mainMediaImageView.image = nativeAdImage.image;
-        gadAppInstallAdView.imageView = mainMediaImageView;
+        gadUnifiedNativeAdView.imageView = mainMediaImageView;
         [self.adView.nativeMainImageView addSubview:mainMediaImageView];
         [mainMediaImageView gad_fillSuperview];
     }
@@ -161,7 +158,7 @@
         [[GADNativeAdImage alloc] initWithURL:[NSURL URLWithString:iconImageURLString] scale:1];
         UIImageView *iconView = [[UIImageView alloc] initWithFrame:CGRectZero];
         iconView.image = nativeAdImage.image;
-        gadAppInstallAdView.iconView = iconView;
+        gadUnifiedNativeAdView.iconView = iconView;
         [self.adView.nativeIconImageView addSubview:iconView];
         [iconView gad_fillSuperview];
     }
@@ -180,81 +177,7 @@
     // as its subview if it does.
     if ([self.adView respondsToSelector:@selector(nativePrivacyInformationIconImageView)]) {
         [self.adView.nativePrivacyInformationIconImageView
-         addSubview:gadAppInstallAdView.adChoicesView];
-    }
-}
-
-/// Creates native app content ad view with adapter. We added GADNativeContentAdView assets on top
-/// of MoPub's adView, to track impressions & clicks.
-- (void)renderContentAdViewWithAdapter:(id<MPNativeAdAdapter>)adapter {
-    // We only load text here. We're creating the GADNativeContentAdView and preparing text assets.
-    GADNativeContentAdView *gadAppContentAdView = [[GADNativeContentAdView alloc] init];
-    [self.adView addSubview:gadAppContentAdView];
-    [gadAppContentAdView gad_fillSuperview];
-    
-    gadAppContentAdView.adChoicesView = (GADAdChoicesView *)[self.adapter privacyInformationIconView];
-    gadAppContentAdView.nativeContentAd = self.adapter.adMobNativeContentAd;
-    if ([self.adView respondsToSelector:@selector(nativeTitleTextLabel)]) {
-        UILabel *headlineView = [[UILabel alloc] initWithFrame:CGRectZero];
-        headlineView.text = self.adapter.adMobNativeContentAd.headline;
-        headlineView.textColor = [UIColor clearColor];
-        gadAppContentAdView.headlineView = headlineView;
-        [self.adView.nativeTitleTextLabel addSubview:headlineView];
-        [headlineView gad_fillSuperview];
-        self.adView.nativeTitleTextLabel.text = adapter.properties[kAdTitleKey];
-    }
-    
-    if ([self.adView respondsToSelector:@selector(nativeMainTextLabel)]) {
-        UILabel *bodyView = [[UILabel alloc] initWithFrame:CGRectZero];
-        bodyView.text = self.adapter.adMobNativeContentAd.body;
-        bodyView.textColor = [UIColor clearColor];
-        gadAppContentAdView.bodyView = bodyView;
-        [self.adView.nativeMainTextLabel addSubview:bodyView];
-        [bodyView gad_fillSuperview];
-        self.adView.nativeMainTextLabel.text = adapter.properties[kAdTextKey];
-    }
-    
-    if ([self.adView respondsToSelector:@selector(nativeCallToActionTextLabel)] &&
-        self.adView.nativeCallToActionTextLabel) {
-        UILabel *callToActionView = [[UILabel alloc] initWithFrame:CGRectZero];
-        callToActionView.text = self.adapter.adMobNativeContentAd.callToAction;
-        callToActionView.textColor = [UIColor clearColor];
-        gadAppContentAdView.callToActionView = callToActionView;
-        [self.adView.nativeCallToActionTextLabel addSubview:callToActionView];
-        [callToActionView gad_fillSuperview];
-        self.adView.nativeCallToActionTextLabel.text = adapter.properties[kAdCTATextKey];
-    }
-    
-    // We delay loading of images until the view is added to the view hierarchy so we don't
-    // unnecessarily load images from the cache if the user is scrolling fast. So we will just store
-    // the image URLs for now.
-    if ([self.adView respondsToSelector:@selector(nativeMainImageView)]) {
-        NSString *mainImageURLString = adapter.properties[kAdMainImageKey];
-        GADNativeAdImage *nativeAdImage =
-        [[GADNativeAdImage alloc] initWithURL:[NSURL URLWithString:mainImageURLString] scale:1];
-        UIImageView *mainMediaImageView = [[UIImageView alloc] initWithFrame:CGRectZero];
-        mainMediaImageView.image = nativeAdImage.image;
-        gadAppContentAdView.imageView = mainMediaImageView;
-        [self.adView.nativeMainImageView addSubview:mainMediaImageView];
-        [mainMediaImageView gad_fillSuperview];
-    }
-    
-    if ([self.adView respondsToSelector:@selector(nativeIconImageView)]) {
-        NSString *iconImageURLString = adapter.properties[kAdIconImageKey];
-        GADNativeAdImage *nativeAdImage =
-        [[GADNativeAdImage alloc] initWithURL:[NSURL URLWithString:iconImageURLString] scale:1];
-        UIImageView *iconView = [[UIImageView alloc] initWithFrame:CGRectZero];
-        iconView.image = nativeAdImage.image;
-        gadAppContentAdView.logoView = iconView;
-        [self.adView.nativeIconImageView addSubview:iconView];
-        [iconView gad_fillSuperview];
-    }
-    
-    // See if the ad contains the nativePrivacyInformationIconImageView and add GADAdChoices view
-    // as its subview if it does.
-    if ([self.adView respondsToSelector:@selector(nativePrivacyInformationIconImageView)]) {
-        [self.adView.nativePrivacyInformationIconImageView
-         addSubview:gadAppContentAdView.adChoicesView];
+         addSubview:gadUnifiedNativeAdView.adChoicesView];
     }
 }
 
