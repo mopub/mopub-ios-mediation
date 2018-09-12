@@ -1,8 +1,13 @@
 //
 //  AppLovinInterstitialCustomEvent.m
 //
+//
+//  Created by Thomas So on 5/21/17.
+//
+//
 
 #import "AppLovinInterstitialCustomEvent.h"
+
 #if __has_include("MoPub.h")
     #import "MPError.h"
     #import "MPLogging.h"
@@ -16,19 +21,22 @@
     #import "ALPrivacySettings.h"
 #endif
 
-// Convenience macro for checking if AppLovin SDK has support for zones
-#define HAS_ZONES_SUPPORT(_SDK) [_SDK.adService respondsToSelector: @selector(loadNextAdForZoneIdentifier:andNotify:)]
 #define DEFAULT_ZONE @""
+#define ZONE_FROM_INFO(__INFO) ( ([__INFO[@"zone_id"] isKindOfClass: [NSString class]] && ((NSString *) __INFO[@"zone_id"]).length > 0) ? __INFO[@"zone_id"] : @"" )
 
 @interface AppLovinInterstitialCustomEvent() <ALAdLoadDelegate, ALAdDisplayDelegate, ALAdVideoPlaybackDelegate>
 
 @property (nonatomic, strong) ALSdk *sdk;
 @property (nonatomic, strong) ALInterstitialAd *interstitialAd;
 @property (nonatomic,   copy) NSString *zoneIdentifier; // The zone identifier this instance of the custom event is loading for
+@property (nonatomic, assign, getter=isTokenEvent) BOOL tokenEvent;
+@property (nonatomic, strong) ALAd *tokenAd;
 
 @end
 
 @implementation AppLovinInterstitialCustomEvent
+
+static const BOOL kALLoggingEnabled = YES;
 static NSString *const kALMoPubMediationErrorDomain = @"com.applovin.sdk.mediation.mopub.errorDomain";
 
 // A dictionary of Zone -> Queue of `ALAd`s to be shared by instances of the custom event.
@@ -47,65 +55,78 @@ static NSObject *ALGlobalInterstitialAdsLock;
     ALGlobalInterstitialAdsLock = [[NSObject alloc] init];
 }
 
-- (BOOL)enableAutomaticImpressionAndClickTracking
-{
-    return NO;
-}
-
 #pragma mark - MPInterstitialCustomEvent Overridden Methods
 
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info
 {
-    // Collect and pass the user's consent from MoPub onto the AppLovin SDK
-    if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
+    [self requestInterstitialWithCustomEventInfo: info adMarkup: nil];
+}
+
+- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
+{
+    // Collect and pass the user's consent from MoPub into the AppLovin SDK
+    if ( [[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes )
+    {
         BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
         [ALPrivacySettings setHasUserConsent: canCollectPersonalInfo];
     }
     
-    [self log: @"Requesting AppLovin interstitial with info: %@", info];
-    
     self.sdk = [self SDKFromCustomEventInfo: info];
-    [self.sdk setPluginVersion: @"MoPub-Certified-3.0.0"];
+    [self.sdk setPluginVersion: @"MoPub-3.1.0"];
+    self.sdk.mediationProvider = ALMediationProviderMoPub;
     
-    // Zones support is available on AppLovin SDK 4.5.0 and higher
-    if ( HAS_ZONES_SUPPORT(self.sdk) && info[@"zone_id"] )
+    BOOL hasAdMarkup = adMarkup.length > 0;
+    
+    [self log: @"Requesting AppLovin interstitial with info: %@ and has ad markup: %d", info, hasAdMarkup];
+    
+    if ( hasAdMarkup )
     {
-        self.zoneIdentifier = info[@"zone_id"];
+        self.tokenEvent = YES;
+        
+        // Use token API
+        [self.sdk.adService loadNextAdForAdToken: adMarkup andNotify: self];
     }
     else
     {
-        self.zoneIdentifier = DEFAULT_ZONE;
-    }
-    
-    // Check if we already have a preloaded ad for the given zone
-    ALAd *preloadedAd = [[self class] dequeueAdForZoneIdentifier: self.zoneIdentifier];
-    if ( preloadedAd )
-    {
-        [self log: @"Found preloaded ad for zone: {%@}", self.zoneIdentifier];
-        [self adService: self.sdk.adService didLoadAd: preloadedAd];
-    }
-    // No ad currently preloaded
-    else
-    {
-        // If this is a default Zone, create the incentivized ad normally
-        if ( [DEFAULT_ZONE isEqualToString: self.zoneIdentifier] )
+        self.zoneIdentifier = ZONE_FROM_INFO(info);
+        
+        // Check if we already have a preloaded ad for the given zone
+        ALAd *preloadedAd = [[self class] dequeueAdForZoneIdentifier: self.zoneIdentifier];
+        if ( preloadedAd )
         {
-            [self.sdk.adService loadNextAd: [ALAdSize sizeInterstitial] andNotify: self];
+            [self log: @"Found preloaded ad for zone: {%@}", self.zoneIdentifier];
+            [self adService: self.sdk.adService didLoadAd: preloadedAd];
         }
-        // Otherwise, use the Zones API
+        // No ad currently preloaded
         else
         {
-            // Dynamically load an ad for a given zone without breaking backwards compatibility for publishers on older SDKs
-            [self.sdk.adService performSelector: @selector(loadNextAdForZoneIdentifier:andNotify:)
-                                     withObject: self.zoneIdentifier
-                                     withObject: self];
+            // If this is a default Zone, create the ad normally
+            if ( [DEFAULT_ZONE isEqualToString: self.zoneIdentifier] )
+            {
+                [self.sdk.adService loadNextAd: [ALAdSize sizeInterstitial] andNotify: self];
+            }
+            // Otherwise, use the Zones API
+            else
+            {
+                [self.sdk.adService loadNextAdForZoneIdentifier: self.zoneIdentifier andNotify: self];
+            }
         }
     }
 }
 
 - (void)showInterstitialFromRootViewController:(UIViewController *)rootViewController
 {
-    ALAd *preloadedAd = [[self class] dequeueAdForZoneIdentifier: self.zoneIdentifier];
+    ALAd *preloadedAd;
+    
+    if ( [self isTokenEvent] && self.tokenAd != nil )
+    {
+        preloadedAd = self.tokenAd;
+    }
+    else
+    {
+        preloadedAd = [[self class] dequeueAdForZoneIdentifier: self.zoneIdentifier];
+    }
+    
     if ( preloadedAd )
     {
         self.interstitialAd = [[ALInterstitialAd alloc] initWithSdk: self.sdk];
@@ -119,7 +140,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
         
         NSError *error = [NSError errorWithDomain: kALMoPubMediationErrorDomain
                                              code: kALErrorCodeUnableToRenderAd
-                                         userInfo: @{NSLocalizedFailureReasonErrorKey : @"Adaptor requested to display an interstitial before one was loaded"}];
+                                         userInfo: @{NSLocalizedFailureReasonErrorKey : @"Adapter requested to display an interstitial before one was loaded"}];
         
         [self.delegate interstitialCustomEvent: self didFailToLoadAdWithError: error];
     }
@@ -131,7 +152,14 @@ static NSObject *ALGlobalInterstitialAdsLock;
 {
     [self log: @"Interstitial did load ad: %@", ad.adIdNumber];
     
-    [[self class] enqueueAd: ad forZoneIdentifier: self.zoneIdentifier];
+    if ( [self isTokenEvent] )
+    {
+        self.tokenAd = ad;
+    }
+    else
+    {
+        [[self class] enqueueAd: ad forZoneIdentifier: self.zoneIdentifier];
+    }
     
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.delegate interstitialCustomEvent: self didLoadAd: ad];
@@ -159,7 +187,6 @@ static NSObject *ALGlobalInterstitialAdsLock;
     
     [self.delegate interstitialCustomEventWillAppear: self];
     [self.delegate interstitialCustomEventDidAppear: self];
-    [self.delegate trackImpression];
 }
 
 - (void)ad:(ALAd *)ad wasHiddenIn:(UIView *)view
@@ -178,7 +205,6 @@ static NSObject *ALGlobalInterstitialAdsLock;
     
     [self.delegate interstitialCustomEventDidReceiveTapEvent: self];
     [self.delegate interstitialCustomEventWillLeaveApplication: self];
-    [self.delegate trackClick];
 }
 
 #pragma mark - Video Playback Delegate
@@ -229,12 +255,15 @@ static NSObject *ALGlobalInterstitialAdsLock;
 
 - (void)log:(NSString *)format, ...
 {
-    va_list valist;
-    va_start(valist, format);
-    NSString *message = [[NSString alloc] initWithFormat: format arguments: valist];
-    va_end(valist);
-    
-    MPLogDebug(@"AppLovinInterstitialCustomEvent : %@", message);
+    if ( kALLoggingEnabled )
+    {
+        va_list valist;
+        va_start(valist, format);
+        NSString *message = [[NSString alloc] initWithFormat: format arguments: valist];
+        va_end(valist);
+        
+        NSLog(@"AppLovinInterstitialCustomEvent: %@", message);
+    }
 }
 
 - (MOPUBErrorCode)toMoPubErrorCode:(int)appLovinErrorCode
