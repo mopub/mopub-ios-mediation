@@ -1,4 +1,7 @@
 ## Changelog
+  * 7.32.0.1
+    * The interstitial adapter now uses `initWithAdUnitID` instead of specifying the `adUnitID` property, since that is now read-only.
+
   * 7.32.0.0
     * This version of the adapters has been certified with AdMob 7.32.0.
 
@@ -14,7 +17,7 @@
 
   * 7.30.0.3
     * Minor bug fixes to the import statements
-    
+
   * 7.30.0.3
     * Append user's ad personalization preference via MoPub's GlobalMediationSettings to AdMob's ad requests. Publishers should work with Google to be GDPR-compliant and Google's personalization preference does not MoPub's consent.
 
@@ -27,7 +30,7 @@
 
   * 7.30.0.0
     * This version of the adapters has been certified with AdMob 7.30.0.
-    
+
   * 7.29.0.0
     * This version of the adapters has been certified with AdMob 7.29.0.
 
