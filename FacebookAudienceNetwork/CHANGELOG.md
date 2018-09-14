@@ -2,7 +2,7 @@
 * 5.0.0.0
     * This version of the adapters has been certified with Facebook Audience Network 5.0.0.
     * Remove calls to disableAutoRefresh for banner (deprecated by Facebook).
-    * Expose the native ad's advertiser name asset for publishers to show as required by Facebook (https://developers.facebook.com/docs/audience-network/guidelines/native-ads#name).
+    * Enable publishers to use the advertiser name asset as it is a required asset starting in Facebook 4.99.0 (https://developers.facebook.com/docs/audience-network/guidelines/native-ads#name).
 
 * 4.99.2.1
     * Align MoPub's interstitial impression tracking to that of Facebook Audience Network.
