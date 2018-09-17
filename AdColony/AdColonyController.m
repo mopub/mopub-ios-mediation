@@ -63,9 +63,14 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
                 instance.currentAllZoneIds = allZoneIdsSet;
                 options.testMode = instance.testModeEnabled;
 
-                if (MoPub.sharedInstance.isGDPRApplicable == MPBoolYes) {
+                BOOL consentGranted = MoPub.sharedInstance.currentConsentStatus == MPConsentStatusConsented;
+                BOOL consentDenied = MoPub.sharedInstance.currentConsentStatus == MPConsentStatusDenied;
+
+                if ((consentGranted || consentDenied) && MoPub.sharedInstance.isGDPRApplicable == MPBoolYes) {
                     [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
-                    [options setOption:kAdColonyConsentResponse withNumericValue:@(MoPub.sharedInstance.canCollectPersonalInfo)];
+                    [options setOption:kAdColonyConsentResponse withNumericValue:@(consentGranted)];
+                } else {
+                    [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@NO];
                 }
 
                 [AdColony configureWithAppID:appId zoneIDs:allZoneIds options:options completion:^(NSArray<AdColonyZone *> * _Nonnull zones) {
