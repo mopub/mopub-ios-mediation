@@ -61,7 +61,6 @@
                                                    adSize:fbAdSize
                                        rootViewController:[self.delegate viewControllerForPresentingModalView]];
     self.fbAdView.delegate = self;
-    [self.fbAdView disableAutoRefresh];
 
     if (!self.fbAdView) {
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nil];

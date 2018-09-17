@@ -48,7 +48,7 @@
     }
 }
 
-- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info {
+- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     // Grab placement name defined in MoPub dashboard as custom event data
     self.placementName = info[@"name"];
 
@@ -64,14 +64,24 @@
     // Live connection to Tapjoy already exists; request the ad
     else {
         MPLogInfo(@"Requesting Tapjoy interstitial");
-        [self requestPlacementContent];
+        [self requestPlacementContentWithAdMarkup:adMarkup];
     }
 }
 
-- (void)requestPlacementContent {
+- (void)requestPlacementContentWithAdMarkup:(NSString *)adMarkup {
     if (self.placementName) {
         self.placement = [TJPlacement placementWithName:self.placementName mediationAgent:@"mopub" mediationId:nil delegate:self];
         self.placement.adapterVersion = MP_SDK_VERSION;
+        
+        // Advanced bidding response
+        if (adMarkup != nil) {
+            // Convert the JSON string into a dictionary.
+            NSData * jsonData = [adMarkup dataUsingEncoding:NSUTF8StringEncoding];
+            NSDictionary * auctionData = [NSJSONSerialization JSONObjectWithData:jsonData options:0 error:nil];
+            if (auctionData != nil) {
+                [self.placement setAuctionData:auctionData];
+            }
+        }
 
         [self.placement requestContent];
     }
@@ -125,7 +135,7 @@
     MPLogInfo(@"Tapjoy connect Succeeded");
     self.isConnecting = NO;
     [self fetchMoPubGDPRSettings];
-    [self requestPlacementContent];
+    [self requestPlacementContentWithAdMarkup:nil];
 
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }

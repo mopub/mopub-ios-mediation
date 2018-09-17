@@ -28,9 +28,8 @@
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info
 {
     MPLogInfo(@"Requesting Google AdMob interstitial");
-    self.interstitial = [[GADInterstitial alloc] init];
-
-    self.interstitial.adUnitID = [info objectForKey:@"adUnitID"];
+    NSString *adUnitId = [info objectForKey:@"adUnitID"];
+    self.interstitial = [[GADInterstitial alloc] initWithAdUnitID:adUnitId];
     self.interstitial.delegate = self;
 
     GADRequest *request = [GADRequest request];
@@ -71,6 +70,11 @@
     self.interstitial.delegate = nil;
 }
 
+- (BOOL)enableAutomaticImpressionAndClickTracking
+{
+    return NO;
+}
+
 #pragma mark - GADInterstitialDelegate
 
 - (void)interstitialDidReceiveAd:(GADInterstitial *)interstitial
@@ -90,6 +94,7 @@
     MPLogInfo(@"Google AdMob Interstitial will present");
     [self.delegate interstitialCustomEventWillAppear:self];
     [self.delegate interstitialCustomEventDidAppear:self];
+    [self.delegate trackImpression];
 }
 
 - (void)interstitialWillDismissScreen:(GADInterstitial *)ad
@@ -109,6 +114,7 @@
     MPLogInfo(@"Google AdMob Interstitial will leave application");
     [self.delegate interstitialCustomEventDidReceiveTapEvent:self];
     [self.delegate interstitialCustomEventWillLeaveApplication:self];
+    [self.delegate trackClick];
 }
 
 @end

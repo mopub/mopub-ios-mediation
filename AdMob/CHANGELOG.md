@@ -1,4 +1,17 @@
 ## Changelog
+  * 7.32.0.1
+    * The interstitial adapter now uses `initWithAdUnitID` instead of specifying the `adUnitID` property, since that is now read-only.
+
+  * 7.32.0.0
+    * This version of the adapters has been certified with AdMob 7.32.0.
+
+  * 7.31.0.2
+    * Add the `trackClick` delegate to complete 7.31.0.1.
+
+  * 7.31.0.1
+    * Align MoPub's interstitial impression tracking to that of AdMob.
+        * Automatic impression tracking is disabled, and AdMob's `interstitialWillPresentScreen` is used to fire MoPub impressions.
+
   * 7.31.0.0
     * This version of the adapters has been certified with AdMob 7.31.0.
 

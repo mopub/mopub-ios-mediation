@@ -1,4 +1,20 @@
 ## Changelog
+   * 5.1.1.0 
+     * This version of the adapters has been certified with AppLovin SDK 5.1.1.
+
+   * 5.1.0.2 
+     * Add the `trackClick` delegate for interstitial to complete 5.1.0.1. 
+
+   * 5.1.0.1
+     * Align MoPub's interstitial impression tracking to that of AppLovin.
+        * Automatic impression tracking is disabled, and AppLovin's `wasDisplayedIn` is used to fire MoPub impressions.
+
+   * 5.1.0.0
+     * This version of the adapters has been certified with AppLovin SDK 5.1.0
+
+   * 5.0.2.0
+     * This version of the adapters has been certified with AppLovin SDK 5.0.2
+
    * 5.0.1.2
      * Minor bug fixes to the import statements
 
