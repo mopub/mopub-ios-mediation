@@ -18,7 +18,7 @@
 
 - (NSString *)creativeNetworkName
 {
-    return @"applovin";
+    return @"applovin_sdk";
 }
 
 - (NSString *)token
