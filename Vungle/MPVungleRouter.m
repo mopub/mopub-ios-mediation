@@ -18,7 +18,6 @@ static NSString *const VunglePluginVersion = @"6.2.0";
 
 static NSString *const kVungleAppIdKey = @"appId";
 NSString *const kVunglePlacementIdKey = @"pid";
-static NSString *const kVunglePlacementIdsKey = @"pids";
 NSString *const kVungleFlexViewAutoDismissSeconds = @"flexViewAutoDismissSeconds";
 NSString *const kVungleUserId = @"userId";
 NSString *const kVungleOrdinal = @"ordinal";
@@ -75,10 +74,6 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     if (!self.vungleAppID) {
         self.vungleAppID = appId;
     }
-
-    NSString *placementIdsString = [[info objectForKey:kVunglePlacementIdsKey] stringByReplacingOccurrencesOfString:@" " withString:@""];
-    if ([placementIdsString length])
-        MPLogInfo(@"No need to set placement IDs in MoPub dashboard with Vungle iOS SDK version %@ and plugin version %@", VungleSDKVersion, VunglePluginVersion);
 
     static dispatch_once_t vungleInitToken;
     dispatch_once(&vungleInitToken, ^{
