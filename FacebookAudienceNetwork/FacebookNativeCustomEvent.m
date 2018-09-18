@@ -56,7 +56,6 @@ static BOOL gVideoEnabled = NO;
             MPLogInfo(@"Loading Facebook native ad markup");
             [self.fbNativeAd loadAdWithBidPayload:adMarkup];
         }
-        // Request a banner ad.
         else {
             MPLogInfo(@"Requesting Facebook native ad");
             [self.fbNativeAd loadAd];
