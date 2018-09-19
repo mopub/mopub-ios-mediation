@@ -1,6 +1,6 @@
 ## Changelog
   * 6.2.0.2
-    * Remove remaining code pertaining to Vungle's placement IDs (`pids`) since it's no longer needed to initialize Vungle.
+    * Clean up remaining code pertaining to Vungle's placement IDs (`pids`) since it's no longer needed to initialize Vungle.
 
   * 6.2.0.1  
     * Update adapters to remove dependency on MPInstanceProvider
