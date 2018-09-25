@@ -1,4 +1,7 @@
 ## Changelog
+   * 5.1.2.0
+     * This version of the adapters has been certified with AppLovin SDK 5.1.2.
+
    * 5.1.1.0 
      * This version of the adapters has been certified with AppLovin SDK 5.1.1.
 
