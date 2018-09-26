@@ -69,8 +69,6 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
                 if ((consentGranted || consentDenied) && MoPub.sharedInstance.isGDPRApplicable == MPBoolYes) {
                     [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
                     [options setOption:kAdColonyConsentResponse withNumericValue:@(consentGranted)];
-                } else {
-                    [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@NO];
                 }
 
                 [AdColony configureWithAppID:appId zoneIDs:allZoneIds options:options completion:^(NSArray<AdColonyZone *> * _Nonnull zones) {
