@@ -62,8 +62,9 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
             [properties setObject:fbNativeAd.advertiserName forKey:kAdTitleKey];
         }
         
-        [properties setObject:_iconView forKey:kAdIconImageViewKey];
-        [properties setObject:_mediaView forKey:kAdMainMediaViewKey];
+        if (fbNativeAd.adChoicesIcon.url.absoluteString) {
+            [properties setObject:fbNativeAd.adChoicesIcon.url.absoluteString forKey:kAdIconImageKey];
+        }
 
         if (fbNativeAd.placementID) {
             [properties setObject:fbNativeAd.placementID forKey:@"placementID"];
