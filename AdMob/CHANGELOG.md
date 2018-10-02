@@ -1,4 +1,8 @@
 ## Changelog
+  * 7.34.0.0
+    * This version of the adapters has been certified with AdMob 7.34.0.
+    * Update the native ad adapter to use Google's MediaView and GADUnifiedNativeAd per requirements (https://developers.google.com/admob/ios/native-unified).
+
   * 7.32.0.1
     * The interstitial adapter now uses `initWithAdUnitID` instead of specifying the `adUnitID` property, since that is now read-only.
 
