@@ -1,5 +1,8 @@
 
 ## Changelog
+* 2.3.0.1
+  * Handle no-fill scenarios from Unity Ads. 
+
 * 2.3.0.0
   * This version of the adapters has been certified with UnityAds 2.3.0
 
