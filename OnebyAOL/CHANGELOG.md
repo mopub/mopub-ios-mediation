@@ -1,6 +1,8 @@
 ## Changelog
 * 6.8.1.0
     * This version of the adapters has been certified with One by AOL 6.8.1.
+    * Fix an issue with native ad images not showing.
+    * Fix an issue with native ad click tracker not fired.
 
 * 6.8.0.4
     * MoPub will not be obtaining consent on behalf of One by AOL. Publishers should work directly with One by AOL to understand their obligations to comply with GDPR. Changes are updated on the supported partners page and our GDPR FAQ.
