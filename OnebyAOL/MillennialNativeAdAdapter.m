@@ -93,6 +93,7 @@ NSString * const kDisclaimerKey = @"mmdisclaimer";
 
 - (void)displayContentForURL:(NSURL *)URL rootViewController:(UIViewController *)controller {
     [self.mmNativeAd invokeDefaultAction];
+    [self.delegate nativeAdDidClick:self];
 }
 
 #pragma mark - Impression tracking
@@ -106,6 +107,7 @@ NSString * const kDisclaimerKey = @"mmdisclaimer";
 
     // Handle the impression
     [self.mmNativeAd fireImpression];
+    [self.delegate nativeAdWillLogImpression:self];
 }
 
 @end
