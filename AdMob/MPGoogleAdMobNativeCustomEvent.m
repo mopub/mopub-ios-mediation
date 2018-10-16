@@ -11,11 +11,6 @@
 
 #import "UIView+MPGoogleAdMobAdditions.h"
 
-static void MPGoogleLogInfo(NSString *message) {
-  message = [[NSString alloc] initWithFormat:@"<Google Adapter> - %@", message];
-  MPLogInfo(message);
-}
-
 /// Holds the preferred location of the AdChoices icon.
 static GADAdChoicesPosition adChoicesPosition;
 
@@ -106,7 +101,7 @@ static GADAdChoicesPosition adChoicesPosition;
 - (void)adLoader:(nonnull GADAdLoader *)adLoader
     didReceiveUnifiedNativeAd:(nonnull GADUnifiedNativeAd *)nativeAd {
   if (![self isValidUnifiedNativeAd:nativeAd]) {
-    MPGoogleLogInfo(
+    MPLogInfo(
         @"Unified native ad is missing one or more required assets, failing the request");
     [self.delegate nativeCustomEvent:self
             didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidAdServerResponse(
