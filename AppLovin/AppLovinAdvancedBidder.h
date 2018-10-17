@@ -1,11 +1,3 @@
-//
-//  AppLovinAdvancedBidder.h
-//
-//
-//  Created by Thomas So on 5/22/18.
-//
-//
-
 #import <Foundation/Foundation.h>
 
 #if __has_include(<MoPub/MoPub.h>)

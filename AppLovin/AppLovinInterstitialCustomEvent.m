@@ -1,11 +1,3 @@
-//
-//  AppLovinInterstitialCustomEvent.m
-//
-//
-//  Created by Thomas So on 5/21/17.
-//
-//
-
 #import "AppLovinInterstitialCustomEvent.h"
 
 #if __has_include("MoPub.h")
@@ -35,8 +27,6 @@
 @end
 
 @implementation AppLovinInterstitialCustomEvent
-
-static const BOOL kALLoggingEnabled = YES;
 static NSString *const kALMoPubMediationErrorDomain = @"com.applovin.sdk.mediation.mopub.errorDomain";
 
 // A dictionary of Zone -> Queue of `ALAd`s to be shared by instances of the custom event.
@@ -55,6 +45,11 @@ static NSObject *ALGlobalInterstitialAdsLock;
     ALGlobalInterstitialAdsLock = [[NSObject alloc] init];
 }
 
+- (BOOL)enableAutomaticImpressionAndClickTracking
+{
+    return NO;
+}
+
 #pragma mark - MPInterstitialCustomEvent Overridden Methods
 
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info
@@ -64,9 +59,8 @@ static NSObject *ALGlobalInterstitialAdsLock;
 
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
-    // Collect and pass the user's consent from MoPub into the AppLovin SDK
-    if ( [[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes )
-    {
+    // Collect and pass the user's consent from MoPub onto the AppLovin SDK
+    if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
         BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
         [ALPrivacySettings setHasUserConsent: canCollectPersonalInfo];
     }
@@ -187,6 +181,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
     
     [self.delegate interstitialCustomEventWillAppear: self];
     [self.delegate interstitialCustomEventDidAppear: self];
+    [self.delegate trackImpression];
 }
 
 - (void)ad:(ALAd *)ad wasHiddenIn:(UIView *)view
@@ -205,6 +200,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
     
     [self.delegate interstitialCustomEventDidReceiveTapEvent: self];
     [self.delegate interstitialCustomEventWillLeaveApplication: self];
+    [self.delegate trackClick];
 }
 
 #pragma mark - Video Playback Delegate
@@ -255,15 +251,12 @@ static NSObject *ALGlobalInterstitialAdsLock;
 
 - (void)log:(NSString *)format, ...
 {
-    if ( kALLoggingEnabled )
-    {
-        va_list valist;
-        va_start(valist, format);
-        NSString *message = [[NSString alloc] initWithFormat: format arguments: valist];
-        va_end(valist);
-        
-        NSLog(@"AppLovinInterstitialCustomEvent: %@", message);
-    }
+    va_list valist;
+    va_start(valist, format);
+    NSString *message = [[NSString alloc] initWithFormat: format arguments: valist];
+    va_end(valist);
+    
+    MPLogDebug(@"AppLovinInterstitialCustomEvent : %@", message);
 }
 
 - (MOPUBErrorCode)toMoPubErrorCode:(int)appLovinErrorCode

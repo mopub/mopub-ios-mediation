@@ -1,13 +1,4 @@
-//
-//  AppLovinBannerCustomEvent.m
-//
-//
-//  Created by Thomas So on 7/6/17.
-//
-//
-
 #import "AppLovinBannerCustomEvent.h"
-
 #if __has_include("MoPub.h")
     #import "MPConstants.h"
     #import "MPError.h"
@@ -45,8 +36,6 @@
 @end
 
 @implementation AppLovinBannerCustomEvent
-
-static const BOOL kALLoggingEnabled = YES;
 static NSString *const kALMoPubMediationErrorDomain = @"com.applovin.sdk.mediation.mopub.errorDomain";
 
 static const CGFloat kALBannerHeightOffsetTolerance = 10.0f;
@@ -60,7 +49,7 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 + (void)initialize
 {
     [super initialize];
-    
+
     ALGlobalAdViews = [NSMutableDictionary dictionary];
 }
 
@@ -73,9 +62,8 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
-    // Collect and pass the user's consent from MoPub into the AppLovin SDK
-    if ( [[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes )
-    {
+    // Collect and pass the user's consent from MoPub onto the AppLovin SDK
+    if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
         BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
         [ALPrivacySettings setHasUserConsent: canCollectPersonalInfo];
     }
@@ -171,15 +159,12 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 
 - (void)log:(NSString *)format, ...
 {
-    if ( kALLoggingEnabled )
-    {
-        va_list valist;
-        va_start(valist, format);
-        NSString *message = [[NSString alloc] initWithFormat: format arguments: valist];
-        va_end(valist);
-        
-        NSLog(@"AppLovinBannerCustomEvent: %@", message);
-    }
+    va_list valist;
+    va_start(valist, format);
+    NSString *message = [[NSString alloc] initWithFormat: format arguments: valist];
+    va_end(valist);
+    
+    MPLogDebug(@"AppLovinBannerCustomEvent : %@", message);
 }
 
 - (MOPUBErrorCode)toMoPubErrorCode:(int)appLovinErrorCode

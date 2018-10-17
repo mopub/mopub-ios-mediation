@@ -1,11 +1,3 @@
-//
-//  AppLovinRewardedVideoCustomEvent.m
-//
-//
-//  Created by Thomas So on 5/21/17.
-//
-//
-
 #import "AppLovinRewardedVideoCustomEvent.h"
 
 #if __has_include("MoPub.h")
@@ -43,8 +35,6 @@
 @end
 
 @implementation AppLovinRewardedVideoCustomEvent
-
-static const BOOL kALLoggingEnabled = YES;
 static NSString *const kALMoPubMediationErrorDomain = @"com.applovin.sdk.mediation.mopub.errorDomain";
 
 // A dictionary of Zone -> `ALIncentivizedInterstitialAd` to be shared by instances of the custom event.
@@ -70,9 +60,8 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
 
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
-    // Collect and pass the user's consent from MoPub into the AppLovin SDK
-    if ( [[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes )
-    {
+    // Collect and pass the user's consent from MoPub onto the AppLovin SDK
+    if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
         BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
         [ALPrivacySettings setHasUserConsent: canCollectPersonalInfo];
     }
@@ -276,15 +265,12 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
 
 - (void)log:(NSString *)format, ...
 {
-    if ( kALLoggingEnabled )
-    {
-        va_list valist;
-        va_start(valist, format);
-        NSString *message = [[NSString alloc] initWithFormat: format arguments: valist];
-        va_end(valist);
-        
-        NSLog(@"AppLovinRewardedVideoCustomEvent: %@", message);
-    }
+    va_list valist;
+    va_start(valist, format);
+    NSString *message = [[NSString alloc] initWithFormat: format arguments: valist];
+    va_end(valist);
+    
+    MPLogDebug(@"AppLovinRewardedVideoCustomEvent: %@", message);
 }
 
 - (MOPUBErrorCode)toMoPubErrorCode:(int)appLovinErrorCode
