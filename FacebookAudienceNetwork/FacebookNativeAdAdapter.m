@@ -55,6 +55,13 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
             [properties setObject:fbNativeAd.callToAction forKey:kAdCTATextKey];
         }
         
+        /* Per Facebook's requirements, either the ad title or the advertiser name
+        will be displayed, depending on the FB SDK version. Therefore, mapping both
+        to the MoPub's ad title asset */
+        if (fbNativeAd.advertiserName) {
+            [properties setObject:fbNativeAd.advertiserName forKey:kAdTitleKey];
+        }
+        
         [properties setObject:_iconView forKey:kAdIconImageViewKey];
         [properties setObject:_mediaView forKey:kAdMainMediaViewKey];
 

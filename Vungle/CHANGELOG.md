@@ -1,6 +1,9 @@
 ## Changelog
+  * 6.2.0.2
+    * Clean up remaining code pertaining to Vungle's placement IDs (`pids`) since it's no longer needed to initialize Vungle.
+
   * 6.2.0.1  
-    * update adapters to remove dependency on MPInstanceProvider
+    * Update adapters to remove dependency on MPInstanceProvider
     * Update adapters to be compatible with MoPub iOS SDK framework
 
   * 6.2.0.0

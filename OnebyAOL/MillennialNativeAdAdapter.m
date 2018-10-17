@@ -10,8 +10,6 @@
     #import "MPAdImpressionTimer.h"
 #endif
 
-NSString * const kAdMainImageViewKey = @"mmmainimage";
-NSString * const kMMAdIconImageViewKey = @"mmiconimage";
 NSString * const kDisclaimerKey = @"mmdisclaimer";
 
 @interface MillennialNativeAdAdapter() <MPAdImpressionTimerDelegate>
@@ -19,6 +17,8 @@ NSString * const kDisclaimerKey = @"mmdisclaimer";
 @property (nonatomic) MPAdImpressionTimer *impressionTimer;
 @property (nonatomic, strong) MMNativeAd *mmNativeAd;
 @property (nonatomic, strong) NSDictionary<NSString *, id> *mmAdProperties;
+@property (nonatomic, readonly) UIImageView *mainImageView;
+@property (nonatomic, readonly) UIImageView *iconImageView;
 
 @end
 
@@ -45,11 +45,13 @@ NSString * const kDisclaimerKey = @"mmdisclaimer";
         }
 
         if (ad.mainImageView.image) {
-            properties[kAdMainImageViewKey] = ad.mainImageView;
+            _mainImageView = ad.mainImageView;
+            properties[kAdMainMediaViewKey] = _mainImageView;
         }
 
         if (ad.iconImageView.image) {
-            properties[kMMAdIconImageViewKey] = ad.iconImageView;
+            _iconImageView = ad.iconImageView;
+            properties[kAdIconImageViewKey] = _iconImageView;
         }
 
         if (ad.disclaimer.text) {
@@ -77,10 +79,21 @@ NSString * const kDisclaimerKey = @"mmdisclaimer";
     return nil;
 }
 
+- (UIView *)mainMediaView
+{
+    return self.mainImageView;
+}
+
+- (UIView *)iconMediaView
+{
+    return self.iconImageView;
+}
+
 #pragma mark - Click Tracking
 
 - (void)displayContentForURL:(NSURL *)URL rootViewController:(UIViewController *)controller {
     [self.mmNativeAd invokeDefaultAction];
+    [self.delegate nativeAdDidClick:self];
 }
 
 #pragma mark - Impression tracking
@@ -94,6 +107,7 @@ NSString * const kDisclaimerKey = @"mmdisclaimer";
 
     // Handle the impression
     [self.mmNativeAd fireImpression];
+    [self.delegate nativeAdWillLogImpression:self];
 }
 
 @end
