@@ -59,7 +59,6 @@ static NSObject *ALGlobalInterstitialAdsLock;
 
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
-    [ALSdk initializeSdk];
     
     // Collect and pass the user's consent from MoPub onto the AppLovin SDK
     if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {

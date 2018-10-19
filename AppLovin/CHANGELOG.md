@@ -1,7 +1,6 @@
 ## Changelog
    * 5.1.2.1
      * Add support for AppLovin to be an Advanced Bidder on the MoPub platform.
-     * Initialize AppLovin in the adapters as a fallback. Publishers must also initialize AppLovin in their apps for the initial ad request to succeed.
 
    * 5.1.2.0
      * This version of the adapters has been certified with AppLovin SDK 5.1.2.
