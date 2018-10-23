@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'MoPub-IronSource-Adapters'
-s.version          = '6.7.11.0'
+s.version          = '6.7.12.0'
 s.summary          = 'IronSource Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats: Interstitial, Rewarded Video.\n
@@ -20,6 +20,6 @@ s.ios.deployment_target = '8.0'
 s.static_framework = true
 s.source_files = 'IronSource/*.{h,m}'
 s.dependency 'mopub-ios-sdk', '~> 5.0'
-s.dependency 'IronSourceSDK','6.7.11'
+s.dependency 'IronSourceSDK','6.7.12'
 end
 
