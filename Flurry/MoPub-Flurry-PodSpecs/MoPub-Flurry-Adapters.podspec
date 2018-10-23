@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'MoPub-Flurry-Adapters'
-s.version          = '9.2.0.0'
+s.version          = '9.2.1.0'
 s.summary          = 'Flurry Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats:  Interstitial, Rewarded Video, Native.\n
@@ -20,6 +20,6 @@ s.ios.deployment_target = '8.0'
 s.static_framework = true
 s.source_files = 'Flurry/*.{h,m}'
 s.dependency 'mopub-ios-sdk', '~> 5.0'
-s.dependency 'Flurry-iOS-SDK/FlurrySDK', '9.2.0'
-s.dependency 'Flurry-iOS-SDK/FlurryAds', '9.2.0'
+s.dependency 'Flurry-iOS-SDK/FlurrySDK', '9.2.1'
+s.dependency 'Flurry-iOS-SDK/FlurryAds', '9.2.1'
 end
