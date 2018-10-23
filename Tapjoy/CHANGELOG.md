@@ -1,4 +1,7 @@
 ## Changelog
+  * 12.1.0.0
+    * This version of the adapters has been certified with Tapjoy 12.1.0.
+
   * 12.0.0.0
     * This version of the adapters has been certified with Tapjoy 12.0.0.
     * Add `TapjoyAdvancedBidder` for publishers using Advanced Bidding.
