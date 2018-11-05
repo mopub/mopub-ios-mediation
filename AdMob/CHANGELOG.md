@@ -1,4 +1,7 @@
 ## Changelog
+  * 7.35.1.0
+    * This version of the adapters has been certified with AdMob 7.35.1.
+
   * 7.34.0.1
     * Start using `MPLogInfo` instead of `MPGoogleLogInfo`.
 
