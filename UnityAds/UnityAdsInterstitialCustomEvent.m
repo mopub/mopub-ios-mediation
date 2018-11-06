@@ -6,9 +6,6 @@
 //
 
 #import "UnityAdsInterstitialCustomEvent.h"
-#if __has_include("MoPub.h")
-    #import "MPLogging.h"
-#endif
 #import "UnityAdsInstanceMediationSettings.h"
 #import "MPUnityRouter.h"
 
