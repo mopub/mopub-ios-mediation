@@ -1,7 +1,3 @@
-//
-//  AppLovinInterstitialCustomEvent.h
-//
-
 #if __has_include(<MoPub/MoPub.h>)
     #import <MoPub/MoPub.h>
 #elif __has_include(<MoPubSDKFramework/MoPub.h>)

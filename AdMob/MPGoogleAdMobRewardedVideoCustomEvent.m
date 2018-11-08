@@ -2,10 +2,10 @@
 
 #import <GoogleMobileAds/GoogleMobileAds.h>
 #if __has_include("MoPub.h")
-    #import "MPLogging.h"
-    #import "MPRewardedVideoError.h"
-    #import "MPRewardedVideoReward.h"
-    #import "MPRewardedVideoCustomEvent+Caching.h"
+#import "MPLogging.h"
+#import "MPRewardedVideoCustomEvent+Caching.h"
+#import "MPRewardedVideoError.h"
+#import "MPRewardedVideoReward.h"
 #endif
 
 @interface MPGoogleAdMobRewardedVideoCustomEvent () <GADRewardBasedVideoAdDelegate>
@@ -32,27 +32,29 @@
 
   NSString *adUnitID = [info objectForKey:@"adunit"];
   if (!adUnitID) {
-    NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain
-                                         code:MPRewardedVideoAdErrorInvalidAdUnitID
-                                     userInfo:@{NSLocalizedDescriptionKey:
-                                                @"Ad Unit ID cannot be nil."}];
+    NSError *error =
+        [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain
+                            code:MPRewardedVideoAdErrorInvalidAdUnitID
+                        userInfo:@{NSLocalizedDescriptionKey : @"Ad Unit ID cannot be nil."}];
     [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
     return;
   }
 
   GADRequest *request = [GADRequest request];
   request.requestAgent = @"MoPub";
-    
-  // Consent collected from the MoPub’s consent dialogue should not be used to set up Google's personalization preference. Publishers should work with Google to be GDPR-compliant.
-    
-  MPGoogleGlobalMediationSettings *medSettings = [[MoPub sharedInstance] globalMediationSettingsForClass:[MPGoogleGlobalMediationSettings class]];
-    
+
+  // Consent collected from the MoPub’s consent dialogue should not be used to set up Google's
+  // personalization preference. Publishers should work with Google to be GDPR-compliant.
+
+  MPGoogleGlobalMediationSettings *medSettings = [[MoPub sharedInstance]
+      globalMediationSettingsForClass:[MPGoogleGlobalMediationSettings class]];
+
   if (medSettings.npa) {
-      GADExtras *extras = [[GADExtras alloc] init];
-      extras.additionalParameters = @{@"npa": medSettings.npa};
-      [request registerAdNetworkExtras:extras];
+    GADExtras *extras = [[GADExtras alloc] init];
+    extras.additionalParameters = @{@"npa" : medSettings.npa};
+    [request registerAdNetworkExtras:extras];
   }
-    
+
   [GADRewardBasedVideoAd sharedInstance].delegate = self;
   [[GADRewardBasedVideoAd sharedInstance] loadRequest:request withAdUnitID:adUnitID];
 }
@@ -64,13 +66,14 @@
 - (void)presentRewardedVideoFromViewController:(UIViewController *)viewController {
   if ([self hasAdAvailable]) {
     [[GADRewardBasedVideoAd sharedInstance] presentFromRootViewController:viewController];
-  }
-  else {
+  } else {
     // We will send the error if the reward-based video ad has already been presented.
-    NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain
-                                         code:MPRewardedVideoAdErrorAdAlreadyPlayed
-                                     userInfo:@{NSLocalizedDescriptionKey:
-                                                @"Reward-based video ad has already been shown."}];
+    NSError *error = [NSError
+        errorWithDomain:MoPubRewardedVideoAdsSDKDomain
+                   code:MPRewardedVideoAdErrorAdAlreadyPlayed
+               userInfo:@{
+                 NSLocalizedDescriptionKey : @"Reward-based video ad has already been shown."
+               }];
     [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
   }
 }
@@ -100,10 +103,9 @@
 #pragma mark - GADRewardBasedVideoAdDelegate methods
 
 - (void)rewardBasedVideoAd:(GADRewardBasedVideoAd *)rewardBasedVideoAd
-   didRewardUserWithReward:(GADAdReward *)reward {
-  MPRewardedVideoReward *moPubReward = [[MPRewardedVideoReward alloc]
-                                      initWithCurrencyType:reward.type
-                                                    amount:reward.amount];
+    didRewardUserWithReward:(GADAdReward *)reward {
+  MPRewardedVideoReward *moPubReward =
+      [[MPRewardedVideoReward alloc] initWithCurrencyType:reward.type amount:reward.amount];
   [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:moPubReward];
 }
 

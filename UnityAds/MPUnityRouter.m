@@ -164,6 +164,11 @@
     if (delegate != nil && [delegate respondsToSelector:@selector(unityAdsPlacementStateChanged:oldState:newState:)]) {
         [delegate unityAdsPlacementStateChanged:placementId oldState:oldState newState:newState];
     }
+    
+    if (delegate != nil && newState == kUnityAdsPlacementStateNoFill){
+        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorUnknown userInfo:nil];
+        [delegate unityAdsDidFailWithError:error];
+    }
 }
 
 @end
