@@ -14,7 +14,7 @@
 #endif
 #import "VungleInstanceMediationSettings.h"
 
-static NSString *const VunglePluginVersion = @"6.2.0";
+static NSString *const VunglePluginVersion = @"6.3.2";
 
 static NSString *const kVungleAppIdKey = @"appId";
 NSString *const kVunglePlacementIdKey = @"pid";
@@ -67,7 +67,8 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     // Collect and pass the user's consent from MoPub onto the Vungle SDK
     if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
         BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
-        [[VungleSDK sharedSDK] updateConsentStatus:(canCollectPersonalInfo) ? VungleConsentAccepted : VungleConsentDenied];
+        [[VungleSDK sharedSDK] updateConsentStatus:(canCollectPersonalInfo) ? VungleConsentAccepted : VungleConsentDenied
+                             consentMessageVersion:@""];
     }
     
     NSString *appId = [info objectForKey:kVungleAppIdKey];
@@ -139,6 +140,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
         if (error) {
             NSLog(@"Vungle: Unable to load an ad for Placement ID :%@, Error %@", placementId, error);
         }
+        [delegate vungleAdDidFailToLoad:error];
     }
 }
 
@@ -186,7 +188,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
 }
 
 - (void)updateConsentStatus:(VungleConsentStatus)status {
-    [[VungleSDK sharedSDK] updateConsentStatus:status];
+    [[VungleSDK sharedSDK] updateConsentStatus:status consentMessageVersion:@""];
 }
 
 - (VungleConsentStatus)getCurrentConsentStatus {
@@ -242,12 +244,12 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
             if (error) {
                 MPLogInfo(@"Vungle: Unable to load an ad for Placement ID :%@, Error %@", key, error);
             }
+            [delegateInstance vungleAdDidFailToLoad:error];
         }
     }
 
     [self.waitingListDic removeAllObjects];
 }
-
 
 #pragma mark - VungleSDKDelegate Methods
 

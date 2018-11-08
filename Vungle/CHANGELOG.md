@@ -1,4 +1,7 @@
 ## Changelog
+  * 6.3.2.0
+    * This version of the adapters has been certified with Vungle 6.3.2.
+
   * 6.2.0.2
     * Clean up remaining code pertaining to Vungle's placement IDs (`pids`) since it's no longer needed to initialize Vungle.
 
