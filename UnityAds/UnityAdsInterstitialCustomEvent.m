@@ -8,6 +8,9 @@
 #import "UnityAdsInterstitialCustomEvent.h"
 #import "UnityAdsInstanceMediationSettings.h"
 #import "MPUnityRouter.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+#endif
 
 static NSString *const kMPUnityRewardedVideoGameId = @"gameId";
 static NSString *const kUnityAdsOptionPlacementIdKey = @"placementId";

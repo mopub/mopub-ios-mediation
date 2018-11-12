@@ -1,5 +1,9 @@
 
 ## Changelog
+* 3.0.0.0
+  * This version of the adapters has been certified with UnityAds 3.0.0.
+  * Add support for banner ad.
+
 * 2.3.0.1
   * Handle no-fill scenarios from Unity Ads. 
 
