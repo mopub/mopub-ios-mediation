@@ -65,7 +65,8 @@
 
 -(void)updateConsentStatus {
     // Collect and pass the user's consent/non-consent from MoPub to the Unity Ads SDK
-    if ([[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusConsented || [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDenied) {
+    
+    if ([MoPub sharedInstance].isGDPRApplicable) {
         UADSMetaData *gdprConsentMetaData = [[UADSMetaData alloc] init];
 
         // If personal data can be collected    - pass YES
