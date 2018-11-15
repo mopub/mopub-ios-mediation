@@ -68,9 +68,9 @@
     if ([[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusConsented || [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDenied) {
         UADSMetaData *gdprConsentMetaData = [[UADSMetaData alloc] init];
 
-        // If the user consented - pass YES
-        // If the user denied - pass NO
-        if([[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusConsented) {
+        // If personal data can be collected    - pass YES
+        // If personal data cannot be collected - pass NO
+        if([[MoPub sharedInstance] canCollectPersonalInfo]) {
             [gdprConsentMetaData set:@"gdpr.consent" value:@YES];
         }
         else {

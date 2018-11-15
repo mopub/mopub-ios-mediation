@@ -9,7 +9,7 @@
     #import "MPLogging.h"
 #endif
 
-static NSString *const kMPUnityRewardedVideoGameId = @"gameId";
+static NSString *const kMPUnityBannerGameId = @"gameId";
 static NSString *const kUnityAdsOptionPlacementIdKey = @"placementId";
 static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 
@@ -31,16 +31,17 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 }
 
 -(void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info {
-    NSString *gameId = info[kMPUnityRewardedVideoGameId];
+    NSString *gameId = info[kMPUnityBannerGameId];
     self.placementId = info[kUnityAdsOptionPlacementIdKey];
     if (self.placementId == nil) {
         self.placementId = info[kUnityAdsOptionZoneIdKey];
     }
-    if (self.placementId == nil) {
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nil];
-    } else {
-        [[MPUnityRouter sharedRouter] requestBannerAdWithGameId:gameId placementId:self.placementId delegate:self];
+    if (gameId == nil || self.placementId == nil) {
+        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:[NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorInvalidCustomEvent userInfo:@{NSLocalizedDescriptionKey: @"Custom event class data did not contain gameId/placementId.", NSLocalizedRecoverySuggestionErrorKey: @"Update your MoPub custom event class data to contain a valid Unity Ads gameId/placementId."}]];
+        return;
     }
+
+    [[MPUnityRouter sharedRouter] requestBannerAdWithGameId:gameId placementId:self.placementId delegate:self];
 }
 
 #pragma mark - UnityAdsBannerDelegate
