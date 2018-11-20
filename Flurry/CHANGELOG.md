@@ -1,4 +1,7 @@
 ## Changelog
+  * 9.2.1.1
+    * Ensure an exclusive pairing between Flurry's FlurryNativeAdAdapter and FlurryNativeVideoAdRenderer.
+
   * 9.2.1.0
     * This version of the adapters has been certified with Flurry 9.2.1.
 
