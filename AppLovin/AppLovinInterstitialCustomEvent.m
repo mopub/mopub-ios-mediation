@@ -218,7 +218,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
 
 #pragma mark - Utility Methods
 
-+ (alnullable ALAd *)dequeueAdForZoneIdentifier:(NSString *)zoneIdentifier
++ (nullable ALAd *)dequeueAdForZoneIdentifier:(NSString *)zoneIdentifier
 {
     @synchronized ( ALGlobalInterstitialAdsLock )
     {
