@@ -63,7 +63,7 @@
         // Collect and pass the user's consent from MoPub onto the Chartboost SDK
         if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
             BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
-            [Chartboost restrictDataCollection:!canCollectPersonalInfo];
+            [Chartboost setPIDataUseConsent:canCollectPersonalInfo ? YesBehavioral : NoBehavioral];
         }
         
         self.activeInterstitialLocations = [NSMutableSet set];

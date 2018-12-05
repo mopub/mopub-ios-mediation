@@ -1,4 +1,7 @@
 ## Changelog
+  * 7.3.0.0
+      * Use Chartboost's `setPIDataUseConsent` instead of `restrictDataCollection` to pass GDPR consent data per Chartboost's 7.3.0 release.
+
   * 7.2.0.3
       * Override Chartboost's didDismissRewardedVideo callback 
       * Adapters now explicitly cache ads instead of calling Chartboost SDK's `setAutoCacheAds` to avoid request tracking issues.
