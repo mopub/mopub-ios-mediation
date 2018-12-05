@@ -22,7 +22,7 @@
     * Improve ironSource SDK initialization
     
  * 6.7.9.1.1
- 	  * Update adapters to be compatible with MoPub iOS SDK framework
+ 	 * Update adapters to be compatible with MoPub iOS SDK framework
 
  * 6.7.9.1.0
     * This version of the adapters has been certified with IronSource 6.7.9.1 
@@ -33,9 +33,9 @@
     
  * 6.7.8.0
     * This version of the adapters has been certified with IronSource 6.7.8.
-
-  * 6.7.5.0
+    
+ * 6.7.5.0
     * This version of the adapters has been certified with IronSource 6.7.5.
 
-  * Initial Commit
+ * Initial Commit
   	* Adapters moved from [mopub-iOS-sdk](https://github.com/mopub/mopub-ios-sdk) to [mopub-iOS-mediation](https://github.com/mopub/mopub-iOS-mediation/)
