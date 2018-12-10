@@ -112,6 +112,7 @@ static GADAdChoicesPosition adChoicesPosition;
   GADUnifiedNativeAdView *gadUnifiedNativeAdView = [[GADUnifiedNativeAdView alloc] init];
 
   GADAdChoicesView *adChoicesView = [[GADAdChoicesView alloc] initWithFrame:CGRectZero];
+  adChoicesView.userInteractionEnabled = NO;
   [gadUnifiedNativeAdView addSubview:adChoicesView];
   gadUnifiedNativeAdView.adChoicesView = adChoicesView;
 
