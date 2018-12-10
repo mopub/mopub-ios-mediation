@@ -55,6 +55,14 @@ static GADAdChoicesPosition adChoicesPosition;
   }
   GADRequest *request = [GADRequest request];
   request.requestAgent = @"MoPub";
+    
+  if ([self.localExtras objectForKey:@"contentUrl"] != nil) {
+      NSString *contentUrl = [self.localExtras objectForKey:@"contentUrl"];
+      if ([contentUrl length] != 0) {
+          request.contentURL = contentUrl;
+      }
+  }
+
   GADNativeAdImageAdLoaderOptions *nativeAdImageLoaderOptions =
       [[GADNativeAdImageAdLoaderOptions alloc] init];
   nativeAdImageLoaderOptions.shouldRequestMultipleImages = NO;

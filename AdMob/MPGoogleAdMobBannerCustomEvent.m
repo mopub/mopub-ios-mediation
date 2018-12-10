@@ -42,6 +42,13 @@
 
   GADRequest *request = [GADRequest request];
 
+  if ([self.localExtras objectForKey:@"contentUrl"] != nil) {
+      NSString *contentUrl = [self.localExtras objectForKey:@"contentUrl"];
+      if ([contentUrl length] != 0) {
+          request.contentURL = contentUrl;
+      }
+  }
+
   CLLocation *location = self.delegate.location;
   if (location) {
     [request setLocationWithLatitude:location.coordinate.latitude
