@@ -1,6 +1,6 @@
 ## Changelog
   * 7.36.0.1
-    * Add support for publishers to pass a content URL to AdMob's ad request via the localExtras (if set).
+    * Add support for publishers to pass a content URL to AdMob's ad request via the localExtras (if set). For more information on content mapping for apps, see https://support.google.com/admob/answer/6270563?hl=en.
 
   * 7.36.0.0
     * This version of the adapters has been certified with AdMob 7.36.0.
