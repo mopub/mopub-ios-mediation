@@ -1,4 +1,7 @@
 ## Changelog
+  * 7.36.0.1
+    * Disable user interaction on the AdChoices icon.
+
   * 7.36.0.0
     * This version of the adapters has been certified with AdMob 7.36.0.
 
