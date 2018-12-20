@@ -11,6 +11,11 @@
 
 #import "UIView+MPGoogleAdMobAdditions.h"
 
+static void MPGoogleLogInfo(NSString *message) {
+  message = [[NSString alloc] initWithFormat:@"<Google Adapter> - %@", message];
+  MPLogInfo(message);
+}
+
 /// Holds the preferred location of the AdChoices icon.
 static GADAdChoicesPosition adChoicesPosition;
 
@@ -54,15 +59,11 @@ static GADAdChoicesPosition adChoicesPosition;
     rootViewController = rootViewController.presentedViewController;
   }
   GADRequest *request = [GADRequest request];
-  request.requestAgent = @"MoPub";
-    
-  if ([self.localExtras objectForKey:@"contentUrl"] != nil) {
-      NSString *contentUrl = [self.localExtras objectForKey:@"contentUrl"];
-      if ([contentUrl length] != 0) {
-          request.contentURL = contentUrl;
-      }
+  if (self.localExtras) {
+    request.testDevices = self.localExtras[@"testDevices"];
   }
 
+  request.requestAgent = @"MoPub";
   GADNativeAdImageAdLoaderOptions *nativeAdImageLoaderOptions =
       [[GADNativeAdImageAdLoaderOptions alloc] init];
   nativeAdImageLoaderOptions.shouldRequestMultipleImages = NO;
@@ -109,7 +110,7 @@ static GADAdChoicesPosition adChoicesPosition;
 - (void)adLoader:(nonnull GADAdLoader *)adLoader
     didReceiveUnifiedNativeAd:(nonnull GADUnifiedNativeAd *)nativeAd {
   if (![self isValidUnifiedNativeAd:nativeAd]) {
-    MPLogInfo(
+    MPGoogleLogInfo(
         @"Unified native ad is missing one or more required assets, failing the request");
     [self.delegate nativeCustomEvent:self
             didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidAdServerResponse(
