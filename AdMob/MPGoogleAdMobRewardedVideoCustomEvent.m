@@ -41,6 +41,9 @@
   }
 
   GADRequest *request = [GADRequest request];
+  if ([self.localExtras objectForKey:@"testDevices"]) {
+    request.testDevices = self.localExtras[@"testDevices"];
+  }
   request.requestAgent = @"MoPub";
 
   if ([self.localExtras objectForKey:@"contentUrl"] != nil) {

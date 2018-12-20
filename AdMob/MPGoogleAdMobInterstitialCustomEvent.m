@@ -49,7 +49,9 @@
 
   // Here, you can specify a list of device IDs that will receive test ads.
   // Running in the simulator will automatically show test ads.
-  request.testDevices = @[ /*more UDIDs here*/ ];
+  if ([self.localExtras objectForKey:@"testDevices"]) {
+    request.testDevices = self.localExtras[@"testDevices"];
+  }
 
   request.requestAgent = @"MoPub";
 
