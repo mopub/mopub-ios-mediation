@@ -15,7 +15,7 @@ DESC
 s.homepage         = 'https://github.com/mopub/mopub-ios-mediation'
 s.license          = { :type => 'New BSD', :file => 'LICENSE' }
 s.author           = { 'MoPub' => 'support@mopub.com' }
-s.source           = { :git => 'https://github.com/mopub/mopub-ios-mediation.git', :commit => 'ac628bb59512c698f6ef021262d8785123f52028' }
+s.source           = { :git => 'https://github.com/mopub/mopub-ios-mediation.git', :tag => 'facebook-5.1.0.0' }
 s.ios.deployment_target = '9.0'
 s.static_framework = true
 s.source_files = 'FacebookAudienceNetwork/*.{h,m}'
