@@ -1,4 +1,8 @@
 ## Changelog
+  * 7.37.0.0
+    * This version of the adapters has been certified with AdMob 7.37.0.
+    * Allow publishers to pass test device IDs to the adapters (via localExtras) to get test ads from AdMob.
+
   * 7.36.0.2
     * Add support for publishers to pass a content URL to AdMob's ad request via the localExtras (if set). For more information on content mapping for apps, see https://support.google.com/admob/answer/6270563?hl=en.
 
