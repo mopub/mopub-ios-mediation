@@ -17,7 +17,6 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
 
 @interface FacebookNativeAdAdapter () <FBNativeAdDelegate>
 
-@property (nonatomic, readonly) FBNativeAd *fbNativeAd;
 @property (nonatomic, readonly) FBAdChoicesView *adChoicesView;
 @property (nonatomic, readonly) FBMediaView *mediaView;
 @property (nonatomic, readonly) FBAdIconView *iconView;

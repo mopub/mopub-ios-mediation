@@ -20,6 +20,7 @@ extern NSString *const kFBVideoAdsEnabledKey;
 @interface FacebookNativeAdAdapter : NSObject <MPNativeAdAdapter>
 
 @property (nonatomic, weak) id<MPNativeAdAdapterDelegate> delegate;
+@property (nonatomic, readonly) FBNativeAd *fbNativeAd;
 
 - (instancetype)initWithFBNativeAd:(FBNativeAd *)fbNativeAd adProperties:(NSDictionary *)adProps;
 

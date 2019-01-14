@@ -1,4 +1,7 @@
 ## Changelog
+* 5.2.0.0
+    * This version of the adapters add a default native ad renderer to simplify the usage of this format.
+
 * 5.1.0.0
     * This version of the adapters has been certified with Facebook Audience Network 5.1.0.
 
