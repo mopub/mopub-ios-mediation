@@ -85,6 +85,13 @@
 - (void)requestVideoAdWithGameId:(NSString *)gameId placementId:(NSString *)placementId delegate:(id<MPUnityRouterDelegate>)delegate;
 {
     [self updateConsentStatus];
+       
+    if([UnityAds getPlacementState:placementId] == kUnityAdsPlacementStateNoFill){
+        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorUnknown userInfo:nil];
+        [delegate unityAdsDidFailWithError:error];
+        return;
+    }
+    
     if (!self.isAdPlaying) {
         [self.delegateMap setObject:delegate forKey:placementId];
         [self initializeWithGameId:gameId];
