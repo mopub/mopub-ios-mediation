@@ -61,30 +61,39 @@
         [UnityAdsBanner setDelegate:self];
         [UnityAds initialize:gameId delegate:self];
     });
+    [self setIfUnityAdsCollectsPersonalInfo];
 }
 
--(void)updateConsentStatus {
+- (void) setIfUnityAdsCollectsPersonalInfo
+{
     // Collect and pass the user's consent/non-consent from MoPub to the Unity Ads SDK
+    UADSMetaData *gdprConsentMetaData = [[UADSMetaData alloc] init];
     
-    if ([MoPub sharedInstance].isGDPRApplicable) {
-        UADSMetaData *gdprConsentMetaData = [[UADSMetaData alloc] init];
-
-        // If personal data can be collected    - pass YES
-        // If personal data cannot be collected - pass NO
-        if([[MoPub sharedInstance] canCollectPersonalInfo]) {
-            [gdprConsentMetaData set:@"gdpr.consent" value:@YES];
+    if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes){
+        if ([[MoPub sharedInstance] allowLegitimateInterest] == YES){
+            if ([[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDenied
+               || [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDoNotTrack) {
+                
+                [gdprConsentMetaData set:@"gdpr.consent" value:@NO];
+            }
+            else {
+                [gdprConsentMetaData set:@"gdpr.consent" value:@YES];
+            }
+        } else {
+            if ([[MoPub sharedInstance] canCollectPersonalInfo] == YES) {
+                [gdprConsentMetaData set:@"gdpr.consent" value:@YES];
+            }
+            else {
+                [gdprConsentMetaData set:@"gdpr.consent" value:@NO];
+            }
         }
-        else {
-            [gdprConsentMetaData set:@"gdpr.consent" value:@NO];
-        }
-
         [gdprConsentMetaData commit];
     }
 }
 
 - (void)requestVideoAdWithGameId:(NSString *)gameId placementId:(NSString *)placementId delegate:(id<MPUnityRouterDelegate>)delegate;
 {
-    [self updateConsentStatus];
+    
     if (!self.isAdPlaying) {
         [self.delegateMap setObject:delegate forKey:placementId];
         [self initializeWithGameId:gameId];
@@ -101,7 +110,6 @@
 }
 
 -(void)requestBannerAdWithGameId:(NSString *)gameId placementId:(NSString *)placementId delegate:(id <UnityAdsBannerDelegate>)delegate {
-    [self updateConsentStatus];
     [self initializeWithGameId:gameId];
     self.bannerDelegate = delegate;
 

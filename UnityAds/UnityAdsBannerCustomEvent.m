@@ -37,17 +37,25 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
         self.placementId = info[kUnityAdsOptionZoneIdKey];
     }
     if (gameId == nil || self.placementId == nil) {
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:[NSError errorWithDomain:@"" code:-1200 userInfo:@{NSLocalizedDescriptionKey: @"Custom event class data did not contain gameId/placementId.", NSLocalizedRecoverySuggestionErrorKey: @"Update your MoPub custom event class data to contain a valid Unity Ads gameId/placementId."}]];
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Custom event class data did not contain gameId/placementId. Update your MoPub custom event class data to contain a valid Unity Ads gameId/placementId."];
+
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+
+        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
 
     [[MPUnityRouter sharedRouter] requestBannerAdWithGameId:gameId placementId:self.placementId delegate:self];
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
 }
 
 #pragma mark - UnityAdsBannerDelegate
 
 -(void)unityAdsBannerDidLoad:(NSString *)placementId view:(UIView *)view {
-    MPLogInfo(@"Unity Banner did load for placement %@", placementId);
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+
     [self.delegate bannerCustomEvent:self didLoadAd:view];
 }
 
@@ -61,12 +69,18 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     MPLogInfo(@"Unity Banner did hide for placement %@", placementId);
 }
 -(void)unityAdsBannerDidClick:(NSString *)placementId {
-    MPLogInfo(@"Unity Banner did click for placement %@", placementId);
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate bannerCustomEventWillLeaveApplication:self];
 }
 -(void)unityAdsBannerDidError:(NSString *)message {
-    MPLogInfo(@"Unity Banner did error with message: %@", message);
+    NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:message];
+
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nil];
+}
+
+- (NSString *) getAdNetworkId {
+    return (self.placementId != nil) ? self.placementId : @"";
 }
 
 @end
