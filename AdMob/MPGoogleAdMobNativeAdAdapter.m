@@ -65,11 +65,14 @@ static NSString *const kGADMStoreKey = @"store";
 - (void)nativeAdDidRecordImpression:(GADUnifiedNativeAd *)nativeAd {
   // Sending impression to MoPub SDK.
   [self.delegate nativeAdWillLogImpression:self];
+  MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], nil);
+  MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], nil);
 }
 
 - (void)nativeAdDidRecordClick:(GADUnifiedNativeAd *)nativeAd {
   // Sending click to MoPub SDK.
   [self.delegate nativeAdDidClick:self];
+  MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], nil);
 }
 
 #pragma mark - <MPNativeAdAdapter>

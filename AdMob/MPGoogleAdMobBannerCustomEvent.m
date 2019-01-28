@@ -6,6 +6,7 @@
 //
 
 #import "MPGoogleAdMobBannerCustomEvent.h"
+#import "GoogleAdMobAdapterConfiguration.h"
 #import <CoreLocation/CoreLocation.h>
 #import <GoogleMobileAds/GoogleMobileAds.h>
 #import "MPGoogleAdMobBannerCustomEvent.h"
@@ -35,13 +36,12 @@
 }
 
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info {
-  MPLogInfo(@"Requesting Google AdMob banner");
+  
   self.adBannerView.frame = [self frameForCustomEventInfo:info];
   self.adBannerView.adUnitID = [info objectForKey:@"adUnitID"];
   self.adBannerView.rootViewController = [self.delegate viewControllerForPresentingModalView];
-
+    
   GADRequest *request = [GADRequest request];
-
   if ([self.localExtras objectForKey:@"contentUrl"] != nil) {
       NSString *contentUrl = [self.localExtras objectForKey:@"contentUrl"];
       if ([contentUrl length] != 0) {
@@ -74,8 +74,12 @@
     extras.additionalParameters = @{@"npa" : medSettings.npa};
     [request registerAdNetworkExtras:extras];
   }
+    
+  // Cache the network initialization parameters
+  [GoogleAdMobAdapterConfiguration updateInitializationParameters:info];
 
   [self.adBannerView loadRequest:request];
+  MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
 }
 
 - (CGRect)frameForCustomEventInfo:(NSDictionary *)info {
@@ -93,28 +97,38 @@
 #pragma mark GADBannerViewDelegate methods
 
 - (void)adViewDidReceiveAd:(GADBannerView *)bannerView {
-  MPLogInfo(@"Google AdMob Banner did load");
+  MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+  MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+  MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    
   [self.delegate bannerCustomEvent:self didLoadAd:self.adBannerView];
 }
 
 - (void)adView:(GADBannerView *)bannerView didFailToReceiveAdWithError:(GADRequestError *)error {
-  MPLogInfo(@"Google AdMob Banner failed to load with error: %@", error.localizedDescription);
+ 
+  NSString *failureReason = [NSString stringWithFormat: @"Google AdMob Banner failed to load with error: %@", error.localizedDescription];
+  NSError *mopubError = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:failureReason];
+
+  MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:mopubError], [self getAdNetworkId]);
   [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
 }
 
 - (void)adViewWillPresentScreen:(GADBannerView *)bannerView {
-  MPLogInfo(@"Google AdMob Banner will present modal");
   [self.delegate bannerCustomEventWillBeginAction:self];
 }
 
 - (void)adViewDidDismissScreen:(GADBannerView *)bannerView {
-  MPLogInfo(@"Google AdMob Banner did dismiss modal");
   [self.delegate bannerCustomEventDidFinishAction:self];
 }
 
 - (void)adViewWillLeaveApplication:(GADBannerView *)bannerView {
-  MPLogInfo(@"Google AdMob Banner will leave the application");
+  MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+
   [self.delegate bannerCustomEventWillLeaveApplication:self];
+}
+
+- (NSString *) getAdNetworkId {
+    return (self.adBannerView) ? self.adBannerView.adUnitID : @"";
 }
 
 @end

@@ -1,5 +1,6 @@
 #import "MPGoogleAdMobNativeCustomEvent.h"
 #import "MPGoogleAdMobNativeAdAdapter.h"
+#import "GoogleAdMobAdapterConfiguration.h"
 #if __has_include("MoPub.h")
 #import "MPLogging.h"
 #import "MPNativeAd.h"
@@ -7,7 +8,6 @@
 #import "MPNativeAdError.h"
 #import "MPNativeAdUtils.h"
 #endif
-
 
 #import "UIView+MPGoogleAdMobAdditions.h"
 
@@ -18,6 +18,7 @@ static GADAdChoicesPosition adChoicesPosition;
 
 /// GADAdLoader instance.
 @property(nonatomic, strong) GADAdLoader *adLoader;
+@property(nonatomic, copy) NSString *admobAdUnitId;
 
 @end
 
@@ -40,8 +41,10 @@ static GADAdChoicesPosition adChoicesPosition;
       [GADMobileAds configureWithApplicationID:applicationID];
     });
   }
-  NSString *adUnitID = info[@"adunit"];
-  if (!adUnitID) {
+  self.admobAdUnitId = info[@"adunit"];
+  if (self.admobAdUnitId == nil) {
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class)
+                                                error:MPNativeAdNSErrorForInvalidAdServerResponse(@"Ad unit ID cannot be nil.")], self.admobAdUnitId);
     [self.delegate nativeCustomEvent:self
             didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidAdServerResponse(
                                          @"Ad unit ID cannot be nil.")];
@@ -78,16 +81,14 @@ static GADAdChoicesPosition adChoicesPosition;
   nativeAdViewAdOptions.preferredAdChoicesPosition = adChoicesPosition;
 
   self.adLoader =
-      [[GADAdLoader alloc] initWithAdUnitID:adUnitID
+      [[GADAdLoader alloc] initWithAdUnitID:self.admobAdUnitId
                          rootViewController:rootViewController
                                     adTypes:@[ kGADAdLoaderAdTypeUnifiedNative ]
                                     options:@[ nativeAdImageLoaderOptions, nativeAdViewAdOptions ]];
   self.adLoader.delegate = self;
 
-
   // Consent collected from the MoPub’s consent dialogue should not be used to set up
   // Google's personalization preference. Publishers should work with Google to be GDPR-compliant.
-
 
   MPGoogleGlobalMediationSettings *medSettings = [[MoPub sharedInstance]
       globalMediationSettingsForClass:[MPGoogleGlobalMediationSettings class]];
@@ -97,13 +98,18 @@ static GADAdChoicesPosition adChoicesPosition;
     extras.additionalParameters = @{@"npa" : medSettings.npa};
     [request registerAdNetworkExtras:extras];
   }
+    
+  // Cache the network initialization parameters
+  [GoogleAdMobAdapterConfiguration updateInitializationParameters:info];
 
   [self.adLoader loadRequest:request];
+  MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.admobAdUnitId);
 }
 
 #pragma mark GADAdLoaderDelegate implementation
 
 - (void)adLoader:(GADAdLoader *)adLoader didFailToReceiveAdWithError:(GADRequestError *)error {
+  MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.admobAdUnitId);
   [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
 }
 
@@ -112,8 +118,7 @@ static GADAdChoicesPosition adChoicesPosition;
 - (void)adLoader:(nonnull GADAdLoader *)adLoader
     didReceiveUnifiedNativeAd:(nonnull GADUnifiedNativeAd *)nativeAd {
   if (![self isValidUnifiedNativeAd:nativeAd]) {
-    MPLogInfo(
-        @"Unified native ad is missing one or more required assets, failing the request");
+    MPLogInfo(@"Unified native ad is missing one or more required assets, failing the request");
     [self.delegate nativeCustomEvent:self
             didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidAdServerResponse(
                                          @"Missing one or more required assets.")];
@@ -171,6 +176,7 @@ static GADAdChoicesPosition adChoicesPosition;
   if ([moPubNativeAd.properties[kAdIconImageKey] length]) {
     if (![MPNativeAdUtils addURLString:moPubNativeAd.properties[kAdIconImageKey]
                             toURLArray:imageURLs]) {
+      MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:MPNativeAdNSErrorForInvalidImageURL()], self.admobAdUnitId);
       [self.delegate nativeCustomEvent:self
               didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidImageURL()];
     }
@@ -179,9 +185,11 @@ static GADAdChoicesPosition adChoicesPosition;
   [super precacheImagesWithURLs:imageURLs
                 completionBlock:^(NSArray *errors) {
                   if (errors) {
+                      MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:MPNativeAdNSErrorForImageDownloadFailure()], self.admobAdUnitId);
                     [self.delegate nativeCustomEvent:self
                             didFailToLoadAdWithError:MPNativeAdNSErrorForImageDownloadFailure()];
                   } else {
+                    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.admobAdUnitId);
                     [self.delegate nativeCustomEvent:self didLoadAd:moPubNativeAd];
                   }
                 }];

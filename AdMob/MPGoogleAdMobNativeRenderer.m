@@ -90,6 +90,8 @@
   }
 
   self.adView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+  MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], nil);
+  MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], nil);    
   [self renderUnifiedAdViewWithAdapter:self.adapter];
   return self.adView;
 }
@@ -99,6 +101,7 @@
 - (void)renderUnifiedAdViewWithAdapter:(id<MPNativeAdAdapter>)adapter {
   // We only load text here. We're creating the GADUnifiedNativeAdView and preparing text
   // assets.
+  
   GADUnifiedNativeAdView *gadUnifiedNativeAdView = [self.adapter adMobUnifiedNativeAdView];
   [self.adView addSubview:gadUnifiedNativeAdView];
   [gadUnifiedNativeAdView gad_fillSuperview];

@@ -1,4 +1,11 @@
 ## Changelog
+  * 7.37.0.1
+    * **Note**: This version is only compatible with the 5.5.0+ release of the MoPub SDK.
+    * Add the `GoogleAdMobAdapterConfiguration` class to: 
+         * pre-initialize the AdMob SDK during MoPub SDK initialization process
+         * store adapter and SDK versions for logging purpose
+    * Streamline adapter logs via `MPLogAdEvent` to make debugging more efficient. For more details, check the [iOS Initialization guide](https://developers.mopub.com/docs/ios/initialization/) and [Writing Custom Events guide](https://developers.mopub.com/docs/ios/custom-events/).
+
   * 7.37.0.0
     * This version of the adapters has been certified with AdMob 7.37.0.
     * Allow publishers to pass test device IDs to the adapters (via localExtras) to get test ads from AdMob.
