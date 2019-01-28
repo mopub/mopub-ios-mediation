@@ -1,4 +1,11 @@
 ## Changelog
+  * 6.3.2.1
+    * **Note**: This version is only compatible with the 5.5.0+ release of the MoPub SDK.
+    * Add the `VungleAdapterConfiguration` class to: 
+         * pre-initialize the Vungle SDK during MoPub SDK initialization process
+         * store adapter and SDK versions for logging purpose
+    * Streamline adapter logs via `MPLogAdEvent` to make debugging more efficient. For more details, check the [iOS Initialization guide](https://developers.mopub.com/docs/ios/initialization/) and [Writing Custom Events guide](https://developers.mopub.com/docs/ios/custom-events/).
+
   * 6.3.2.0
     * This version of the adapters has been certified with Vungle 6.3.2.
 
