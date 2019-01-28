@@ -1,5 +1,6 @@
 
 #import "TapjoyInterstitialCustomEvent.h"
+#import "TapjoyAdapterConfiguration.h"
 #import <Tapjoy/TJPlacement.h>
 #import <Tapjoy/Tapjoy.h>
 #if __has_include("MoPub.h")
@@ -43,14 +44,18 @@
         self.isConnecting = YES;
     }
     else {
-        MPLogInfo(@"Tapjoy interstitial is initialized with empty 'sdkKey'. You must call Tapjoy connect before requesting content.");
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:nil];
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Tapjoy interstitial is initialized with empty 'sdkKey'. You must call Tapjoy connect before requesting content."];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementName);
+        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
     }
 }
 
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     // Grab placement name defined in MoPub dashboard as custom event data
     self.placementName = info[@"name"];
+    
+    // Cache network initialization info
+    [TapjoyAdapterConfiguration updateInitializationParameters:info];
 
     // Adapter is making connect call on behalf of publisher, wait for success before requesting content.
     if (self.isConnecting) {
@@ -69,7 +74,7 @@
 }
 
 - (void)requestPlacementContentWithAdMarkup:(NSString *)adMarkup {
-    if (self.placementName) {
+    if (self.placementName != nil) {
         self.placement = [TJPlacement placementWithName:self.placementName mediationAgent:@"mopub" mediationId:nil delegate:self];
         self.placement.adapterVersion = MP_SDK_VERSION;
         
@@ -83,16 +88,18 @@
             }
         }
 
+        MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.placementName);
         [self.placement requestContent];
     }
     else {
-        MPLogInfo(@"Invalid Tapjoy placement name specified");
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:nil];
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid Tapjoy placement name specified"];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
+        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
     }
 }
 
 - (void)showInterstitialFromRootViewController:(UIViewController *)rootViewController {
-    MPLogInfo(@"Tapjoy interstitial will be shown");
+    MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.placementName);
     [self.placement showContentWithViewController:nil];
 }
 
@@ -105,29 +112,33 @@
 
 - (void)requestDidSucceed:(TJPlacement *)placement {
     if (placement.isContentAvailable) {
-        MPLogInfo(@"Tapjoy interstitial request successful");
+        MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.placementName);
         [self.delegate interstitialCustomEvent:self didLoadAd:nil];
     }
     else {
-        MPLogInfo(@"No Tapjoy interstitials available");
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:nil];
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"No Tapjoy interstitials available"];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementName);
+        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
     }
 }
 
 - (void)requestDidFail:(TJPlacement *)placement error:(NSError *)error {
-    MPLogInfo(@"Tapjoy interstitial request failed");
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementName);
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
 }
 
 - (void)contentDidAppear:(TJPlacement *)placement {
-    MPLogInfo(@"Tapjoy interstitial did appear");
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.placementName);
     [self.delegate interstitialCustomEventWillAppear:self];
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.placementName);
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.placementName);
     [self.delegate interstitialCustomEventDidAppear:self];
 }
 
 - (void)contentDidDisappear:(TJPlacement *)placement {
-    MPLogInfo(@"Tapjoy interstitial did disappear");
+    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.placementName);
     [self.delegate interstitialCustomEventWillDisappear:self];
+    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.placementName);
     [self.delegate interstitialCustomEventDidDisappear:self];
 }
 
