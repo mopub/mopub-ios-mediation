@@ -58,12 +58,12 @@ NSString * const kDisclaimerKey = @"mmdisclaimer";
             properties[kDisclaimerKey] = ad.disclaimer.text;
         }
 
-        _mmNativeAd = ad;
-        _mmAdProperties = properties;
+        self.mmNativeAd = ad;
+        self.mmAdProperties = properties;
 
         // Impression tracking
-        _impressionTimer = [[MPAdImpressionTimer alloc] initWithRequiredSecondsForImpression:0.0 requiredViewVisibilityPercentage:0.5];
-        _impressionTimer.delegate = self;
+        self.impressionTimer = [[MPAdImpressionTimer alloc] initWithRequiredSecondsForImpression:0.0 requiredViewVisibilityPercentage:0.5];
+        self.impressionTimer.delegate = self;
 
     }
     return self;
@@ -94,6 +94,8 @@ NSString * const kDisclaimerKey = @"mmdisclaimer";
 - (void)displayContentForURL:(NSURL *)URL rootViewController:(UIViewController *)controller {
     [self.mmNativeAd invokeDefaultAction];
     [self.delegate nativeAdDidClick:self];
+
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], nil);
 }
 
 #pragma mark - Impression tracking
@@ -108,6 +110,9 @@ NSString * const kDisclaimerKey = @"mmdisclaimer";
     // Handle the impression
     [self.mmNativeAd fireImpression];
     [self.delegate nativeAdWillLogImpression:self];
+    
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], nil);
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], nil);
 }
 
 @end

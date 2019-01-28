@@ -32,7 +32,7 @@ static NSString *const kMoPubMMAdapterDCN = @"dcn";
             if(![mmSDK isInitialized]) {
                 MMAppSettings *appSettings = [[MMAppSettings alloc] init];
                 [mmSDK initializeWithSettings:appSettings withUserSettings:nil];
-                MPLogDebug(@"Millennial adapter version: %@", self.version);
+                MPLogInfo(@"Millennial adapter version: %@", self.version);
             }
         } else {
             self = nil; // No support below minimum OS.
@@ -55,22 +55,23 @@ static NSString *const kMoPubMMAdapterDCN = @"dcn";
                                          userInfo:@{
                                                     NSLocalizedDescriptionKey:[NSString stringWithFormat:@"Millennial adapter not properly intialized yet."]
                                                     }];
-        MPLogError(@"%@", [error localizedDescription]);
         [delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
+        
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         return;
     }
 
-    MPLogDebug(@"Requesting Millennial native ad with event info %@.", info);
-
     NSString *placementId = info[kMoPubMMAdapterAdUnit];
-    if (!placementId) {
+    if (placementId == nil) {
         NSError *error = [NSError errorWithDomain:MMSDKErrorDomain
                                              code:MMSDKErrorServerResponseNoContent
                                          userInfo:@{
                                                     NSLocalizedDescriptionKey:[NSString stringWithFormat:@"Millennial received no placement ID. Request failed."]
                                                     }];
-        MPLogError(@"%@", [error localizedDescription]);
         [delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
+        
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+
         return;
     }
 
@@ -84,6 +85,8 @@ static NSString *const kMoPubMMAdapterDCN = @"dcn";
     self.nativeAd = [[MMNativeAd alloc] initWithPlacementId:placementId supportedTypes:@[MMNativeAdTypeInline]];
     self.nativeAd.delegate = self;
     [self.nativeAd load:nil];
+    
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
 }
 
 -(MMCreativeInfo*)creativeInfo
@@ -103,15 +106,22 @@ static NSString *const kMoPubMMAdapterDCN = @"dcn";
 }
 
 - (void)nativeAdRequestDidSucceed:(MMNativeAd *)ad {
-    MPLogDebug(@"Millennial native ad loaded, creative ID %@", self.creativeInfo.creativeId);
     MillennialNativeAdAdapter *adapter = [[MillennialNativeAdAdapter alloc] initWithMMNativeAd:self.nativeAd];
     MPNativeAd *mpNativeAd = [[MPNativeAd alloc] initWithAdAdapter:adapter];
     [self.delegate nativeCustomEvent:self didLoadAd:mpNativeAd];
+    
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void)nativeAd:(MMNativeAd *)ad requestDidFailWithError:(NSError *)error {
-    MPLogWarn(@"Millennial native ad did fail loading with error: %@.", error);
     [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:MPNativeAdNSErrorForNoInventory()];
+    
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
 }
+
+- (NSString *) getAdNetworkId {
+    return kMoPubMMAdapterAdUnit;
+}
+
 
 @end
