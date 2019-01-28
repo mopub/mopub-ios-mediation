@@ -1,4 +1,11 @@
 ## Changelog
+ * 6.8.0.0.1
+    * **Note**: This version is only compatible with the 5.5.0+ release of the MoPub SDK.
+    * Add the `IronSourceAdapterConfiguration` class to: 
+         * pre-initialize the ironSource SDK during MoPub SDK initialization process
+         * store adapter and SDK versions for logging purpose
+    * Streamline adapter logs via `MPLogAdEvent` to make debugging more efficient. For more details, check the [iOS Initialization guide](https://developers.mopub.com/docs/ios/initialization/) and [Writing Custom Events guide](https://developers.mopub.com/docs/ios/custom-events/).
+
  * 6.8.0.0.0
     * This version of the adapters has been certified with IronSource 6.8.0.0
     
@@ -22,7 +29,7 @@
     * Improve ironSource SDK initialization
     
  * 6.7.9.1.1
- 	 * Update adapters to be compatible with MoPub iOS SDK framework
+ 	  * Update adapters to be compatible with MoPub iOS SDK framework
 
  * 6.7.9.1.0
     * This version of the adapters has been certified with IronSource 6.7.9.1 
@@ -33,9 +40,9 @@
     
  * 6.7.8.0
     * This version of the adapters has been certified with IronSource 6.7.8.
-    
- * 6.7.5.0
+
+  * 6.7.5.0
     * This version of the adapters has been certified with IronSource 6.7.5.
 
- * Initial Commit
+  * Initial Commit
   	* Adapters moved from [mopub-iOS-sdk](https://github.com/mopub/mopub-ios-sdk) to [mopub-iOS-mediation](https://github.com/mopub/mopub-iOS-mediation/)

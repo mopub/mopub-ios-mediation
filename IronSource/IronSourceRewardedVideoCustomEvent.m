@@ -16,7 +16,7 @@
 
 #pragma mark Class local properties
 @property (nonatomic, assign) NSString *placementName;
-@property (nonatomic, strong) NSString *instanceId;
+@property (nonatomic, copy) NSString *instanceId;
 @property (nonatomic, assign) BOOL isTestEnabled;
 @end
 
@@ -41,20 +41,22 @@ static BOOL initRewardedVideoSuccessfully = NO;
         [IronSource setConsent:canCollectPersonalInfo];
     }
 
-    [self logInfo:@"Requesting IronSource Rewarded Video ad"];
     NSString *appKey = [info objectForKey:kIronSourceAppKey];
     [self initializeRewardedVideoIronSourceSDKWithApplicationKey:appKey];
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.instanceId);
     
     if (initRewardedVideoSuccessfully) {
         id<MPRewardedVideoCustomEventDelegate> strongDelegate = self.delegate;
         
         if ([self hasAdAvailable]) {
             [strongDelegate rewardedVideoDidLoadAdForCustomEvent:self];
+            MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.instanceId);
         } else {
-            [self logError:@"IronSource rewarded video ad was not available"];
+            MPLogInfo(@"IronSource rewarded video ad was not available");
             NSError *error = [self createErrorWith:@"IronSource adapter failed to request rewarded video"
                                          andReason:@"no more fill"
                                      andSuggestion:@""];
+            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.instanceId);
             [strongDelegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
         }
     }
@@ -66,25 +68,26 @@ static BOOL initRewardedVideoSuccessfully = NO;
 }
 
 - (BOOL)hasAdAvailable {
-    return [IronSource hasISDemandOnlyRewardedVideo:_instanceId];
+    return [IronSource hasISDemandOnlyRewardedVideo:self.instanceId];
 }
 
 - (void)presentRewardedVideoFromViewController:(UIViewController *)viewController {
+     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.instanceId);
     
     if([self hasAdAvailable]) {
-        [self logInfo:@"IronSource rewarded video ad will be presented"];
-        if ([self isEmpty:_placementName]) {
-            [IronSource showISDemandOnlyRewardedVideo:viewController instanceId:_instanceId];
+        if ([self isEmpty:self.placementName]) {
+            [IronSource showISDemandOnlyRewardedVideo:viewController instanceId:self.instanceId];
         } else {
-            [IronSource showISDemandOnlyRewardedVideo:viewController placement:_placementName instanceId:_instanceId];
+            [IronSource showISDemandOnlyRewardedVideo:viewController placement:self.placementName instanceId:self.instanceId];
         }
     } else {
         id<MPRewardedVideoCustomEventDelegate> strongDelegate = self.delegate;
-        [self logError:@"IronSource rewarded video ad was not available"];
+        MPLogInfo(@"IronSource rewarded video ad was not available");
         NSError *error = [self createErrorWith:@"IronSource adapter failed to request rewarded video"
                                      andReason:@"no more fill"
                                  andSuggestion:@""];
         [strongDelegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
+        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.instanceId);
     }
 }
 
@@ -104,12 +107,12 @@ static BOOL initRewardedVideoSuccessfully = NO;
         [IronSource setISDemandOnlyRewardedVideoDelegate:self];
         
         if (!initRewardedVideoSuccessfully) {
-            [self logInfo:@"IronSource SDK initialization complete"];
+            MPLogInfo(@"IronSource SDK initialization complete");
             [IronSource setMediationType:[NSString stringWithFormat:@"%@%@",kIronSourceMediationName,kIronSourceMediationVersion]];
             [IronSource initISDemandOnly:applicationKey adUnits:@[IS_INTERSTITIAL,IS_REWARDED_VIDEO]];
         }
     } else {
-        [self logError:@"IronSource Adapter failed to request RewardedVideo, 'applicationKey' parameter is missing. make sure that 'applicationKey' server parameter is added"];
+        MPLogInfo(@"IronSource Adapter failed to request RewardedVideo, 'applicationKey' parameter is missing. make sure that 'applicationKey' server parameter is added");
         NSError *error = [self createErrorWith:@"IronSource Adapter failed to request RewardedVideo"
                                      andReason:@"applicationKey parameter is missing"
                                  andSuggestion:@"make sure that 'applicationKey' server parameter is added"];
@@ -123,28 +126,28 @@ static BOOL initRewardedVideoSuccessfully = NO;
 - (void)parseCredentials:(NSDictionary *)parameters {
     
     if ([parameters objectForKey:kIronSourcePlacementName] != nil){
-        _placementName = [parameters objectForKey:kIronSourcePlacementName];
+        self.placementName = [parameters objectForKey:kIronSourcePlacementName];
     }
     
-    _instanceId = @"0";
+    self.instanceId = @"0";
    if (![[parameters objectForKey:kIronSourceInstanceId] isEqualToString:@""] && [parameters objectForKey:kIronSourceInstanceId] != nil )
     {
-        _instanceId = [parameters objectForKey:kIronSourceInstanceId];
+        self.instanceId = [parameters objectForKey:kIronSourceInstanceId];
     }
     
     if ([parameters objectForKey:kIronSourceIsTestEnabled] != nil){
-        _isTestEnabled = [[parameters objectForKey:kIronSourceIsTestEnabled] boolValue];
+        self.isTestEnabled = [[parameters objectForKey:kIronSourceIsTestEnabled] boolValue];
     }
 }
 
 - (void)logInfo:(NSString *)log {
-    if (_isTestEnabled) {
+    if (self.isTestEnabled) {
         MPLogInfo(log);
     }
 }
 
 - (void)logError:(NSString *)log {
-    if (_isTestEnabled) {
+    if (self.isTestEnabled) {
         MPLogError(log);
     }
 }
@@ -176,9 +179,9 @@ static BOOL initRewardedVideoSuccessfully = NO;
  *              You can then show the video. Value will change to NO when no videos are available.
  */
 - (void)rewardedVideoHasChangedAvailability:(BOOL)available instanceId:(NSString *)instanceId {
-    [self logInfo: [NSString stringWithFormat:@"RewardedVideo has changed availability - %@, for instance: %@ " , available ? @"YES" : @"NO", instanceId]];
+    MPLogInfo(@"RewardedVideo has changed availability - %@, for instance: %@ " , available ? @"YES" : @"NO", instanceId);
     
-    if(![_instanceId isEqualToString:instanceId])
+    if(![self.instanceId isEqualToString:instanceId])
         return;
     
     id<MPRewardedVideoCustomEventDelegate> strongDelegate = self.delegate;
@@ -187,8 +190,13 @@ static BOOL initRewardedVideoSuccessfully = NO;
     if (!initRewardedVideoSuccessfully) {
         if (available) {
             [strongDelegate rewardedVideoDidLoadAdForCustomEvent:self];
+            MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.instanceId);
         } else  {
-            [strongDelegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:nil];
+            NSError *error = [self createErrorWith:@"IronSource adapter failed to request rewarded video"
+                                         andReason:@"no more fill"
+                                     andSuggestion:@""];
+            [strongDelegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.instanceId);
         }
         initRewardedVideoSuccessfully = YES;
     }
@@ -206,11 +214,11 @@ static BOOL initRewardedVideoSuccessfully = NO;
         NSString *rewardName = [placementInfo rewardName];
         NSNumber *rewardAmount = [placementInfo rewardAmount];
         id<MPRewardedVideoCustomEventDelegate> strongDelegate = self.delegate;
-        _reward = [[MPRewardedVideoReward alloc] initWithCurrencyType:rewardName amount:rewardAmount];
-        [strongDelegate rewardedVideoShouldRewardUserForCustomEvent:self reward:_reward];
-        [self logInfo:[NSString stringWithFormat:@"IronSource received reward for placement %@ ,for instance:%@",rewardName ,instanceId]];
+        self.reward = [[MPRewardedVideoReward alloc] initWithCurrencyType:rewardName amount:rewardAmount];
+        [strongDelegate rewardedVideoShouldRewardUserForCustomEvent:self reward:self.reward];
+        MPLogInfo(@"IronSource received reward for placement %@, for instance:%@", rewardName, instanceId);
     } else {
-        [self logError:@"IronSource received reward for placement - without placement info"];
+        MPLogInfo(@"IronSource received reward for placement - without placement info");
     }
 }
 
@@ -231,18 +239,20 @@ static BOOL initRewardedVideoSuccessfully = NO;
  *
  */
 - (void)rewardedVideoDidOpen:(NSString *)instanceId {
-    [self logInfo:[NSString stringWithFormat:@"IronSource RewardedVideo did open for instance:%@",instanceId]];
     
     id<MPRewardedVideoCustomEventDelegate> strongDelegate = self.delegate;
     [strongDelegate rewardedVideoWillAppearForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.instanceId);
     [strongDelegate rewardedVideoDidAppearForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.instanceId);
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.instanceId);
 }
 
 /*!
  * @discussion Invoked when the video ad starts playing.
  */
 - (void)rewardedVideoDidStart:(NSString *)instanceId {
-    [self logInfo:[NSString stringWithFormat:@"IronSource RewardedVideo did start for instance:%@",instanceId]];
+    MPLogInfo(@"IronSource RewardedVideo did start for instance:%@", instanceId);
 }
 
 /*!
@@ -250,11 +260,13 @@ static BOOL initRewardedVideoSuccessfully = NO;
  *
  */
 - (void)rewardedVideoDidClose:(NSString *)instanceId {
-    [self logInfo:[NSString stringWithFormat:@"IronSource RewardedVideo did close for instance:%@",instanceId]];
+    MPLogInfo(@"IronSource RewardedVideo did close for instance:%@", instanceId);
     
     id<MPRewardedVideoCustomEventDelegate> strongDelegate = self.delegate;
     [strongDelegate rewardedVideoWillDisappearForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.instanceId);
     [strongDelegate rewardedVideoDidDisappearForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.instanceId);
     
     self.reward = nil;
 }
@@ -263,17 +275,17 @@ static BOOL initRewardedVideoSuccessfully = NO;
  * @discussion Invoked when the video ad finishes playing.
  */
 - (void)rewardedVideoDidEnd:(NSString *)instanceId {
-    [self logInfo:[NSString stringWithFormat:@"IronSource RewardedVideo did end for instance:%@",instanceId]];
+    MPLogInfo(@"IronSource RewardedVideo did end for instance:%@", instanceId);
 }
 
 /*!
  * @discussion Invoked when a video has been clicked.
  */
 - (void)didClickRewardedVideo:(ISPlacementInfo *)placementInfo instanceId:(NSString *)instanceId {
-    [self logInfo:[NSString stringWithFormat:@"Did click IronSource RewardedVideo for instance:%@",instanceId]];
     
     id<MPRewardedVideoCustomEventDelegate> strongDelegate = self.delegate;
     [strongDelegate rewardedVideoDidReceiveTapEventForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.instanceId);
 }
 
 @end

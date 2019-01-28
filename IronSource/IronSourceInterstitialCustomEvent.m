@@ -10,8 +10,8 @@
 #import "IronSourceConstants.h"
 
 @interface IronSourceInterstitialCustomEvent()
-@property (nonatomic, strong) NSString *placementName;
-@property (nonatomic, strong) NSString *instanceId;
+@property (nonatomic, copy) NSString *placementName;
+@property (nonatomic, copy) NSString *instanceId;
 @property (nonatomic, assign) BOOL isTestEnabled;
 
 @end
@@ -31,25 +31,25 @@ static BOOL initInterstitialSuccessfully;
     }
 
     NSString *applicationKey = @"";
-    _instanceId = @"0";
+    self.instanceId = @"0";
     
     if ([info objectForKey:kIronSourceAppKey] != nil){
         applicationKey = [info objectForKey:kIronSourceAppKey];
     }
     
     if ([info objectForKey:kIronSourceIsTestEnabled] != nil){
-        _isTestEnabled = [[info objectForKey:kIronSourceIsTestEnabled] boolValue];
+        self.isTestEnabled = [[info objectForKey:kIronSourceIsTestEnabled] boolValue];
     }
     
     if (![[info objectForKey:kIronSourceInstanceId] isEqualToString:@""] &&
         [info objectForKey:kIronSourceInstanceId] != nil ){
-        _instanceId = [info objectForKey:kIronSourceInstanceId];
+        self.instanceId = [info objectForKey:kIronSourceInstanceId];
     }
     
     if ([info objectForKey:kIronSourcePlacementName] != nil){
-        _placementName = [info objectForKey:kIronSourcePlacementName];
+        self.placementName = [info objectForKey:kIronSourcePlacementName];
     } else {
-        _placementName = nil;
+        self.placementName = nil;
     }
     
     if (![self isEmpty:applicationKey]) {
@@ -64,17 +64,18 @@ static BOOL initInterstitialSuccessfully;
                                  andSuggestion:@"Make sure that 'applicationKey' server parameter is added"];
         
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
-        [self logError:@"IronSource adapter failed to requestInterstitial, 'applicationKey' parameter is missing. make sure that 'applicationKey' server parameter is added"];
+        MPLogInfo(@"IronSource adapter failed to requestInterstitial, 'applicationKey' parameter is missing. make sure that 'applicationKey' server parameter is added");
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.instanceId);
     }
 }
 
 - (void)showInterstitialFromRootViewController:(UIViewController *)rootViewController {
-    [self logInfo:[NSString stringWithFormat:@"Show IronSource interstitial ad for instance %@",_instanceId]];
     
-    if (_placementName) {
-        [IronSource showISDemandOnlyInterstitial:rootViewController placement:_placementName instanceId:_instanceId];
+    MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.instanceId);
+    if (self.placementName != nil) {
+        [IronSource showISDemandOnlyInterstitial:rootViewController placement:self.placementName instanceId:self.instanceId];
     } else {
-        [IronSource showISDemandOnlyInterstitial:rootViewController instanceId:_instanceId];
+        [IronSource showISDemandOnlyInterstitial:rootViewController instanceId:self.instanceId];
     }
 }
 
@@ -83,7 +84,7 @@ static BOOL initInterstitialSuccessfully;
 - (void)initInterstitialIronSourceSDKWithAppKey:(NSString *)appKey {
     
     if (!initInterstitialSuccessfully) {
-        [self logInfo:@"IronSource SDK initialization complete"];
+        MPLogInfo(@"IronSource SDK initialization complete");
         
         [IronSource setMediationType:[NSString stringWithFormat:@"%@%@",kIronSourceMediationName,kIronSourceMediationVersion]];
         [IronSource initISDemandOnly:appKey adUnits:@[IS_INTERSTITIAL]];
@@ -93,23 +94,10 @@ static BOOL initInterstitialSuccessfully;
 }
 
 - (void)loadInterstitial {
-    [self logInfo:[NSString stringWithFormat:@"Load IronSource interstitial ad for instance %@",_instanceId]];
-    [IronSource loadISDemandOnlyInterstitial:_instanceId];
+    MPLogInfo(@"Load IronSource interstitial ad for instance %@",self.instanceId);
+    [IronSource loadISDemandOnlyInterstitial:self.instanceId];
 }
 
-#pragma mark Utiles Methods
-
-- (void)logInfo:(NSString *)log {
-    if (_isTestEnabled) {
-        MPLogInfo(log);
-    }
-}
-
-- (void)logError:(NSString *)log {
-    if (_isTestEnabled) {
-        MPLogError(log);
-    }
-}
 
 - (NSError *)createErrorWith:(NSString *)description andReason:(NSString *)reaason andSuggestion:(NSString *)suggestion {
     NSDictionary *userInfo = @{
@@ -135,22 +123,22 @@ static BOOL initInterstitialSuccessfully;
  * @discussion Called each time an ad is available
  */
 - (void)interstitialDidLoad:(NSString *)instanceId {
-    [self logInfo:[NSString stringWithFormat:@"IronSource interstitial ad did load for instance %@",instanceId]];
     
-    if(![_instanceId isEqualToString:instanceId])
+    if(![self.instanceId isEqualToString:instanceId])
         return;
     
     [self.delegate interstitialCustomEvent:self didLoadAd:nil];
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.instanceId);
 }
 
 /*!
  * @discussion Called each time an ad is not available
  */
 - (void)interstitialDidFailToLoadWithError:(NSError *)error instanceId:(NSString *)instanceId {
-    [self logError:[NSString stringWithFormat:@"IronSource interstitial ad did fail to load with error: %@, instanceId: %@", error.localizedDescription, instanceId]];
+    MPLogInfo(@"IronSource interstitial ad did fail to load with error: %@, instanceId: %@", error.localizedDescription, instanceId);
     
     // Ignore callback
-    if(![_instanceId isEqualToString:instanceId])
+    if(![self.instanceId isEqualToString:instanceId])
         return;
     
     if (!error) {
@@ -160,39 +148,44 @@ static BOOL initInterstitialSuccessfully;
     }
     
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.instanceId);
 }
 
 /*!
  * @discussion Called each time the Interstitial window is about to open
  */
 - (void)interstitialDidOpen:(NSString *)instanceId {
-    [self logInfo:[NSString stringWithFormat:@"IronSource interstitial ad did open for instance %@",instanceId]];
     
     // Ignore callback
-    if(![_instanceId isEqualToString:instanceId])
+    if(![self.instanceId isEqualToString:instanceId])
         return;
     
     [self.delegate interstitialCustomEventWillAppear:self];
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.instanceId);
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.instanceId);
 }
 
 /*!
  * @discussion Called each time the Interstitial window is about to close
  */
 - (void)interstitialDidClose:(NSString *)instanceId {
-    [self logInfo:[NSString stringWithFormat:@"IronSource interstitial ad did close for instance %@",instanceId]];
+    MPLogInfo(@"IronSource interstitial ad did close for instance %@", instanceId);
     
     id<MPInterstitialCustomEventDelegate> strongDelegate = self.delegate;
     [strongDelegate interstitialCustomEventWillDisappear:self];
+    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.instanceId);
     [strongDelegate interstitialCustomEventDidDisappear:self];
+    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.instanceId);
 }
 
 /*!
  * @discussion Called each time the Interstitial window has opened successfully.
  */
 - (void)interstitialDidShow:(NSString *)instanceId {
-    [self logInfo:[NSString stringWithFormat:@"IronSource interstitial ad did show for instance %@",instanceId]];
+    MPLogInfo(@"IronSource interstitial ad did show for instance %@", instanceId);
     
     [self.delegate interstitialCustomEventDidAppear:self];
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.instanceId);
 }
 
 /*!
@@ -201,8 +194,8 @@ static BOOL initInterstitialSuccessfully;
  *              You can learn about the reason by examining the ‘error’ value
  */
 - (void)interstitialDidFailToShowWithError:(NSError *)error instanceId:(NSString *)instanceId {
-    [self logError:[NSString stringWithFormat:@"IronSource interstitial ad did fail to show with error for instance %@",instanceId]];
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+    MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.instanceId);
 
 }
 
@@ -210,11 +203,11 @@ static BOOL initInterstitialSuccessfully;
  * @discussion Called each time the end user has clicked on the Interstitial ad.
  */
 - (void)didClickInterstitial:(NSString *)instanceId {
-    [self logInfo:[NSString stringWithFormat:@"Did click IronSource interstitial ad for instance %@",instanceId]];
     
     id<MPInterstitialCustomEventDelegate> strongDelegate = self.delegate;
     [strongDelegate interstitialCustomEventDidReceiveTapEvent:self];
     [strongDelegate interstitialCustomEventWillLeaveApplication:self];
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.instanceId);
 }
 
 @end
