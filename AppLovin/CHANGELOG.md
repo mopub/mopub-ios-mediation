@@ -1,4 +1,10 @@
 ## Changelog
+   * 6.1.4.2
+     * Addressed various issues introduced in the last version:
+         * Allow passing in of SDK key via the initialization `configuration` object as many publishers integrate without SDK key in the `Info.plist`.
+         * Do not consider banner ad display failure as ad load failure.
+         * Do not consider users closing rewarded ad early or reward validation failure as an ad load failure.
+   
    * 6.1.4.1
      * **Note**: This version is only compatible with the 5.5.0+ release of the MoPub SDK.
      * Add the `AppLovinAdapterConfiguration` class to: 

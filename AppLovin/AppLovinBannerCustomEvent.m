@@ -330,8 +330,6 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
     NSError *error = [NSError errorWithDomain: kALMoPubMediationErrorDomain
                                          code: kALErrorCodeUnableToRenderAd
                                      userInfo: @{NSLocalizedFailureReasonErrorKey: failureReason}];
-    
-    [self.parentCustomEvent.delegate bannerCustomEvent: self.parentCustomEvent didFailToLoadAdWithError: error];
     MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
 }
 

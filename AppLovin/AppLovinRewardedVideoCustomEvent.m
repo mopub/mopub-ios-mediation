@@ -85,7 +85,7 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
     }
     
     // Create incentivized ad based off of zone
-    self.incent = [[self class] incentivizedInterstitialAdForZoneIdentifier: _zoneIdentifier
+    self.incent = [[self class] incentivizedInterstitialAdForZoneIdentifier: self.zoneIdentifier
                                                                 customEvent: self
                                                                         sdk: self.sdk];
     
@@ -240,8 +240,6 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
     NSString *failureReason = [NSString stringWithFormat:@"Rewarded video validation request for ad failed with error code: %ld", responseCode];
 
     NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:failureReason];
-    
-    [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
 }
 
@@ -250,8 +248,6 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
     NSString *failureReason = [NSString stringWithFormat: @"Rewarded video validation request was rejected with response: %@", response];
 
     NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:failureReason];
-    
-    [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
 }
 

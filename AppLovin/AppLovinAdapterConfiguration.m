@@ -7,48 +7,28 @@
 #endif
 
 #if __has_include("MoPub.h")
-#import "MPLogging.h"
+    #import "MPLogging.h"
 #endif
 
-// Constants
-static NSString * const kAppLovinSdkInfoPlistKey   = @"AppLovinSdkKey";
-
-// Errors
-static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-applovin-adapters";
-
-typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode) {
-    AppLovinAdapterErrorCodeMissingSdkKeyInPlist,
-};
-
 @implementation AppLovinAdapterConfiguration
+static ALSdk *__nullable AppLovinAdapterConfigurationSDK;
 
-/**
- Retrieves a shared instance of the AppLovin SDK.
- */
-+ (ALSdk *)appLovinSdk {
-    ALSdk * sharedSdk = nil;
-    
-    // Check if the SDK key is present in info.plist. If it's not present, do not attempt
-    // to fetch the token since this will cause the app to crash!
-    if ([[NSBundle mainBundle] objectForInfoDictionaryKey:kAppLovinSdkInfoPlistKey] != nil) {
-        sharedSdk = [ALSdk shared];
-    }
-    // Error
-    else {
-        MPLogInfo(@"Could not find `AppLovinSdkKey` in Info.plist or a cached AppLovin SDK key.");
-    }
-    
-    return sharedSdk;
-}
+static NSString *const kAppLovinSDKInfoPlistKey = @"AppLovinSdkKey";
+static NSString *const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-applovin-adapters";
+
+typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
+{
+    AppLovinAdapterErrorCodeMissingSDKKey,
+};
 
 #pragma mark - Test Mode
 
 + (BOOL)isTestMode {
-    return [AppLovinAdapterConfiguration appLovinSdk].settings.isTestAdsEnabled;
+    return AppLovinAdapterConfigurationSDK.settings.isTestAdsEnabled;
 }
 
 + (void)setIsTestMode:(BOOL)isTestMode {
-    [AppLovinAdapterConfiguration appLovinSdk].settings.isTestAdsEnabled = isTestMode;
+    AppLovinAdapterConfigurationSDK.settings.isTestAdsEnabled = isTestMode;
 }
 
 #pragma mark - MPAdapterConfiguration
@@ -58,7 +38,7 @@ typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode) {
 }
 
 - (NSString *)biddingToken {
-    return [AppLovinAdapterConfiguration appLovinSdk].adService.bidToken;
+    return AppLovinAdapterConfigurationSDK.adService.bidToken;
 }
 
 - (NSString *)moPubNetworkName {
@@ -69,24 +49,31 @@ typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode) {
     return ALSdk.version;
 }
 
-- (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration
-                                  complete:(void(^)(NSError *))complete {
-    // Attempt to retrieve an AppLovin SDK instance
-    ALSdk * appLovinSdk = [AppLovinAdapterConfiguration appLovinSdk];
+- (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration complete:(void(^)(NSError *))completionBlock
+{
+    // Check if an SDK key is provided in the `configuration` dictionary
+    ALSdk *sdk = [self SDKFromConfiguration: configuration];
     
-    // Initialize the AppLovin SDK to start preloading ads in the background.
-    NSError * error = nil;
-    if (appLovinSdk != nil) {
-        [appLovinSdk initializeSdk];
+    NSError *error;
+    if ( sdk )
+    {
+        AppLovinAdapterConfigurationSDK = sdk;
     }
-    // Could not retrieve an AppLovin SDK instance
-    else {
-        error = [NSError errorWithDomain:kAdapterErrorDomain code:AppLovinAdapterErrorCodeMissingSdkKeyInPlist userInfo:@{ NSLocalizedDescriptionKey: @"Could not find 'AppLovinSdkKey' in Info.plist" }];
+    // If SDK could not be retrieved, it means SDK key was missing from `configuration` AND the Info.plist
+    else
+    {
+        error = [NSError errorWithDomain: kAdapterErrorDomain
+                                    code: AppLovinAdapterErrorCodeMissingSDKKey
+                                userInfo: @{NSLocalizedDescriptionKey: @"Could not retrieve AppLovin SDK key from `configuration` or Info.plist"}];
     }
     
-    if (complete != nil) {
-        complete(error);
-    }
+    if ( completionBlock ) completionBlock( error );
+}
+
+- (nullable ALSdk *)SDKFromConfiguration:(NSDictionary<NSString *, id> *)configuration
+{
+    NSString *key = configuration[@"sdk_key"];
+    return ( key.length > 0 ) ? [ALSdk sharedWithKey: key] : [ALSdk shared];
 }
 
 @end
