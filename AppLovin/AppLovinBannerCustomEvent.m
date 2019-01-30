@@ -73,9 +73,9 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
     
     self.sdk = [self SDKFromCustomEventInfo: info];
     self.sdk.mediationProvider = ALMediationProviderMoPub;
+    [self.sdk setPluginVersion: AppLovinAdapterConfiguration.pluginVersion];
     
-    NSString *pluginVersion = [@"MoPub-" stringByAppendingString: [AppLovinAdapterConfiguration adapterVersion]];
-    [self.sdk setPluginVersion: pluginVersion];
+    [AppLovinAdapterConfiguration setCachedInitializationParameters: info];
     
     // Convert requested size to AppLovin Ad Size
     ALAdSize *adSize = [self appLovinAdSizeFromRequestedSize: size];

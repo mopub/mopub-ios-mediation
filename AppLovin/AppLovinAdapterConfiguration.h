@@ -32,6 +32,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration
                                   complete:(void(^ _Nullable)(NSError * _Nullable))complete;
+
+@property (nonatomic, copy, readonly, class) NSString *pluginVersion;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -70,9 +70,9 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
     
     self.sdk = [self SDKFromCustomEventInfo: info];
     self.sdk.mediationProvider = ALMediationProviderMoPub;
+    [self.sdk setPluginVersion: AppLovinAdapterConfiguration.pluginVersion];
     
-    NSString *pluginVersion = [@"MoPub-" stringByAppendingString: [AppLovinAdapterConfiguration adapterVersion]];
-    [self.sdk setPluginVersion: pluginVersion];
+    [AppLovinAdapterConfiguration setCachedInitializationParameters: info];
     
     BOOL hasAdMarkup = adMarkup.length > 0;
     

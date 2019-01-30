@@ -15,6 +15,7 @@ static ALSdk *__nullable AppLovinAdapterConfigurationSDK;
 
 static NSString *const kAppLovinSDKInfoPlistKey = @"AppLovinSdkKey";
 static NSString *const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-applovin-adapters";
+static NSString *const kAdapterVersion = @"6.1.4.2";
 
 typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
 {
@@ -34,7 +35,7 @@ typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"6.1.4.2";
+    return kAdapterVersion;
 }
 
 - (NSString *)biddingToken {
@@ -47,6 +48,11 @@ typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
 
 - (NSString *)networkSdkVersion {
     return ALSdk.version;
+}
+
++ (NSString *)pluginVersion
+{
+    return [@"MoPub-" stringByAppendingString: kAdapterVersion];
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration complete:(void(^)(NSError *))completionBlock
@@ -72,7 +78,11 @@ typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
 
 - (nullable ALSdk *)SDKFromConfiguration:(NSDictionary<NSString *, id> *)configuration
 {
-    NSString *key = configuration[@"sdk_key"];
+    // If there is a configuration cached already from any of the custom events, use that instead
+    NSDictionary<NSString *, id> *cachedConfiguration = [[self class] cachedInitializationParameters];
+    NSDictionary<NSString *, id> *configurationToUse = (cachedConfiguration.count > 0) ? cachedConfiguration : configuration;
+    
+    NSString *key = configurationToUse[@"sdk_key"];
     return ( key.length > 0 ) ? [ALSdk sharedWithKey: key] : [ALSdk shared];
 }
 
