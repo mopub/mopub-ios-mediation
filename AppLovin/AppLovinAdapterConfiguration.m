@@ -78,9 +78,9 @@ typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
 
 - (nullable ALSdk *)SDKFromConfiguration:(NSDictionary<NSString *, id> *)configuration
 {
-    // If there is a configuration cached already from any of the custom events, use that instead
+    // If there is a configuration cached with SDK key already from any of the custom events, use that instead
     NSDictionary<NSString *, id> *cachedConfiguration = [[self class] cachedInitializationParameters];
-    NSDictionary<NSString *, id> *configurationToUse = (cachedConfiguration.count > 0) ? cachedConfiguration : configuration;
+    NSDictionary<NSString *, id> *configurationToUse = cachedConfiguration[@"sdk_key"] ? cachedConfiguration : configuration;
     
     NSString *key = configurationToUse[@"sdk_key"];
     return ( key.length > 0 ) ? [ALSdk sharedWithKey: key] : [ALSdk shared];
