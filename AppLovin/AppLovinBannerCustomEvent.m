@@ -1,4 +1,6 @@
 #import "AppLovinBannerCustomEvent.h"
+#import "AppLovinAdapterConfiguration.h"
+
 #if __has_include("MoPub.h")
     #import "MPConstants.h"
     #import "MPError.h"
@@ -70,8 +72,10 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
     }
     
     self.sdk = [self SDKFromCustomEventInfo: info];
-    [self.sdk setPluginVersion: @"MoPub-3.1.0"];
     self.sdk.mediationProvider = ALMediationProviderMoPub;
+    
+    NSString *pluginVersion = [@"MoPub-" stringByAppendingString: [AppLovinAdapterConfiguration adapterVersion]];
+    [self.sdk setPluginVersion: pluginVersion];
     
     // Convert requested size to AppLovin Ad Size
     ALAdSize *adSize = [self appLovinAdSizeFromRequestedSize: size];
