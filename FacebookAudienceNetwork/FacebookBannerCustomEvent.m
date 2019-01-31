@@ -9,6 +9,7 @@
 #import "FacebookBannerCustomEvent.h"
 
 #if __has_include("MoPub.h")
+    #import "MoPub.h"
     #import "MPLogging.h"
 #endif
 
@@ -46,14 +47,20 @@
     } else if (size.height == kFBAdSizeHeight50Banner.size.height) {
         fbAdSize = kFBAdSizeHeight50Banner;
     } else {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Banner size does not match with Facebook's standard banner width or height"];
+        NSError *error = [self createErrorWith:@"Banner size does not match with Facebook's standard banner width or height"
+                                     andReason:@""
+                                 andSuggestion:@""];
+        
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.fbPlacementId);
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
     
     if (self.fbPlacementId == nil) {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid Facebook placement ID"];
+        NSError *error = [self createErrorWith:@"Invalid Facebook placement ID"
+                                     andReason:@""
+                                 andSuggestion:@""];
+        
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
 
@@ -66,7 +73,10 @@
     self.fbAdView.delegate = self;
 
     if (!self.fbAdView) {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Facebook failed to load an ad"];
+        NSError *error = [self createErrorWith:@"Facebook failed to load an ad"
+                                     andReason:@""
+                                 andSuggestion:@""];
+        
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.fbPlacementId);
         return;
@@ -96,6 +106,16 @@
 
         MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.fbPlacementId);
     }
+}
+
+- (NSError *)createErrorWith:(NSString *)description andReason:(NSString *)reaason andSuggestion:(NSString *)suggestion {
+    NSDictionary *userInfo = @{
+                               NSLocalizedDescriptionKey: NSLocalizedString(description, nil),
+                               NSLocalizedFailureReasonErrorKey: NSLocalizedString(reaason, nil),
+                               NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(suggestion, nil)
+                               };
+
+    return [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:userInfo];
 }
 
 - (void)dealloc

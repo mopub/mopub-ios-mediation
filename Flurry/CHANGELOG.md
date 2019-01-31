@@ -1,4 +1,7 @@
 ## Changelog
+  * 9.2.1.3
+    * Move source_files to the `Network` subspec. 
+
   * 9.2.1.2
     * **Note**: This version is only compatible with the 5.5.0+ release of the MoPub SDK.
     * Add the `FlurryAdapterConfiguration` class to: 

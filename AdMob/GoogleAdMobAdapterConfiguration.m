@@ -8,6 +8,10 @@
 #import "GoogleAdMobAdapterConfiguration.h"
 #import <GoogleMobileAds/GoogleMobileAds.h>
 
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+#endif
+
 // Initialization configuration keys
 static NSString * const kAdMobApplicationIdKey = @"appid";
 

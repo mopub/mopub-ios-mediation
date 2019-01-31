@@ -28,7 +28,9 @@
 
     NSString *appId = [info objectForKey:@"appId"];
     if (appId == nil) {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Invalid setup. Use the appId parameter when configuring your network in the MoPub website."];
+        NSError *error = [self createErrorWith:@"AdColony adapter failed to requestInterstitial"
+                                     andReason:@"Invalid setup"
+                                 andSuggestion:@"Use the appId parameter when configuring your network in the MoPub website."];
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
 
@@ -37,7 +39,9 @@
     
     NSArray *allZoneIds = [info objectForKey:@"allZoneIds"];
     if (allZoneIds.count == 0) {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Invalid setup. Use the allZoneIds parameter when configuring your network in the MoPub website."];
+        NSError *error = [self createErrorWith:@"AdColony adapter failed to requestInterstitial"
+                                     andReason:@"Invalid setup"
+                                 andSuggestion:@"Use the allZoneIds parameter when configuring your network in the MoPub website."];
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
 
@@ -106,13 +110,17 @@
             
             MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
         } else {
-            NSError *error = [NSError errorWithCode:MOPUBErrorUnknown localizedDescription:@"Failed to show AdColony video"];
+            NSError *error = [self createErrorWith:@"Failed to show AdColony video"
+                                     andReason:@"Unknown Error"
+                                 andSuggestion:@""];
             MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
             
             [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
         }
     } else {
-        NSError *error = [NSError errorWithCode:MOPUBErrorNoInventory localizedDescription:@"Failed to show AdColony video, ad is not available"];
+        NSError *error = [self createErrorWith:@"Failed to show AdColony video"
+                                     andReason:@"ad is not available"
+                                 andSuggestion:@""];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
@@ -121,6 +129,16 @@
 
 - (NSString *) getAdNetworkId {
     return self.zoneId;
+}
+
+- (NSError *)createErrorWith:(NSString *)description andReason:(NSString *)reaason andSuggestion:(NSString *)suggestion {
+    NSDictionary *userInfo = @{
+                               NSLocalizedDescriptionKey: NSLocalizedString(description, nil),
+                               NSLocalizedFailureReasonErrorKey: NSLocalizedString(reaason, nil),
+                               NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(suggestion, nil)
+                               };
+    
+    return [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:userInfo];
 }
 
 @end

@@ -9,6 +9,7 @@
 #import "FacebookInterstitialCustomEvent.h"
 
 #if __has_include("MoPub.h")
+    #import "MoPub.h"
     #import "MPLogging.h"
     #import "MPRealTimeTimer.h"
 #endif
@@ -38,8 +39,11 @@
 {
     self.fbPlacementId = [info objectForKey:@"placement_id"];
     if (self.fbPlacementId == nil) {
-     
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid Facebook placement ID"];
+        
+        NSError *error = [self createErrorWith:@"Invalid Facebook placement ID"
+                                     andReason:@""
+                                 andSuggestion:@""];
+        
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
         
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
@@ -68,8 +72,11 @@
 }
 
 - (void)showInterstitialFromRootViewController:(UIViewController *)controller {
-    if (!self.fbInterstitialAd || !self.fbInterstitialAd.isAdValid) {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Error in loading Facebook Interstitial"];
+    if (!self.fbInterstitialAd || !self.fbInterstitialAd.isAdValid) {        
+        NSError *error = [self createErrorWith:@"Error in loading Facebook Interstitial"
+                                     andReason:@""
+                                 andSuggestion:@""];    
+        
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.fbPlacementId);
         [self.delegate interstitialCustomEventDidExpire:self];
     } else {
@@ -83,6 +90,16 @@
         MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
         [self.delegate interstitialCustomEventDidAppear:self];
     }
+}
+
+- (NSError *)createErrorWith:(NSString *)description andReason:(NSString *)reaason andSuggestion:(NSString *)suggestion {
+    NSDictionary *userInfo = @{
+                               NSLocalizedDescriptionKey: NSLocalizedString(description, nil),
+                               NSLocalizedFailureReasonErrorKey: NSLocalizedString(reaason, nil),
+                               NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(suggestion, nil)
+                               };
+
+    return [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:userInfo];
 }
 
 - (void)dealloc
@@ -108,7 +125,10 @@
         __strong __typeof__(weakSelf) strongSelf = weakSelf;
         if (strongSelf && !strongSelf.hasTrackedImpression) {
             [strongSelf.delegate interstitialCustomEventDidExpire:strongSelf];
-            NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Facebook interstitial ad expired  per Audience Network's expiration policy"];
+
+            NSError *error = [self createErrorWith:@"Facebook interstitial ad expired  per Audience Network's expiration policy"
+                                         andReason:@""
+                                     andSuggestion:@""];
 
             MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.fbPlacementId);
             //Delete the cached objects

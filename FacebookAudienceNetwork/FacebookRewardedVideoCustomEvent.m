@@ -39,7 +39,10 @@
 
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     if (![info objectForKey:@"placement_id"]) {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid Facebook placement ID"];
+        NSError *error = [self createErrorWith:@"Invalid Facebook placement ID"
+                                     andReason:@""
+                                 andSuggestion:@""];
+        
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
         
         [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
@@ -77,7 +80,9 @@
 {
     if(![self hasAdAvailable])
     {
-        NSError *error = [NSError errorWithCode:MOPUBErrorNoInventory localizedDescription:@"Error in loading Facebook Rewarded Video"];
+        NSError *error = [self createErrorWith:@"Error in loading Facebook Rewarded Video"
+                                     andReason:@""
+                                 andSuggestion:@""];
 
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.fbPlacementId);
         [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
@@ -136,7 +141,10 @@
         if (strongSelf && !strongSelf.hasTrackedImpression) {
             [strongSelf.delegate rewardedVideoDidExpireForCustomEvent:strongSelf];
             
-            NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Facebook rewarded video ad expired  per Audience Network's expiration policy"];
+            NSError *error = [self createErrorWith:@"Facebook rewarded video ad expired  per Audience Network's expiration policy"
+                                         andReason:@""
+                                     andSuggestion:@""];
+            
             MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.fbPlacementId);
 
             strongSelf.fbRewardedVideoAd = nil;
@@ -144,6 +152,16 @@
         [strongSelf.expirationTimer invalidate];
     }];
     [self.expirationTimer scheduleNow];
+}
+
+- (NSError *)createErrorWith:(NSString *)description andReason:(NSString *)reaason andSuggestion:(NSString *)suggestion {
+    NSDictionary *userInfo = @{
+                               NSLocalizedDescriptionKey: NSLocalizedString(description, nil),
+                               NSLocalizedFailureReasonErrorKey: NSLocalizedString(reaason, nil),
+                               NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(suggestion, nil)
+                               };
+
+    return [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:userInfo];
 }
 
 /*!

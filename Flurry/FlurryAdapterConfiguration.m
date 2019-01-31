@@ -16,6 +16,10 @@
 #import "FlurryAdError.h"
 #endif
 
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+#endif
+
 // Initialization configuration keys
 static NSString * const kFlurryApiKey = @"apiKey";
 

@@ -8,6 +8,7 @@
 #import "FacebookNativeCustomEvent.h"
 #import "FacebookNativeAdAdapter.h"
 #if __has_include("MoPub.h")
+    #import "MoPub.h"
     #import "MPNativeAd.h"
     #import "MPLogging.h"
     #import "MPNativeAdError.h"

@@ -1,4 +1,7 @@
 ## Changelog
+  * 3.3.5.2
+    * Move source_files to the `Network` subspec.
+
   * 3.3.5.1
     * **Note**: This version is only compatible with the 5.5.0+ release of the MoPub SDK.
     * Add the `AdColonyAdapterConfiguration` class to: 

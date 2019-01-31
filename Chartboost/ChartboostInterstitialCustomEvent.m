@@ -78,12 +78,24 @@ static NSString *appId = nil;
     if ([[MPChartboostRouter sharedRouter] hasCachedInterstitialForLocation:self.location]) {
 
         [[MPChartboostRouter sharedRouter] showInterstitialForLocation:self.location];
-    } else {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Failed to show Chartboost interstitial"];
-
+    } else {        
+        NSError *error = [self createErrorWith:@"Failed to show Chartboost interstitial"
+                                     andReason:@""
+                                 andSuggestion:@""];
+        
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     }
+}
+
+- (NSError *)createErrorWith:(NSString *)description andReason:(NSString *)reaason andSuggestion:(NSString *)suggestion {
+    NSDictionary *userInfo = @{
+                               NSLocalizedDescriptionKey: NSLocalizedString(description, nil),
+                               NSLocalizedFailureReasonErrorKey: NSLocalizedString(reaason, nil),
+                               NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(suggestion, nil)
+                               };
+
+    return [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:userInfo];
 }
 
 #pragma mark - ChartboostDelegate
@@ -99,7 +111,9 @@ static NSString *appId = nil;
 - (void)didFailToLoadInterstitial:(CBLocation)location withError:(CBLoadError)error
 {
     NSString *failureReason = [NSString stringWithFormat:@"Failed to load Chartboost interstitial. Location: %@", location];
-    NSError *mopubError = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:failureReason];
+    NSError *mopubError = [self createErrorWith:failureReason
+                                 andReason:@""
+                             andSuggestion:@""];
 
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:mopubError];
     MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:mopubError], [self getAdNetworkId]);

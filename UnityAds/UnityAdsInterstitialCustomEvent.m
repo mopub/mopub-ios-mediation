@@ -39,8 +39,10 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
         self.placementId = [info objectForKey:kUnityAdsOptionZoneIdKey];
     }
     if (gameId == nil || self.placementId == nil) {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Unity Ads adapter is configured with an invalid placement id"];
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementId);
+          NSError *error = [self createErrorWith:@"Unity Ads adapter failed to requestInterstitial"
+                                       andReason:@"Configured with an invalid placement id"
+                                   andSuggestion:@""];
+          MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementId);
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
 
         return;
@@ -51,6 +53,16 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 
     [[MPUnityRouter sharedRouter] requestVideoAdWithGameId:gameId placementId:self.placementId delegate:self];
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.placementId);
+}
+
+- (NSError *)createErrorWith:(NSString *)description andReason:(NSString *)reaason andSuggestion:(NSString *)suggestion {
+    NSDictionary *userInfo = @{
+                               NSLocalizedDescriptionKey: NSLocalizedString(description, nil),
+                               NSLocalizedFailureReasonErrorKey: NSLocalizedString(reaason, nil),
+                               NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(suggestion, nil)
+                               };
+    
+    return [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:userInfo];
 }
 
 - (BOOL)hasAdAvailable
@@ -64,7 +76,9 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.placementId);
         [[MPUnityRouter sharedRouter] presentVideoAdFromViewController:viewController customerId:nil placementId:self.placementId settings:nil delegate:self];
     } else {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Failed to show Unity Interstitial: Unity now claims that there is no available video ad."];
+        NSError *error = [self createErrorWith:@"Unity Ads failed to load failed to show Unity Interstitial"
+                                 andReason:@"There is no available video ad."
+                             andSuggestion:@""];
         
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementId);
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
@@ -98,9 +112,11 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 
 - (void)unityAdsDidError:(UnityAdsError)error withMessage:(NSString *)message
 {
-    NSError *loadError = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Unity Ads failed to load an ad"];
-    [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:loadError];
-    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:loadError], self.placementId);
+    NSError *errorLoad = [self createErrorWith:@"Unity Ads failed to load an ad"
+                                 andReason:@""
+                             andSuggestion:@""];
+    [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:errorLoad];
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:errorLoad], self.placementId);
 }
 
 - (void) unityAdsDidStart:(NSString *)placementId

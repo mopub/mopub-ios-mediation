@@ -37,8 +37,9 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
         self.placementId = info[kUnityAdsOptionZoneIdKey];
     }
     if (gameId == nil || self.placementId == nil) {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Custom event class data did not contain gameId/placementId. Update your MoPub custom event class data to contain a valid Unity Ads gameId/placementId."];
-
+        NSError *error = [self createErrorWith:@"Unity Ads adapter failed to request Ad"
+                                     andReason:@"Custom event class data did not contain gameId/placementId"
+                                 andSuggestion:@"Update your MoPub custom event class data to contain a valid Unity Ads gameId/placementId."];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
 
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
@@ -50,6 +51,16 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 }
 
 #pragma mark - UnityAdsBannerDelegate
+
+- (NSError *)createErrorWith:(NSString *)description andReason:(NSString *)reaason andSuggestion:(NSString *)suggestion {
+    NSDictionary *userInfo = @{
+                               NSLocalizedDescriptionKey: NSLocalizedString(description, nil),
+                               NSLocalizedFailureReasonErrorKey: NSLocalizedString(reaason, nil),
+                               NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(suggestion, nil)
+                               };
+    
+    return [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:userInfo];
+}
 
 -(void)unityAdsBannerDidLoad:(NSString *)placementId view:(UIView *)view {
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
@@ -73,7 +84,9 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     [self.delegate bannerCustomEventWillLeaveApplication:self];
 }
 -(void)unityAdsBannerDidError:(NSString *)message {
-    NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:message];
+    NSError *error = [self createErrorWith:@"Unity Ads failed to load an ad"
+                                 andReason:@""
+                             andSuggestion:@""];
 
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nil];

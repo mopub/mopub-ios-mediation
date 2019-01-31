@@ -1,4 +1,7 @@
 ## Changelog
+  * 6.3.2.2
+    * Move source_files to the `Network` subspec.
+
   * 6.3.2.1
     * **Note**: This version is only compatible with the 5.5.0+ release of the MoPub SDK.
     * Add the `VungleAdapterConfiguration` class to: 

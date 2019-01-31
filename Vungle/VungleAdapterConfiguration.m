@@ -9,6 +9,10 @@
 #import "VungleAdapterConfiguration.h"
 #import "MPVungleRouter.h"
 
+#if __has_include("MoPub.h")
+#import "MPLogging.h"
+#endif
+
 // Errors
 static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-vungle-adapters";
 

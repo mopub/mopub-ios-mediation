@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'MoPub-OnebyAOL-Adapters'
-s.version          = '6.8.1.1'
+s.version          = '6.8.1.2'
 s.summary          = 'Aol Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats: Banner, Interstitial, Rewarded Video, Native.\n
@@ -15,14 +15,15 @@ DESC
 s.homepage         = 'https://github.com/mopub/mopub-ios-mediation';
 s.license          = { :type => 'New BSD', :file => 'LICENSE' }
 s.author           = { 'MoPub' => 'support@mopub.com' }
-s.source           = { :git => 'https://github.com/mopub/mopub-ios-mediation.git', :tag => 'aol-6.8.1.1' }
+s.source           = { :git => 'https://github.com/mopub/mopub-ios-mediation.git', :tag => "aol-#{s.version}" }
 s.ios.deployment_target = '8.0'
 s.static_framework = true
-s.source_files = 'OnebyAOL/*.{h,m}'
-s.exclude_files = 'MPStaticNativeAdImpressionTimer.{h,m}'
 s.subspec 'MoPub' do |ms|
   ms.dependency 'mopub-ios-sdk', '~> 5.5'
 end
 s.subspec 'Network' do |ns|
+  ns.source_files = 'OnebyAOL/*.{h,m}'
+  ns.exclude_files = 'MPStaticNativeAdImpressionTimer.{h,m}'
+  ns.dependency 'mopub-ios-sdk', '~> 5.5'
 end
 end

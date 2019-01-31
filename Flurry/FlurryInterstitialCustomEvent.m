@@ -31,8 +31,10 @@
     self.apiKey = [info objectForKey:@"apiKey"];
     NSString *adSpaceName = [info objectForKey:@"adSpaceName"];
     
-    if (self.apiKey || !adSpaceName) {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Failed interstitial ad fetch. Missing required server extras [FLURRY_APIKEY and/or FLURRY_ADSPACE]"];
+    if (self.apiKey || !adSpaceName) {        
+        NSError *error = [self createErrorWith:@"Failed interstitial ad fetch"
+                                     andReason:@"Missing required server extras [FLURRY_APIKEY and/or FLURRY_ADSPACE]"
+                                 andSuggestion:@"Make sure that the Flurry API key or ad space parameter is not nil"];
         
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
@@ -61,8 +63,10 @@
     if (self.adInterstitial.ready) {
         [self.adInterstitial presentWithViewController:rootViewController];
     } else {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Trying to show a Flurry interstitial ad when it's not ready."];
-        
+        NSError *error = [self createErrorWith:@"Trying to show a Flurry interstitial ad when it's not ready."
+                                     andReason:@""
+                                 andSuggestion:@""];
+
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
     }
@@ -76,6 +80,16 @@
 - (void)dealloc
 {
     self.adInterstitial.adDelegate = nil;
+}
+
+- (NSError *)createErrorWith:(NSString *)description andReason:(NSString *)reaason andSuggestion:(NSString *)suggestion {
+    NSDictionary *userInfo = @{
+                               NSLocalizedDescriptionKey: NSLocalizedString(description, nil),
+                               NSLocalizedFailureReasonErrorKey: NSLocalizedString(reaason, nil),
+                               NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(suggestion, nil)
+                               };
+    
+    return [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:userInfo];
 }
 
 #pragma mark - FlurryAdInterstitialDelegate
@@ -139,7 +153,10 @@
                 adError:(FlurryAdError) adError errorDescription:(NSError*) errorDescription
 {
     NSString *failureReason = [NSString stringWithFormat:@"Flurry interstitial failed to load with error: %@", errorDescription.description];
-    NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:failureReason];
+
+    NSError *error = [self createErrorWith:failureReason
+                                 andReason:@""
+                             andSuggestion:@""];
 
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
     
