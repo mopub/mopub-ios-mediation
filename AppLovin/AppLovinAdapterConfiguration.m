@@ -15,7 +15,7 @@ static ALSdk *__nullable AppLovinAdapterConfigurationSDK;
 
 static NSString *const kAppLovinSDKInfoPlistKey = @"AppLovinSdkKey";
 static NSString *const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-applovin-adapters";
-static NSString *const kAdapterVersion = @"6.1.4.4";
+static NSString *const kAdapterVersion = @"6.1.4.5";
 
 typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
 {

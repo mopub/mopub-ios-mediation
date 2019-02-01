@@ -1,4 +1,7 @@
 ## Changelog
+  * 9.2.1.5
+    * Adapters now fetch only the core MoPub iOS SDK (excluding viewability SDKs). Publishers wishing to integrate viewability should fetch the `mopub-ios-sdk` dependency in their own Podfile.
+
   * 9.2.1.4
     * Update the Adapter Version to accommodate podspec changes for Unity releases.
     

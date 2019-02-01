@@ -25,7 +25,7 @@ static NSString * const kMoPubMMAdapterAdUnit = @"placementId";
 }
 
 - (NSString *)adapterVersion {
-    return @"6.8.1.3";
+    return @"6.8.1.4";
 }
 
 - (NSString *)biddingToken {
