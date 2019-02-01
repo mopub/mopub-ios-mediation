@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'MoPub-Flurry-Adapters'
-s.version          = '9.2.1.3'
+s.version          = '9.2.1.4'
 s.summary          = 'Flurry Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats:  Interstitial, Rewarded Video, Native.\n

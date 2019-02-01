@@ -1,4 +1,7 @@
 ## Changelog
+* 6.8.1.3
+    * Update Adapter Version in MillennialAdapterConfiguration to accommodate podspec changes for Unity releases.
+    
 * 6.8.1.2
     * Move source_files to the `Network` subspec. 
 

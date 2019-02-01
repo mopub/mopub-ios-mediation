@@ -1,4 +1,7 @@
 ## Changelog
+  * 7.37.0.3
+    * Update Adapter Version in GoogleAdMobAdapterConfiguration to accommodate podspec changes for Unity releases. 
+
   * 7.37.0.2
     * Move source_files to the `Network` subspec. 
 

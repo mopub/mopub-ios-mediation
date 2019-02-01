@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'MoPub-FacebookAudienceNetwork-Adapters'
-s.version          = '5.1.0.2'
+s.version          = '5.1.0.3'
 s.summary          = 'Facebook Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats: Banners, Interstitial, Rewarded Video and Native.\n

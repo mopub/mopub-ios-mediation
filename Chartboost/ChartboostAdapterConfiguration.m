@@ -37,7 +37,7 @@ typedef NS_ENUM(NSInteger, ChartboostAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"7.3.0.1";
+    return @"7.3.0.3";
 }
 
 - (NSString *)biddingToken {

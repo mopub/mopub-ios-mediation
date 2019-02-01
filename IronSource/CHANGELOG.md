@@ -1,4 +1,7 @@
 ## Changelog
+ * 6.8.0.0.3
+    * Update Adapter Version in IronsSourceAdapterConfiguration to accommodate podspec changes for Unity releases.
+    
  * 6.8.0.0.2
     * Move source_files to the `Network` subspec.
 
