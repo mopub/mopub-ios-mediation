@@ -33,6 +33,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration
                                   complete:(void(^ _Nullable)(NSError * _Nullable))complete;
 
+/**
+ * The plugin version to be used by the AppLovin SDK throughout the various custom events.
+ */
 @property (nonatomic, copy, readonly, class) NSString *pluginVersion;
 
 @end
