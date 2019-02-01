@@ -57,7 +57,6 @@ typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration complete:(void(^)(NSError *))completionBlock
 {
-    // Check if an SDK key is provided in the `configuration` dictionary
     ALSdk *sdk = [self SDKFromConfiguration: configuration];
     
     NSError *error;
@@ -65,7 +64,7 @@ typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
     {
         AppLovinAdapterConfigurationSDK = sdk;
     }
-    // If SDK could not be retrieved, it means SDK key was missing from `configuration` AND the Info.plist
+    // If SDK could not be retrieved, it means SDK key was missing from `configuration` (cached or not) AND the Info.plist
     else
     {
         error = [NSError errorWithDomain: kAdapterErrorDomain
