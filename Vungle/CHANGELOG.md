@@ -1,4 +1,7 @@
 ## Changelog
+  * 6.3.2.4
+    * Adapters now fetch only the core MoPub iOS SDK (excluding viewability SDKs). Publishers wishing to integrate viewability should fetch the `mopub-ios-sdk` dependency in their own Podfile.
+
   * 6.3.2.3
     * Update adapter version in VungleAdapterConfiguration to accommodate podspec changes for Unity releases.
     

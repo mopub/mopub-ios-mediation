@@ -1,11 +1,14 @@
 ## Changelog
-   * 6.1.4.4
+   * 6.1.4.5
      * Addressed some issues and optimized adapter:
-         * Allow passing in of SDK key via the initialization `configuration` object as many publishers integrate without SDK key in the `Info.plist`.
-         * Add support for using a cached `configuration` NSDictionary for initialization.
-         * Do not consider banner ad display failure as ad load failure.
-         * Do not consider users closing rewarded ad early or reward validation failure as an ad load failure.
-         * Bumped AppLovin SDK plugin version to "MoPub-6.1.4.4".
+     * Allow passing in of SDK key via the initialization `configuration` object as many publishers integrate without SDK key in the `Info.plist`.
+     * Add support for using a cached `configuration` NSDictionary for initialization.
+     * Do not consider banner ad display failure as ad load failure.
+     * Do not consider users closing rewarded ad early or reward validation failure as an ad load failure.
+     * Bumped AppLovin SDK plugin version to "MoPub-6.1.4.5".
+   
+   * 6.1.4.4
+     * Adapters now fetch only the core MoPub iOS SDK (excluding viewability SDKs). Publishers wishing to integrate viewability should fetch the `mopub-ios-sdk` dependency in their own Podfile.
    
    * 6.1.4.3
      * Update Adapter Version in AppLovinAdapterConfiguration to accommodate podspec changes for Unity releases.
