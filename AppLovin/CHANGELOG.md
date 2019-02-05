@@ -1,5 +1,6 @@
 ## Changelog
-   * 6.1.4.5
+   * 6.2.0.0
+     * This version of the adapters has been certified with AppLovin SDK 6.2.0.
      * Addressed some issues and optimized adapter:
      * Allow passing in of SDK key via the initialization `configuration` object as many publishers integrate without SDK key in the `Info.plist`.
      * Add support for using a cached `configuration` NSDictionary for initialization.
