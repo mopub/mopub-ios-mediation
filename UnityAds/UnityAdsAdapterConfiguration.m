@@ -37,7 +37,7 @@ typedef NS_ENUM(NSInteger, UnityAdsAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"3.0.0.1";
+    return @"3.0.1.0";
 }
 
 - (NSString *)biddingToken {
