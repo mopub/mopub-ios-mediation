@@ -95,7 +95,7 @@
 {
     
     if([UnityAds getPlacementState:placementId] == kUnityAdsPlacementStateNoFill){
-        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorUnknown userInfo:nil];
+        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
         [delegate unityAdsDidFailWithError:error];
         return;
     }
