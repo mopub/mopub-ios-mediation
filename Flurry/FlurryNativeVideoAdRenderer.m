@@ -63,7 +63,7 @@
 
  - (UIView *)retrieveViewWithAdapter:(id<MPNativeAdAdapter>)adapter error:(NSError *__autoreleasing *)error
 {
-    if (!adapter) {
+    if (!adapter || ![adapter isKindOfClass:[FlurryNativeAdAdapter class]]) {
         if (error) {
             *error = MPNativeAdNSErrorForRenderValueTypeError();
         }

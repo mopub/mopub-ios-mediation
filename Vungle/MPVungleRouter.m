@@ -14,11 +14,10 @@
 #endif
 #import "VungleInstanceMediationSettings.h"
 
-static NSString *const VunglePluginVersion = @"6.2.0";
+static NSString *const VunglePluginVersion = @"6.3.2";
 
-static NSString *const kVungleAppIdKey = @"appId";
+NSString *const kVungleAppIdKey = @"appId";
 NSString *const kVunglePlacementIdKey = @"pid";
-static NSString *const kVunglePlacementIdsKey = @"pids";
 NSString *const kVungleFlexViewAutoDismissSeconds = @"flexViewAutoDismissSeconds";
 NSString *const kVungleUserId = @"userId";
 NSString *const kVungleOrdinal = @"ordinal";
@@ -68,17 +67,13 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     // Collect and pass the user's consent from MoPub onto the Vungle SDK
     if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
         BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
-        [[VungleSDK sharedSDK] updateConsentStatus:(canCollectPersonalInfo) ? VungleConsentAccepted : VungleConsentDenied];
+        [[VungleSDK sharedSDK] updateConsentStatus:(canCollectPersonalInfo) ? VungleConsentAccepted : VungleConsentDenied consentMessageVersion:@""];
     }
     
     NSString *appId = [info objectForKey:kVungleAppIdKey];
     if (!self.vungleAppID) {
         self.vungleAppID = appId;
     }
-
-    NSString *placementIdsString = [[info objectForKey:kVunglePlacementIdsKey] stringByReplacingOccurrencesOfString:@" " withString:@""];
-    if ([placementIdsString length])
-        MPLogInfo(@"No need to set placement IDs in MoPub dashboard with Vungle iOS SDK version %@ and plugin version %@", VungleSDKVersion, VunglePluginVersion);
 
     static dispatch_once_t vungleInitToken;
     dispatch_once(&vungleInitToken, ^{
@@ -139,11 +134,12 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
 
     NSError *error = nil;
     if ([[VungleSDK sharedSDK] loadPlacementWithID:placementId error:&error]) {
-        NSLog(@"Vungle: Start to load an ad for Placement ID :%@", placementId);
+        MPLogInfo(@"Vungle: Start to load an ad for Placement ID :%@", placementId);
     } else {
         if (error) {
-            NSLog(@"Vungle: Unable to load an ad for Placement ID :%@, Error %@", placementId, error);
+            MPLogInfo(@"Vungle: Unable to load an ad for Placement ID :%@, Error %@", placementId, error);
         }
+        [delegate vungleAdDidFailToLoad:error];        
     }
 }
 
@@ -165,7 +161,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     }
 }
 
-- (void)presentRewardedVideoAdFromViewController:(UIViewController *)viewController customerId:(NSString *)customerId settings:(VungleInstanceMediationSettings *)settings forPlacementId:(NSString *)placementId eventInfo:(NSDictionary *)info {
+- (void)presentRewardedVideoAdFromViewController:(UIViewController *)viewController customerId:(NSString *)customerId settings:(VungleInstanceMediationSettings *)settings forPlacementId:(NSString *)placementId {
     if (!self.isAdPlaying && [self isAdAvailableForPlacementId:placementId]) {
         self.isAdPlaying = YES;
         NSMutableDictionary *options = [NSMutableDictionary dictionary];
@@ -191,7 +187,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
 }
 
 - (void)updateConsentStatus:(VungleConsentStatus)status {
-    [[VungleSDK sharedSDK] updateConsentStatus:status];
+    [[VungleSDK sharedSDK] updateConsentStatus:status consentMessageVersion:@""];
 }
 
 - (VungleConsentStatus)getCurrentConsentStatus {
@@ -206,19 +202,19 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     NSString *appId = [info objectForKey:kVungleAppIdKey];
     if ([appId length] == 0) {
         isValid = NO;
-        MPLogError(@"Vungle: AppID is empty. Setup appID on MoPub dashboard.");
+        MPLogInfo(@"Vungle: AppID is empty. Setup appID on MoPub dashboard.");
     }
     else {
         if (self.vungleAppID && ![self.vungleAppID isEqualToString:appId]) {
             isValid = NO;
-            MPLogError(@"Vungle: AppID is different from the one used for initialization. Make sure you set the same network App ID for all AdUnits in this application on MoPub dashboard.");
+            MPLogInfo(@"Vungle: AppID is different from the one used for initialization. Make sure you set the same network App ID for all AdUnits in this application on MoPub dashboard.");
         }
     }
 
     NSString *placementId = [info objectForKey:kVunglePlacementIdKey];
     if ([placementId length] == 0) {
         isValid = NO;
-        MPLogError(@"Vungle: PlacementID is empty. Setup placementID on MoPub dashboard.");
+        MPLogInfo(@"Vungle: PlacementID is empty. Setup placementID on MoPub dashboard.");
     }
 
     if (isValid) {
@@ -247,6 +243,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
             if (error) {
                 MPLogInfo(@"Vungle: Unable to load an ad for Placement ID :%@, Error %@", key, error);
             }
+            [delegateInstance vungleAdDidFailToLoad:error];
         }
     }
 

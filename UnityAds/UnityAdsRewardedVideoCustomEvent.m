@@ -7,12 +7,12 @@
 
 #import "UnityAdsRewardedVideoCustomEvent.h"
 #import "UnityAdsInstanceMediationSettings.h"
+#import "UnityAdsAdapterConfiguration.h"
 #import "MPUnityRouter.h"
 #if __has_include("MoPub.h")
     #import "MPRewardedVideoReward.h"
     #import "MPRewardedVideoError.h"
     #import "MPLogging.h"
-    #import "MPRewardedVideoCustomEvent+Caching.h"
 #endif
 
 static NSString *const kMPUnityRewardedVideoGameId = @"gameId";
@@ -35,7 +35,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 - (void)initializeSdkWithParameters:(NSDictionary *)parameters {
     NSString *gameId = [parameters objectForKey:kMPUnityRewardedVideoGameId];
     if (gameId == nil) {
-        NSLog(@"Initialization parameters did not contain gameId.");
+        MPLogInfo(@"Initialization parameters did not contain gameId.");
         return;
     }
 
@@ -46,12 +46,15 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 {
     NSString *gameId = [info objectForKey:kMPUnityRewardedVideoGameId];
     if (gameId == nil) {
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:[NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorInvalidCustomEvent userInfo:@{NSLocalizedDescriptionKey: @"Custom event class data did not contain gameId.", NSLocalizedRecoverySuggestionErrorKey: @"Update your MoPub custom event class data to contain a valid Unity Ads gameId."}]];
+        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorInvalidCustomEvent userInfo:@{NSLocalizedDescriptionKey: @"Custom event class data did not contain gameId.", NSLocalizedRecoverySuggestionErrorKey: @"Update your MoPub custom event class data to contain a valid Unity Ads gameId."}];
+
+        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementId);
         return;
     }
 
     // Only need to cache game ID for SDK initialization
-    [self setCachedInitializationParameters:@{ kMPUnityRewardedVideoGameId: gameId }];
+    [UnityAdsAdapterConfiguration updateInitializationParameters:info];
 
     self.placementId = [info objectForKey:kUnityAdsOptionPlacementIdKey];
     if (self.placementId == nil) {
@@ -59,11 +62,14 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     }
 
     if (self.placementId == nil) {
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:[NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorInvalidCustomEvent userInfo:@{NSLocalizedDescriptionKey: @"Custom event class data did not contain placementId.", NSLocalizedRecoverySuggestionErrorKey: @"Update your MoPub custom event class data to contain a valid Unity Ads placementId."}]];
+        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorInvalidCustomEvent userInfo:@{NSLocalizedDescriptionKey: @"Custom event class data did not contain placementId.", NSLocalizedRecoverySuggestionErrorKey: @"Update your MoPub custom event class data to contain a valid Unity Ads placementId."}];
+        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementId);
         return;
     }
 
     [[MPUnityRouter sharedRouter] requestVideoAdWithGameId:gameId placementId:self.placementId delegate:self];
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.placementId);
 }
 
 - (BOOL)hasAdAvailable
@@ -77,11 +83,15 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
         UnityAdsInstanceMediationSettings *settings = [self.delegate instanceMediationSettingsForClass:[UnityAdsInstanceMediationSettings class]];
 
         NSString *customerId = [self.delegate customerIdForRewardedVideoCustomEvent:self];
+
+        MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.placementId);
         [[MPUnityRouter sharedRouter] presentVideoAdFromViewController:viewController customerId:customerId placementId:self.placementId settings:settings delegate:self];
+
+        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.placementId);
     } else {
-        MPLogInfo(@"Failed to show Unity rewarded video: Unity now claims that there is no available video ad.");
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
         [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
+         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementId);
     }
 }
 
@@ -97,6 +107,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     // has played a video for the same ad network.
     if (![self hasAdAvailable]) {
         [self.delegate rewardedVideoDidExpireForCustomEvent:self];
+        MPLogAdEvent([MPLogEvent adExpiredWithTimeInterval:0], self.placementId);
     }}
 
 #pragma mark - MPUnityRouterDelegate
@@ -104,6 +115,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 - (void)unityAdsReady:(NSString *)placementId
 {
     [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.placementId);
 }
 
 - (void)unityAdsDidError:(UnityAdsError)error withMessage:(NSString *)message
@@ -154,13 +166,18 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
             unityErrorMessage = @"Unity Ads unknown error";
             break;
     }
-    [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:[NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorUnknown userInfo:@{NSLocalizedDescriptionKey: unityErrorMessage}]];
+    NSError *adapterError = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorUnknown userInfo:@{NSLocalizedDescriptionKey: unityErrorMessage}];
+    [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:adapterError];
+     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:adapterError], self.placementId);
 }
 
 - (void) unityAdsDidStart:(NSString *)placementId
 {
     [self.delegate rewardedVideoWillAppearForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.placementId);
+
     [self.delegate rewardedVideoDidAppearForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.placementId);
 }
 
 - (void) unityAdsDidFinish:(NSString *)placementId withFinishState:(UnityAdsFinishState)state
@@ -176,11 +193,13 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 - (void) unityAdsDidClick:(NSString *)placementId
 {
     [self.delegate rewardedVideoDidReceiveTapEventForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.placementId);
 }
 
 - (void)unityAdsDidFailWithError:(NSError *)error
 {
     [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementId);
 }
 
 @end

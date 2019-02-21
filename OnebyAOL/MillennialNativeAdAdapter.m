@@ -10,8 +10,6 @@
     #import "MPAdImpressionTimer.h"
 #endif
 
-NSString * const kAdMainImageViewKey = @"mmmainimage";
-NSString * const kMMAdIconImageViewKey = @"mmiconimage";
 NSString * const kDisclaimerKey = @"mmdisclaimer";
 
 @interface MillennialNativeAdAdapter() <MPAdImpressionTimerDelegate>
@@ -19,6 +17,8 @@ NSString * const kDisclaimerKey = @"mmdisclaimer";
 @property (nonatomic) MPAdImpressionTimer *impressionTimer;
 @property (nonatomic, strong) MMNativeAd *mmNativeAd;
 @property (nonatomic, strong) NSDictionary<NSString *, id> *mmAdProperties;
+@property (nonatomic, readonly) UIImageView *mainImageView;
+@property (nonatomic, readonly) UIImageView *iconImageView;
 
 @end
 
@@ -45,23 +45,25 @@ NSString * const kDisclaimerKey = @"mmdisclaimer";
         }
 
         if (ad.mainImageView.image) {
-            properties[kAdMainImageViewKey] = ad.mainImageView;
+            _mainImageView = ad.mainImageView;
+            properties[kAdMainMediaViewKey] = _mainImageView;
         }
 
         if (ad.iconImageView.image) {
-            properties[kMMAdIconImageViewKey] = ad.iconImageView;
+            _iconImageView = ad.iconImageView;
+            properties[kAdIconImageViewKey] = _iconImageView;
         }
 
         if (ad.disclaimer.text) {
             properties[kDisclaimerKey] = ad.disclaimer.text;
         }
 
-        _mmNativeAd = ad;
-        _mmAdProperties = properties;
+        self.mmNativeAd = ad;
+        self.mmAdProperties = properties;
 
         // Impression tracking
-        _impressionTimer = [[MPAdImpressionTimer alloc] initWithRequiredSecondsForImpression:0.0 requiredViewVisibilityPercentage:0.5];
-        _impressionTimer.delegate = self;
+        self.impressionTimer = [[MPAdImpressionTimer alloc] initWithRequiredSecondsForImpression:0.0 requiredViewVisibilityPercentage:0.5];
+        self.impressionTimer.delegate = self;
 
     }
     return self;
@@ -77,10 +79,23 @@ NSString * const kDisclaimerKey = @"mmdisclaimer";
     return nil;
 }
 
+- (UIView *)mainMediaView
+{
+    return self.mainImageView;
+}
+
+- (UIView *)iconMediaView
+{
+    return self.iconImageView;
+}
+
 #pragma mark - Click Tracking
 
 - (void)displayContentForURL:(NSURL *)URL rootViewController:(UIViewController *)controller {
     [self.mmNativeAd invokeDefaultAction];
+    [self.delegate nativeAdDidClick:self];
+
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], nil);
 }
 
 #pragma mark - Impression tracking
@@ -94,6 +109,10 @@ NSString * const kDisclaimerKey = @"mmdisclaimer";
 
     // Handle the impression
     [self.mmNativeAd fireImpression];
+    [self.delegate nativeAdWillLogImpression:self];
+    
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], nil);
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], nil);
 }
 
 @end

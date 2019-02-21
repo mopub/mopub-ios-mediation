@@ -15,7 +15,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         if (![Flurry activeSessionExists]) {
-            [Flurry setDebugLogEnabled:YES];
+            [Flurry setLogLevel:FlurryLogLevelDebug];
             [Flurry startSession:apiKey];
         }
         [Flurry addOrigin:FlurryMediationOrigin withVersion:FlurryAdapterVersion];

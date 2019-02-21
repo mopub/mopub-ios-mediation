@@ -21,6 +21,13 @@
 @interface MPUnityRouter ()
 
 @property (nonatomic, assign) BOOL isAdPlaying;
+@property (nonatomic, weak) id<MPUnityRouterDelegate> delegate;
+
+@property NSMutableDictionary* delegateMap;
+@property id<UnityAdsBannerDelegate> bannerDelegate;
+
+@property BOOL bannerLoadRequested;
+@property NSString* bannerPlacementId;
 
 @end
 
@@ -51,28 +58,48 @@
         [mediationMetaData setName:@"MoPub"];
         [mediationMetaData setVersion:[[MoPub sharedInstance] version]];
         [mediationMetaData commit];
+        [UnityAdsBanner setDelegate:self];
         [UnityAds initialize:gameId delegate:self];
     });
+    [self setIfUnityAdsCollectsPersonalInfo];
+}
+
+- (void) setIfUnityAdsCollectsPersonalInfo
+{
+    // Collect and pass the user's consent/non-consent from MoPub to the Unity Ads SDK
+    UADSMetaData *gdprConsentMetaData = [[UADSMetaData alloc] init];
+    
+    if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes){
+        if ([[MoPub sharedInstance] allowLegitimateInterest] == YES){
+            if ([[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDenied
+               || [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDoNotTrack) {
+                
+                [gdprConsentMetaData set:@"gdpr.consent" value:@NO];
+            }
+            else {
+                [gdprConsentMetaData set:@"gdpr.consent" value:@YES];
+            }
+        } else {
+            if ([[MoPub sharedInstance] canCollectPersonalInfo] == YES) {
+                [gdprConsentMetaData set:@"gdpr.consent" value:@YES];
+            }
+            else {
+                [gdprConsentMetaData set:@"gdpr.consent" value:@NO];
+            }
+        }
+        [gdprConsentMetaData commit];
+    }
 }
 
 - (void)requestVideoAdWithGameId:(NSString *)gameId placementId:(NSString *)placementId delegate:(id<MPUnityRouterDelegate>)delegate;
 {
-    // Collect and pass the user's consent/non-consent from MoPub to the Unity Ads SDK
-    if ([[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusConsented || [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDenied) {
-        UADSMetaData *gdprConsentMetaData = [[UADSMetaData alloc] init];
-
-        // If the user consented - pass YES
-        // If the user denied - pass NO
-        if([[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusConsented) {
-            [gdprConsentMetaData set:@"gdpr.consent" value:@YES];
-        }
-        else {
-            [gdprConsentMetaData set:@"gdpr.consent" value:@NO];
-        }
-
-        [gdprConsentMetaData commit];
+    
+    if([UnityAds getPlacementState:placementId] == kUnityAdsPlacementStateNoFill){
+        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
+        [delegate unityAdsDidFailWithError:error];
+        return;
     }
-
+    
     if (!self.isAdPlaying) {
         [self.delegateMap setObject:delegate forKey:placementId];
         [self initializeWithGameId:gameId];
@@ -85,6 +112,18 @@
     } else {
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorUnknown userInfo:nil];
         [delegate unityAdsDidFailWithError:error];
+    }
+}
+
+-(void)requestBannerAdWithGameId:(NSString *)gameId placementId:(NSString *)placementId delegate:(id <UnityAdsBannerDelegate>)delegate {
+    [self initializeWithGameId:gameId];
+    self.bannerDelegate = delegate;
+
+    if ([UnityAds isReady:placementId]) {
+        [UnityAdsBanner loadBanner:placementId];
+    } else {
+        self.bannerLoadRequested = YES;
+        self.bannerPlacementId = placementId;
     }
 }
 
@@ -117,11 +156,20 @@
     }
 }
 
+-(void)clearBannerDelegate {
+    self.bannerDelegate = nil;
+    self.bannerPlacementId = nil;
+    self.bannerLoadRequested = NO;
+}
+
 #pragma mark - UnityAdsExtendedDelegate
 
 - (void)unityAdsReady:(NSString *)placementId
 {
-    if (!self.isAdPlaying) {
+    if ([placementId isEqualToString:self.bannerPlacementId] && self.bannerLoadRequested) {
+        self.bannerLoadRequested = NO;
+        [UnityAdsBanner loadBanner:self.bannerPlacementId];
+    } else if (!self.isAdPlaying) {
         id delegate = [self getDelegate:placementId];
         if (delegate != nil) {
             [delegate unityAdsReady:placementId];
@@ -164,6 +212,33 @@
     if (delegate != nil && [delegate respondsToSelector:@selector(unityAdsPlacementStateChanged:oldState:newState:)]) {
         [delegate unityAdsPlacementStateChanged:placementId oldState:oldState newState:newState];
     }
+    
+    if (delegate != nil && newState == kUnityAdsPlacementStateNoFill){
+        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorUnknown userInfo:nil];
+        [delegate unityAdsDidFailWithError:error];
+    }
+}
+
+#pragma mark - UnityAdsBannerDelegate
+
+-(void)unityAdsBannerDidLoad:(NSString *)placementId view:(UIView *)view {
+    [self.bannerDelegate unityAdsBannerDidLoad:placementId view:view];
+}
+
+-(void)unityAdsBannerDidUnload:(NSString *)placementId {
+    [self.bannerDelegate unityAdsBannerDidUnload:placementId];
+}
+-(void)unityAdsBannerDidShow:(NSString *)placementId {
+    [self.bannerDelegate unityAdsBannerDidShow:placementId];
+}
+-(void)unityAdsBannerDidHide:(NSString *)placementId {
+    [self.bannerDelegate unityAdsBannerDidHide:placementId];
+}
+-(void)unityAdsBannerDidClick:(NSString *)placementId {
+    [self.bannerDelegate unityAdsBannerDidClick:placementId];
+}
+-(void)unityAdsBannerDidError:(NSString *)message {
+    [self.bannerDelegate unityAdsBannerDidError:message];
 }
 
 @end

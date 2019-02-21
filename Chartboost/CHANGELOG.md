@@ -1,4 +1,24 @@
 ## Changelog
+  * 7.3.0.4
+      * Adapters now fetch only the core MoPub iOS SDK (excluding viewability SDKs). Publishers wishing to integrate viewability should fetch the `mopub-ios-sdk` dependency in their own Podfile.
+
+  * 7.3.0.3
+      * Update Adapter Version in ChartboostAdapterConfiguration to accommodate podspec changes for Unity releases.
+      
+  * 7.3.0.2
+      * Move source_files to the `Network` subspec.
+
+  * 7.3.0.1
+      * **Note**: This version is only compatible with the 5.5.0+ release of the MoPub SDK.
+      * Add the `ChartboostAdapterConfiguration` class to: 
+           * pre-initialize the Chartboost SDK during MoPub SDK initialization process
+           * store adapter and SDK versions for logging purpose
+      * Streamline adapter logs via `MPLogAdEvent` to make debugging more efficient. For more details, check the [iOS Initialization guide](https://developers.mopub.com/docs/ios/initialization/) and [Writing Custom Events guide](https://developers.mopub.com/docs/ios/custom-events/).
+      * Allow supported mediated networks and publishers to opt-in to process a user’s personal data based on legitimate interest basis. More details [here](https://developers.mopub.com/docs/publisher/gdpr-guide/#legitimate-interest-support).
+
+  * 7.3.0.0
+      * Use Chartboost's `setPIDataUseConsent` instead of `restrictDataCollection` to pass GDPR consent data per Chartboost's 7.3.0 release.
+
   * 7.2.0.3
       * Override Chartboost's didDismissRewardedVideo callback 
       * Adapters now explicitly cache ads instead of calling Chartboost SDK's `setAutoCacheAds` to avoid request tracking issues.
