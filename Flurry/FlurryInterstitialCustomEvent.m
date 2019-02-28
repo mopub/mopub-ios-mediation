@@ -31,7 +31,7 @@
     self.apiKey = [info objectForKey:@"apiKey"];
     NSString *adSpaceName = [info objectForKey:@"adSpaceName"];
     
-    if (self.apiKey || !adSpaceName) {        
+    if (!self.apiKey || !adSpaceName) {        
         NSError *error = [self createErrorWith:@"Failed interstitial ad fetch"
                                      andReason:@"Missing required server extras [FLURRY_APIKEY and/or FLURRY_ADSPACE]"
                                  andSuggestion:@"Make sure that the Flurry API key or ad space parameter is not nil"];
