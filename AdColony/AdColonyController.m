@@ -14,19 +14,12 @@
     #import "MPRewardedVideo.h"
 #endif
 
-typedef enum {
-    INIT_STATE_UNKNOWN,
-    INIT_STATE_INITIALIZED,
-    INIT_STATE_INITIALIZING
-} InitState;
-
 NSString *const kAdColonyExplicitConsentGiven = @"explicit_consent_given";
 NSString *const kAdColonyConsentResponse = @"consent_response";
 
 @interface AdColonyController()
 
-@property (atomic, assign) InitState initState;
-@property (atomic, retain) NSArray *callbacks;
+@property (atomic, assign, readwrite) InitState initState;
 @property (atomic, strong) NSSet *currentAllZoneIds;
 @property (atomic, assign) BOOL testModeEnabled;
 
@@ -46,8 +39,6 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
                 callback();
             }
         } else {
-            instance.callbacks = [instance.callbacks arrayByAddingObject:callback];
-
             if (instance.initState != INIT_STATE_INITIALIZING) {
                 instance.initState = INIT_STATE_INITIALIZING;
 
@@ -63,17 +54,33 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
                 instance.currentAllZoneIds = allZoneIdsSet;
                 options.testMode = instance.testModeEnabled;
 
-                if (MoPub.sharedInstance.isGDPRApplicable == MPBoolYes) {
-                    [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
-                    [options setOption:kAdColonyConsentResponse withNumericValue:@(MoPub.sharedInstance.canCollectPersonalInfo)];
+                if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes){
+                    if ([[MoPub sharedInstance] allowLegitimateInterest] == YES){
+                        if ([[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDenied
+                            || [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDoNotTrack) {
+                            
+                            [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
+                            [options setOption:kAdColonyConsentResponse withNumericValue:@NO];
+                        }
+                        else {
+                            [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
+                            [options setOption:kAdColonyConsentResponse withNumericValue:@YES];
+                        }
+                    } else {
+                        if ([[MoPub sharedInstance] canCollectPersonalInfo]) {
+                            [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
+                            [options setOption:kAdColonyConsentResponse withNumericValue:@(MoPub.sharedInstance.canCollectPersonalInfo)];
+                        }
+                    }
                 }
 
                 [AdColony configureWithAppID:appId zoneIDs:allZoneIds options:options completion:^(NSArray<AdColonyZone *> * _Nonnull zones) {
                     @synchronized (instance) {
                         instance.initState = INIT_STATE_INITIALIZED;
-                        for (void(^localCallback)() in instance.callbacks) {
-                            localCallback();
-                        }
+                    }
+                    
+                    if (callback != nil) {
+                        callback();
                     }
                 }];
             }
@@ -121,7 +128,6 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
 - (id)init {
     if (self = [super init]) {
         _initState = INIT_STATE_UNKNOWN;
-        _callbacks = @[];
     }
     return self;
 }

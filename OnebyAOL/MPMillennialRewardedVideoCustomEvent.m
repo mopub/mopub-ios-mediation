@@ -7,9 +7,9 @@
 
 #import "MPMillennialRewardedVideoCustomEvent.h"
 #import "MPMillennialInterstitialCustomEvent.h"
+#import "MillennialAdapterConfiguration.h"
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
-    #import "MPRewardedVideoCustomEvent+Caching.h"
 #endif
 #import <MMAdSDK/MMAd+Experimental.h>
 #import "MMAdapterVersion.h"
@@ -65,19 +65,8 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
             if (![mmSDK isInitialized]) {
                 [mmSDK initializeWithSettings:[[MMAppSettings alloc] init]
                              withUserSettings:nil];
-                MPLogDebug(@"Millennial adapter version: %@", self.version);
+                MPLogInfo(@"Millennial adapter version: %@", self.version);
             }
-            
-            // Collect and pass the user's consent from MoPub onto the One by AOL SDK
-            if ( [MoPub sharedInstance].isGDPRApplicable == MPBoolYes )
-                [mmSDK setConsentRequired: TRUE];
-            else
-                [mmSDK setConsentRequired: FALSE];
-            
-            if ( [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusConsented ) {
-                [mmSDK setConsentDataValue: @"1" forKey:@"mopub"];
-            }
-            
         } else {
             self = nil; // No support below minimum OS.
         }
@@ -92,7 +81,7 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
         if (![mmSDK isInitialized]) {
             [mmSDK initializeWithSettings:[[MMAppSettings alloc] init]
                          withUserSettings:nil];
-            MPLogDebug(@"Millennial adapter version: %@", self.version);
+            MPLogInfo(@"Millennial adapter version: %@", self.version);
         }
     });
 }
@@ -107,27 +96,27 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
                                          userInfo:@{
                                                     NSLocalizedDescriptionKey:[NSString stringWithFormat:@"Millennial adapter not properly intialized yet."]
                                                     }];
-        MPLogError(@"%@", [error localizedDescription]);
         [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+        
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         return;
     }
 
-    MPLogDebug(@"Requesting Millennial rewarded video with event info %@.", info);
-
     NSString *placementId = info[kMoPubMMAdapterAdUnit];
-    if (!placementId) {
+    if (placementId == nil) {
         NSError *error = [NSError errorWithDomain:MMSDKErrorDomain
                                              code:MMSDKErrorServerResponseNoContent
                                          userInfo:@{
                                                     NSLocalizedDescriptionKey:[NSString stringWithFormat:@"Millennial received no placement ID. Request failed."]
                                                     }];
-        MPLogError(@"%@", [error localizedDescription]);
         [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+        
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         return; // Early return
     }
 
     // Cache the initialization parameters
-    [self setCachedInitializationParameters:info];
+    [MillennialAdapterConfiguration updateInitializationParameters:info];
 
     [mmSDK appSettings].mediator = NSStringFromClass([MPMillennialRewardedVideoCustomEvent class]);
     if (info[kMoPubMMAdapterDCN]) {
@@ -141,6 +130,8 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
     self.interstitialEvent.delegate = self;
     self.interstitialEvent.rewardEvent = self;
     [self.interstitialEvent requestInterstitialWithCustomEventInfo:info];
+    
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
 }
 
 - (BOOL)hasAdAvailable {
@@ -148,6 +139,8 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
 }
 
 - (void)presentRewardedVideoFromViewController:(UIViewController *)viewController {
+    MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+
     if ([self hasAdAvailable]) {
         [self.interstitialEvent showInterstitialFromRootViewController:viewController];
     } else {
@@ -156,8 +149,9 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
                                          userInfo:@{
                                                     NSLocalizedDescriptionKey:[NSString stringWithFormat:@"Millennial reward video was unavailable to display."]
                                                     }];
-        MPLogError(@"%@", [error localizedDescription]);
         [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
+        
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     }
 }
 
@@ -189,7 +183,7 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
 
 - (BOOL)incentivizedAdCompletedVideo:(MMAd *)ad {
     MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyAmount:@(kMPRewardedVideoRewardCurrencyAmountUnspecified)];
-    MPLogDebug(@"%@ incentivizedAdCompletedVideo %@, reward: %@.", NSStringFromClass([self class]), ad, reward);
+    MPLogInfo(@"%@ incentivizedAdCompletedVideo %@, reward: %@.", NSStringFromClass([self class]), ad, reward);
     [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:reward];
     return YES;
 }
@@ -198,12 +192,12 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
     // kMMXIncentiveVideoCompleteEventId events already special-cased by the SDK
     // to call incentivizedAdCompletedVideo directly. Otherwise we could check
     // for it here and call incentivizedAdCompletedVideo.
-    MPLogDebug(@"%@ incentivizedAd: %@  triggeredEvent: %@.", NSStringFromClass([self class]), ad, event);
+    MPLogInfo(@"%@ incentivizedAd: %@  triggeredEvent: %@.", NSStringFromClass([self class]), ad, event);
     return YES;
 }
 
 -(void)xIncentiveEventWasTriggered:(MMXIncentiveEvent *)event {
-    MPLogDebug(@"%@ xIncentiveEventWasTriggered %@.", NSStringFromClass([self class]), event);
+    MPLogInfo(@"%@ xIncentiveEventWasTriggered %@.", NSStringFromClass([self class]), event);
 }
 
 #pragma mark - MPInterstitialCustomEventDelegate
@@ -221,7 +215,9 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
 
 - (void)interstitialCustomEvent:(MPInterstitialCustomEvent *)customEvent
                       didLoadAd:(id)ad {
-    MPLogDebug(@"%@ interstitialCustomEvent didLoadAd %@/%@.", NSStringFromClass([self class]), self, customEvent);
+
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+
     // Now that we have the interstitial, assign the incentive delegate to be
     // notified when the video has completed.
     if (customEvent == self.interstitialEvent) {
@@ -233,14 +229,16 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
 
 - (void)interstitialCustomEvent:(MPInterstitialCustomEvent *)customEvent
        didFailToLoadAdWithError:(NSError *)error {
-    MPLogDebug(@"%@ interstitialCustomEvent didFailToLoadAdWithError %@ / %@: %@.", NSStringFromClass([self class]), self, customEvent, error);
+    MPLogInfo(@"%@ interstitialCustomEvent didFailToLoadAdWithError %@ / %@: %@.", NSStringFromClass([self class]), self, customEvent, error);
     if (error.code == MMSDKErrorInterstitialAdAlreadyLoaded) {
         MPLogInfo(@"Interstitial already loaded, ignoring this request.");
         [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
     } else {
-        MPLogError(@"Interstitial failed with error (%d) %@.", error.code, error.description);
+        MPLogInfo(@"Interstitial failed with error (%ld) %@.", (long)error.code, error.description);
         [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
     }
+
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
 }
 
 - (void)interstitialCustomEventDidExpire:(MPInterstitialCustomEvent *)customEvent {
@@ -249,23 +247,33 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
 
 - (void)interstitialCustomEventWillAppear:(MPInterstitialCustomEvent *)customEvent {
     [self.delegate rewardedVideoWillAppearForCustomEvent:self];
+    
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void)interstitialCustomEventDidAppear:(MPInterstitialCustomEvent *)customEvent {
     [self.delegate rewardedVideoDidAppearForCustomEvent:self];
+    
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void)interstitialCustomEventWillDisappear:(MPInterstitialCustomEvent *)customEvent {
     [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
+    
+    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void)interstitialCustomEventDidDisappear:(MPInterstitialCustomEvent *)customEvent {
     [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
+    
+    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void)interstitialCustomEventDidReceiveTapEvent:(MPInterstitialCustomEvent *)customEvent {
-    MPLogDebug(@"%@ interstitialCustomEvent tap event %@ / %@.", NSStringFromClass([self class]), self, customEvent);
     [self.delegate rewardedVideoDidReceiveTapEventForCustomEvent:self];
+    
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void)interstitialCustomEventWillLeaveApplication:(MPInterstitialCustomEvent *)customEvent {
@@ -273,13 +281,17 @@ static const char *const kMoPubMMRewardEventKey = "_rewardEvent_";
 }
 
 - (void)trackImpression {
-    MPLogDebug(@"%@ trackImpression %@.", NSStringFromClass([self class]), self);
+    MPLogInfo(@"%@ trackImpression %@.", NSStringFromClass([self class]), self);
     [self.delegate trackImpression];
 }
 
 - (void)trackClick {
-    MPLogDebug(@"%@ trackClick %@.", NSStringFromClass([self class]), self);
+    MPLogInfo(@"%@ trackClick %@.", NSStringFromClass([self class]), self);
     [self.delegate trackClick];
+}
+
+- (NSString *) getAdNetworkId {
+    return kMoPubMMAdapterAdUnit;
 }
 
 @end

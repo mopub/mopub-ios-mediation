@@ -8,13 +8,13 @@
 
 #import "FlurryNativeCustomEvent.h"
 #import "FlurryNativeAdAdapter.h"
+#import "FlurryAdapterConfiguration.h"
 #if __has_include("MoPub.h")
     #import "MPNativeAd.h"
     #import "MPNativeAdError.h"
     #import "MPLogging.h"
 #endif
 #import "FlurryMPConfig.h"
-
 
 NSString *const kFlurryApiKey = @"apiKey";
 NSString *const kFlurryAdSpaceName = @"adSpaceName";
@@ -29,40 +29,54 @@ NSString *const kFlurryAdSpaceName = @"adSpaceName";
 
 - (void)requestAdWithCustomEventInfo:(NSDictionary *)info
 {
-    MPLogInfo(@"Requesting Flurry native ad");
     NSString *apiKey = [info objectForKey:kFlurryApiKey];
     NSString *adSpaceName = [info objectForKey:kFlurryAdSpaceName];
 
     if (!apiKey || !adSpaceName) {
-        MPLogError(@"Failed native ad fetch. Missing required server extras [FLURRY_APIKEY and/or FLURRY_ADSPACE]");
-        [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:[NSError errorWithDomain:MoPubNativeAdsSDKDomain code:MPNativeAdErrorInvalidServerResponse userInfo:nil]];
+        MPLogInfo(@"Failed native ad fetch. Missing required server extras [FLURRY_APIKEY and/or FLURRY_ADSPACE]");
+        NSError *error = [NSError errorWithDomain:MoPubNativeAdsSDKDomain code:MPNativeAdErrorInvalidServerResponse userInfo:nil];
+
+        [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
+        
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
         return;
     } else {
         MPLogInfo(@"Server info fetched from MoPub for Flurry. API key: %@. Ad space name: %@", apiKey, adSpaceName);
     }
+    
+    // Cache the initialization parameters
+    [FlurryAdapterConfiguration updateInitializationParameters:info];
 
     [FlurryMPConfig startSessionWithApiKey:apiKey];
 
     self.adNative = [[FlurryAdNative alloc] initWithSpace:adSpaceName];
     self.adNative.adDelegate = self;
     [self.adNative fetchAd];
+    
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], nil);
 }
 
 #pragma mark - Flurry Ad Delegates
 
 - (void) adNativeDidFetchAd:(FlurryAdNative *)flurryAd
 {
-    MPLogDebug(@"Flurry native ad fetched (customEvent)");
     FlurryNativeAdAdapter *adAdapter = [[FlurryNativeAdAdapter alloc] initWithFlurryAdNative:flurryAd];
     MPNativeAd *interfaceAd = [[MPNativeAd alloc] initWithAdAdapter:adAdapter];
 
     [self.delegate nativeCustomEvent:self didLoadAd:interfaceAd];
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void) adNative:(FlurryAdNative *)flurryAd adError:(FlurryAdError)adError errorDescription:(NSError *)errorDescription
 {
-    MPLogDebug(@"Flurry native ad failed to load with error (customEvent): %@", errorDescription.description);
+    MPLogInfo(@"Flurry native ad failed to load with error (customEvent): %@", errorDescription.description);
     [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:errorDescription];
+    
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:errorDescription], [self getAdNetworkId]);
+}
+
+- (NSString *) getAdNetworkId {
+    return kFlurryApiKey;
 }
 
 @end

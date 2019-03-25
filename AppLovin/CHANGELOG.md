@@ -1,6 +1,63 @@
 ## Changelog
+   * 6.2.0.1
+     * Persist the AppLovin SDK Key for Unity publishers without access to set it in the project's info.plist. Click [here](https://developers.mopub.com/publishers/mediation/networks/applovin/#download-and-integration) for further implementation instructions.
+
+   * 6.2.0.0
+     * This version of the adapters has been certified with AppLovin SDK 6.2.0.
+     * Addressed some issues and optimized adapter:
+     * Allow passing in of SDK key via the initialization `configuration` object as many publishers integrate without SDK key in the `Info.plist`.
+     * Add support for using a cached `configuration` NSDictionary for initialization.
+     * Do not consider banner ad display failure as ad load failure.
+     * Do not consider users closing rewarded ad early or reward validation failure as an ad load failure.
+     * Bumped AppLovin SDK plugin version to "MoPub-6.2.0.0".
+   
+   * 6.1.4.4
+     * Adapters now fetch only the core MoPub iOS SDK (excluding viewability SDKs). Publishers wishing to integrate viewability should fetch the `mopub-ios-sdk` dependency in their own Podfile.
+
+   * 6.1.4.3
+     * Update Adapter Version in AppLovinAdapterConfiguration to accommodate podspec changes for Unity releases.
+     
+   * 6.1.4.2
+     * Move source_files to the `Network` subspec.
+
+   * 6.1.4.1
+     * **Note**: This version is only compatible with the 5.5.0+ release of the MoPub SDK.
+     * Add the `AppLovinAdapterConfiguration` class to: 
+          * pre-initialize the AppLovin SDK during MoPub SDK initialization process
+          * store adapter and SDK versions for logging purpose
+          * return the Advanced Biding token previously returned by `AppLovinAdvancedBidder.m`
+     * Streamline adapter logs via `MPLogAdEvent` to make debugging more efficient. For more details, check the [iOS Initialization guide](https://developers.mopub.com/docs/ios/initialization/) and [Writing Custom Events guide](https://developers.mopub.com/docs/ios/custom-events/).
+
+   * 6.1.4.0
+     * This version of the adapters has been certified with AppLovin SDK 6.1.4.
+
+   * 5.1.2.1
+     * Add support for AppLovin to be an Advanced Bidder on the MoPub platform.
+
+   * 5.1.2.0
+     * This version of the adapters has been certified with AppLovin SDK 5.1.2.
+
+   * 5.1.1.0 
+     * This version of the adapters has been certified with AppLovin SDK 5.1.1.
+
+   * 5.1.0.2 
+     * Add the `trackClick` delegate for interstitial to complete 5.1.0.1. 
+
+   * 5.1.0.1
+     * Align MoPub's interstitial impression tracking to that of AppLovin.
+        * Automatic impression tracking is disabled, and AppLovin's `wasDisplayedIn` is used to fire MoPub impressions.
+
+   * 5.1.0.0
+     * This version of the adapters has been certified with AppLovin SDK 5.1.0
+
+   * 5.0.2.0
+     * This version of the adapters has been certified with AppLovin SDK 5.0.2
+
+   * 5.0.1.2
+     * Minor bug fixes to the import statements
+
    * 5.0.1.1
-	  * Update adapters to be compatible with MoPub iOS SDK framework
+     * Update adapters to be compatible with MoPub iOS SDK framework
 
    * 5.0.1.0
       * This version of the adapters has been certified with AppLovin SDK 5.0.1

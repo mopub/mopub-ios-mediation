@@ -1,5 +1,5 @@
 //
-//  MPChartboostRouter.h
+//  ChartboostRouter.h
 //  MoPubSDK
 //
 //  Copyright (c) 2015 MoPub. All rights reserved.
@@ -17,13 +17,13 @@
  * corresponding custom event objects. Also acts as primary Chartboost delegate and distributes
  * callbacks to their appropriate custom events.
  */
-@interface MPChartboostRouter : NSObject <ChartboostDelegate>
+@interface ChartboostRouter : NSObject <ChartboostDelegate>
 
 @property (nonatomic, strong) NSMutableDictionary *interstitialEvents;
 @property (nonatomic, strong) NSMutableSet *activeInterstitialLocations;
 @property (nonatomic, strong) NSMutableDictionary *rewardedVideoEvents;
 
-+ (MPChartboostRouter *)sharedRouter;
++ (ChartboostRouter *)sharedRouter;
 - (void)startWithAppId:(NSString *)appId appSignature:(NSString *)appSignature;
 
 

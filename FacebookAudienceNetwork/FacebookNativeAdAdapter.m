@@ -17,9 +17,9 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
 
 @interface FacebookNativeAdAdapter () <FBNativeAdDelegate>
 
-@property (nonatomic, readonly) FBNativeAd *fbNativeAd;
-@property (nonatomic, readonly) FBAdChoicesView *adChoicesView;
+@property (nonatomic, readonly) FBAdOptionsView *adOptionsView;
 @property (nonatomic, readonly) FBMediaView *mediaView;
+@property (nonatomic, readonly) FBAdIconView *iconView;
 
 @end
 
@@ -32,6 +32,8 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
     if (self = [super init]) {
         _fbNativeAd = fbNativeAd;
         _fbNativeAd.delegate = self;
+        _mediaView = [[FBMediaView alloc] init];
+        _iconView = [[FBAdIconView alloc] init];
 
         NSMutableDictionary *properties;
         if (adProps) {
@@ -40,21 +42,27 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
             properties = [NSMutableDictionary dictionary];
         }
 
-        if (fbNativeAd.title) {
-            [properties setObject:fbNativeAd.title forKey:kAdTitleKey];
+        if (fbNativeAd.headline) {
+            [properties setObject:fbNativeAd.headline forKey:kAdTitleKey];
         }
 
-        if (fbNativeAd.body) {
-            [properties setObject:fbNativeAd.body forKey:kAdTextKey];
+        if (fbNativeAd.bodyText) {
+            [properties setObject:fbNativeAd.bodyText forKey:kAdTextKey];
         }
 
         if (fbNativeAd.callToAction) {
             [properties setObject:fbNativeAd.callToAction forKey:kAdCTATextKey];
         }
-
-        if (fbNativeAd.icon.url.absoluteString) {
-            [properties setObject:fbNativeAd.icon.url.absoluteString forKey:kAdIconImageKey];
+        
+        /* Per Facebook's requirements, either the ad title or the advertiser name
+        will be displayed, depending on the FB SDK version. Therefore, mapping both
+        to the MoPub's ad title asset */
+        if (fbNativeAd.advertiserName) {
+            [properties setObject:fbNativeAd.advertiserName forKey:kAdTitleKey];
         }
+        
+        [properties setObject:_iconView forKey:kAdIconImageViewKey];
+        [properties setObject:_mediaView forKey:kAdMainMediaViewKey];
 
         if (fbNativeAd.placementID) {
             [properties setObject:fbNativeAd.placementID forKey:@"placementID"];
@@ -66,17 +74,9 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
 
         _properties = properties;
 
-        _adChoicesView = [[FBAdChoicesView alloc] initWithNativeAd:fbNativeAd];
-        _adChoicesView.backgroundShown = NO;
-
-        // If video ad is enabled, use mediaView, otherwise use coverImage.
-        if ([[_properties objectForKey:kFBVideoAdsEnabledKey] boolValue]) {
-            _mediaView = [[FBMediaView alloc] initWithNativeAd:fbNativeAd];
-        } else {
-            if (fbNativeAd.coverImage.url.absoluteString) {
-                [properties setObject:fbNativeAd.coverImage.url.absoluteString forKey:kAdMainImageKey];
-            }
-        }
+        _adOptionsView = [[FBAdOptionsView alloc] init];
+        _adOptionsView.nativeAd = fbNativeAd;
+        _adOptionsView.backgroundColor = [UIColor clearColor];
     }
 
     return self;
@@ -97,13 +97,13 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
 
 - (void)willAttachToView:(UIView *)view
 {
-    [self.fbNativeAd registerViewForInteraction:view withViewController:[self.delegate viewControllerForPresentingModalView]];
+    [self.fbNativeAd registerViewForInteraction:view mediaView:self.mediaView iconView:self.iconView viewController:[self.delegate viewControllerForPresentingModalView]];
 }
 
 - (void)willAttachToView:(UIView *)view withAdContentViews:(NSArray *)adContentViews
 {
     if ( adContentViews.count > 0 ) {
-        [self.fbNativeAd registerViewForInteraction:view withViewController:[self.delegate viewControllerForPresentingModalView] withClickableViews:adContentViews];
+        [self.fbNativeAd registerViewForInteraction:view mediaView:self.mediaView iconView:self.iconView viewController:[self.delegate viewControllerForPresentingModalView] clickableViews:adContentViews];
     } else {
         [self willAttachToView:view];
     }
@@ -111,7 +111,7 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
 
 - (UIView *)privacyInformationIconView
 {
-    return self.adChoicesView;
+    return self.adOptionsView;
 }
 
 - (UIView *)mainMediaView
@@ -119,30 +119,42 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
     return self.mediaView;
 }
 
+- (UIView *)iconMediaView
+{
+    return self.iconView;
+}
+
 #pragma mark - FBNativeAdDelegate
 
 - (void)nativeAdWillLogImpression:(FBNativeAd *)nativeAd
 {
     if ([self.delegate respondsToSelector:@selector(nativeAdWillLogImpression:)]) {
+        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.fbNativeAd.placementID);
+        MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.fbNativeAd.placementID);
         [self.delegate nativeAdWillLogImpression:self];
     } else {
-        MPLogWarn(@"Delegate does not implement impression tracking callback. Impressions likely not being tracked.");
+        MPLogInfo(@"Delegate does not implement impression tracking callback. Impressions likely not being tracked.");
     }
 }
 
 - (void)nativeAdDidClick:(FBNativeAd *)nativeAd
 {
     if ([self.delegate respondsToSelector:@selector(nativeAdDidClick:)]) {
+        MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.fbNativeAd.placementID);
         [self.delegate nativeAdDidClick:self];
     } else {
-        MPLogWarn(@"Delegate does not implement click tracking callback. Clicks likely not being tracked.");
+        MPLogInfo(@"Delegate does not implement click tracking callback. Clicks likely not being tracked.");
     }
+
+    MPLogAdEvent([MPLogEvent adWillPresentModalForAdapter:NSStringFromClass(self.class)], self.fbNativeAd.placementID);
 
     [self.delegate nativeAdWillPresentModalForAdapter:self];
 }
 
 - (void)nativeAdDidFinishHandlingClick:(FBNativeAd *)nativeAd
 {
+    MPLogAdEvent([MPLogEvent adDidDismissModalForAdapter:NSStringFromClass(self.class)], self.fbNativeAd.placementID);
+
     [self.delegate nativeAdDidDismissModalForAdapter:self];
 }
 
