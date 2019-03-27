@@ -62,3 +62,12 @@ NSTimeInterval kMoPubVASAdapterSATimeoutInterval = 600;
 }
 
 @end
+
+@implementation MillennialAdapterConfiguration
+
+- (NSString *)moPubNetworkName
+{
+    return @"Millennial";
+}
+
+@end

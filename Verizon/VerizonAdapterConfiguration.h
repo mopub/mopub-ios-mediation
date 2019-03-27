@@ -17,3 +17,6 @@ extern NSTimeInterval kMoPubVASAdapterSATimeoutInterval;
 @interface VerizonAdapterConfiguration : MPBaseAdapterConfiguration
 + (NSString *)appMediator;
 @end
+
+@interface MillennialAdapterConfiguration : VerizonAdapterConfiguration
+@end

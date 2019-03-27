@@ -206,3 +206,5 @@
 - (void)inlineAdDidRefresh:(nonnull VASInlineAdView *)inlineAd {}
 
 @end
+@implementation MPMillennialBannerCustomEvent
+@end
