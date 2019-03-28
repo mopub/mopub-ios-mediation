@@ -5,6 +5,7 @@
 #import "MPLogging.h"
 #endif
 #import "VerizonAdapterConfiguration.h"
+#import "VerizonBidCache.h"
 
 @interface MPVerizonInterstitialCustomEvent () <VASInterstitialAdFactoryDelegate, VASInterstitialAdDelegate>
 
@@ -84,7 +85,13 @@
     self.interstitialAdFactory = [[VASInterstitialAdFactory alloc] initWithPlacementId:placementId vasAds:[VASAds sharedInstance] delegate:self];
     [self.interstitialAdFactory setRequestMetadata:metaDataBuilder.build];
     
-    [self.interstitialAdFactory load:self];
+    VASBid *bid = [VerizonBidCache.sharedInstance bidForPlacementId:placementId];
+    if (bid) {
+        [self.interstitialAdFactory loadBid:bid interstitialAdDelegate:self];
+    } else {
+        [self.interstitialAdFactory load:self];
+    }
+    
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
 }
 
@@ -241,6 +248,24 @@
 }
 
 - (void)interstitialAdEvent:(nonnull VASInterstitialAd *)interstitialAd source:(nonnull NSString *)source eventId:(nonnull NSString *)eventId arguments:(nonnull NSDictionary<NSString *,id> *)arguments {}
+
+#pragma mark - Super Auction
+
++ (void)requestBidWithPlacementId:(nonnull NSString *)placementId
+                       completion:(nonnull VASBidRequestCompletionHandler)completion {
+    VASRequestMetadataBuilder *metaDataBuilder = [[VASRequestMetadataBuilder alloc] init];
+    [metaDataBuilder setAppMediator:VerizonAdapterConfiguration.appMediator];
+    [VASInterstitialAdFactory requestBidForPlacementId:placementId requestMetadata:metaDataBuilder.build vasAds:[VASAds sharedInstance] completionHandler:^(VASBid * _Nullable bid, VASErrorInfo * _Nullable errorInfo) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (bid) {
+                [VerizonBidCache.sharedInstance storeBid:bid
+                                          forPlacementId:placementId
+                                               untilDate:[NSDate dateWithTimeIntervalSinceNow:kMoPubVASAdapterSATimeoutInterval]];
+            }
+            completion(bid,errorInfo);
+        });
+    }];
+}
 
 @end
 @implementation MPMillennialInterstitialCustomEvent

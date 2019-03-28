@@ -7,6 +7,7 @@
 #import "MPAdConfiguration.h"
 #endif
 #import "VerizonAdapterConfiguration.h"
+#import "VerizonBidCache.h"
 
 @interface MPVerizonBannerCustomEvent ()<VASInlineAdFactoryDelegate, VASInlineAdViewDelegate>
 @property (nonatomic, assign) BOOL didTrackClick;
@@ -80,7 +81,13 @@
     self.inlineFactory = [[VASInlineAdFactory alloc] initWithPlacementId:placementId adSizes:@[requestedSize] vasAds:[VASAds sharedInstance] delegate:self];
     [self.inlineFactory setRequestMetadata:metaDataBuilder.build];
     
-    [self.inlineFactory load:self];
+    VASBid *bid = [VerizonBidCache.sharedInstance bidForPlacementId:placementId];
+    
+    if (bid) {
+        [self.inlineFactory loadBid:bid inlineAdDelegate:self];
+    } else {
+        [self.inlineFactory load:self];
+    }
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
 }
 
@@ -104,7 +111,7 @@
             [strongSelf.delegate bannerCustomEvent:strongSelf didFailToLoadAdWithError:errorInfo];
         }
     });
-
+    
     MPLogInfo(@"VAS ad factory %@ failed inline loading with error (%ld) %@", adFactory, (long)errorInfo.code, errorInfo.description);
 }
 
@@ -126,7 +133,7 @@
             MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
         }
     });
-
+    
     MPLogInfo(@"VAS banner %@ did load, creative ID %@", inlineAd, inlineAd.creativeInfo.creativeId);
 }
 
@@ -144,7 +151,7 @@
             [strongSelf.delegate bannerCustomEventWillBeginAction:strongSelf];
         }
     });
-
+    
     MPLogInfo(@"VAS banner %@ will present modal.");
 }
 
@@ -158,7 +165,7 @@
             [strongSelf.delegate bannerCustomEventDidFinishAction:strongSelf];
         }
     });
-
+    
     MPLogInfo(@"VAS banner %@ did dismiss modal.", inlineAd);
 }
 
@@ -178,7 +185,7 @@
             }
         }
     });
-
+    
     MPLogInfo(@"VAS banner %@ was clicked.", inlineAd);
 }
 
@@ -192,7 +199,7 @@
             [strongSelf.delegate bannerCustomEventWillLeaveApplication:strongSelf];
         }
     });
-
+    
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
@@ -206,6 +213,30 @@
 - (void)inlineAdEvent:(VASInlineAdView *)inlineAd source:(NSString *)source eventId:(NSString *)eventId arguments:(NSDictionary<NSString *, id> *)arguments {}
 
 - (void)inlineAdDidRefresh:(nonnull VASInlineAdView *)inlineAd {}
+
+#pragma mark - Super Auction
+
++ (void)requestBidWithPlacementId:(nonnull NSString *)placementId
+                          adSizes:(nonnull NSArray<VASInlineAdSize *> *)adSizes
+                       completion:(nonnull VASBidRequestCompletionHandler)completion {
+    VASRequestMetadataBuilder *metaDataBuilder = [[VASRequestMetadataBuilder alloc] init];
+    [metaDataBuilder setAppMediator:VerizonAdapterConfiguration.appMediator];
+    [VASInlineAdFactory requestBidForPlacementId:placementId
+                                         adSizes:adSizes
+                                 requestMetadata:metaDataBuilder.build
+                                          vasAds:[VASAds sharedInstance]
+                                      completion:^(VASBid * _Nullable bid, VASErrorInfo * _Nullable errorInfo) {
+                                          dispatch_async(dispatch_get_main_queue(), ^{
+                                              if (bid) {
+                                                  [VerizonBidCache.sharedInstance storeBid:bid
+                                                                            forPlacementId:placementId
+                                                                                 untilDate:[NSDate dateWithTimeIntervalSinceNow:kMoPubVASAdapterSATimeoutInterval]];
+                                              }
+                                              completion(bid,errorInfo);
+                                          });
+                                      }];
+}
+
 
 @end
 @implementation MPMillennialBannerCustomEvent
