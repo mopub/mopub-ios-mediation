@@ -7,7 +7,9 @@
 
 #import "VerizonBidCache.h"
 #import <VerizonAdsInlinePlacement/VerizonAdsInlinePlacement.h>
+#if __has_include("MoPub.h")
 #import "MoPub.h"
+#endif
 
 #pragma mark - Timer
 
