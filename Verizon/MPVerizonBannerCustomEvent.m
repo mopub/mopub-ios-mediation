@@ -2,8 +2,10 @@
 #import <VerizonAdsInlinePlacement/VerizonAdsInlinePlacement.h>
 #import <VerizonAdsStandardEdition/VerizonAdsStandardEdition.h>
 #import "MPVerizonBannerCustomEvent.h"
+#if __has_include("MoPub.h")
 #import "MPLogging.h"
 #import "MPAdConfiguration.h"
+#endif
 #import "VerizonAdapterConfiguration.h"
 
 @interface MPVerizonBannerCustomEvent ()<VASInlineAdFactoryDelegate, VASInlineAdViewDelegate>

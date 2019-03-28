@@ -1,7 +1,9 @@
 #import <VerizonAdsInterstitialPlacement/VerizonAdsInterstitialPlacement.h>
 #import <VerizonAdsStandardEdition/VerizonAdsStandardEdition.h>
 #import "MPVerizonInterstitialCustomEvent.h"
+#if __has_include("MoPub.h")
 #import "MPLogging.h"
+#endif
 #import "VerizonAdapterConfiguration.h"
 
 @interface MPVerizonInterstitialCustomEvent () <VASInterstitialAdFactoryDelegate, VASInterstitialAdDelegate>
