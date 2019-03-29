@@ -1,4 +1,26 @@
 ## Changelog
+* 5.2.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.2.0. 
+    * Add `FacebookNativeAdRenderer` to render native ads using [predefined layouts from Facebook Audience Network](https://developers.facebook.com/docs/audience-network/ios/nativeadtemplate). You won't need to use a custom layout. Simply pass your `MPStaticNativeAdRendererSettings` to the `FacebookNativeAdRenderer`'s `rendererConfigurationWithRendererSettings:` call, and register that configuration with the ad request.
+     * Replace `FBAdChoicesView` with `FBAdOptionsView`.
+
+* 5.1.0.4
+    * Adapters now fetch only the core MoPub iOS SDK (excluding viewability SDKs). Publishers wishing to integrate viewability should fetch the `mopub-ios-sdk` dependency in their own Podfile.
+
+* 5.1.0.3
+    * Update Adapter Version in FacebookAdapterConfiguration to accommodate podspec changes for Unity releases.
+    
+* 5.1.0.2
+    * Move source_files to the `Network` subspec. 
+
+* 5.1.0.1
+    * **Note**: This version is only compatible with the 5.5.0+ release of the MoPub SDK.
+    * Add the `FacebookAdapterConfiguration` class to: 
+         * pre-initialize the Facebook Audience Netwok SDK during MoPub SDK initialization process
+         * store adapter and SDK versions for logging purpose
+         * return the Advanced Biding token previously returned by `FacebookAdvancedBidder.m`
+    * Streamline adapter logs via `MPLogAdEvent` to make debugging more efficient. For more details, check the [iOS Initialization guide](https://developers.mopub.com/docs/ios/initialization/) and [Writing Custom Events guide](https://developers.mopub.com/docs/ios/custom-events/).
+
 * 5.1.0.0
     * This version of the adapters has been certified with Facebook Audience Network 5.1.0.
 

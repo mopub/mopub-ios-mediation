@@ -132,7 +132,10 @@
 
 - (void) adNativeWillPresent:(FlurryAdNative*) nativeAd
 {
-    MPLogDebug(@"Flurry native ad will present (adapter)");
+    MPLogAdEvent([MPLogEvent adWillPresentModalForAdapter:NSStringFromClass(self.class)], nil);
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], nil);
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], nil);
+
     if ([self.delegate respondsToSelector:@selector(nativeAdWillPresentModalForAdapter:)]) {
         [self.delegate nativeAdWillPresentModalForAdapter:self];
     }
@@ -140,20 +143,20 @@
 
 - (void) adNativeWillLeaveApplication:(FlurryAdNative*) nativeAd
 {
-    MPLogDebug(@"Flurry native ad will leave application (adapter)");
     if ([self.delegate respondsToSelector:@selector(nativeAdWillLeaveApplicationFromAdapter:)]) {
-        [self.delegate nativeAdWillLeaveApplicationFromAdapter:self];
     }
 }
 
 - (void) adNativeWillDismiss:(FlurryAdNative*) nativeAd
 {
-    MPLogDebug(@"Flurry native ad will dismiss (adapter)");
+    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], nil);
 }
 
 - (void) adNativeDidDismiss:(FlurryAdNative*) nativeAd
 {
-    MPLogDebug(@"Flurry native ad did dismiss (adapter)");
+    MPLogAdEvent([MPLogEvent adDidDismissModalForAdapter:NSStringFromClass(self.class)], nil);
+    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], nil);
+
     if ([self.delegate respondsToSelector:@selector(nativeAdDidDismissModalForAdapter:)]) {
         [self.delegate nativeAdDidDismissModalForAdapter:self];
     }
@@ -161,21 +164,23 @@
 
 - (void) adNativeDidReceiveClick:(FlurryAdNative*) nativeAd
 {
-    MPLogDebug(@"Flurry native ad was clicked (adapter)");
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], nil);
+
     if ([self.delegate respondsToSelector:@selector(nativeAdDidClick:)]) {
         [self.delegate nativeAdDidClick:self];
     } else {
-        MPLogWarn(@"Delegate does not implement click tracking callback. Clicks likely not being tracked.");
+        MPLogInfo(@"Delegate does not implement click tracking callback. Clicks likely not being tracked.");
     }
 }
 
 - (void) adNativeDidLogImpression:(FlurryAdNative*) nativeAd
 {
-    MPLogDebug(@"Flurry native ad was shown (adapter)");
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], nil);
+
     if ([self.delegate respondsToSelector:@selector(nativeAdWillLogImpression:)]) {
         [self.delegate nativeAdWillLogImpression:self];
     } else {
-        MPLogWarn(@"Delegate does not implement impression tracking callback. Impression likely not being tracked.");
+        MPLogInfo(@"Delegate does not implement impression tracking callback. Impression likely not being tracked.");
     }
 }
 

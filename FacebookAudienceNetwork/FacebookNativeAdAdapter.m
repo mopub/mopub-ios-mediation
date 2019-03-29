@@ -17,8 +17,7 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
 
 @interface FacebookNativeAdAdapter () <FBNativeAdDelegate>
 
-@property (nonatomic, readonly) FBNativeAd *fbNativeAd;
-@property (nonatomic, readonly) FBAdChoicesView *adChoicesView;
+@property (nonatomic, readonly) FBAdOptionsView *adOptionsView;
 @property (nonatomic, readonly) FBMediaView *mediaView;
 @property (nonatomic, readonly) FBAdIconView *iconView;
 
@@ -75,8 +74,9 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
 
         _properties = properties;
 
-        _adChoicesView = [[FBAdChoicesView alloc] initWithNativeAd:fbNativeAd];
-        _adChoicesView.backgroundShown = NO;
+        _adOptionsView = [[FBAdOptionsView alloc] init];
+        _adOptionsView.nativeAd = fbNativeAd;
+        _adOptionsView.backgroundColor = [UIColor clearColor];
     }
 
     return self;
@@ -111,7 +111,7 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
 
 - (UIView *)privacyInformationIconView
 {
-    return self.adChoicesView;
+    return self.adOptionsView;
 }
 
 - (UIView *)mainMediaView
@@ -129,25 +129,32 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
 - (void)nativeAdWillLogImpression:(FBNativeAd *)nativeAd
 {
     if ([self.delegate respondsToSelector:@selector(nativeAdWillLogImpression:)]) {
+        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.fbNativeAd.placementID);
+        MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.fbNativeAd.placementID);
         [self.delegate nativeAdWillLogImpression:self];
     } else {
-        MPLogWarn(@"Delegate does not implement impression tracking callback. Impressions likely not being tracked.");
+        MPLogInfo(@"Delegate does not implement impression tracking callback. Impressions likely not being tracked.");
     }
 }
 
 - (void)nativeAdDidClick:(FBNativeAd *)nativeAd
 {
     if ([self.delegate respondsToSelector:@selector(nativeAdDidClick:)]) {
+        MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.fbNativeAd.placementID);
         [self.delegate nativeAdDidClick:self];
     } else {
-        MPLogWarn(@"Delegate does not implement click tracking callback. Clicks likely not being tracked.");
+        MPLogInfo(@"Delegate does not implement click tracking callback. Clicks likely not being tracked.");
     }
+
+    MPLogAdEvent([MPLogEvent adWillPresentModalForAdapter:NSStringFromClass(self.class)], self.fbNativeAd.placementID);
 
     [self.delegate nativeAdWillPresentModalForAdapter:self];
 }
 
 - (void)nativeAdDidFinishHandlingClick:(FBNativeAd *)nativeAd
 {
+    MPLogAdEvent([MPLogEvent adDidDismissModalForAdapter:NSStringFromClass(self.class)], self.fbNativeAd.placementID);
+
     [self.delegate nativeAdDidDismissModalForAdapter:self];
 }
 

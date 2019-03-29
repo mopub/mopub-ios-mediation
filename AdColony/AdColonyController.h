@@ -10,10 +10,19 @@
 #import "AdColonyInstanceMediationSettings.h"
 #import "AdColonyGlobalMediationSettings.h"
 
+typedef enum {
+    INIT_STATE_UNKNOWN,
+    INIT_STATE_INITIALIZED,
+    INIT_STATE_INITIALIZING
+} InitState;
+
 /*
  * Internal controller to handle initialization and common routines across ad types.
  */
 @interface AdColonyController : NSObject
+@property (atomic, assign, readonly) InitState initState;
+
++ (AdColonyController *)sharedInstance;
 
 /*
  * Initialize AdColony for the given zone IDs and app ID.

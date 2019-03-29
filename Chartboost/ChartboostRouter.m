@@ -1,11 +1,11 @@
 //
-//  MPChartboostRouter.m
+//  ChartboostRouter.m
 //  MoPubSDK
 //
 //  Copyright (c) 2015 MoPub. All rights reserved.
 //
 
-#import "MPChartboostRouter.h"
+#import "ChartboostRouter.h"
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
     #import "MoPub.h"
@@ -25,18 +25,18 @@
  * "locations" in a single app session, we may have multiple instances of our custom event class,
  * all of which are interested in delegate callbacks.
  *
- * MPChartboostRouter is a singleton that is always the Chartboost delegate, and dispatches
+ * ChartboostRouter is a singleton that is always the Chartboost delegate, and dispatches
  * events to all of the custom event instances.
  */
 
-@implementation MPChartboostRouter
+@implementation ChartboostRouter
 
-+ (MPChartboostRouter *)sharedRouter
++ (ChartboostRouter *)sharedRouter
 {
-    static MPChartboostRouter * sharedRouter;
+    static ChartboostRouter * sharedRouter;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        sharedRouter = [[MPChartboostRouter alloc] init];
+        sharedRouter = [[ChartboostRouter alloc] init];
     });
     return sharedRouter;
 }
@@ -48,7 +48,7 @@
     if (self) {
         self.interstitialEvents = [NSMutableDictionary dictionary];
         self.rewardedVideoEvents = [NSMutableDictionary dictionary];
-
+        
         /*
          * We need the active locations set to keep track of locations that are currently being
          * cached/ready to show/visible on screen for interstitial ads.
@@ -61,9 +61,24 @@
          */
         
         // Collect and pass the user's consent from MoPub onto the Chartboost SDK
-        if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
-            BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
-            [Chartboost restrictDataCollection:!canCollectPersonalInfo];
+        if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes){
+            if ([[MoPub sharedInstance] allowLegitimateInterest] == YES){
+                if ([[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDenied
+                    || [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDoNotTrack) {
+                    
+                    [Chartboost setPIDataUseConsent:NoBehavioral];
+                }
+                else {
+                    [Chartboost setPIDataUseConsent:YesBehavioral];
+                }
+            } else {
+                if ([[MoPub sharedInstance] canCollectPersonalInfo] == YES) {
+                    [Chartboost setPIDataUseConsent:YesBehavioral];
+                }
+                else {
+                    [Chartboost setPIDataUseConsent:NoBehavioral];
+                }
+            }
         }
         
         self.activeInterstitialLocations = [NSMutableSet set];
@@ -86,24 +101,31 @@
 - (void)cacheInterstitialWithAppId:(NSString *)appId appSignature:(NSString *)appSignature location:(NSString *)location forChartboostInterstitialCustomEvent:(ChartboostInterstitialCustomEvent *)event
 {
     if ([self.activeInterstitialLocations containsObject:location]) {
-        MPLogInfo(@"Failed to load Chartboost interstitial: this location is already in use.");
         [event didFailToLoadInterstitial:location withError:CBLoadErrorInternal];
+        
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Failed to load Chartboost interstitial: this location is already in use."];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], appId);
+        
         return;
     }
-
+    
     if ([appId length] > 0 && [appSignature length] > 0) {
         [self setInterstitialEvent:event forLocation:location];
-
+        
         [self startWithAppId:appId appSignature:appSignature];
-
+        
         if ([self hasCachedInterstitialForLocation:location]) {
             [self didCacheInterstitial:location];
         } else {
             [Chartboost cacheInterstitial:location];
+            
+            MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], appId);
         }
     } else {
-        MPLogInfo(@"Failed to load Chartboost interstitial: missing either appId or appSignature.");
         [event didFailToLoadInterstitial:location withError:CBLoadErrorInternal];
+        
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Failed to load Chartboost interstitial: missing either appId or appSignature."];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], appId);
     }
 }
 
@@ -146,17 +168,21 @@
 {
     if ([appId length] > 0 && [appSignature length] > 0) {
         [self setRewardedVideoEvent:event forLocation:location];
-
+        
         [self startWithAppId:appId appSignature:appSignature];
-
+        
         if ([self hasCachedRewardedVideoForLocation:location]) {
             [self didCacheRewardedVideo:location];
         } else {
             [Chartboost cacheRewardedVideo:location];
+            
+            MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], appId);
         }
     } else {
-        MPLogInfo(@"Failed to load Chartboost rewarded video: missing either appId or appSignature.");
         [event didFailToLoadRewardedVideo:location withError:CBLoadErrorInternal];
+        
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Failed to load Chartboost rewarded video: missing either appId or appSignature"];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], appId);
     }
 }
 

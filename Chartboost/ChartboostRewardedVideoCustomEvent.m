@@ -6,41 +6,24 @@
 //
 
 #import "ChartboostRewardedVideoCustomEvent.h"
-#import "MPChartboostRouter.h"
+#import "ChartboostAdapterConfiguration.h"
+#import "ChartboostRouter.h"
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
     #import "MPRewardedVideoReward.h"
     #import "MPRewardedVideoError.h"
-    #import "MPRewardedVideoCustomEvent+Caching.h"
 #endif
 #import <Chartboost/Chartboost.h>
 
 @interface ChartboostRewardedVideoCustomEvent () <ChartboostDelegate>
+@property (nonatomic, copy) NSString *appId;
 @end
 
 @implementation ChartboostRewardedVideoCustomEvent
 
-- (void)initializeSdkWithParameters:(NSDictionary *)parameters
-{
-    NSString *appId = [parameters objectForKey:@"appId"];
-    NSString *appSignature = [parameters objectForKey:@"appSignature"];
-
-    if (appId == nil) {
-        MPLogInfo(@"No appId found in initialization parameters.");
-        return;
-    }
-
-    if (appSignature == nil) {
-        MPLogInfo(@"No appSignature found in initialization parameters.");
-        return;
-    }
-
-    [[MPChartboostRouter sharedRouter] startWithAppId:appId appSignature:appSignature];
-}
-
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info
 {
-    NSString *appId = [info objectForKey:@"appId"];
+    self.appId = [info objectForKey:@"appId"];
 
     NSString *appSignature = [info objectForKey:@"appSignature"];
 
@@ -48,33 +31,32 @@
     self.location = location ? location : CBLocationDefault;
 
     // Cache the network SDK initialization parameters
-    [self setCachedInitializationParameters:info];
+    [ChartboostAdapterConfiguration updateInitializationParameters:info];
 
-    MPLogInfo(@"Requesting Chartboost rewarded video.");
-    [[MPChartboostRouter sharedRouter] cacheRewardedAdWithAppId:appId appSignature:appSignature location:self.location forChartboostRewardedVideoCustomEvent:self];
+    [[ChartboostRouter sharedRouter] cacheRewardedAdWithAppId:self.appId appSignature:appSignature location:self.location forChartboostRewardedVideoCustomEvent:self];
 }
 
 - (void)presentRewardedVideoFromViewController:(UIViewController *)viewController
 {
-    if ([[MPChartboostRouter sharedRouter] hasCachedRewardedVideoForLocation:self.location]) {
-        MPLogInfo(@"Chartboost rewarded video will be shown.");
+    MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 
-        [[MPChartboostRouter sharedRouter] showRewardedVideoForLocation:self.location];
+    if ([[ChartboostRouter sharedRouter] hasCachedRewardedVideoForLocation:self.location]) {
+        [[ChartboostRouter sharedRouter] showRewardedVideoForLocation:self.location];
     } else {
-        MPLogInfo(@"Failed to show Chartboost rewarded video.");
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
         [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
+        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     }
 }
 
 - (void)handleCustomEventInvalidated
 {
-    [[[MPChartboostRouter sharedRouter] rewardedVideoEvents] removeObjectForKey:self.location];
+    [[[ChartboostRouter sharedRouter] rewardedVideoEvents] removeObjectForKey:self.location];
 }
 
 - (BOOL)hasAdAvailable
 {
-    return [[MPChartboostRouter sharedRouter] hasCachedRewardedVideoForLocation:self.location];
+    return [[ChartboostRouter sharedRouter] hasCachedRewardedVideoForLocation:self.location];
 }
 
 - (void)handleAdPlayedForCustomEventNetwork
@@ -93,34 +75,52 @@
 {
     [self.delegate rewardedVideoWillAppearForCustomEvent:self];
     [self.delegate rewardedVideoDidAppearForCustomEvent:self];
+    
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void)didCacheRewardedVideo:(CBLocation)location
 {
     [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
+    
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void)didFailToLoadRewardedVideo:(CBLocation)location
                          withError:(CBLoadError)error
 {
-    [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:nil];
+    
+    NSError *mopubError = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
+
+    [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:mopubError];
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:mopubError], [self getAdNetworkId]);
 }
 
 - (void)didDismissRewardedVideo:(CBLocation)location
 {
     [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+
     [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void)didCloseRewardedVideo:(CBLocation)location
 {
     [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+
     [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void)didClickRewardedVideo:(CBLocation)location
 {
     [self.delegate rewardedVideoDidReceiveTapEventForCustomEvent:self];
+    
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void)didCompleteRewardedVideo:(CBLocation)location
@@ -129,5 +129,8 @@
     [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:[[MPRewardedVideoReward alloc] initWithCurrencyAmount:@(reward)]];
 }
 
+- (NSString *) getAdNetworkId {
+    return self.appId;
+}
 
 @end
