@@ -38,7 +38,9 @@ static GADAdChoicesPosition adChoicesPosition;
   if (applicationID) {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-      [GADMobileAds configureWithApplicationID:applicationID];
+      [[GADMobileAds sharedInstance] startWithCompletionHandler:^(GADInitializationStatus *status){
+        MPLogInfo(@"Google Mobile Ads SDK initialized succesfully.");
+      }];
     });
   }
   self.admobAdUnitId = info[@"adunit"];

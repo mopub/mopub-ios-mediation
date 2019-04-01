@@ -72,13 +72,14 @@ typedef NS_ENUM(NSInteger, AdMobAdapterErrorCode) {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         dispatch_async(dispatch_get_main_queue(), ^{
-            [GADMobileAds configureWithApplicationID:appId];
+          [[GADMobileAds sharedInstance] startWithCompletionHandler:^(GADInitializationStatus *status){
+            MPLogInfo(@"Google Mobile Ads SDK initialized succesfully.");
+            if (complete != nil) {
+              complete(nil);
+            }
+          }];
         });
     });
-    
-    if (complete != nil) {
-        complete(nil);
-    }
 }
 
 @end
