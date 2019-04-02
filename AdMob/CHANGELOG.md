@@ -1,4 +1,8 @@
 ## Changelog
+  * 7.42.2.0
+    * Updated the adapter to use Google's new rewarded API.
+    * This version of the adapters has been certified with AdMob 7.42.2.
+
   * 7.39.0.0
     * This version of the adapters has been certified with AdMob 7.39.0.
 
