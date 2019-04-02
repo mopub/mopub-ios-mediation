@@ -34,15 +34,13 @@ static GADAdChoicesPosition adChoicesPosition;
 }
 
 - (void)requestAdWithCustomEventInfo:(NSDictionary *)info {
-  NSString *applicationID = [info objectForKey:@"appid"];
-  if (applicationID) {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-      [[GADMobileAds sharedInstance] startWithCompletionHandler:^(GADInitializationStatus *status){
-        MPLogInfo(@"Google Mobile Ads SDK initialized succesfully.");
-      }];
-    });
-  }
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    [[GADMobileAds sharedInstance] startWithCompletionHandler:^(GADInitializationStatus *status){
+      MPLogInfo(@"Google Mobile Ads SDK initialized succesfully.");
+    }];
+  });
+  
   self.admobAdUnitId = info[@"adunit"];
   if (self.admobAdUnitId == nil) {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class)
@@ -61,6 +59,13 @@ static GADAdChoicesPosition adChoicesPosition;
   GADRequest *request = [GADRequest request];
   if ([self.localExtras objectForKey:@"testDevices"]) {
     request.testDevices = self.localExtras[@"testDevices"];
+  }
+  if ([self.localExtras objectForKey:@"tagForChildDirectedTreatment"]) {
+    [GADMobileAds.sharedInstance.requestConfiguration tagForChildDirectedTreatment:self.localExtras[@"tagForChildDirectedTreatment"]];
+  }
+  if ([self.localExtras objectForKey:@"tagForUnderAgeOfConsent"]) {
+    [GADMobileAds.sharedInstance.requestConfiguration
+     tagForUnderAgeOfConsent:self.localExtras[@"tagForUnderAgeOfConsent"]];
   }
   request.requestAgent = @"MoPub";
     

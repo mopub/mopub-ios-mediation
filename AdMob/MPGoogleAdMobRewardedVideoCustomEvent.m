@@ -15,15 +15,12 @@
 @implementation MPGoogleAdMobRewardedVideoCustomEvent
 
 - (void)initializeSdkWithParameters:(NSDictionary *)parameters {
-    NSString *applicationID = [parameters objectForKey:@"appid"];
-    if (applicationID) {
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-          [[GADMobileAds sharedInstance] startWithCompletionHandler:^(GADInitializationStatus *status){
-            MPLogInfo(@"Google Mobile Ads SDK initialized succesfully.");
-          }];
-        });
-    }
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+      [[GADMobileAds sharedInstance] startWithCompletionHandler:^(GADInitializationStatus *status){
+        MPLogInfo(@"Google Mobile Ads SDK initialized succesfully.");
+      }];
+    });
 }
 
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info {
@@ -48,6 +45,16 @@
     if ([self.localExtras objectForKey:@"testDevices"]) {
       request.testDevices = self.localExtras[@"testDevices"];
     }
+
+    if ([self.localExtras objectForKey:@"tagForChildDirectedTreatment"]) {
+      [GADMobileAds.sharedInstance.requestConfiguration tagForChildDirectedTreatment:self.localExtras[@"tagForChildDirectedTreatment"]];
+    }
+
+    if ([self.localExtras objectForKey:@"tagForUnderAgeOfConsent"]) {
+      [GADMobileAds.sharedInstance.requestConfiguration
+          tagForUnderAgeOfConsent:self.localExtras[@"tagForUnderAgeOfConsent"]];
+    }
+
     request.requestAgent = @"MoPub";
 
     if ([self.localExtras objectForKey:@"contentUrl"] != nil) {

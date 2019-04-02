@@ -61,6 +61,16 @@
   if ([self.localExtras objectForKey:@"testDevices"]) {
     request.testDevices = self.localExtras[@"testDevices"];
   }
+
+  if ([self.localExtras objectForKey:@"tagForChildDirectedTreatment"]) {
+    [GADMobileAds.sharedInstance.requestConfiguration tagForChildDirectedTreatment:self.localExtras[@"tagForChildDirectedTreatment"]];
+  }
+
+  if ([self.localExtras objectForKey:@"tagForUnderAgeOfConsent"]) {
+    [GADMobileAds.sharedInstance.requestConfiguration
+     tagForUnderAgeOfConsent:self.localExtras[@"tagForUnderAgeOfConsent"]];
+  }
+  
   request.requestAgent = @"MoPub";
 
   // Consent collected from the MoPub’s consent dialogue should not be used to set up Google's
