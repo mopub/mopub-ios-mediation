@@ -1,6 +1,9 @@
 #import <VerizonAdsStandardEdition/VerizonAdsStandardEdition.h>
 #import <VerizonAdsCore/VerizonAdsCore.h>
 #import "VerizonAdapterConfiguration.h"
+#if __has_include("MoPub.h")
+#import "MoPub.h"
+#endif
 
 NSErrorDomain const kMoPubVASAdapterErrorDomain = @"com.verizon.ads.mopubvasadapter.ErrorDomain";
 NSString * const kMoPubVASAdapterErrorWho = @"MoPubVASAdapter";
