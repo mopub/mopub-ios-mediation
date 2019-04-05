@@ -77,6 +77,7 @@
     }
 
     self.rewardedAd = [[GADRewardedAd alloc] initWithAdUnitID:self.admobAdUnitId];
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
     [self.rewardedAd loadRequest:request completionHandler:^(GADRequestError *error){
       if (error) {
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
@@ -86,17 +87,12 @@
         [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
       }
     }];
-    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
-}
-
-- (BOOL)hasAdAvailable {
-    return self.rewardedAd.isReady;
 }
 
 - (void)presentRewardedVideoFromViewController:(UIViewController *)viewController {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     
-    if ([self hasAdAvailable]) {
+    if (self.rewardedAd.isReady) {
         [self.rewardedAd presentFromRootViewController:viewController delegate:self];
     } else {
         // We will send the error if the rewarded ad has already been presented.
@@ -104,8 +100,8 @@
                           errorWithDomain:MoPubRewardedVideoAdsSDKDomain
                           code:MPRewardedVideoAdErrorNoAdReady
                           userInfo:@{NSLocalizedDescriptionKey : @"Rewarded ad is not ready to be presented."}];
-        [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+        [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
     }
 }
 
@@ -124,7 +120,7 @@
 // and needs to load another ad. That event will be passed on to the publisher app, which can then
 // trigger another load.
 - (void)handleAdPlayedForCustomEventNetwork {
-    if (![self hasAdAvailable]) {
+    if (!self.rewardedAd.isReady) {
         // Sending rewardedVideoDidExpireForCustomEvent: callback because the reward-based video ad will
         // not be available once its been presented.
         [self.delegate rewardedVideoDidExpireForCustomEvent:self];
@@ -140,19 +136,18 @@
 }
 
 - (void)rewardedAdDidPresent:(GADRewardedAd *)rewardedAd {
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate rewardedVideoWillAppearForCustomEvent:self];
     [self.delegate rewardedVideoDidAppearForCustomEvent:self];
     // Recording an impression after the reward-based video ad appears on the screen.
     [self.delegate trackImpression];
-
-    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void)rewardedAd:(GADRewardedAd *)rewardedAd didFailToPresentWithError:(NSError *)error {
-    [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
     MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+    [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
 }
 
 - (void)rewardedAdDidDismiss:(GADRewardedAd *)rewardedAd {

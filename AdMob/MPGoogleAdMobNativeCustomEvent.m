@@ -108,9 +108,8 @@ static GADAdChoicesPosition adChoicesPosition;
     
   // Cache the network initialization parameters
   [GoogleAdMobAdapterConfiguration updateInitializationParameters:info];
-
-  [self.adLoader loadRequest:request];
   MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.admobAdUnitId);
+  [self.adLoader loadRequest:request];
 }
 
 #pragma mark GADAdLoaderDelegate implementation

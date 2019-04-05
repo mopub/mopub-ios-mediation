@@ -87,9 +87,8 @@
     
   // Cache the network initialization parameters
   [GoogleAdMobAdapterConfiguration updateInitializationParameters:info];
-
-  [self.adBannerView loadRequest:request];
   MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
+  [self.adBannerView loadRequest:request];
 }
 
 - (CGRect)frameForCustomEventInfo:(NSDictionary *)info {
