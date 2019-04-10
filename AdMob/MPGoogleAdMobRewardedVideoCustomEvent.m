@@ -89,6 +89,10 @@
     }];
 }
 
+- (BOOL)hasAdAvailable {
+    return self.rewardedAd.isReady;
+}
+
 - (void)presentRewardedVideoFromViewController:(UIViewController *)viewController {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     
