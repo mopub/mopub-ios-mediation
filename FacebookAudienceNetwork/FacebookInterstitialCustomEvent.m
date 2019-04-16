@@ -7,6 +7,7 @@
 
 #import <FBAudienceNetwork/FBAudienceNetwork.h>
 #import "FacebookInterstitialCustomEvent.h"
+#import "FacebookAdapterConfiguration.h"
 
 #if __has_include("MoPub.h")
     #import "MoPub.h"
@@ -53,7 +54,7 @@
 
     self.fbInterstitialAd = [[FBInterstitialAd alloc] initWithPlacementID:[info objectForKey:@"placement_id"]];
     self.fbInterstitialAd.delegate = self;
-    [FBAdSettings setMediationService:[NSString stringWithFormat:@"MOPUB_%@", MP_SDK_VERSION]];
+    [FBAdSettings setMediationService:[FacebookAdapterConfiguration mediationString]];
 
     // Load the advanced bid payload.
     if (adMarkup != nil) {
