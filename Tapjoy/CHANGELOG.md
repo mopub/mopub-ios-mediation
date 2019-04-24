@@ -1,4 +1,8 @@
 ## Changelog
+  * 12.2.1.0
+    * This version of the adapters has been certified with Tapjoy 12.2.1.
+    * Pass MoPub's log level to Tapjoy. To adjust Tapjoy's log level via MoPub's log settings, reference the steps on [this page](https://developers.mopub.com/publishers/ios/test/#enable-logging).
+    
   * 12.2.0.4
     * Adapters now fetch only the core MoPub iOS SDK (excluding viewability SDKs). Publishers wishing to integrate viewability should fetch the `mopub-ios-sdk` dependency in their own Podfile.
 

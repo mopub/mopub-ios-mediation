@@ -7,7 +7,7 @@
 
 #import "ChartboostRewardedVideoCustomEvent.h"
 #import "ChartboostAdapterConfiguration.h"
-#import "MPChartboostRouter.h"
+#import "ChartboostRouter.h"
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
     #import "MPRewardedVideoReward.h"
@@ -33,15 +33,15 @@
     // Cache the network SDK initialization parameters
     [ChartboostAdapterConfiguration updateInitializationParameters:info];
 
-    [[MPChartboostRouter sharedRouter] cacheRewardedAdWithAppId:self.appId appSignature:appSignature location:self.location forChartboostRewardedVideoCustomEvent:self];
+    [[ChartboostRouter sharedRouter] cacheRewardedAdWithAppId:self.appId appSignature:appSignature location:self.location forChartboostRewardedVideoCustomEvent:self];
 }
 
 - (void)presentRewardedVideoFromViewController:(UIViewController *)viewController
 {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 
-    if ([[MPChartboostRouter sharedRouter] hasCachedRewardedVideoForLocation:self.location]) {
-        [[MPChartboostRouter sharedRouter] showRewardedVideoForLocation:self.location];
+    if ([[ChartboostRouter sharedRouter] hasCachedRewardedVideoForLocation:self.location]) {
+        [[ChartboostRouter sharedRouter] showRewardedVideoForLocation:self.location];
     } else {
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
         [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
@@ -51,12 +51,12 @@
 
 - (void)handleCustomEventInvalidated
 {
-    [[[MPChartboostRouter sharedRouter] rewardedVideoEvents] removeObjectForKey:self.location];
+    [[[ChartboostRouter sharedRouter] rewardedVideoEvents] removeObjectForKey:self.location];
 }
 
 - (BOOL)hasAdAvailable
 {
-    return [[MPChartboostRouter sharedRouter] hasCachedRewardedVideoForLocation:self.location];
+    return [[ChartboostRouter sharedRouter] hasCachedRewardedVideoForLocation:self.location];
 }
 
 - (void)handleAdPlayedForCustomEventNetwork

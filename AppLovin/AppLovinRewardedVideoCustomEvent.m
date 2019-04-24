@@ -300,7 +300,9 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
 
 - (ALSdk *)SDKFromCustomEventInfo:(NSDictionary *)info
 {
-    NSString *SDKKey = info[@"sdk_key"];
+    // The SDK key is not returned from the MoPub dashboard, so we statically read it
+    // for Unity publishers who don't have access to the project's info.plist.
+    NSString *SDKKey = AppLovinAdapterConfiguration.sdkKey;
     if ( SDKKey.length > 0 )
     {
         return [ALSdk sharedWithKey: SDKKey];

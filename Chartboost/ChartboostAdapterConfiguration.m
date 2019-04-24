@@ -1,8 +1,9 @@
 #import <Chartboost/Chartboost.h>
 #import "ChartboostAdapterConfiguration.h"
-#import "MPChartboostRouter.h"
+#import "ChartboostRouter.h"
 
 #if __has_include("MoPub.h")
+#import "MoPub.h"
 #import "MPLogging.h"
 #endif
 
@@ -37,7 +38,7 @@ typedef NS_ENUM(NSInteger, ChartboostAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"7.3.0.4";
+    return @"7.3.1.0";
 }
 
 - (NSString *)biddingToken {
@@ -78,10 +79,29 @@ typedef NS_ENUM(NSInteger, ChartboostAdapterErrorCode) {
     }
     
     // Initialize the router
-    [[MPChartboostRouter sharedRouter] startWithAppId:appId appSignature:appSignature];
+    [[ChartboostRouter sharedRouter] startWithAppId:appId appSignature:appSignature];
     if (complete != nil) {
         complete(nil);
     }
+    
+    MPBLogLevel mopubLogLevel = [[MoPub sharedInstance] logLevel];
+    CBLoggingLevel * chartboostLogLevel = [ChartboostAdapterConfiguration getChartboostLogLevel:mopubLogLevel];
+
+    [Chartboost setLoggingLevel:chartboostLogLevel];
 }
 
++ (CBLoggingLevel *)getChartboostLogLevel:(MPBLogLevel *)logLevel
+{
+    int logLevelVal = logLevel;
+    
+    switch (logLevelVal) {
+        case MPBLogLevelDebug:
+            return CBLoggingLevelVerbose;
+        case MPBLogLevelInfo:
+            return CBLoggingLevelInfo;
+        default:
+            return CBLoggingLevelOff;
+    }
+}
+    
 @end

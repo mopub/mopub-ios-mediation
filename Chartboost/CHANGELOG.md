@@ -1,4 +1,11 @@
 ## Changelog
+  * 7.3.1.0
+      * This version of the adapters has been certified with Chartboost 7.3.1.
+      * Pass MoPub's log level to Chartboost. To adjust Chartboost's log level via MoPub's log settings, reference [this page](https://developers.mopub.com/publishers/ios/test/#enable-logging).
+
+  * 7.3.0.5
+      * Rename `MPChartboostRouter` to `ChartboostRouter` for consistency with other adapter class names.
+
   * 7.3.0.4
       * Adapters now fetch only the core MoPub iOS SDK (excluding viewability SDKs). Publishers wishing to integrate viewability should fetch the `mopub-ios-sdk` dependency in their own Podfile.
 

@@ -40,7 +40,7 @@ typedef NS_ENUM(NSInteger, AdMobAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"7.39.0.0";
+    return @"7.42.2.0";
 }
 
 - (NSString *)biddingToken {
@@ -52,33 +52,22 @@ typedef NS_ENUM(NSInteger, AdMobAdapterErrorCode) {
 }
 
 - (NSString *)networkSdkVersion {
-    return @"7.37.0";
+    return @"7.42.2";
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration
                                   complete:(void(^)(NSError *))complete {
-    // Verify application ID exists
-    NSString * appId = configuration[kAdMobApplicationIdKey];
-    if (appId == nil) {
-        NSError * error = [NSError errorWithDomain:kAdapterErrorDomain code:AdMobAdapterErrorCodeMissingAppId userInfo:@{ NSLocalizedDescriptionKey: @"AdMob's initialization skipped. The appId is empty. Ensure it is properly configured on the MoPub dashboard." }];
-        MPLogEvent([MPLogEvent error:error message:nil]);
-        
-        if (complete != nil) {
-            complete(error);
-        }
-        return;
-    }
-    
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         dispatch_async(dispatch_get_main_queue(), ^{
-            [GADMobileAds configureWithApplicationID:appId];
+          [[GADMobileAds sharedInstance] startWithCompletionHandler:^(GADInitializationStatus *status){
+            MPLogInfo(@"Google Mobile Ads SDK initialized succesfully.");
+            if (complete != nil) {
+              complete(nil);
+            }
+          }];
         });
     });
-    
-    if (complete != nil) {
-        complete(nil);
-    }
 }
 
 @end

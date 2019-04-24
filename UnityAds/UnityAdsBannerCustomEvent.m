@@ -4,7 +4,7 @@
 //
 
 #import "UnityAdsBannerCustomEvent.h"
-#import "MPUnityRouter.h"
+#import "UnityRouter.h"
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
 #endif
@@ -46,7 +46,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
         return;
     }
 
-    [[MPUnityRouter sharedRouter] requestBannerAdWithGameId:gameId placementId:self.placementId delegate:self];
+    [[UnityRouter sharedRouter] requestBannerAdWithGameId:gameId placementId:self.placementId delegate:self];
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
 }
 

@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'MoPub-UnityAds-Adapters'
-s.version          = '3.0.1.0'
+s.version          = '3.0.1.1'
 s.summary          = 'Unity Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats: Interstitial, Rewarded Video.\n

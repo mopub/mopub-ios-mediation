@@ -1,11 +1,11 @@
 //
-//  MPChartboostRouter.m
+//  ChartboostRouter.m
 //  MoPubSDK
 //
 //  Copyright (c) 2015 MoPub. All rights reserved.
 //
 
-#import "MPChartboostRouter.h"
+#import "ChartboostRouter.h"
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
     #import "MoPub.h"
@@ -25,18 +25,18 @@
  * "locations" in a single app session, we may have multiple instances of our custom event class,
  * all of which are interested in delegate callbacks.
  *
- * MPChartboostRouter is a singleton that is always the Chartboost delegate, and dispatches
+ * ChartboostRouter is a singleton that is always the Chartboost delegate, and dispatches
  * events to all of the custom event instances.
  */
 
-@implementation MPChartboostRouter
+@implementation ChartboostRouter
 
-+ (MPChartboostRouter *)sharedRouter
++ (ChartboostRouter *)sharedRouter
 {
-    static MPChartboostRouter * sharedRouter;
+    static ChartboostRouter * sharedRouter;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        sharedRouter = [[MPChartboostRouter alloc] init];
+        sharedRouter = [[ChartboostRouter alloc] init];
     });
     return sharedRouter;
 }

@@ -12,11 +12,11 @@
     #import "MPLogging.h"
     #import "MoPub.h"
 #endif
-#import "MPVungleRouter.h"
+#import "VungleRouter.h"
 
 // If you need to play ads with vungle options, you may modify playVungleAdFromRootViewController and create an options dictionary and call the playAd:withOptions: method on the vungle SDK.
 
-@interface VungleInterstitialCustomEvent () <MPVungleRouterDelegate>
+@interface VungleInterstitialCustomEvent () <VungleRouterDelegate>
 
 @property (nonatomic, assign) BOOL handledAdAvailable;
 @property (nonatomic, copy) NSString *placementId;
@@ -39,12 +39,12 @@
     [VungleAdapterConfiguration updateInitializationParameters:info];
     
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.placementId);
-    [[MPVungleRouter sharedRouter] requestInterstitialAdWithCustomEventInfo:info delegate:self];
+    [[VungleRouter sharedRouter] requestInterstitialAdWithCustomEventInfo:info delegate:self];
 }
 
 - (void)showInterstitialFromRootViewController:(UIViewController *)rootViewController
 {
-    if ([[MPVungleRouter sharedRouter] isAdAvailableForPlacementId:self.placementId]) {
+    if ([[VungleRouter sharedRouter] isAdAvailableForPlacementId:self.placementId]) {
         
         if (self.options) {
             // In the event that options have been updated
@@ -81,7 +81,7 @@
         self.options = options.count ? options : nil;
         
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.placementId);
-        [[MPVungleRouter sharedRouter] presentInterstitialAdFromViewController:rootViewController options:self.options forPlacementId:self.placementId];
+        [[VungleRouter sharedRouter] presentInterstitialAdFromViewController:rootViewController options:self.options forPlacementId:self.placementId];
     } else {
         NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Failed to show Vungle video interstitial: Vungle now claims that there is no available video ad."];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementId);
@@ -91,10 +91,10 @@
 
 - (void)invalidate
 {
-    [[MPVungleRouter sharedRouter] clearDelegateForPlacementId:self.placementId];
+    [[VungleRouter sharedRouter] clearDelegateForPlacementId:self.placementId];
 }
 
-#pragma mark - MPVungleRouterDelegate
+#pragma mark - VungleRouterDelegate
 
 - (void)vungleAdDidLoad
 {

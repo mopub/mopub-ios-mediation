@@ -7,21 +7,20 @@
 #import "MPRewardedVideoReward.h"
 #endif
 
-@interface MPGoogleAdMobRewardedVideoCustomEvent () <GADRewardBasedVideoAdDelegate>
+@interface MPGoogleAdMobRewardedVideoCustomEvent () <GADRewardedAdDelegate>
 @property(nonatomic, copy) NSString *admobAdUnitId;
-
+@property(nonatomic, strong) GADRewardedAd *rewardedAd;
 @end
 
 @implementation MPGoogleAdMobRewardedVideoCustomEvent
 
 - (void)initializeSdkWithParameters:(NSDictionary *)parameters {
-    NSString *applicationID = [parameters objectForKey:@"appid"];
-    if (applicationID) {
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            [GADMobileAds configureWithApplicationID:applicationID];
-        });
-    }
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+      [[GADMobileAds sharedInstance] startWithCompletionHandler:^(GADInitializationStatus *status){
+        MPLogInfo(@"Google Mobile Ads SDK initialized succesfully.");
+      }];
+    });
 }
 
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info {
@@ -46,6 +45,16 @@
     if ([self.localExtras objectForKey:@"testDevices"]) {
       request.testDevices = self.localExtras[@"testDevices"];
     }
+
+    if ([self.localExtras objectForKey:@"tagForChildDirectedTreatment"]) {
+      [GADMobileAds.sharedInstance.requestConfiguration tagForChildDirectedTreatment:self.localExtras[@"tagForChildDirectedTreatment"]];
+    }
+
+    if ([self.localExtras objectForKey:@"tagForUnderAgeOfConsent"]) {
+      [GADMobileAds.sharedInstance.requestConfiguration
+          tagForUnderAgeOfConsent:self.localExtras[@"tagForUnderAgeOfConsent"]];
+    }
+
     request.requestAgent = @"MoPub";
 
     if ([self.localExtras objectForKey:@"contentUrl"] != nil) {
@@ -66,29 +75,37 @@
         extras.additionalParameters = @{@"npa" : medSettings.npa};
         [request registerAdNetworkExtras:extras];
     }
-    
-    [GADRewardBasedVideoAd sharedInstance].delegate = self;
-    [[GADRewardBasedVideoAd sharedInstance] loadRequest:request withAdUnitID:self.admobAdUnitId];
+
+    self.rewardedAd = [[GADRewardedAd alloc] initWithAdUnitID:self.admobAdUnitId];
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
+    [self.rewardedAd loadRequest:request completionHandler:^(GADRequestError *error){
+      if (error) {
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+      } else {
+        MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+        [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
+      }
+    }];
 }
 
 - (BOOL)hasAdAvailable {
-    return [GADRewardBasedVideoAd sharedInstance].isReady;
+    return self.rewardedAd.isReady;
 }
 
 - (void)presentRewardedVideoFromViewController:(UIViewController *)viewController {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     
-    if ([self hasAdAvailable]) {
-        [[GADRewardBasedVideoAd sharedInstance] presentFromRootViewController:viewController];
+    if (self.rewardedAd.isReady) {
+        [self.rewardedAd presentFromRootViewController:viewController delegate:self];
     } else {
-        // We will send the error if the reward-based video ad has already been presented.
+        // We will send the error if the rewarded ad has already been presented.
         NSError *error = [NSError
                           errorWithDomain:MoPubRewardedVideoAdsSDKDomain
-                          code:MPRewardedVideoAdErrorAdAlreadyPlayed
-                          userInfo:@{NSLocalizedDescriptionKey : @"Reward-based video ad has already been shown."}];
-        [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
+                          code:MPRewardedVideoAdErrorNoAdReady
+                          userInfo:@{NSLocalizedDescriptionKey : @"Rewarded ad is not ready to be presented."}];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+        [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
     }
 }
 
@@ -107,63 +124,42 @@
 // and needs to load another ad. That event will be passed on to the publisher app, which can then
 // trigger another load.
 - (void)handleAdPlayedForCustomEventNetwork {
-    if (![self hasAdAvailable]) {
+    if (!self.rewardedAd.isReady) {
         // Sending rewardedVideoDidExpireForCustomEvent: callback because the reward-based video ad will
         // not be available once its been presented.
         [self.delegate rewardedVideoDidExpireForCustomEvent:self];
     }
 }
 
-#pragma mark - GADRewardBasedVideoAdDelegate methods
+#pragma mark - GADRewardedAdDelegate methods
 
-- (void)rewardBasedVideoAd:(GADRewardBasedVideoAd *)rewardBasedVideoAd didRewardUserWithReward:(GADAdReward *)reward {
+- (void)rewardedAd:(GADRewardedAd *)rewardedAd userDidEarnReward:(GADAdReward *)reward {
     MPRewardedVideoReward *moPubReward =
     [[MPRewardedVideoReward alloc] initWithCurrencyType:reward.type amount:reward.amount];
     [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:moPubReward];
 }
 
-- (void)rewardBasedVideoAd:(GADRewardBasedVideoAd *)rewardBasedVideoAd didFailToLoadWithError:(NSError *)error {
-    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-    [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
-}
-
-- (void)rewardBasedVideoAdDidReceiveAd:(GADRewardBasedVideoAd *)rewardBasedVideoAd {
-    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
-}
-
-- (void)rewardBasedVideoAdDidOpen:(GADRewardBasedVideoAd *)rewardBasedVideoAd {
+- (void)rewardedAdDidPresent:(GADRewardedAd *)rewardedAd {
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate rewardedVideoWillAppearForCustomEvent:self];
     [self.delegate rewardedVideoDidAppearForCustomEvent:self];
     // Recording an impression after the reward-based video ad appears on the screen.
     [self.delegate trackImpression];
-    
-    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
-- (void)rewardBasedVideoAdDidStartPlaying:(GADRewardBasedVideoAd *)rewardBasedVideoAd {
-    // MoPub rewarded video custom event doesn't have a callback when the video starts playing.
-    MPLogInfo(@"Google AdMob reward-based video ad started playing.");
+- (void)rewardedAd:(GADRewardedAd *)rewardedAd didFailToPresentWithError:(NSError *)error {
+    MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+    [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
 }
 
-- (void)rewardBasedVideoAdDidClose:(GADRewardBasedVideoAd *)rewardBasedVideoAd {
-    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
+- (void)rewardedAdDidDismiss:(GADRewardedAd *)rewardedAd {
+  MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+  [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
 
-    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
-}
-
-- (void)rewardBasedVideoAdWillLeaveApplication:(GADRewardBasedVideoAd *)rewardBasedVideoAd {
-    // Recording a click because the rewardBasedVideoAdWillLeaveApplication: is invoked when a click
-    // on the reward-based video ad happens.
-    [self.delegate trackClick];
-    [self.delegate rewardedVideoDidReceiveTapEventForCustomEvent:self];
-    [self.delegate rewardedVideoWillLeaveApplicationForCustomEvent:self];
-    
-    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+  MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+  [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
 }
 
 - (NSString *) getAdNetworkId {

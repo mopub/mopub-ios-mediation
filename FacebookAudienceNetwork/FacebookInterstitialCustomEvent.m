@@ -7,6 +7,7 @@
 
 #import <FBAudienceNetwork/FBAudienceNetwork.h>
 #import "FacebookInterstitialCustomEvent.h"
+#import "FacebookAdapterConfiguration.h"
 
 #if __has_include("MoPub.h")
     #import "MoPub.h"
@@ -53,7 +54,7 @@
 
     self.fbInterstitialAd = [[FBInterstitialAd alloc] initWithPlacementID:[info objectForKey:@"placement_id"]];
     self.fbInterstitialAd.delegate = self;
-    [FBAdSettings setMediationService:[NSString stringWithFormat:@"MOPUB_%@", MP_SDK_VERSION]];
+    [FBAdSettings setMediationService:[FacebookAdapterConfiguration mediationString]];
 
     // Load the advanced bid payload.
     if (adMarkup != nil) {
@@ -89,6 +90,8 @@
         
         MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
         [self.delegate interstitialCustomEventDidAppear:self];
+        
+        [self cancelExpirationTimer];
     }
 }
 
@@ -105,6 +108,7 @@
 - (void)dealloc
 {
     self.fbInterstitialAd.delegate = nil;
+    [self cancelExpirationTimer];
 }
 
 - (BOOL)enableAutomaticImpressionAndClickTracking
@@ -112,10 +116,21 @@
     return NO;
 }
 
+-(void)cancelExpirationTimer
+{
+    if (_expirationTimer != nil)
+    {
+        [self.expirationTimer invalidate];
+        self.expirationTimer = nil;
+    }
+}
+
 #pragma mark FBInterstitialAdDelegate methods
 
 - (void)interstitialAdDidLoad:(FBInterstitialAd *)interstitialAd
 {
+    [self cancelExpirationTimer];
+
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
     [self.delegate interstitialCustomEvent:self didLoadAd:interstitialAd];
     
@@ -134,23 +149,25 @@
             //Delete the cached objects
             strongSelf.fbInterstitialAd = nil;
         }
-        [strongSelf.expirationTimer invalidate];
     }];
     [self.expirationTimer scheduleNow];
 }
 
 - (void)interstitialAdWillLogImpression:(FBInterstitialAd *)interstitialAd
 {
+    [self cancelExpirationTimer];
+
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
     
     //set the tracker to true when the ad is shown on the screen. So that the timer is invalidated.
     _hasTrackedImpression = true;
     [self.delegate trackImpression];
-    [self.expirationTimer invalidate];
 }
 
 - (void)interstitialAd:(FBInterstitialAd *)interstitialAd didFailWithError:(NSError *)error
 {
+    [self cancelExpirationTimer];
+
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.fbPlacementId);
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
 }

@@ -10,7 +10,7 @@
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
 #endif
-#import "MPChartboostRouter.h"
+#import "ChartboostRouter.h"
 #import <Chartboost/Chartboost.h>
 
 static NSString *appId = nil;
@@ -35,7 +35,7 @@ static NSString *appId = nil;
 
 - (void)invalidate
 {
-    [[MPChartboostRouter sharedRouter] unregisterInterstitialEvent:self];
+    [[ChartboostRouter sharedRouter] unregisterInterstitialEvent:self];
     self.location = nil;
 }
 
@@ -65,7 +65,7 @@ static NSString *appId = nil;
     // Cache the network SDK initialization parameters
     [ChartboostAdapterConfiguration updateInitializationParameters:info];
 
-    [[MPChartboostRouter sharedRouter] cacheInterstitialWithAppId:appId
+    [[ChartboostRouter sharedRouter] cacheInterstitialWithAppId:appId
                                                      appSignature:appSignature
                                                          location:self.location
                              forChartboostInterstitialCustomEvent:self];
@@ -75,9 +75,9 @@ static NSString *appId = nil;
 {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 
-    if ([[MPChartboostRouter sharedRouter] hasCachedInterstitialForLocation:self.location]) {
+    if ([[ChartboostRouter sharedRouter] hasCachedInterstitialForLocation:self.location]) {
 
-        [[MPChartboostRouter sharedRouter] showInterstitialForLocation:self.location];
+        [[ChartboostRouter sharedRouter] showInterstitialForLocation:self.location];
     } else {        
         NSError *error = [self createErrorWith:@"Failed to show Chartboost interstitial"
                                      andReason:@""

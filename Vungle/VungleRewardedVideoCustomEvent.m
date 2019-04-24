@@ -15,10 +15,10 @@
     #import "MoPub.h"
 #endif
 #import <VungleSDK/VungleSDK.h>
-#import "MPVungleRouter.h"
+#import "VungleRouter.h"
 #import "VungleInstanceMediationSettings.h"
 
-@interface VungleRewardedVideoCustomEvent ()  <MPVungleRouterDelegate>
+@interface VungleRewardedVideoCustomEvent ()  <VungleRouterDelegate>
 
 @property (nonatomic, copy) NSString *placementId;
 
@@ -29,7 +29,7 @@
 
 - (void)initializeSdkWithParameters:(NSDictionary *)parameters
 {
-    [[MPVungleRouter sharedRouter] initializeSdkWithInfo:parameters];
+    [[VungleRouter sharedRouter] initializeSdkWithInfo:parameters];
 }
 
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info
@@ -40,7 +40,7 @@
     [VungleAdapterConfiguration updateInitializationParameters:info];
 
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.placementId);
-    [[MPVungleRouter sharedRouter] requestRewardedVideoAdWithCustomEventInfo:info delegate:self];
+    [[VungleRouter sharedRouter] requestRewardedVideoAdWithCustomEventInfo:info delegate:self];
 }
 
 - (BOOL)hasAdAvailable
@@ -51,11 +51,11 @@
 - (void)presentRewardedVideoFromViewController:(UIViewController *)viewController
 {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.placementId);
-    if ([[MPVungleRouter sharedRouter] isAdAvailableForPlacementId:self.placementId]) {
+    if ([[VungleRouter sharedRouter] isAdAvailableForPlacementId:self.placementId]) {
         VungleInstanceMediationSettings *settings = [self.delegate instanceMediationSettingsForClass:[VungleInstanceMediationSettings class]];
 
         NSString *customerId = [self.delegate customerIdForRewardedVideoCustomEvent:self];
-        [[MPVungleRouter sharedRouter] presentRewardedVideoAdFromViewController:viewController customerId:customerId settings:settings forPlacementId:self.placementId];
+        [[VungleRouter sharedRouter] presentRewardedVideoAdFromViewController:viewController customerId:customerId settings:settings forPlacementId:self.placementId];
     } else {
         NSError *error = [NSError errorWithCode:MPRewardedVideoAdErrorNoAdsAvailable localizedDescription:@"Failed to show Vungle rewarded video: Vungle now claims that there is no available video ad."];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementId);
@@ -65,7 +65,7 @@
 
 - (void)handleCustomEventInvalidated
 {
-    [[MPVungleRouter sharedRouter] clearDelegateForPlacementId:self.placementId];
+    [[VungleRouter sharedRouter] clearDelegateForPlacementId:self.placementId];
 }
 
 - (void)handleAdPlayedForCustomEventNetwork

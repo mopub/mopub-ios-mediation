@@ -17,8 +17,7 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
 
 @interface FacebookNativeAdAdapter () <FBNativeAdDelegate>
 
-@property (nonatomic, readonly) FBNativeAd *fbNativeAd;
-@property (nonatomic, readonly) FBAdChoicesView *adChoicesView;
+@property (nonatomic, readonly) FBAdOptionsView *adOptionsView;
 @property (nonatomic, readonly) FBMediaView *mediaView;
 @property (nonatomic, readonly) FBAdIconView *iconView;
 
@@ -75,8 +74,9 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
 
         _properties = properties;
 
-        _adChoicesView = [[FBAdChoicesView alloc] initWithNativeAd:fbNativeAd];
-        _adChoicesView.backgroundShown = NO;
+        _adOptionsView = [[FBAdOptionsView alloc] init];
+        _adOptionsView.nativeAd = fbNativeAd;
+        _adOptionsView.backgroundColor = [UIColor clearColor];
     }
 
     return self;
@@ -111,7 +111,7 @@ NSString *const kFBVideoAdsEnabledKey = @"video_enabled";
 
 - (UIView *)privacyInformationIconView
 {
-    return self.adChoicesView;
+    return self.adOptionsView;
 }
 
 - (UIView *)mainMediaView

@@ -17,7 +17,7 @@
 #endif
 
 #define FlurryMediationOrigin @"Flurry_Mopub_iOS"
-#define FlurryAdapterVersion @"9.2.1.5"
+#define FlurryAdapterVersion @"9.3.1.0"
 
 @interface FlurryMPConfig : NSObject
 

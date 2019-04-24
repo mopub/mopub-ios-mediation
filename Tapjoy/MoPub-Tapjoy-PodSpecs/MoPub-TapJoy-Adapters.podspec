@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'MoPub-TapJoy-Adapters'
-s.version          = '12.2.0.4'
+s.version          = '12.2.1.0'
 s.summary          = 'TapJoy Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats: Interstitial, Rewarded Video.\n
@@ -23,7 +23,7 @@ s.subspec 'MoPub' do |ms|
 end
 s.subspec 'Network' do |ns|
   ns.source_files = 'Tapjoy/*.{h,m}'
-  ns.dependency 'TapjoySDK', '12.2.0'
+  ns.dependency 'TapjoySDK', '12.2.1'
   ns.dependency 'mopub-ios-sdk/Core', '~> 5.5'
 end
 end

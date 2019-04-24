@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'MoPub-Vungle-Adapters'
-s.version          = '6.3.2.4'
+s.version          = '6.3.2.5'
 s.summary          = 'Vungle Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats: Interstitial, Rewarded Video.\n
