@@ -28,7 +28,7 @@
     NSString *appSignature = [info objectForKey:@"appSignature"];
 
     NSString *location = [info objectForKey:@"location"];
-    self.location = location ? location : CBLocationDefault;
+    self.location = [location length] != 0 ? location : CBLocationDefault;
 
     // Cache the network SDK initialization parameters
     [ChartboostAdapterConfiguration updateInitializationParameters:info];
