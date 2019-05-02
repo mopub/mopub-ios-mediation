@@ -139,7 +139,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
         self.interstitialAd = [[ALInterstitialAd alloc] initWithSdk: self.sdk];
         self.interstitialAd.adDisplayDelegate = self;
         self.interstitialAd.adVideoPlaybackDelegate = self;
-        [self.interstitialAd showOver: rootViewController.view.window andRender: preloadedAd];
+        [self.interstitialAd showAd: preloadedAd];
     }
     else
     {
@@ -227,7 +227,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
 
 - (void)videoPlaybackEndedInAd:(ALAd *)ad atPlaybackPercent:(NSNumber *)percentPlayed fullyWatched:(BOOL)wasFullyWatched
 {
-    MPLogInfo(@"Interstitial video playback ended at playback percent: %lu", percentPlayed.unsignedIntegerValue);
+    MPLogInfo(@"Interstitial video playback ended at playback percent: %lu", (unsigned long)percentPlayed.unsignedIntegerValue);
 }
 
 #pragma mark - Utility Methods
@@ -286,7 +286,9 @@ static NSObject *ALGlobalInterstitialAdsLock;
 
 - (ALSdk *)SDKFromCustomEventInfo:(NSDictionary *)info
 {
-    NSString *SDKKey = info[@"sdk_key"];
+    // The SDK key is not returned from the MoPub dashboard, so we statically read it
+    // for Unity publishers who don't have access to the project's info.plist.
+    NSString *SDKKey = AppLovinAdapterConfiguration.sdkKey;
     if ( SDKKey.length > 0 )
     {
         return [ALSdk sharedWithKey: SDKKey];

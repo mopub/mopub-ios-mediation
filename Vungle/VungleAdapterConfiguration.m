@@ -7,7 +7,7 @@
 
 #import <VungleSDK/VungleSDK.h>
 #import "VungleAdapterConfiguration.h"
-#import "MPVungleRouter.h"
+#import "VungleRouter.h"
 
 #if __has_include("MoPub.h")
 #import "MPLogging.h"
@@ -38,7 +38,7 @@ typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"6.3.2.4";
+    return @"6.3.2.5";
 }
 
 - (NSString *)biddingToken {
@@ -67,7 +67,7 @@ typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
         return;
     }
     
-    [MPVungleRouter.sharedRouter initializeSdkWithInfo:configuration];
+    [VungleRouter.sharedRouter initializeSdkWithInfo:configuration];
     if (complete != nil) {
         complete(nil);
     }

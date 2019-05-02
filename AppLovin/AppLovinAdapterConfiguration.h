@@ -38,6 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, copy, readonly, class) NSString *pluginVersion;
 
+@property (class, nonatomic, copy, readonly) NSString * sdkKey;
+
 @end
 
 NS_ASSUME_NONNULL_END

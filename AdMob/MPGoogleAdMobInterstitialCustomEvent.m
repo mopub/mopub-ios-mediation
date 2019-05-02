@@ -53,6 +53,13 @@
     if ([self.localExtras objectForKey:@"testDevices"]) {
       request.testDevices = self.localExtras[@"testDevices"];
     }
+    if ([self.localExtras objectForKey:@"tagForChildDirectedTreatment"]) {
+      [GADMobileAds.sharedInstance.requestConfiguration tagForChildDirectedTreatment:self.localExtras[@"tagForChildDirectedTreatment"]];
+    }
+    if ([self.localExtras objectForKey:@"tagForUnderAgeOfConsent"]) {
+      [GADMobileAds.sharedInstance.requestConfiguration
+       tagForUnderAgeOfConsent:self.localExtras[@"tagForUnderAgeOfConsent"]];
+    }
 
     request.requestAgent = @"MoPub";
     
@@ -70,9 +77,8 @@
     
     // Cache the network initialization parameters
     [GoogleAdMobAdapterConfiguration updateInitializationParameters:info];
-    
-    [self.interstitial loadRequest:request];
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
+    [self.interstitial loadRequest:request];
 }
 
 - (void)showInterstitialFromRootViewController:(UIViewController *)rootViewController {
@@ -109,31 +115,29 @@ didFailToReceiveAdWithError:(GADRequestError *)error {
 
 - (void)interstitialWillPresentScreen:(GADInterstitial *)interstitial {
     MPLogAdEvent(MPLogEvent.adShowSuccess, self.admobAdUnitId);
-    [self.delegate interstitialCustomEventWillAppear:self];
-    [self.delegate interstitialCustomEventDidAppear:self];
-    [self.delegate trackImpression];
-    
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate interstitialCustomEventWillAppear:self];
+    [self.delegate interstitialCustomEventDidAppear:self];
+    [self.delegate trackImpression];
 }
 
 - (void)interstitialWillDismissScreen:(GADInterstitial *)ad {
-    [self.delegate interstitialCustomEventWillDisappear:self];
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate interstitialCustomEventWillDisappear:self];
 }
 
 - (void)interstitialDidDismissScreen:(GADInterstitial *)ad {
-    [self.delegate interstitialCustomEventDidDisappear:self];
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate interstitialCustomEventDidDisappear:self];
 }
 
 - (void)interstitialWillLeaveApplication:(GADInterstitial *)ad {
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate interstitialCustomEventDidReceiveTapEvent:self];
     [self.delegate interstitialCustomEventWillLeaveApplication:self];
     [self.delegate trackClick];
-    
-    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (NSString *) getAdNetworkId {

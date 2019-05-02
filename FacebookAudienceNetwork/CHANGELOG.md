@@ -1,4 +1,15 @@
 ## Changelog
+* 5.3.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.3.0.
+
+* 5.2.0.1
+    * Nil out the 1-hour expiration timer to release memory after a rewarded video has been shown.
+
+* 5.2.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.2.0. 
+    * Add `FacebookNativeAdRenderer` to render native ads using [predefined layouts from Facebook Audience Network](https://developers.facebook.com/docs/audience-network/ios/nativeadtemplate). You won't need to use a custom layout. Simply pass your `MPStaticNativeAdRendererSettings` to the `FacebookNativeAdRenderer`'s `rendererConfigurationWithRendererSettings:` call, and register that configuration with the ad request.
+     * Replace `FBAdChoicesView` with `FBAdOptionsView`.
+
 * 5.1.0.4
     * Adapters now fetch only the core MoPub iOS SDK (excluding viewability SDKs). Publishers wishing to integrate viewability should fetch the `mopub-ios-sdk` dependency in their own Podfile.
 

@@ -1,4 +1,7 @@
 ## Changelog
+  * 6.3.2.5
+    * Rename `MPVungleRouter` to `VungleRouter` for consistency with other adapter class names. 
+
   * 6.3.2.4
     * Adapters now fetch only the core MoPub iOS SDK (excluding viewability SDKs). Publishers wishing to integrate viewability should fetch the `mopub-ios-sdk` dependency in their own Podfile.
 

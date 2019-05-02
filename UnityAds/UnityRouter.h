@@ -1,5 +1,5 @@
 //
-//  MPUnityRouter.h
+//  UnityRouter.h
 //  MoPubSDK
 //
 //  Copyright (c) 2016 MoPub. All rights reserved.
@@ -10,25 +10,25 @@
 #import <UnityAds/UnityAdsExtended.h>
 #import <UnityAds/UADSBanner.h>
 
-@protocol MPUnityRouterDelegate;
+@protocol UnityRouterDelegate;
 @class UnityAdsInstanceMediationSettings;
 
-@interface MPUnityRouter : NSObject <UnityAdsExtendedDelegate, UnityAdsBannerDelegate>
+@interface UnityRouter : NSObject <UnityAdsExtendedDelegate, UnityAdsBannerDelegate>
 
 @property NSString* currentPlacementId;
 
-+ (MPUnityRouter *)sharedRouter;
++ (UnityRouter *)sharedRouter;
 
 - (void)initializeWithGameId:(NSString *)gameId;
-- (void)requestVideoAdWithGameId:(NSString *)gameId placementId:(NSString *)placementId delegate:(id<MPUnityRouterDelegate>)delegate;
+- (void)requestVideoAdWithGameId:(NSString *)gameId placementId:(NSString *)placementId delegate:(id<UnityRouterDelegate>)delegate;
 - (void)requestBannerAdWithGameId:(NSString *)gameId placementId:(NSString *)placementId delegate:(id<UnityAdsBannerDelegate>)delegate;
 - (BOOL)isAdAvailableForPlacementId:(NSString *)placementId;
-- (void)presentVideoAdFromViewController:(UIViewController *)viewController customerId:(NSString *)customerId placementId:(NSString *)placementId settings:(UnityAdsInstanceMediationSettings *)settings delegate:(id<MPUnityRouterDelegate>)delegate;
-- (void)clearDelegate:(id<MPUnityRouterDelegate>)delegate;
+- (void)presentVideoAdFromViewController:(UIViewController *)viewController customerId:(NSString *)customerId placementId:(NSString *)placementId settings:(UnityAdsInstanceMediationSettings *)settings delegate:(id<UnityRouterDelegate>)delegate;
+- (void)clearDelegate:(id<UnityRouterDelegate>)delegate;
 
 @end
 
-@protocol MPUnityRouterDelegate <NSObject>
+@protocol UnityRouterDelegate <NSObject>
 
 - (void)unityAdsReady:(NSString *)placementId;
 - (void)unityAdsDidError:(UnityAdsError)error withMessage:(NSString *)message;

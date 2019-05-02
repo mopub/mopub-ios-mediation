@@ -1,4 +1,7 @@
 ## Changelog
+  * 3.3.7.0
+    * This version of the adapters has been certified with AdColony 3.3.7.
+
   * 3.3.5.4
     * Adapters now fetch only the core MoPub iOS SDK (excluding viewability SDKs). Publishers wishing to integrate viewability should fetch the `mopub-ios-sdk` dependency in their own Podfile.
 

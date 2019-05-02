@@ -1,4 +1,13 @@
 ## Changelog
+* 6.8.3.0.0
+  * This version of adapters has been certified with IronSource 6.8.3.0.
+  
+* 6.8.1.0.2
+  * Call `rewardedVideoDidFailToLoadAdForCustomEvent` after logging a failure case to avoid potential crashes on nil IDs during Load failure. 
+  
+ * 6.8.1.0.1
+    * Log load failure before calling delegate method `rewardedVideoDidFailToLoadAdForCustomEvent` to fix crash due to dangling pointer.
+    
  * 6.8.1.0.0
     * This version of the adapters has been certified with IronSource 6.8.1.0.
     

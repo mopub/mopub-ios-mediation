@@ -1,11 +1,11 @@
 //
-//  MPUnityRouter.m
+//  UnityRouter.m
 //  MoPubSDK
 //
 //  Copyright (c) 2016 MoPub. All rights reserved.
 //
 
-#import "MPUnityRouter.h"
+#import "UnityRouter.h"
 #import "UnityAdsInstanceMediationSettings.h"
 
 #if __has_include(<MoPub/MoPub.h>)
@@ -18,10 +18,10 @@
     #import "MPRewardedVideo.h"
 #endif
 
-@interface MPUnityRouter ()
+@interface UnityRouter ()
 
 @property (nonatomic, assign) BOOL isAdPlaying;
-@property (nonatomic, weak) id<MPUnityRouterDelegate> delegate;
+@property (nonatomic, weak) id<UnityRouterDelegate> delegate;
 
 @property NSMutableDictionary* delegateMap;
 @property id<UnityAdsBannerDelegate> bannerDelegate;
@@ -31,7 +31,7 @@
 
 @end
 
-@implementation MPUnityRouter
+@implementation UnityRouter
 
 - (id) init {
     self = [super init];
@@ -40,12 +40,12 @@
     return self;
 }
 
-+ (MPUnityRouter *)sharedRouter
++ (UnityRouter *)sharedRouter
 {
-    static MPUnityRouter * sharedRouter;
+    static UnityRouter * sharedRouter;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        sharedRouter = [[MPUnityRouter alloc] init];
+        sharedRouter = [[UnityRouter alloc] init];
     });
     return sharedRouter;
 }
@@ -91,7 +91,7 @@
     }
 }
 
-- (void)requestVideoAdWithGameId:(NSString *)gameId placementId:(NSString *)placementId delegate:(id<MPUnityRouterDelegate>)delegate;
+- (void)requestVideoAdWithGameId:(NSString *)gameId placementId:(NSString *)placementId delegate:(id<UnityRouterDelegate>)delegate;
 {
     
     if([UnityAds getPlacementState:placementId] == kUnityAdsPlacementStateNoFill){
@@ -132,7 +132,7 @@
     return [UnityAds isReady:placementId];
 }
 
-- (void)presentVideoAdFromViewController:(UIViewController *)viewController customerId:(NSString *)customerId placementId:(NSString *)placementId settings:(UnityAdsInstanceMediationSettings *)settings delegate:(id<MPUnityRouterDelegate>)delegate
+- (void)presentVideoAdFromViewController:(UIViewController *)viewController customerId:(NSString *)customerId placementId:(NSString *)placementId settings:(UnityAdsInstanceMediationSettings *)settings delegate:(id<UnityRouterDelegate>)delegate
 {
     if (!self.isAdPlaying && [self isAdAvailableForPlacementId:placementId]) {
         self.isAdPlaying = YES;
@@ -144,11 +144,11 @@
     }
 }
 
-- (id<MPUnityRouterDelegate>)getDelegate:(NSString*) placementId {
+- (id<UnityRouterDelegate>)getDelegate:(NSString*) placementId {
     return [self.delegateMap valueForKey:placementId];
 }
 
-- (void)clearDelegate:(id<MPUnityRouterDelegate>)delegate
+- (void)clearDelegate:(id<UnityRouterDelegate>)delegate
 {
     if (self.delegate == delegate)
     {

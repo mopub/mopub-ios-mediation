@@ -7,15 +7,22 @@
 #endif
 
 #if __has_include("MoPub.h")
+    #import "MoPub.h"
     #import "MPLogging.h"
 #endif
+
+@interface AppLovinAdapterConfiguration()
+@property (class, nonatomic, copy, readwrite) NSString * sdkKey;
+@end
 
 @implementation AppLovinAdapterConfiguration
 static ALSdk *__nullable AppLovinAdapterConfigurationSDK;
 
 static NSString *const kAppLovinSDKInfoPlistKey = @"AppLovinSdkKey";
 static NSString *const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-applovin-adapters";
-static NSString *const kAdapterVersion = @"6.2.0.0";
+static NSString *const kAdapterVersion = @"6.5.4.0";
+
+static NSString *gSdkKey = nil;
 
 typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
 {
@@ -73,6 +80,11 @@ typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
     }
     
     if ( completionBlock ) completionBlock( error );
+    
+    MPBLogLevel * logLevel = [[MoPub sharedInstance] logLevel];
+    BOOL verboseLoggingEnabled = logLevel == MPBLogLevelDebug;
+
+    [[ALSdk sharedWithKey: AppLovinAdapterConfiguration.sdkKey].settings setIsVerboseLogging: verboseLoggingEnabled];
 }
 
 - (nullable ALSdk *)SDKFromConfiguration:(NSDictionary<NSString *, id> *)configuration
@@ -81,8 +93,31 @@ typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
     NSDictionary<NSString *, id> *cachedConfiguration = [[self class] cachedInitializationParameters];
     NSDictionary<NSString *, id> *configurationToUse = cachedConfiguration[@"sdk_key"] ? cachedConfiguration : configuration;
     
-    NSString *key = configurationToUse[@"sdk_key"];
-    return ( key.length > 0 ) ? [ALSdk sharedWithKey: key] : [ALSdk shared];
+    NSString *keyFromPlist = [[NSBundle mainBundle] objectForInfoDictionaryKey:kAppLovinSDKInfoPlistKey];
+    NSString *keyFromConfiguration = configurationToUse[@"sdk_key"];
+    
+    // Persist the AppLovin SDK Key for Unity publishers because there's no access to the project's info.plist to set it. For instructions, check https://developers.mopub.com/publishers/mediation/networks/applovin/#download-and-integration
+    // Other AppLovin adapter files will statically read the SDK Key at the time of the ad requests. For non-Unity publishers, we
+    // prioritize the SDK Key entry that is set in the info.plist.
+    if (keyFromPlist.length > 0)
+    {
+        AppLovinAdapterConfiguration.sdkKey = keyFromPlist;
+    }
+    else if (keyFromConfiguration.length > 0)
+    {
+        AppLovinAdapterConfiguration.sdkKey = keyFromConfiguration;
+    }
+    return ( AppLovinAdapterConfiguration.sdkKey.length > 0 ) ? [ALSdk sharedWithKey: AppLovinAdapterConfiguration.sdkKey] : [ALSdk shared];
+}
+
++ (NSString *)sdkKey
+{
+    return gSdkKey;
+}
+
++ (void)setSdkKey:(NSString *)key
+{
+    gSdkKey = key;
 }
 
 @end

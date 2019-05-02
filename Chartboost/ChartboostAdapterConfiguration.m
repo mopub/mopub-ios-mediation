@@ -1,10 +1,14 @@
 #import <Chartboost/Chartboost.h>
 #import "ChartboostAdapterConfiguration.h"
-#import "MPChartboostRouter.h"
+#import "ChartboostRouter.h"
 
 #if __has_include("MoPub.h")
+#import "MoPub.h"
 #import "MPLogging.h"
 #endif
+
+#define CHARTBOOST_ADAPTER_VERSION             @"7.5.0.0"
+#define MOPUB_NETWORK_NAME                     @"chartboost"
 
 // Constants
 static NSString * const kChartboostAppIdKey        = @"appId";
@@ -37,7 +41,7 @@ typedef NS_ENUM(NSInteger, ChartboostAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"7.3.0.4";
+    return CHARTBOOST_ADAPTER_VERSION;
 }
 
 - (NSString *)biddingToken {
@@ -45,7 +49,7 @@ typedef NS_ENUM(NSInteger, ChartboostAdapterErrorCode) {
 }
 
 - (NSString *)moPubNetworkName {
-    return @"chartboost";
+    return MOPUB_NETWORK_NAME;
 }
 
 - (NSString *)networkSdkVersion {
@@ -78,10 +82,34 @@ typedef NS_ENUM(NSInteger, ChartboostAdapterErrorCode) {
     }
     
     // Initialize the router
-    [[MPChartboostRouter sharedRouter] startWithAppId:appId appSignature:appSignature];
+    [[ChartboostRouter sharedRouter] startWithAppId:appId appSignature:appSignature];
     if (complete != nil) {
         complete(nil);
     }
+    
+    MPBLogLevel mopubLogLevel = [[MoPub sharedInstance] logLevel];
+    CBLoggingLevel * chartboostLogLevel = [ChartboostAdapterConfiguration getChartboostLogLevel:mopubLogLevel];
+
+    [Chartboost setLoggingLevel:chartboostLogLevel];
 }
 
++ (CBLoggingLevel *)getChartboostLogLevel:(MPBLogLevel *)logLevel
+{
+    int logLevelVal = logLevel;
+    
+    switch (logLevelVal) {
+        case MPBLogLevelDebug:
+            return CBLoggingLevelVerbose;
+        case MPBLogLevelInfo:
+            return CBLoggingLevelInfo;
+        default:
+            return CBLoggingLevelOff;
+    }
+}
+
++ (NSString*)mediationString
+{
+    return CHARTBOOST_ADAPTER_VERSION;
+}
+    
 @end

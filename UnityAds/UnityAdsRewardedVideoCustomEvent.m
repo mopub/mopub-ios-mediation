@@ -8,7 +8,7 @@
 #import "UnityAdsRewardedVideoCustomEvent.h"
 #import "UnityAdsInstanceMediationSettings.h"
 #import "UnityAdsAdapterConfiguration.h"
-#import "MPUnityRouter.h"
+#import "UnityRouter.h"
 #if __has_include("MoPub.h")
     #import "MPRewardedVideoReward.h"
     #import "MPRewardedVideoError.h"
@@ -19,7 +19,7 @@ static NSString *const kMPUnityRewardedVideoGameId = @"gameId";
 static NSString *const kUnityAdsOptionPlacementIdKey = @"placementId";
 static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 
-@interface UnityAdsRewardedVideoCustomEvent () <MPUnityRouterDelegate>
+@interface UnityAdsRewardedVideoCustomEvent () <UnityRouterDelegate>
 
 @property (nonatomic, copy) NSString *placementId;
 
@@ -29,7 +29,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 
 - (void)dealloc
 {
-    [[MPUnityRouter sharedRouter] clearDelegate:self];
+    [[UnityRouter sharedRouter] clearDelegate:self];
 }
 
 - (void)initializeSdkWithParameters:(NSDictionary *)parameters {
@@ -39,7 +39,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
         return;
     }
 
-    [[MPUnityRouter sharedRouter] initializeWithGameId:gameId];
+    [[UnityRouter sharedRouter] initializeWithGameId:gameId];
 }
 
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info
@@ -68,13 +68,13 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
         return;
     }
 
-    [[MPUnityRouter sharedRouter] requestVideoAdWithGameId:gameId placementId:self.placementId delegate:self];
+    [[UnityRouter sharedRouter] requestVideoAdWithGameId:gameId placementId:self.placementId delegate:self];
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.placementId);
 }
 
 - (BOOL)hasAdAvailable
 {
-    return [[MPUnityRouter sharedRouter] isAdAvailableForPlacementId:self.placementId];
+    return [[UnityRouter sharedRouter] isAdAvailableForPlacementId:self.placementId];
 }
 
 - (void)presentRewardedVideoFromViewController:(UIViewController *)viewController
@@ -85,7 +85,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
         NSString *customerId = [self.delegate customerIdForRewardedVideoCustomEvent:self];
 
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.placementId);
-        [[MPUnityRouter sharedRouter] presentVideoAdFromViewController:viewController customerId:customerId placementId:self.placementId settings:settings delegate:self];
+        [[UnityRouter sharedRouter] presentVideoAdFromViewController:viewController customerId:customerId placementId:self.placementId settings:settings delegate:self];
 
         MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.placementId);
     } else {
@@ -97,7 +97,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 
 - (void)handleCustomEventInvalidated
 {
-    [[MPUnityRouter sharedRouter] clearDelegate:self];
+    [[UnityRouter sharedRouter] clearDelegate:self];
 }
 
 - (void)handleAdPlayedForCustomEventNetwork
@@ -110,7 +110,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
         MPLogAdEvent([MPLogEvent adExpiredWithTimeInterval:0], self.placementId);
     }}
 
-#pragma mark - MPUnityRouterDelegate
+#pragma mark - UnityRouterDelegate
 
 - (void)unityAdsReady:(NSString *)placementId
 {

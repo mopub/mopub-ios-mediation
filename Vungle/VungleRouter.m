@@ -1,11 +1,11 @@
 //
-//  MPVungleRouter.m
+//  VungleRouter.m
 //  MoPubSDK
 //
 //  Copyright (c) 2015 MoPub. All rights reserved.
 //
 
-#import "MPVungleRouter.h"
+#import "VungleRouter.h"
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
     #import "MPRewardedVideoError.h"
@@ -28,7 +28,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     SDKInitializeStateInitialized
 };
 
-@interface MPVungleRouter ()
+@interface VungleRouter ()
 
 @property (nonatomic, copy) NSString *vungleAppID;
 @property (nonatomic, assign) BOOL isAdPlaying;
@@ -39,7 +39,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
 
 @end
 
-@implementation MPVungleRouter
+@implementation VungleRouter
 
 
 - (instancetype)init {
@@ -53,11 +53,11 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     return self;
 }
 
-+ (MPVungleRouter *)sharedRouter {
-    static MPVungleRouter * sharedRouter;
++ (VungleRouter *)sharedRouter {
+    static VungleRouter * sharedRouter;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        sharedRouter = [[MPVungleRouter alloc] init];
+        sharedRouter = [[VungleRouter alloc] init];
     });
     return sharedRouter;
 }
@@ -89,7 +89,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     });
 }
 
-- (void)requestInterstitialAdWithCustomEventInfo:(NSDictionary *)info delegate:(id<MPVungleRouterDelegate>)delegate {
+- (void)requestInterstitialAdWithCustomEventInfo:(NSDictionary *)info delegate:(id<VungleRouterDelegate>)delegate {
     if ([self validateInfoData:info]) {
         if (self.sdkInitializeState == SDKInitializeStateNotInitialized) {
             [self.waitingListDic setObject:delegate forKey:[info objectForKey:kVunglePlacementIdKey]];
@@ -107,7 +107,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     }
 }
 
-- (void)requestRewardedVideoAdWithCustomEventInfo:(NSDictionary *)info delegate:(id<MPVungleRouterDelegate>)delegate {
+- (void)requestRewardedVideoAdWithCustomEventInfo:(NSDictionary *)info delegate:(id<VungleRouterDelegate>)delegate {
     if ([self validateInfoData:info]) {
         if (self.sdkInitializeState == SDKInitializeStateNotInitialized) {
             [self.waitingListDic setObject:delegate forKey:[info objectForKey:kVunglePlacementIdKey]];
@@ -126,7 +126,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     }
 }
 
-- (void)requestAdWithCustomEventInfo:(NSDictionary *)info delegate:(id<MPVungleRouterDelegate>)delegate {
+- (void)requestAdWithCustomEventInfo:(NSDictionary *)info delegate:(id<VungleRouterDelegate>)delegate {
     [self initializeSdkWithInfo:info];
 
     NSString *placementId = [info objectForKey:kVunglePlacementIdKey];
@@ -232,7 +232,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
 
 - (void)clearWaitingList {
     for (id key in self.waitingListDic) {
-        id<MPVungleRouterDelegate> delegateInstance = [self.waitingListDic objectForKey:key];
+        id<VungleRouterDelegate> delegateInstance = [self.waitingListDic objectForKey:key];
         [self.delegatesDic setObject:delegateInstance forKey:key];
 
         NSError *error = nil;

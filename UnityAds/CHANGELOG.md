@@ -1,9 +1,18 @@
 
 ## Changelog
+* 3.0.3.0
+  * This version of the adapters has been certified with UnityAds 3.0.3.
+
+* 3.0.1.1
+  * Pass MoPub's log level to Unity Ads. To adjust Unity Ads' log level via MoPub's log settings, reference [this page](https://developers.mopub.com/publishers/ios/test/#enable-logging).
+
 * 3.0.1.0
-  * This version of the adapters has been certified with UnityAds 3.0.1.
+  * This version of the adapters has been certified with Unity Ads 3.0.1.
   * Includes checks for Unity Ads availability to avoid timeouts.
   
+* 3.0.0.5
+  * Rename `MPUnityRouter` to `UnityRouter` for consistency with other adapter class names. 
+
 * 3.0.0.4
   * Adapters now fetch only the core MoPub iOS SDK (excluding viewability SDKs). Publishers wishing to integrate viewability should fetch the `mopub-ios-sdk` dependency in their own Podfile.
 

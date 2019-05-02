@@ -7,7 +7,7 @@
 
 #import "UnityAdsInterstitialCustomEvent.h"
 #import "UnityAdsInstanceMediationSettings.h"
-#import "MPUnityRouter.h"
+#import "UnityRouter.h"
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
 #endif
@@ -17,7 +17,7 @@ static NSString *const kMPUnityInterstitialVideoGameId = @"gameId";
 static NSString *const kUnityAdsOptionPlacementIdKey = @"placementId";
 static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 
-@interface UnityAdsInterstitialCustomEvent () <MPUnityRouterDelegate>
+@interface UnityAdsInterstitialCustomEvent () <UnityRouterDelegate>
 
 @property BOOL loadRequested;
 @property (nonatomic, copy) NSString *placementId;
@@ -28,7 +28,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 
 - (void)dealloc
 {
-    [[MPUnityRouter sharedRouter] clearDelegate:self];
+    [[UnityRouter sharedRouter] clearDelegate:self];
 }
 
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info {
@@ -51,7 +51,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     // Only need to cache game ID for SDK initialization
     [UnityAdsAdapterConfiguration updateInitializationParameters:info];
 
-    [[MPUnityRouter sharedRouter] requestVideoAdWithGameId:gameId placementId:self.placementId delegate:self];
+    [[UnityRouter sharedRouter] requestVideoAdWithGameId:gameId placementId:self.placementId delegate:self];
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.placementId);
 }
 
@@ -67,14 +67,14 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 
 - (BOOL)hasAdAvailable
 {
-    return [[MPUnityRouter sharedRouter] isAdAvailableForPlacementId:self.placementId];
+    return [[UnityRouter sharedRouter] isAdAvailableForPlacementId:self.placementId];
 }
 
 - (void)showInterstitialFromRootViewController:(UIViewController *)viewController
 {
     if ([self hasAdAvailable]) {
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.placementId);
-        [[MPUnityRouter sharedRouter] presentVideoAdFromViewController:viewController customerId:nil placementId:self.placementId settings:nil delegate:self];
+        [[UnityRouter sharedRouter] presentVideoAdFromViewController:viewController customerId:nil placementId:self.placementId settings:nil delegate:self];
     } else {
         NSError *error = [self createErrorWith:@"Unity Ads failed to load failed to show Unity Interstitial"
                                  andReason:@"There is no available video ad."
@@ -87,7 +87,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 
 - (void)handleCustomEventInvalidated
 {
-    [[MPUnityRouter sharedRouter] clearDelegate:self];
+    [[UnityRouter sharedRouter] clearDelegate:self];
 }
 
 - (void)handleAdPlayedForCustomEventNetwork
@@ -99,7 +99,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
         [self.delegate interstitialCustomEventDidExpire:self];
     }}
 
-#pragma mark - MPUnityRouterDelegate
+#pragma mark - UnityRouterDelegate
 
 - (void)unityAdsReady:(NSString *)placementId
 {
