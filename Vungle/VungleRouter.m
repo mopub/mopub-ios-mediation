@@ -14,7 +14,7 @@
 #endif
 #import "VungleInstanceMediationSettings.h"
 
-static NSString *const VunglePluginVersion = @"6.3.2";
+static NSString *const VunglePluginVersion = @"6.3.2.6";
 
 NSString *const kVungleAppIdKey = @"appId";
 NSString *const kVunglePlacementIdKey = @"pid";
@@ -139,7 +139,9 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
         if (error) {
             MPLogInfo(@"Vungle: Unable to load an ad for Placement ID :%@, Error %@", placementId, error);
         }
-        [delegate vungleAdDidFailToLoad:error];        
+        if (self.sdkInitializeState == SDKInitializeStateInitialized) {
+            [delegate vungleAdDidFailToLoad:error];
+        }
     }
 }
 
