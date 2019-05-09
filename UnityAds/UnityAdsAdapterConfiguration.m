@@ -41,7 +41,7 @@ typedef NS_ENUM(NSInteger, UnityAdsAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"3.1.0.0";
+    return [UnityRouter getAdaptorVersion];
 }
 
 - (NSString *)biddingToken {

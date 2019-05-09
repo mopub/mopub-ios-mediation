@@ -43,6 +43,10 @@ static int missedImpressionOrdinal = 0;
     return self;
 }
 
++ (NSString *)getAdaptorVersion{
+  return @"3.1.0.0";
+}
+
 + (UnityRouter *)sharedRouter
 {
     static UnityRouter * sharedRouter;
@@ -61,7 +65,7 @@ static int missedImpressionOrdinal = 0;
         [mediationMetaData setName:@"MoPub"];
         [mediationMetaData setVersion:[[MoPub sharedInstance] version]];
         [mediationMetaData set:@"enable_metadata_load" value:@"true"];
-        [mediationMetaData set:@"adaptor_version" value:@"3.1.0.0"];
+        [mediationMetaData set:@"adaptor_version" value:[UnityRouter getAdaptorVersion]];
         [mediationMetaData commit];
 
         [UnityAdsBanner setDelegate:self];
