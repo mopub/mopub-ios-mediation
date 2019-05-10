@@ -29,17 +29,16 @@
 @property BOOL bannerLoadRequested;
 @property NSString* bannerPlacementId;
 
+@property (nonatomic, assign) int impressionOrdinal;
+@property (nonatomic, assign) int missedImpressionOrdinal;
+
 @end
 
 @implementation UnityRouter
 
-static int impressionOrdinal = 0;
-static int missedImpressionOrdinal = 0;
-
 - (id) init {
     self = [super init];
     self.delegateMap = [[NSMutableDictionary alloc] init];
-
     return self;
 }
 
@@ -64,7 +63,7 @@ static int missedImpressionOrdinal = 0;
         UADSMediationMetaData *mediationMetaData = [[UADSMediationMetaData alloc] init];
         [mediationMetaData setName:@"MoPub"];
         [mediationMetaData setVersion:[[MoPub sharedInstance] version]];
-        [mediationMetaData set:@"enable_metadata_load" value:@"true"];
+        [mediationMetaData set:@"enable_metadata_load" value:[NSNumber numberWithBool:YES]];
         [mediationMetaData set:@"adaptor_version" value:[UnityRouter getAdaptorVersion]];
         [mediationMetaData commit];
 
@@ -154,12 +153,14 @@ static int missedImpressionOrdinal = 0;
         self.currentPlacementId = placementId;
 
         UADSMediationMetaData* mediationMetaData = [[UADSMediationMetaData alloc] init];
-        [mediationMetaData setOrdinal:impressionOrdinal++];
+        self.impressionOrdinal++;
+        [mediationMetaData setOrdinal:self.impressionOrdinal];
         [mediationMetaData commit];
         [UnityAds show:viewController placementId:placementId];
     } else {
         UADSMediationMetaData* mediationMetaData = [[UADSMediationMetaData alloc] init];
-        [mediationMetaData setMissedImpressionOrdinal:missedImpressionOrdinal++];
+        self.missedImpressionOrdinal++;
+        [mediationMetaData setMissedImpressionOrdinal:self.missedImpressionOrdinal];
         [mediationMetaData commit];
 
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorUnknown userInfo:nil];
