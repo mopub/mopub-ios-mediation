@@ -1,5 +1,8 @@
 
 ## Changelog
+* 3.0.3.0
+  * This version of the adapters has been certified with UnityAds 3.0.3.
+
 * 3.0.1.1
   * Pass MoPub's log level to Unity Ads. To adjust Unity Ads' log level via MoPub's log settings, reference [this page](https://developers.mopub.com/publishers/ios/test/#enable-logging).
 

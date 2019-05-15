@@ -1,4 +1,8 @@
 ## Changelog
+  * 7.43.0.0
+    * This version of the adapters has been certified with AdMob 7.43.0.
+    * Move the `npa` from `MediationSettings` to `NetworkConfiguration`. [Click here](https://developers.mopub.com/publishers/mediation/networks/google/#instructions-for-passing-users-ad-preference-to-admob) for updated usage isntructions.
+
   * 7.42.2.0
     * Updated the adapter to use Google's new rewarded API.
     * This version of the adapters has been certified with AdMob 7.42.2.
