@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'MoPub-Verizon-Adapters'
-s.version          = '1.0.5.0'
+s.version          = '1.0.5.1'
 s.summary          = 'Verizon Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats: Banner, and Interstitial.\n

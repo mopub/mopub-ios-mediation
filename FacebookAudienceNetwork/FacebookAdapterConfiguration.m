@@ -7,10 +7,16 @@
 
 #import "FacebookAdapterConfiguration.h"
 #import <FBAudienceNetwork/FBAudienceNetwork.h>
+#import "FacebookAdapterConfiguration.h"
 
 #if __has_include("MoPub.h")
 #import "MPLogging.h"
+#import "MPConstants.h"
 #endif
+
+#define FACEBOOK_SDK_VERSION                 @"5.3.0"
+#define FACEBOOK_ADAPTER_VERSION             @"5.3.0.0"
+#define MOPUB_NETWORK_NAME                   @"facebook"
 
 @implementation FacebookAdapterConfiguration
 
@@ -34,7 +40,7 @@
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"5.2.0.1";
+    return FACEBOOK_ADAPTER_VERSION;
 }
 
 - (NSString *)biddingToken {
@@ -42,12 +48,16 @@
 }
 
 - (NSString *)moPubNetworkName {
-    return @"facebook";
+    return MOPUB_NETWORK_NAME;
 }
 
 - (NSString *)networkSdkVersion {
     // `FBAdSettings` has no API to retrieve the Facebook Audience Network SDK version
-    return @"5.2.0";
+    return FACEBOOK_SDK_VERSION;
+}
+
++ (NSString*)mediationString {
+    return [NSString stringWithFormat:@"MOPUB_%@:%@", MP_SDK_VERSION, FACEBOOK_ADAPTER_VERSION];
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration

@@ -38,27 +38,9 @@
 
 - (void)initializeSdkWithParameters:(NSDictionary *)parameters callback:(void(^)(void))completionCallback {
     NSString *appId = [parameters objectForKey:@"appId"];
-    if (appId == nil) {
-        NSError *error = [self createErrorWith:@"AdColony adapter failed to load ad"
-                                     andReason:@"Invalid setup"
-                                 andSuggestion:@"Use the appId parameter when configuring your network in the MoPub website."];
-        
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-
-        return;
-    }
-    
     NSArray *allZoneIds = [parameters objectForKey:@"allZoneIds"];
-    if (allZoneIds.count == 0) {
-        
-        NSError *error = [self createErrorWith:@"AdColony adapter failed to load ad"
-                                     andReason:@"Invalid setup"
-                                 andSuggestion:@"Use the allZoneIds parameter when configuring your network in the MoPub website."];
-        
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-
+    
+    if (![self paramsAreValid:appId withAllZoneIds:allZoneIds]) {
         return;
     }
     
@@ -67,10 +49,10 @@
     [AdColonyController initializeAdColonyCustomEventWithAppId:appId allZoneIds:allZoneIds userId:userId callback:completionCallback];
 }
 
-- (NSError *)createErrorWith:(NSString *)description andReason:(NSString *)reaason andSuggestion:(NSString *)suggestion {
+- (NSError *)createErrorWith:(NSString *)description andReason:(NSString *)reason andSuggestion:(NSString *)suggestion {
     NSDictionary *userInfo = @{
                                NSLocalizedDescriptionKey: NSLocalizedString(description, nil),
-                               NSLocalizedFailureReasonErrorKey: NSLocalizedString(reaason, nil),
+                               NSLocalizedFailureReasonErrorKey: NSLocalizedString(reason, nil),
                                NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(suggestion, nil)
                                };
     
@@ -78,23 +60,15 @@
 }
 
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info {
+    NSString *appId = [info objectForKey:@"appId"];
     NSArray *allZoneIds = [info objectForKey:@"allZoneIds"];
-    if (allZoneIds.count == 0) {
-        
-        NSError *error = [self createErrorWith:@"AdColony adapter failed to requestRewardedVideo"
-                                     andReason:@"Invalid setup"
-                                 andSuggestion:@"Use the allZoneIds parameter when configuring your network in the MoPub website."];
-        
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-
+    
+    if (![self paramsAreValid:appId withAllZoneIds:allZoneIds]) {
         return;
     }
     
     self.zoneId = [info objectForKey:@"zoneId"];
-    if (self.zoneId == nil) {
-        self.zoneId = allZoneIds[0];
-    }
+    [self assignFirstAvailableZoneIdIfNecessary:allZoneIds];
     
     // Cache the initialization parameters
     [AdColonyAdapterConfiguration updateInitializationParameters:info];
@@ -116,7 +90,7 @@
         
         __weak AdColonyRewardedVideoCustomEvent *weakSelf = self;
         
-        [AdColony requestInterstitialInZone:[self getAdNetworkId] options:options success:^(AdColonyInterstitial * _Nonnull ad) {
+        [AdColony requestInterstitialInZone:[self zoneId] options:options success:^(AdColonyInterstitial * _Nonnull ad) {
             
             MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
             
@@ -165,7 +139,6 @@
             [weakSelf.delegate rewardedVideoDidFailToLoadAdForCustomEvent:weakSelf error:error];
             MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         }];
-        
     }];
 }
 
@@ -194,6 +167,48 @@
 
 - (NSString *) getAdNetworkId {
     return self.zoneId;
+}
+
+- (BOOL) paramsAreValid:(NSString *)appId withAllZoneIds:(NSArray *)allZoneIds {
+    // Fail if app id is missing
+    if (appId == nil || [appId length] == 0) {
+        [self logAndFailAdapters:@"App Id"];
+        return false;
+    }
+    
+    // Fail if allZoneIds array is missing a valid first element
+    if (![self hasValidFirstElement:allZoneIds]) {
+        [self logAndFailAdapters:@"Zone Id"];
+        return false;
+    }
+    return true;
+}
+
+- (void) assignFirstAvailableZoneIdIfNecessary:(NSArray *)allZoneIds {
+    if ((self.zoneId == nil || [self.zoneId length] == 0)) {
+        self.zoneId = allZoneIds[0];
+    }
+}
+
+- (BOOL) hasValidFirstElement:(NSArray *)allZoneIds {
+    if (allZoneIds != nil && allZoneIds.count > 0) {
+        NSString *firstZoneId = allZoneIds[0];
+        if (firstZoneId != nil || [firstZoneId length] > 0) {
+            return true;
+        }
+    }
+    [self logAndFailAdapters:@"Zone Id"];
+    return false;
+}
+
+- (void) logAndFailAdapters:(NSString *)missingParam {
+    NSError *error = [self createErrorWith:@"AdColony adapter failed to request rewarded video"
+                                 andReason:[NSString stringWithFormat:@"%@ is nil/empty", missingParam]
+                             andSuggestion:[NSString stringWithFormat:@"Make sure the %@ is configured on the MoPub UI.", missingParam]];
+    
+    MPLogDebug(@"%@. %@. %@", error.localizedDescription, error.localizedFailureReason, error.localizedRecoverySuggestion);
+    [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+    return;
 }
 
 @end

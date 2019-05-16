@@ -5,6 +5,7 @@
 //
 #import <FBAudienceNetwork/FBAudienceNetwork.h>
 #import "FacebookRewardedVideoCustomEvent.h"
+#import "FacebookAdapterConfiguration.h"
 
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
@@ -52,8 +53,8 @@
     self.fbRewardedVideoAd = [[FBRewardedVideoAd alloc] initWithPlacementID:[info objectForKey:@"placement_id"]];
     self.fbRewardedVideoAd.delegate = self;
     
-    [FBAdSettings setMediationService:[NSString stringWithFormat:@"MOPUB_%@", MP_SDK_VERSION]];
-    
+    [FBAdSettings setMediationService:[FacebookAdapterConfiguration mediationString]];
+
     // Load the advanced bid payload.
     if (adMarkup != nil) {
         MPLogInfo(@"Loading Facebook rewarded video ad markup for Advanced Bidding");
