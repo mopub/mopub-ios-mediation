@@ -81,11 +81,7 @@ typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
     
     if ( completionBlock ) completionBlock( error );
     
-    // Explicitly silence deprecated warning, as there is no way to access "MPMoPubConfiguration.loggingLevel" from the adapter
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    MPBLogLevel logLevel = [MoPub sharedInstance].logLevel;
-#pragma clang diagnostic pop
+    MPBLogLevel logLevel = [MPLogging consoleLogLevel];
     BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
 
     [[ALSdk sharedWithKey: AppLovinAdapterConfiguration.sdkKey].settings setIsVerboseLogging: verboseLoggingEnabled];
