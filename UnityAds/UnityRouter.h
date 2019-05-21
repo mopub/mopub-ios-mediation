@@ -18,7 +18,7 @@
 @property NSString* currentPlacementId;
 
 + (UnityRouter *)sharedRouter;
-+ (NSString *)getAdaptorVersion;
++ (NSString *)getAdapterVersion;
 
 - (void)initializeWithGameId:(NSString *)gameId;
 - (void)requestVideoAdWithGameId:(NSString *)gameId placementId:(NSString *)placementId delegate:(id<UnityRouterDelegate>)delegate;
