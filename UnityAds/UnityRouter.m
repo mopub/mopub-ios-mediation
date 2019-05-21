@@ -42,7 +42,7 @@
     return self;
 }
 
-+ (NSString *)getAdaptorVersion{
++ (NSString *)getAdapterVersion{
   return @"3.1.0.0";
 }
 
@@ -64,7 +64,7 @@
         [mediationMetaData setName:@"MoPub"];
         [mediationMetaData setVersion:[[MoPub sharedInstance] version]];
         [mediationMetaData set:@"enable_metadata_load" value:[NSNumber numberWithBool:YES]];
-        [mediationMetaData set:@"adaptor_version" value:[UnityRouter getAdaptorVersion]];
+        [mediationMetaData set:@"adapter_version" value:[UnityRouter getAdapterVersion]];
         [mediationMetaData commit];
 
         [UnityAdsBanner setDelegate:self];
