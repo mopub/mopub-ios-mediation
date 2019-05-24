@@ -11,7 +11,7 @@ NSString * const kMoPubVASAdapterPlacementId = @"placementId";
 NSString * const kMoPubVASAdapterSiteId = @"siteId";
 NSString * const kMoPubMillennialAdapterPlacementId = @"adUnitID";
 NSString * const kMoPubMillennialAdapterSiteId = @"dcn";
-NSString * const kMoPubVASAdapterVersion = @"1.0.5.1";
+NSString * const kMoPubVASAdapterVersion = @"1.1.2.0";
 NSTimeInterval kMoPubVASAdapterSATimeoutInterval = 600;
 
 @implementation VerizonAdapterConfiguration
