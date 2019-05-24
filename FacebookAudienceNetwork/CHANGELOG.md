@@ -1,4 +1,8 @@
 ## Changelog
+* 5.3.2.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.3.2.
+    * Removed dependency on `CoreLocation.framework`.
+
 * 5.3.0.0
     * This version of the adapters has been certified with Facebook Audience Network 5.3.0.
 

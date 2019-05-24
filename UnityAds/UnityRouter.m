@@ -7,6 +7,7 @@
 
 #import "UnityRouter.h"
 #import "UnityAdsInstanceMediationSettings.h"
+#import "UnityAdsAdapterConfiguration.h"
 
 #if __has_include(<MoPub/MoPub.h>)
     #import <MoPub/MoPub.h>
@@ -39,11 +40,8 @@
 - (id) init {
     self = [super init];
     self.delegateMap = [[NSMutableDictionary alloc] init];
-    return self;
-}
 
-+ (NSString *)getAdapterVersion{
-  return @"3.1.0.0";
+    return self;
 }
 
 + (UnityRouter *)sharedRouter
@@ -64,9 +62,9 @@
         [mediationMetaData setName:@"MoPub"];
         [mediationMetaData setVersion:[[MoPub sharedInstance] version]];
         [mediationMetaData set:@"enable_metadata_load" value:[NSNumber numberWithBool:YES]];
-        [mediationMetaData set:@"adapter_version" value:[UnityRouter getAdapterVersion]];
+        [mediationMetaData set:@"adapter_version"  value:ADAPTER_VERSION];
         [mediationMetaData commit];
-
+        
         [UnityAdsBanner setDelegate:self];
         [UnityAds initialize:gameId delegate:self];
     });
@@ -81,7 +79,7 @@
     if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes){
         if ([[MoPub sharedInstance] allowLegitimateInterest] == YES){
             if ([[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDenied
-               || [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDoNotTrack) {
+                || [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDoNotTrack) {
                 
                 [gdprConsentMetaData set:@"gdpr.consent" value:@NO];
             }
@@ -107,13 +105,13 @@
     UADSMetaData *loadMetaData = [[UADSMetaData alloc] initWithCategory:@"load"];
     [loadMetaData set:uniqueEventId value:placementId];
     [loadMetaData commit];
-
+    
     if([UnityAds getPlacementState:placementId] == kUnityAdsPlacementStateNoFill){
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
         [delegate unityAdsDidFailWithError:error];
         return;
     }
-
+    
     if (!self.isAdPlaying) {
         [self.delegateMap setObject:delegate forKey:placementId];
         [self initializeWithGameId:gameId];
@@ -151,7 +149,7 @@
     if (!self.isAdPlaying && [self isAdAvailableForPlacementId:placementId]) {
         self.isAdPlaying = YES;
         self.currentPlacementId = placementId;
-
+        
         UADSMediationMetaData* mediationMetaData = [[UADSMediationMetaData alloc] init];
         self.impressionOrdinal++;
         [mediationMetaData setOrdinal:self.impressionOrdinal];
@@ -162,7 +160,7 @@
         self.missedImpressionOrdinal++;
         [mediationMetaData setMissedImpressionOrdinal:self.missedImpressionOrdinal];
         [mediationMetaData commit];
-
+        
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorUnknown userInfo:nil];
         [delegate unityAdsDidFailWithError:error];
     }
