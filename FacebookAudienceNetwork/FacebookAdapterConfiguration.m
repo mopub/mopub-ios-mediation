@@ -14,8 +14,8 @@
 #import "MPConstants.h"
 #endif
 
-#define FACEBOOK_SDK_VERSION                 @"5.3.0"
-#define FACEBOOK_ADAPTER_VERSION             @"5.3.0.0"
+#define FACEBOOK_SDK_VERSION                 @"5.3.2"
+#define FACEBOOK_ADAPTER_VERSION             @"5.3.2.0"
 #define MOPUB_NETWORK_NAME                   @"facebook"
 
 @implementation FacebookAdapterConfiguration
