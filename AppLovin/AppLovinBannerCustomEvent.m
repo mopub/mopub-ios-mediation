@@ -330,7 +330,7 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 
 - (void)ad:(ALAd *)ad didFailToDisplayInAdView:(ALAdView *)adView withError:(ALAdViewDisplayErrorCode)code
 {
-    NSString *failureReason = [NSString stringWithFormat:@"Banner failed to display: %ld", code];
+    NSString *failureReason = [NSString stringWithFormat: @"Banner failed to display: %ld", (long)code];
     
     NSError *error = [NSError errorWithDomain: kALMoPubMediationErrorDomain
                                          code: kALErrorCodeUnableToRenderAd

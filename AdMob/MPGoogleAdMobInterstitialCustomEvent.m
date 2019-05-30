@@ -66,12 +66,11 @@
     // Consent collected from the MoPub’s consent dialogue should not be used to set up Google's
     // personalization preference. Publishers should work with Google to be GDPR-compliant.
     
-    MPGoogleGlobalMediationSettings *medSettings = [[MoPub sharedInstance]
-                                                    globalMediationSettingsForClass:[MPGoogleGlobalMediationSettings class]];
+    NSString *npaValue = GoogleAdMobAdapterConfiguration.npaString;
     
-    if (medSettings.npa) {
+    if (npaValue.length > 0) {
         GADExtras *extras = [[GADExtras alloc] init];
-        extras.additionalParameters = @{@"npa" : medSettings.npa};
+        extras.additionalParameters = @{@"npa": npaValue};
         [request registerAdNetworkExtras:extras];
     }
     

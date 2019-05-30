@@ -152,7 +152,7 @@
         }
     });
     
-    MPLogInfo(@"VAS banner %@ will present modal.");
+    MPLogInfo(@"VAS banner %@ will present modal.", inlineAd);
 }
 
 - (void)inlineAdDidCollapse:(VASInlineAdView *)inlineAd

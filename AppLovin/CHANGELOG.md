@@ -1,4 +1,15 @@
 ## Changelog
+   * 6.6.1.0
+     * This version of the adapters has been certified with AppLovin SDK 6.6.1.
+
+   * 6.6.0.0
+     * This version of the adapters has been certified with AppLovin SDK 6.6.0.
+
+   * 6.5.4.0
+     * This version of the adapters has been certified with AppLovin SDK 6.5.4.
+     * Fix compiler warnings.
+     * Remove `userDeclinedToViewAd:` rewarded video delegate method as prompts have been removed.
+
    * 6.4.2.0
      * This version of the adapters has been certified with AppLovin SDK 6.4.2.
 

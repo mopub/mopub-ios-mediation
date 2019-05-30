@@ -7,12 +7,12 @@
 #import <FBAudienceNetwork/FBAudienceNetwork.h>
 #import "FacebookNativeCustomEvent.h"
 #import "FacebookNativeAdAdapter.h"
+#import "FacebookAdapterConfiguration.h"
 #if __has_include("MoPub.h")
     #import "MoPub.h"
     #import "MPNativeAd.h"
     #import "MPLogging.h"
     #import "MPNativeAdError.h"
-    #import "MPNativeAdConstants.h"
 #endif
 
 static const NSInteger FacebookNoFillErrorCode = 1001;
@@ -51,7 +51,7 @@ static BOOL gVideoEnabled = NO;
     if (self.fbPlacementId) {
         self.fbNativeAd = [[FBNativeAd alloc] initWithPlacementID:self.fbPlacementId];
         self.fbNativeAd.delegate = self;
-        [FBAdSettings setMediationService:[NSString stringWithFormat:@"MOPUB_%@", MP_SDK_VERSION]];
+        [FBAdSettings setMediationService:[FacebookAdapterConfiguration mediationString]];
         
         // Load the advanced bid payload.
         if (adMarkup != nil) {

@@ -12,6 +12,7 @@
 #endif
 #import "ChartboostRewardedVideoCustomEvent.h"
 #import "ChartboostInterstitialCustomEvent.h"
+#import "ChartboostAdapterConfiguration.h"
 
 @interface ChartboostRewardedVideoCustomEvent (ChartboostRouter) <ChartboostDelegate>
 @end
@@ -91,7 +92,7 @@
     static dispatch_once_t once;
     dispatch_once(&once, ^{
         [Chartboost startWithAppId:appId appSignature:appSignature delegate:self];
-        [Chartboost setMediation:CBMediationMoPub withVersion:MP_SDK_VERSION];
+        [Chartboost setMediation:CBMediationMoPub withLibraryVersion:MP_SDK_VERSION adapterVersion:[ChartboostAdapterConfiguration mediationString]];
         [Chartboost setAutoCacheAds:FALSE];
     });
 }
