@@ -16,6 +16,9 @@
 // Errors
 static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-vungle-adapters";
 
+NSString *const kVNGSDKOptionsMinSpaceForInit = @"vngMinSpaceForInit";
+NSString *const kVNGSDKOptionsMinSpaceForAdLoad = @"vngMinSpaceForAdLoad";
+
 typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
     VungleAdapterErrorCodeMissingAppId,
 };
@@ -38,7 +41,7 @@ typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"6.3.2.6";
+    return @"6.4.1";
 }
 
 - (NSString *)biddingToken {
@@ -57,6 +60,35 @@ typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration
                                   complete:(void(^)(NSError *))complete {
     NSString * appId = configuration[kVungleAppIdKey];
+
+    // If we don't receive a user configuration value for `shouldCollect` we default it to YES.
+    self.shouldCollect = YES;
+    if (configuration[kVungleSDKCollectDevice]) {
+        // This will be coming from the publisher, so we should always update it here
+        self.shouldCollect = [configuration[kVungleSDKCollectDevice] boolValue];
+    }
+    // Even if we don't have an app ID, we want to update the SDK with this value now.
+    [VungleRouter.sharedRouter setShouldCollect:self.shouldCollect];
+    
+    NSMutableDictionary *sizeOverrideDict = [NSMutableDictionary dictionary];
+    if (configuration[kVNGSDKOptionsMinSpaceForInit]) {
+        [sizeOverrideDict setValue:configuration[kVNGSDKOptionsMinSpaceForInit] forKey:kVungleSDKMinSpaceForInit];
+    } else {
+        [sizeOverrideDict setValue:@(0) forKey:kVungleSDKMinSpaceForInit];
+    }
+    if (configuration[kVNGSDKOptionsMinSpaceForAdLoad]) {
+        [sizeOverrideDict setValue:configuration[kVNGSDKOptionsMinSpaceForAdLoad] forKey:kVungleSDKMinSpaceForAdRequest];
+        [sizeOverrideDict setValue:configuration[kVNGSDKOptionsMinSpaceForAdLoad] forKey:kVungleSDKMinSpaceForAssetLoad];
+    } else {
+        [sizeOverrideDict setValue:@(0) forKey:kVungleSDKMinSpaceForAdRequest];
+        [sizeOverrideDict setValue:@(0) forKey:kVungleSDKMinSpaceForAssetLoad];
+    }
+    if (sizeOverrideDict.count > 0) {
+        [VungleRouter.sharedRouter setSDKOptions:sizeOverrideDict];
+    }
+    
+    // Check for and extract size override values here - call VungleRouter method to
+    // set BEFORE init.
     if (appId == nil) {
         NSError * error = [NSError errorWithDomain:kAdapterErrorDomain code:VungleAdapterErrorCodeMissingAppId userInfo:@{ NSLocalizedDescriptionKey: @"Missing the appId parameter when configuring your network in the MoPub website." }];
         MPLogEvent([MPLogEvent error:error message:nil]);

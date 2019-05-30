@@ -107,9 +107,11 @@
 
 - (void)vungleAdWillAppear
 {
-
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.placementId);
     [self.delegate interstitialCustomEventWillAppear:self];
+}
+
+- (void)vungleAdDidAppear {
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.placementId);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.placementId);
     [self.delegate interstitialCustomEventDidAppear:self];
@@ -145,4 +147,7 @@
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
 }
 
+- (NSString *)getPlacementID {
+    return self.placementId;
+}
 @end

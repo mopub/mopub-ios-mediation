@@ -32,4 +32,8 @@
 
 @property (nonatomic, assign) NSTimeInterval flexViewAutoDismissSeconds;
 
+@property (nonatomic, assign) BOOL startMuted;
+
+@property (nonatomic, assign) NSNumber *orientations;
+
 @end
