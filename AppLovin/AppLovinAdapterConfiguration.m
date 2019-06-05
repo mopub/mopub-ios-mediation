@@ -7,6 +7,7 @@
 #endif
 
 #if __has_include("MoPub.h")
+    #import "MoPub.h"
     #import "MPLogging.h"
 #endif
 
@@ -19,7 +20,7 @@ static ALSdk *__nullable AppLovinAdapterConfigurationSDK;
 
 static NSString *const kAppLovinSDKInfoPlistKey = @"AppLovinSdkKey";
 static NSString *const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-applovin-adapters";
-static NSString *const kAdapterVersion = @"6.2.0.1";
+static NSString *const kAdapterVersion = @"6.6.1.0";
 
 static NSString *gSdkKey = nil;
 
@@ -79,6 +80,11 @@ typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
     }
     
     if ( completionBlock ) completionBlock( error );
+    
+    MPBLogLevel logLevel = [MPLogging consoleLogLevel];
+    BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
+
+    [[ALSdk sharedWithKey: AppLovinAdapterConfiguration.sdkKey].settings setIsVerboseLogging: verboseLoggingEnabled];
 }
 
 - (nullable ALSdk *)SDKFromConfiguration:(NSDictionary<NSString *, id> *)configuration

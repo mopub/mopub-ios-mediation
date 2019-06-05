@@ -1,5 +1,15 @@
 
 ## Changelog
+* 3.1.0.0
+    * This version of the adapters has been certified with Unity Ads 3.1.0.
+    * Add load API functionality via metadata API to prevent rewarded and interstitial placements from loading in UnityAds until `load` is called.
+
+* 3.0.3.0
+  * This version of the adapters has been certified with UnityAds 3.0.3.
+
+* 3.0.1.1
+  * Pass MoPub's log level to Unity Ads. To adjust Unity Ads' log level via MoPub's log settings, reference [this page](https://developers.mopub.com/publishers/ios/test/#enable-logging).
+
 * 3.0.1.0
   * This version of the adapters has been certified with Unity Ads 3.0.1.
   * Includes checks for Unity Ads availability to avoid timeouts.

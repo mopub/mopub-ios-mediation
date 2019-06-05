@@ -29,6 +29,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration
                                   complete:(void(^ _Nullable)(NSError * _Nullable))complete;
+
++ (NSString*)mediationString;
+
 @end
 
 NS_ASSUME_NONNULL_END

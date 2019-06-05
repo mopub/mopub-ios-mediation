@@ -131,9 +131,7 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
         
         if ( [self isTokenEvent] )
         {
-            [self.incent showOver: [UIApplication sharedApplication].keyWindow
-                         renderAd: self.tokenAd
-                        andNotify: self];
+            [self.incent showAd: self.tokenAd andNotify: self];
         }
         else
         {
@@ -226,7 +224,7 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
 
 - (void)videoPlaybackEndedInAd:(ALAd *)ad atPlaybackPercent:(NSNumber *)percentPlayed fullyWatched:(BOOL)wasFullyWatched
 {
-    MPLogInfo(@"Rewarded video video playback ended at playback percent: %lu", percentPlayed.unsignedIntegerValue);
+    MPLogInfo(@"Rewarded video video playback ended at playback percent: %lu", (unsigned long)percentPlayed.unsignedIntegerValue);
     
     self.fullyWatched = wasFullyWatched;
 }
@@ -240,7 +238,7 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
 
 - (void)rewardValidationRequestForAd:(ALAd *)ad didFailWithError:(NSInteger)responseCode
 {
-    NSString *failureReason = [NSString stringWithFormat:@"Rewarded video validation request for ad failed with error code: %ld", responseCode];
+    NSString *failureReason = [NSString stringWithFormat:@"Rewarded video validation request for ad failed with error code: %ld", (long)responseCode];
 
     NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:failureReason];
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
@@ -252,18 +250,6 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
 
     NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:failureReason];
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-}
-
-- (void)userDeclinedToViewAd:(ALAd *)ad
-{
-    MPLogInfo(@"User declined to view rewarded video");
-    
-    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-
-    [self.delegate rewardedVideoWillDisappearForCustomEvent: self];
-    [self.delegate rewardedVideoDidDisappearForCustomEvent: self];
-    
-    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void)rewardValidationRequestForAd:(ALAd *)ad didSucceedWithResponse:(NSDictionary *)response

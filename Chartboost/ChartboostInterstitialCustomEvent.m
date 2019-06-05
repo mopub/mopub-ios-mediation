@@ -60,7 +60,7 @@ static NSString *appId = nil;
         }
     }
     NSString *location = [info objectForKey:@"location"];
-    self.location = location ? location : @"Default";
+    self.location = [location length] != 0 ? location : CBLocationDefault;
     
     // Cache the network SDK initialization parameters
     [ChartboostAdapterConfiguration updateInitializationParameters:info];

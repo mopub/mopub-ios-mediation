@@ -34,13 +34,13 @@ static GADAdChoicesPosition adChoicesPosition;
 }
 
 - (void)requestAdWithCustomEventInfo:(NSDictionary *)info {
-  NSString *applicationID = [info objectForKey:@"appid"];
-  if (applicationID) {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-      [GADMobileAds configureWithApplicationID:applicationID];
-    });
-  }
+  static dispatch_once_t onceToken;
+  dispatch_once(&onceToken, ^{
+    [[GADMobileAds sharedInstance] startWithCompletionHandler:^(GADInitializationStatus *status){
+      MPLogInfo(@"Google Mobile Ads SDK initialized succesfully.");
+    }];
+  });
+  
   self.admobAdUnitId = info[@"adunit"];
   if (self.admobAdUnitId == nil) {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class)
@@ -59,6 +59,13 @@ static GADAdChoicesPosition adChoicesPosition;
   GADRequest *request = [GADRequest request];
   if ([self.localExtras objectForKey:@"testDevices"]) {
     request.testDevices = self.localExtras[@"testDevices"];
+  }
+  if ([self.localExtras objectForKey:@"tagForChildDirectedTreatment"]) {
+    [GADMobileAds.sharedInstance.requestConfiguration tagForChildDirectedTreatment:self.localExtras[@"tagForChildDirectedTreatment"]];
+  }
+  if ([self.localExtras objectForKey:@"tagForUnderAgeOfConsent"]) {
+    [GADMobileAds.sharedInstance.requestConfiguration
+     tagForUnderAgeOfConsent:self.localExtras[@"tagForUnderAgeOfConsent"]];
   }
   request.requestAgent = @"MoPub";
     
@@ -90,20 +97,18 @@ static GADAdChoicesPosition adChoicesPosition;
   // Consent collected from the MoPub’s consent dialogue should not be used to set up
   // Google's personalization preference. Publishers should work with Google to be GDPR-compliant.
 
-  MPGoogleGlobalMediationSettings *medSettings = [[MoPub sharedInstance]
-      globalMediationSettingsForClass:[MPGoogleGlobalMediationSettings class]];
+  NSString *npaValue = GoogleAdMobAdapterConfiguration.npaString;
 
-  if (medSettings.npa) {
+    if (npaValue.length > 0) {
     GADExtras *extras = [[GADExtras alloc] init];
-    extras.additionalParameters = @{@"npa" : medSettings.npa};
+    extras.additionalParameters = @{@"npa": npaValue};
     [request registerAdNetworkExtras:extras];
   }
     
   // Cache the network initialization parameters
   [GoogleAdMobAdapterConfiguration updateInitializationParameters:info];
-
-  [self.adLoader loadRequest:request];
   MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.admobAdUnitId);
+  [self.adLoader loadRequest:request];
 }
 
 #pragma mark GADAdLoaderDelegate implementation
