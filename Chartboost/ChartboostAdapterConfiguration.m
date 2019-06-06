@@ -82,18 +82,18 @@ typedef NS_ENUM(NSInteger, ChartboostAdapterErrorCode) {
     }
     
     // Initialize the router
-    [[ChartboostRouter sharedRouter] startWithAppId:appId appSignature:appSignature];
-    if (complete != nil) {
-        complete(nil);
-    }
+    [[ChartboostRouter sharedRouter] startWithAppId:appId appSignature:appSignature completion:^(BOOL initialized) {
+        if (complete != nil) {
+            complete(nil);
+        }
+    }];
     
-    MPBLogLevel mopubLogLevel = [[MoPub sharedInstance] logLevel];
-    CBLoggingLevel * chartboostLogLevel = [ChartboostAdapterConfiguration getChartboostLogLevel:mopubLogLevel];
-
+    MPBLogLevel mopubLogLevel = [MPLogging consoleLogLevel];
+    CBLoggingLevel chartboostLogLevel = [ChartboostAdapterConfiguration getChartboostLogLevel:mopubLogLevel];
     [Chartboost setLoggingLevel:chartboostLogLevel];
 }
 
-+ (CBLoggingLevel *)getChartboostLogLevel:(MPBLogLevel *)logLevel
++ (CBLoggingLevel)getChartboostLogLevel:(MPBLogLevel)logLevel
 {
     int logLevelVal = logLevel;
     

@@ -24,8 +24,7 @@
 @property (nonatomic, strong) NSMutableDictionary *rewardedVideoEvents;
 
 + (ChartboostRouter *)sharedRouter;
-- (void)startWithAppId:(NSString *)appId appSignature:(NSString *)appSignature;
-
+- (void)startWithAppId:(NSString *)appId appSignature:(NSString *)appSignature completion:(void(^)(BOOL))completion;
 
 /*
  * Interstitial Ads
