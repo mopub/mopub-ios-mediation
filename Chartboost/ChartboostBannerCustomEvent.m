@@ -7,6 +7,7 @@
 
 #import "ChartboostBannerCustomEvent.h"
 #import "ChartboostAdapterConfiguration.h"
+#import "ChartboostRouter.h"
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
 #endif
@@ -25,24 +26,38 @@
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info
 {
     self.appID = [info objectForKey:@"appId"];
+    NSString *appSignature = [info objectForKey:@"appSignature"];
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.appID);
     
-    NSString *location = [info objectForKey:@"location"];
-    location = [location length] != 0 ? location: CBLocationDefault;
-    if (self.banner && (!CGSizeEqualToSize(self.banner.size, size) || ![self.banner.location isEqualToString:location])) {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Chartboost adapter failed to load ad: size or location in new request doesn't match the existing banner values."];
+    if ([self.appID length] == 0 || [appSignature length] == 0) {
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Failed to load Chartboost banner: missing either appId or appSignature"];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.appID);
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
     
-    if (!self.banner) {
-        self.banner = [[CHBBanner alloc] initWithSize:size location:location delegate:self];
-        self.banner.automaticallyRefreshesContent = NO;
+    NSString *location = [info objectForKey:@"location"];
+    location = [location length] != 0 ? location: CBLocationDefault;
+    if (self.banner && (!CGSizeEqualToSize(self.banner.size, size) || ![self.banner.location isEqualToString:location])) {
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Chartboost adapter failed to load ad: size or location in new request doesn't match the existing banner values."];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.appID);
+        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+        return;
     }
     
     [ChartboostAdapterConfiguration updateInitializationParameters:info];
-    [self.banner showFromViewController:[self.delegate viewControllerForPresentingModalView]];
+    
+    __weak typeof(self) weakSelf = self;
+    [[ChartboostRouter sharedRouter] startWithAppId:self.appID appSignature:appSignature completion:^(BOOL initialized) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (!weakSelf.banner) {
+                weakSelf.banner = [[CHBBanner alloc] initWithSize:size location:location delegate:weakSelf];
+                weakSelf.banner.automaticallyRefreshesContent = NO;
+            }
+            
+            [weakSelf.banner showFromViewController:[weakSelf.delegate viewControllerForPresentingModalView]];
+        });
+    }];
 }
 
 - (BOOL)enableAutomaticImpressionAndClickTracking
