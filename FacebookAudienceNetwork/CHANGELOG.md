@@ -1,7 +1,7 @@
 ## Changelog
 * 5.3.2.1
-    * Fix mapping for Native Ads that causes invalid argument exceptions due to invalid url. 
-    * Replaced `FacebookAdapterConfiguration` initialilization logic with the Facebook Audience Network SDK callbacks.
+    * Fix mapping for native ads that causes invalid argument exceptions due to invalid URLs. 
+    * Update the initialilization logic in `FacebookAdapterConfiguration` to have completion callbacks.
 
 * 5.3.2.0
     * This version of the adapters has been certified with Facebook Audience Network 5.3.2.
