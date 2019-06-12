@@ -1,9 +1,9 @@
 ## Changelog
  * 6.8.4.0.0
-  * This version of the adapters has been certified with ironSource 6.8.4.
-  * Revised adapter code to comply with ironSource 6.8.4.
-  * Remove placementName, ironSource SDK 6.8.4 no longer uses it.
-  * Ad load will fail gracefully if the unique instanceIds are not used during concurrent ad requests for rewarded video.
+  * This version of the adapters has been certified with ironSource 6.8.4.0.
+  * Revise adapter code to comply with ironSource 6.8.4.0.
+  * Remove `placementName` as ironSource 6.8.4.0 no longer uses it.
+  * Gracefully fail ad loads if the unique `instanceIds` are not used during concurrent ad requests for rewarded video.
 
  * 6.8.3.0.0
   * This version of adapters has been certified with IronSource 6.8.3.0.

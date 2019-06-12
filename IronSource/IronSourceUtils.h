@@ -12,12 +12,11 @@
 
 @interface IronSourceUtils : NSObject
 
-// IronSource Util methods.
 + (BOOL)isEmpty:(id)value;
 + (NSError *)createErrorWith:(NSString *)description
                    andReason:(NSString *)reason
                andSuggestion:(NSString *)suggestion;
-+ (NSString *)getMoPubSDKVersion;
++ (NSString *)getMoPubSdkVersion;
 
 @end
 

@@ -19,12 +19,13 @@ NSMapTable<NSString *, id<IronSourceInterstitialDelegate>>
 @implementation IronSourceManager
 
 + (instancetype)sharedManager {
-    static IronSourceManager *sharedMyManager = nil;
+    static IronSourceManager *sharedManager = nil;
     static dispatch_once_t onceToken;
+
     dispatch_once(&onceToken, ^{
-        sharedMyManager = [[self alloc] init];
+        sharedManager = [[self alloc] init];
     });
-    return sharedMyManager;
+    return sharedManager;
 }
 
 - (instancetype)init {
@@ -36,7 +37,7 @@ NSMapTable<NSString *, id<IronSourceInterstitialDelegate>>
         [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory
                               valueOptions:NSPointerFunctionsWeakMemory];
         [IronSource setMediationType:[NSString stringWithFormat:@"%@%@SDK%@",
-                                      kIronSourceMediationName,kIronSourceMediationVersion, [IronSourceUtils getMoPubSDKVersion]]];
+                                      kIronSourceMediationName,kIronSourceMediationVersion, [IronSourceUtils getMoPubSdkVersion]]];
     }
     return self;
 }
@@ -44,6 +45,7 @@ NSMapTable<NSString *, id<IronSourceInterstitialDelegate>>
 - (void)initIronSourceSDKWithAppKey:(NSString *)appKey forAdUnits:(NSSet *)adUnits {
     if([adUnits member:@[IS_INTERSTITIAL]] != nil){
         static dispatch_once_t onceTokenIS;
+
         dispatch_once(&onceTokenIS, ^{
             [IronSource setISDemandOnlyInterstitialDelegate:self];
             [IronSource initISDemandOnly:appKey adUnits:@[IS_INTERSTITIAL]];
@@ -51,6 +53,7 @@ NSMapTable<NSString *, id<IronSourceInterstitialDelegate>>
     }
     if([adUnits member:@[IS_REWARDED_VIDEO]] != nil){
         static dispatch_once_t onceTokenRV;
+
         dispatch_once(&onceTokenRV, ^{
             [IronSource setISDemandOnlyRewardedVideoDelegate:self];
             [IronSource initISDemandOnly:appKey adUnits:@[IS_REWARDED_VIDEO]];
@@ -100,12 +103,14 @@ NSMapTable<NSString *, id<IronSourceInterstitialDelegate>>
 #pragma mark ISDemandOnlyRewardedDelegate
 
 - (void)rewardedVideoAdRewarded:(NSString *)instanceId {
-    MPLogDebug(@"IronSourceManager got rewardedVideoAdRewarded for instanceId %@", instanceId);
+    MPLogDebug(@"IronSourceManager rewarded user for instanceId %@", instanceId);
+
     id<IronSourceRewardedVideoDelegate> delegate =
     [self getRewardedDelegateForInstanceID:instanceId];
+
     if (delegate) {
         [delegate rewardedVideoAdRewarded:instanceId];
-    }else {
+    } else {
         MPLogDebug(@"IronSourceManager - rewardedVideoAdRewarded adapterDelegate is null");
     }
 }
@@ -114,10 +119,11 @@ NSMapTable<NSString *, id<IronSourceInterstitialDelegate>>
     MPLogDebug(@"IronSourceManager got rewardedVideoDidFailToShowWithError for instanceId %@ with error: %@", instanceId, error);
     id<IronSourceRewardedVideoDelegate> delegate =
     [self getRewardedDelegateForInstanceID:instanceId];
+
     if (delegate) {
         [delegate rewardedVideoDidFailToShowWithError:error instanceId:instanceId];
         [self removeRewardedDelegateForInstanceID:instanceId];
-    }else {
+    } else {
         MPLogDebug(@"IronSourceManager - rewardedVideoDidFailToShowWithError adapterDelegate is null");
     }
 }
@@ -126,9 +132,10 @@ NSMapTable<NSString *, id<IronSourceInterstitialDelegate>>
     MPLogDebug(@"IronSourceManager got rewardedVideoDidOpen for instanceId %@", instanceId);
     id<IronSourceRewardedVideoDelegate> delegate =
     [self getRewardedDelegateForInstanceID:instanceId];
+
     if (delegate) {
         [delegate rewardedVideoDidOpen:instanceId];
-    }else {
+    } else {
         MPLogDebug(@"IronSourceManager - rewardedVideoDidOpen adapterDelegate is null");
     }
 }
@@ -137,10 +144,11 @@ NSMapTable<NSString *, id<IronSourceInterstitialDelegate>>
     MPLogDebug(@"IronSourceManager got rewardedVideoDidClose for instanceId %@", instanceId);
     id<IronSourceRewardedVideoDelegate> delegate =
     [self getRewardedDelegateForInstanceID:instanceId];
+
     if (delegate) {
         [delegate rewardedVideoDidClose:instanceId];
         [self removeRewardedDelegateForInstanceID:instanceId];
-    }else {
+    } else {
         MPLogDebug(@"IronSourceManager - rewardedVideoDidClose adapterDelegate is null");
     }
 }
@@ -149,9 +157,10 @@ NSMapTable<NSString *, id<IronSourceInterstitialDelegate>>
     MPLogDebug(@"IronSourceManager got rewardedVideoDidClick for instanceId %@", instanceId);
     id<IronSourceRewardedVideoDelegate> delegate =
     [self getRewardedDelegateForInstanceID:instanceId];
+
     if (delegate) {
         [delegate rewardedVideoDidClick:instanceId];
-    }else {
+    } else {
         MPLogDebug(@"IronSourceManager - rewardedVideoDidClick adapterDelegate is null");
     }
 }
@@ -161,7 +170,7 @@ NSMapTable<NSString *, id<IronSourceInterstitialDelegate>>
     id<IronSourceRewardedVideoDelegate> delegate = [self getRewardedDelegateForInstanceID:instanceId];
     if(delegate){
         [delegate rewardedVideoDidLoad:instanceId];
-    }else {
+    } else {
         MPLogDebug(@"IronSourceManager - rewardedVideoDidLoad adapterDelegate is null");
     }
 }
@@ -172,7 +181,7 @@ NSMapTable<NSString *, id<IronSourceInterstitialDelegate>>
     if(delegate){
         [delegate rewardedVideoDidFailToLoadWithError:error instanceId:instanceId];
         [self removeRewardedDelegateForInstanceID:instanceId];
-    }else {
+    } else {
         MPLogDebug(@"IronSourceManager - rewardedVideoDidFailToLoadWithError adapterDelegate is null");
     }
 }
@@ -185,7 +194,7 @@ NSMapTable<NSString *, id<IronSourceInterstitialDelegate>>
     [self getInterstitialDelegateForInstanceID:instanceId];
     if (delegate) {
         [delegate interstitialDidLoad:instanceId];
-    }else {
+    } else {
         MPLogDebug(@"IronSourceManager - didClickInterstitial adapterDelegate is null");
     }
 }
@@ -197,7 +206,7 @@ NSMapTable<NSString *, id<IronSourceInterstitialDelegate>>
     if (delegate) {
         [delegate interstitialDidFailToLoadWithError:error instanceId:instanceId];
         [self removeInterstitialDelegateForInstanceID:instanceId];
-    }else {
+    } else {
         MPLogDebug(@"IronSourceManager - interstitialDidFailToLoadWithError adapterDelegate is null");
     }
 }
@@ -208,7 +217,7 @@ NSMapTable<NSString *, id<IronSourceInterstitialDelegate>>
     [self getInterstitialDelegateForInstanceID:instanceId];
     if (delegate) {
         [delegate interstitialDidOpen:instanceId];
-    }else {
+    } else {
         MPLogDebug(@"IronSourceManager - interstitialDidOpen adapterDelegate is null");
     }
 }
@@ -220,7 +229,7 @@ NSMapTable<NSString *, id<IronSourceInterstitialDelegate>>
     if (delegate) {
         [delegate interstitialDidClose:instanceId];
         [self removeInterstitialDelegateForInstanceID:instanceId];
-    }else {
+    } else {
         MPLogDebug(@"IronSourceManager - interstitialDidClose adapterDelegate is null");
     }
 }
@@ -232,7 +241,7 @@ NSMapTable<NSString *, id<IronSourceInterstitialDelegate>>
     if (delegate) {
         [delegate interstitialDidFailToShowWithError:error instanceId:instanceId];
         [self removeInterstitialDelegateForInstanceID:instanceId];
-    }else {
+    } else {
         MPLogDebug(@"IronSourceManager - interstitialDidFailToShowWithError adapterDelegate is null");
     }
 }
@@ -243,7 +252,7 @@ NSMapTable<NSString *, id<IronSourceInterstitialDelegate>>
     [self getInterstitialDelegateForInstanceID:instanceId];
     if (delegate) {
         [delegate didClickInterstitial:instanceId];
-    }else {
+    } else {
         MPLogDebug(@"IronSourceManager - didClickInterstitial adapterDelegate is null");
     }
 }

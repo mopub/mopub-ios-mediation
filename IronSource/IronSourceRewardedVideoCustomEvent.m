@@ -3,10 +3,11 @@
 //
 
 #import "IronSourceRewardedVideoCustomEvent.h"
+#import "IronSourceAdapterConfiguration.h"
 #import "IronSourceConstants.h"
 #if __has_include("MoPub.h")
-#import "MPLogging.h"
-#import "MoPub.h"
+    #import "MPLogging.h"
+    #import "MoPub.h"
 #endif
 
 @interface IronSourceRewardedVideoCustomEvent()<IronSourceRewardedVideoDelegate>
@@ -20,6 +21,7 @@
 
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info {
     MPLogInfo(@"IronSource requestRewardedVideoWithCustomEventInfo with: %@", info);
+    
     // Collect and pass the user's consent from MoPub onto the ironSource SDK
     if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
         BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
@@ -29,8 +31,8 @@
     @try {
         self.instanceID = kDefaultInstanceId;
         NSString *appKey = @"";
-        if(info == nil){
-            MPLogInfo(@"serverParams is null. Make sure you have entered ironSource's application and instance keys on the MoPub dashboard");
+        if (info == nil) {
+            MPLogInfo(@"serverParams is null. Make sure you have entered IronSource's application and instance keys on the MoPub dashboard");
             NSError *error = [IronSourceUtils createErrorWith:@"Can't initialize IronSource Rewarded Video"
                                          andReason:@"serverParams is null"
                                      andSuggestion:@"make sure that server parameters is added"];
@@ -60,6 +62,8 @@
         }
         
         MPLogInfo(@"IronSource Rewarded Video initialization with appkey %@", appKey);
+        // Cache the initialization parameters
+        [IronSourceAdapterConfiguration updateInitializationParameters:info];
         [[IronSourceManager sharedManager] initIronSourceSDKWithAppKey:appKey forAdUnits:[NSSet setWithObject:@[IS_REWARDED_VIDEO]]];
         [self loadRewardedVideo: self.instanceID];
     } @catch (NSException *exception) {

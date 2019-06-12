@@ -3,6 +3,9 @@
 //  
 
 #import "IronSourceUtils.h"
+#if __has_include("MoPub.h")
+#import "MoPub.h"
+#endif
 
 @implementation IronSourceUtils
 
@@ -27,7 +30,7 @@
     return [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:userInfo];
 }
 
-+ (NSString *)getMoPubSDKVersion {
++ (NSString *)getMoPubSdkVersion {
     NSString * version = @"";
     NSString *sdkVersion = [[MoPub sharedInstance] version];
     @try{
