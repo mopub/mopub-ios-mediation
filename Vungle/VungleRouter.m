@@ -72,6 +72,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
         self.waitingListDict = [NSMutableDictionary dictionary];
         self.bannerDelegates = [NSMutableArray array];
         self.isAdPlaying = NO;
+        self.bannerAdPlacementDic = [NSMutableDictionary dictionary];
     }
     return self;
 }
@@ -211,20 +212,18 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 - (void)requestBannerAdWithCustomEventInfo:(NSDictionary *)info size:(CGSize)size delegate:(id<VungleRouterDelegate>)delegate {
     [self collectConsentStatusFromMoPub];
     
-    // Verify if PlacementID is nil (first MREC request) or PlacementID is the same one requested
+    // If bannerDelegates is empty, it means no refresh is ongoing. So, we can request new banner with different PlacementID.
     if (self.bannerDelegates.count > 0) {
         if (self.bannerPlacementID != nil && ![[info objectForKey:kVunglePlacementIdKey] isEqualToString:self.bannerPlacementID]) {
-            
-            MPLogInfo(@"A banner ad type has been already instantiated. Multiple banner ads are not supported with Vungle iOS SDK version %@ and adapter version %@.", VungleSDKVersion, [[[VungleAdapterConfiguration alloc] init] adapterVersion]);
+            MPLogInfo(@"A banner ad type has been already instantiated. Multiple banner ads are not supported with Vungle iOS SDK version %@ and adapter version %@.", VungleSDKVersion, VungleAdapterVersion);
             [delegate vungleAdDidFailToLoad:nil];
             return;
         }
     }
     
-    if ([self validateInfoData:info] && CGSizeEqualToSize(size, kVNGMRECSize)) {
+    if ([self validateInfoData:info] && (CGSizeEqualToSize(size, kVNGMRECSize) || CGSizeEqualToSize(size, kVNGBannerSize) || CGSizeEqualToSize(size, kVNGLeaderboardBannerSize))) {
         self.bannerPlacementID = [info objectForKey:kVunglePlacementIdKey];
         self.isInvalidatedBannerForPlacementID = NO;
-        
         if (self.sdkInitializeState == SDKInitializeStateNotInitialized) {
             if (![self.waitingListDict objectForKey:[info objectForKey:kVunglePlacementIdKey]]) {
                 [self.waitingListDict setObject:delegate forKey:[info objectForKey:kVunglePlacementIdKey]];
@@ -236,7 +235,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
             }
         } else if (self.sdkInitializeState == SDKInitializeStateInitialized) {
             NSString *placementID = [info objectForKey:kVunglePlacementIdKey];
-            [self requestBannerMrecAdWithPlacementID:placementID delegate:delegate];
+            [self requestBannerAdWithPlacementID:placementID size:size delegate:delegate];
         }
     } else {
         [delegate vungleAdDidFailToLoad:nil];
@@ -260,8 +259,8 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
     }
 }
 
-- (void)requestBannerMrecAdWithPlacementID:(NSString *)placementID delegate:(id<VungleRouterDelegate>)delegate {
-    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
+- (void)requestBannerAdWithPlacementID:(NSString *)placementID size:(CGSize)size delegate:(id<VungleRouterDelegate>)delegate {
+    NSMutableDictionary *tempDic = [NSMutableDictionary dictionary];
     if ([[VungleSDK sharedSDK]  isAdCachedForPlacementID:placementID]) {
         [delegate vungleAdDidLoad];
         
@@ -274,9 +273,8 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
         [self.bannerDelegates addObject:dictionary];
         
         NSError *error = nil;
-        
-        if ([[VungleSDK sharedSDK] loadPlacementWithID:placementID error:&error]) {
-            MPLogInfo(@"Vungle: Start to load an ad for Placement ID :%@", placementID);
+        if ([[VungleSDK sharedSDK] loadPlacementWithID:placementID withSize:(CGSizeEqualToSize(size, MOPUB_MEDIUM_RECT_SIZE) ? CGSizeZero : size) error:&error]) {
+            NSLog(@"Vungle: Start to load an ad for Placement ID :%@", placementID);
         } else {
             if (error) {
                 MPLogInfo(@"Vungle: Unable to load an ad for Placement ID :%@, Error %@", placementID, error);
@@ -362,11 +360,9 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
     return nil;
 }
 
-- (void)completeBannerAdViewForPlacementID:(NSString *)placementID
-{
+- (void)completeBannerAdViewForPlacementID:(NSString *)placementID {
     if (placementID) {
         MPLogInfo(@"Vungle: Triggering an ad completion call for %@", placementID);
-        
         for (int i = 0; i < self.bannerDelegates.count; i++) {
             if ((BannerRouterDelegateState)[[self.bannerDelegates[i] valueForKey:kVungleBannerDelegateStateKey] intValue] == BannerRouterDelegateStatePlaying) {
                 [[VungleSDK sharedSDK] finishedDisplayingAd];
@@ -455,15 +451,16 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 }
 
 - (void)clearWaitingList {
-    for (id key in self.waitingListDict) {
-        id<VungleRouterDelegate> delegateInstance = [self.waitingListDict objectForKey:key];
-        
-        if ([[delegateInstance getPlacementID] isEqualToString:self.bannerPlacementID]) {
-            NSString *id = [delegateInstance getPlacementID];
-            [self requestBannerMrecAdWithPlacementID:id delegate:delegateInstance];
-        } else {
-            if (![self.delegatesDict objectForKey:key]) {
-                [self.delegatesDict setObject:delegateInstance forKey:key];
+    for (id key in self.waitingListDic) {
+        id<VungleRouterDelegate> delegateInstance = [self.waitingListDic objectForKey:key];
+        if ([[delegateInstance getPlacementID] isEqualToString:self.bannerPlacementID] || [self.bannerAdPlacementDic objectForKey:[delegateInstance getPlacementID]]) {
+            NSString *tempPlacementID = [delegateInstance getPlacementID];
+            CGSize size = [[delegateInstance getPlacementID] isEqualToString:self.bannerPlacementID] ? MOPUB_MEDIUM_RECT_SIZE : [(NSValue *)[self.bannerAdPlacementDic objectForKey:[delegateInstance getPlacementID]] CGSizeValue];
+            [self requestBannerAdWithPlacementID:tempPlacementID size:size delegate:delegateInstance];
+        }
+        else {
+            if (![self.delegatesDic objectForKey:key]) {
+                [self.delegatesDic setObject:delegateInstance forKey:key];
             }
             
             NSError *error = nil;
@@ -492,7 +489,6 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 - (void)vungleAdPlayabilityUpdate:(BOOL)isAdPlayable placementID:(NSString *)placementID error:(NSError *)error {
     if ([placementID isEqualToString:self.bannerPlacementID]) {
         BOOL needToClearDelegate = NO;
-        
         for (int i = 0; i < self.bannerDelegates.count; i++) {
             if ((BannerRouterDelegateState)[[self.bannerDelegates[i] valueForKey:kVungleBannerDelegateStateKey] intValue] == BannerRouterDelegateStateRequesting) {
                 if (isAdPlayable) {
@@ -539,7 +535,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 
 - (void)vungleWillShowAdForPlacementID:(nullable NSString *)placementID {
     id<VungleRouterDelegate> targetDelegate;
-    if ([placementID isEqualToString:self.bannerPlacementID]) {
+    if ([placementID isEqualToString:self.bannerPlacementID] || [self.bannerAdPlacementDic objectForKey:placementID]) {
         for (int i = 0; i < self.bannerDelegates.count; i++) {
             if ((BannerRouterDelegateState)[[self.bannerDelegates[i] valueForKey:kVungleBannerDelegateStateKey] intValue] == BannerRouterDelegateStateCached) {
                 targetDelegate = [self.bannerDelegates[i] objectForKey:kVungleBannerDelegateKey];
@@ -565,7 +561,6 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 
 - (void)vungleWillCloseAdWithViewInfo:(VungleViewInfo *)info placementID:(NSString *)placementID {
     id<VungleRouterDelegate> targetDelegate;
-    
     if ([placementID isEqualToString:self.bannerPlacementID]) {
         for (int i = 0; i < self.bannerDelegates.count; i++) {
             if ((BannerRouterDelegateState)[[self.bannerDelegates[i] valueForKey:kVungleBannerDelegateStateKey] intValue] == BannerRouterDelegateStateClosing) {
@@ -594,7 +589,6 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 
 - (void)vungleDidCloseAdWithViewInfo:(VungleViewInfo *)info placementID:(NSString *)placementID {
     id<VungleRouterDelegate> targetDelegate;
-    
     if ([placementID isEqualToString:self.bannerPlacementID]) {
         BOOL needToClearDelegate = NO;
         for (int i = 0; i < self.bannerDelegates.count; i++) {
