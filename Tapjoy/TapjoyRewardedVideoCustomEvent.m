@@ -156,16 +156,16 @@
 #pragma mark - TJPlacementDelegate methods
 
 - (void)requestDidSucceed:(TJPlacement *)placement {
-    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.placementName);
     if (!placement.isContentAvailable) {
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
-        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementName);
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementName);
         [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
     }
 }
 
 - (void)contentIsReady:(TJPlacement *)placement {
     MPLogInfo(@"Tapjoy rewarded video content is ready");
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.placementName);
     [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
 }
 
@@ -199,6 +199,7 @@
 #pragma mark Tapjoy Video
 
 - (void)videoDidStart:(TJPlacement *)placement {
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.placement);
 }
 
 - (void)videoDidComplete:(TJPlacement*)placement {
@@ -206,6 +207,7 @@
 }
 
 - (void)videoDidFail:(TJPlacement*)placement error:(NSString*)errorMsg {
+    MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:errorMsg], self.placement);
 }
 
 - (void)tjcConnectSuccess:(NSNotification*)notifyObj {
