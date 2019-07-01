@@ -7,7 +7,7 @@ before_install:
   - git submodule update --init --recursive
   - npm i -g grunt-cli
   - npm i firebase-tools@3.17.2 -g
-  - gem install cocoapods -v '0.32.1'
+  - sudo gem install cocoapods -v '0.32.1'
 script:
   - chmod 777 ./travis/script/ios_automate_release.sh
   - ./travis/script/ios_automate_release.sh
