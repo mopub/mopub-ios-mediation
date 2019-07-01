@@ -1,5 +1,6 @@
 language: objective-c
 cache: cocoapods
+xcode_destination: platform=iOS Simulator,OS=11.3,name=iPhone X
 before_install:
   - git submodule add https://${GITHUB_TOKEN}@github.com/mopub/ios-mediation.git
   - git submodule update --init --recursive
