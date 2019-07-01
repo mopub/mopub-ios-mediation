@@ -1,4 +1,6 @@
 ## Changelog
+
+
   * 12.3.1.0
     * This version of adapters has been certified with Tapjoy 12.3.1.
     * Fix misleading logging for ad load success and ad show failure in `TapjoyRewardedVideoCustomEvent`.
