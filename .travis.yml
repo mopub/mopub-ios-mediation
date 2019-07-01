@@ -1,7 +1,4 @@
 language: objective-c
-rvm: 1.9.3
-node_js:
-- "8.16.0"
 cache: cocoapods
 before_install:
   - git submodule add https://${GITHUB_TOKEN}@github.com/mopub/ios-mediation.git
