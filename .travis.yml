@@ -8,8 +8,8 @@ before_install:
   - npm i -g grunt-cli
   - npm i firebase-tools@3.17.2 -g
 script:
-  - chmod 777 ios-automate-release.sh
-  - ./ios-automate-release.sh
+  - chmod 777 ./travis/script/ios_automate_release.sh
+  - ./travis/script/ios_automate_release.sh
 # branch whitelist
 branches:
   only:
