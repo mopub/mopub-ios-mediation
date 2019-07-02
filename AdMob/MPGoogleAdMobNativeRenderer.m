@@ -154,6 +154,7 @@
   if ([self.adView respondsToSelector:@selector(nativeVideoView)]) {
     [self.adView.nativeVideoView addSubview:gadUnifiedNativeAdView.mediaView];
     [gadUnifiedNativeAdView.mediaView gad_fillSuperview];
+    [self.adView bringSubviewToFront:self.adView.nativeVideoView];
   } else if ([self.adView respondsToSelector:@selector(nativeMainImageView)]) {
     [self.adView.nativeMainImageView addSubview:gadUnifiedNativeAdView.mediaView];
     [gadUnifiedNativeAdView.mediaView gad_fillSuperview];
