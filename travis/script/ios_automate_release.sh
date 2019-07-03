@@ -14,7 +14,7 @@ NETWORKS=(
     FacebookAudienceNetwork
     Flurry 
     IronSource
-    TapJoy
+    Tapjoy
     UnityAds
     Vungle
 )
@@ -31,7 +31,6 @@ function get_display_name {
         IronSource ) name="ironSource";;
         OnebyAOL ) name="One by AOL";;
         UnityAds ) name="Unity Ads";;
-        TapJoy ) name="Tapjoy";;
     esac
     eval "$out='$name'"
 }
@@ -54,6 +53,8 @@ echo $tagname
 #curl -H "Authorization: token ${GITHUB_TOKEN}" --data '{"tag_name": "'"$tagname"'","target_commitish": "'"$commitId"'","name": "'"$versionnumber"'","body": "Refer https://github.com/mopub/mopub-ios-mediation/blob/master/'"$1"'/CHANGELOG.md.","draft": false,"prerelease": false}' https://api.github.com/repos/mopub/ios-mediation/releases
 
 ### pod spec lint run ###
+echo $1
+echo "check"
 pod spec lint ./ios-mediation/MoPub-$1-Adapters.podspec --allow-warnings --use-libraries
 if [ $? -eq 0 ]; then
  ### Uncomment pod push to cocoapods for final release ###
