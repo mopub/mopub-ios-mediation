@@ -58,7 +58,7 @@ pod spec lint ./ios-mediation/MoPub-$1-Adapters.podspec --allow-warnings --use-l
 echo "here 2"
 
  ### Uncomment pod push to cocoapods for final release ###
- # /usr/local/bin/pod trunk push ./$1/MoPub-$1-PodSpecs/MoPub-$1-Adapters.podspec --allow-warnings --use-libraries --verbose
+ #pod trunk push ./ios-mediation/MoPub-$1-Adapters.podspec --allow-warnings --use-libraries --verbose
  if [ $? -eq 0 ]; then
     ### UPDATE FIREBASE ###
     echo "Updating staging JSON..."

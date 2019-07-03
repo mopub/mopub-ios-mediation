@@ -3,7 +3,7 @@ cache: cocoapods
 osx_image: xcode10.2
 xcode_destination: platform=iOS Simulator,OS=11.3,name=iPhone X
 before_install:
-  - git submodule add https://${GITHUB_TOKEN}@github.com/mopub/ios-mediation.git
+  - git submodule add https://${GITHUB_KEY}@github.com/mopub/ios-mediation.git
   - git submodule update --init --recursive
   - npm i -g grunt-cli
   - npm i firebase-tools@3.17.2 -g
