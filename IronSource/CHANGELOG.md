@@ -1,4 +1,5 @@
 ## Changelog
+
  * 6.8.4.0.1
     * Fix missing `MPLogging.h` import to avoid build errors.
 

@@ -50,10 +50,10 @@ tagname="$lowercaseselection-$versionnumber"
 echo $tagname
 
 ### Publish release in Github [TO_DO]
-#curl -H "Authorization: token ${GITHUB_TOKEN}" --data '{"tag_name": "'"$tagname"'","target_commitish": "'"$commitId"'","name": "'"$versionnumber"'","body": "Refer https://github.com/mopub/mopub-ios-mediation/blob/master/$1/CHANGELOG.md.","draft": false,"prerelease": false}' https://api.github.com/repos/mopub/mopub-ios-mediation/releases
+#curl -H "Authorization: token ${GITHUB_TOKEN}" --data '{"tag_name": "'"$tagname"'","target_commitish": "'"$commitId"'","name": "'"$versionnumber"'","body": "Refer https://github.com/mopub/mopub-ios-mediation/blob/master/'"$1"'/CHANGELOG.md.","draft": false,"prerelease": false}' https://api.github.com/repos/mopub/ios-mediation/releases
 
 ### pod spec lint run ###
-pod spec lint ./$1/MoPub-$1-PodSpecs/MoPub-$1-Adapters.podspec --allow-warnings --use-libraries
+pod spec lint ./ios-mediation/MoPub-$1-Adapters.podspec --allow-warnings --use-libraries
 
  ### Uncomment pod push to cocoapods for final release ###
  # /usr/local/bin/pod trunk push ./$1/MoPub-$1-PodSpecs/MoPub-$1-Adapters.podspec --allow-warnings --use-libraries --verbose
