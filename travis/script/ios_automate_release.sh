@@ -14,7 +14,7 @@ NETWORKS=(
     FacebookAudienceNetwork
     Flurry 
     IronSource
-    Tapjoy
+    TapJoy
     UnityAds
     Vungle
 )
@@ -31,6 +31,7 @@ function get_display_name {
         IronSource ) name="ironSource";;
         OnebyAOL ) name="One by AOL";;
         UnityAds ) name="Unity Ads";;
+        TapJoy ) name="Tapjoy";;
     esac
     eval "$out='$name'"
 }
