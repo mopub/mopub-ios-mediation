@@ -53,7 +53,9 @@ echo $tagname
 #curl -H "Authorization: token ${GITHUB_TOKEN}" --data '{"tag_name": "'"$tagname"'","target_commitish": "'"$commitId"'","name": "'"$versionnumber"'","body": "Refer https://github.com/mopub/mopub-ios-mediation/blob/master/'"$1"'/CHANGELOG.md.","draft": false,"prerelease": false}' https://api.github.com/repos/mopub/ios-mediation/releases
 
 ### pod spec lint run ###
+echo "here 1"
 pod spec lint ./ios-mediation/MoPub-$1-Adapters.podspec --allow-warnings --use-libraries
+echo "here 2"
 
  ### Uncomment pod push to cocoapods for final release ###
  # /usr/local/bin/pod trunk push ./$1/MoPub-$1-PodSpecs/MoPub-$1-Adapters.podspec --allow-warnings --use-libraries --verbose
