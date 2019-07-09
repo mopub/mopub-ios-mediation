@@ -20,7 +20,7 @@ static ALSdk *__nullable AppLovinAdapterConfigurationSDK;
 
 static NSString *const kAppLovinSDKInfoPlistKey = @"AppLovinSdkKey";
 static NSString *const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-applovin-adapters";
-static NSString *const kAdapterVersion = @"6.6.0.0";
+static NSString *const kAdapterVersion = @"6.7.1.0";
 
 static NSString *gSdkKey = nil;
 
@@ -81,8 +81,8 @@ typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
     
     if ( completionBlock ) completionBlock( error );
     
-    MPBLogLevel * logLevel = [[MoPub sharedInstance] logLevel];
-    BOOL verboseLoggingEnabled = logLevel == MPBLogLevelDebug;
+    MPBLogLevel logLevel = [MPLogging consoleLogLevel];
+    BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
 
     [[ALSdk sharedWithKey: AppLovinAdapterConfiguration.sdkKey].settings setIsVerboseLogging: verboseLoggingEnabled];
 }

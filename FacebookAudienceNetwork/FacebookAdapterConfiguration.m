@@ -14,9 +14,10 @@
 #import "MPConstants.h"
 #endif
 
-#define FACEBOOK_SDK_VERSION                 @"5.3.0"
-#define FACEBOOK_ADAPTER_VERSION             @"5.3.0.0"
+#define FACEBOOK_ADAPTER_VERSION             @"5.4.0.0"
 #define MOPUB_NETWORK_NAME                   @"facebook"
+
+static NSString * const kFacebookPlacementIDs = @"placement_ids";
 
 @implementation FacebookAdapterConfiguration
 
@@ -52,8 +53,7 @@
 }
 
 - (NSString *)networkSdkVersion {
-    // `FBAdSettings` has no API to retrieve the Facebook Audience Network SDK version
-    return FACEBOOK_SDK_VERSION;
+    return FB_AD_SDK_VERSION;
 }
 
 + (NSString*)mediationString {
@@ -62,22 +62,23 @@
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration
                                   complete:(void(^)(NSError *))complete {
-    // Facebook Audience Network does not have a SDK-level initialization that needs to
-    // be invoked prior to requesting ads.
-    
-    // However, we need to initialize an adview to trigger the internal
-    // `[FBAdUtility initializeAudienceNetwork]` method which is required to
-    // properly initialize the bidding tokens from FAN.
-    dispatch_async(dispatch_get_main_queue(), ^{
-        FBAdView * initHackforFacebook = [[FBAdView alloc] initWithPlacementID:@"" adSize:kFBAdSize320x50 rootViewController:[UIViewController new]];
-        if (initHackforFacebook) {
-            MPLogDebug(@"Initialized Facebook Audience Network");
-        }
-    });
-    
-    if (complete != nil) {
-        complete(nil);
-    }
+    FBAdInitSettings *fbSettings = [[FBAdInitSettings alloc]
+                                    initWithPlacementIDs:configuration[kFacebookPlacementIDs]
+                                    mediationService:[FacebookAdapterConfiguration mediationString]];
+    [FBAudienceNetworkAds
+     initializeWithSettings:fbSettings
+     completionHandler:^(FBAdInitResults *results) {
+         if (results.success) {
+             MPLogDebug(@"Initialized Facebook Audience Network");
+             complete(nil);
+         } else {
+             NSError *error =
+             [NSError errorWithDomain:@"FacebookAdapterConfiguration"
+                                 code:0
+                             userInfo:@{NSLocalizedDescriptionKey : results.message}];
+             complete(error);
+         }
+     }];
 }
 
 @end
