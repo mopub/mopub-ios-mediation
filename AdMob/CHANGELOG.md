@@ -1,4 +1,7 @@
 ## Changelog
+  * 7.46.0.0
+    * This version of the adapters has been certified with AdMob 7.46.0.
+
   * 7.44.0.0
     * This version of the adapters has been certified with AdMob 7.44.0.
 

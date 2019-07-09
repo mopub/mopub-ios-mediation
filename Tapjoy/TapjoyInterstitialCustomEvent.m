@@ -142,6 +142,12 @@
     [self.delegate interstitialCustomEventDidDisappear:self];
 }
 
+- (void)didClick:(TJPlacement*)placement
+{
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.placementName);
+    [self.delegate interstitialCustomEventDidReceiveTapEvent:self];  
+}
+
 - (void)tjcConnectSuccess:(NSNotification*)notifyObj {
     MPLogInfo(@"Tapjoy connect Succeeded");
     self.isConnecting = NO;

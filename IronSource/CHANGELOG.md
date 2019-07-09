@@ -1,9 +1,18 @@
 ## Changelog
-* 6.8.3.0.0
-  * This version of adapters has been certified with IronSource 6.8.3.0.
+ * 6.8.4.0.1
+    * Fix missing `MPLogging.h` import to avoid build errors.
+
+ * 6.8.4.0.0
+    * This version of the adapters has been certified with ironSource 6.8.4.0.
+    * Revise adapter code to comply with ironSource 6.8.4.0.
+    * Remove `placementName` as ironSource 6.8.4.0 no longer uses it.
+    * Gracefully fail ad loads if the unique `instanceIds` are not used during concurrent ad requests for rewarded video.
+
+ * 6.8.3.0.0
+    * This version of adapters has been certified with IronSource 6.8.3.0.
   
-* 6.8.1.0.2
-  * Call `rewardedVideoDidFailToLoadAdForCustomEvent` after logging a failure case to avoid potential crashes on nil IDs during Load failure. 
+ * 6.8.1.0.2
+    * Call `rewardedVideoDidFailToLoadAdForCustomEvent` after logging a failure case to avoid potential crashes on nil IDs during Load failure. 
   
  * 6.8.1.0.1
     * Log load failure before calling delegate method `rewardedVideoDidFailToLoadAdForCustomEvent` to fix crash due to dangling pointer.
