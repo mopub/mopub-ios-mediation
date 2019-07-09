@@ -30,6 +30,19 @@
  * events to all of the custom event instances.
  */
 
+typedef void(^InitializationCompletion)(BOOL);
+typedef NS_ENUM(NSUInteger, InitializationState) {
+    InitializationStateNotStarted,
+    InitializationStateOngoing,
+    InitializationStateSucceeded,
+    InitializationStateFailed
+};
+
+@interface ChartboostRouter ()
+@property (nonatomic) NSMutableArray<InitializationCompletion> *initializationCompletions;
+@property (nonatomic) InitializationState initialized;
+@end
+
 @implementation ChartboostRouter
 
 + (ChartboostRouter *)sharedRouter
@@ -49,6 +62,8 @@
     if (self) {
         self.interstitialEvents = [NSMutableDictionary dictionary];
         self.rewardedVideoEvents = [NSMutableDictionary dictionary];
+        self.initializationCompletions = [NSMutableArray array];
+        self.initialized = InitializationStateNotStarted;
         
         /*
          * We need the active locations set to keep track of locations that are currently being
@@ -87,14 +102,42 @@
     return self;
 }
 
+- (void)startWithAppId:(NSString *)appId appSignature:(NSString *)appSignature completion:(void(^)(BOOL))completion
+{
+    @synchronized (self) {
+        switch (self.initialized) {
+            case InitializationStateNotStarted:
+            case InitializationStateFailed:
+                if (completion) {
+                    [self.initializationCompletions addObject:completion];
+                }
+                [self startWithAppId:appId appSignature:appSignature];
+                break;
+            case InitializationStateOngoing:
+                if (completion) {
+                    [self.initializationCompletions addObject:completion];
+                }
+                break;
+            case InitializationStateSucceeded:
+                if (completion) {
+                    completion(YES);
+                }
+                break;
+        }
+    }
+}
+
 - (void)startWithAppId:(NSString *)appId appSignature:(NSString *)appSignature
 {
-    static dispatch_once_t once;
-    dispatch_once(&once, ^{
+    @synchronized (self) {
+        if (self.initialized == InitializationStateOngoing || self.initialized == InitializationStateSucceeded) {
+            return;
+        }
+        self.initialized = InitializationStateOngoing;
         [Chartboost startWithAppId:appId appSignature:appSignature delegate:self];
         [Chartboost setMediation:CBMediationMoPub withLibraryVersion:MP_SDK_VERSION adapterVersion:[ChartboostAdapterConfiguration mediationString]];
         [Chartboost setAutoCacheAds:FALSE];
-    });
+    }
 }
 
 #pragma mark - Insterstitial Ads
@@ -113,7 +156,7 @@
     if ([appId length] > 0 && [appSignature length] > 0) {
         [self setInterstitialEvent:event forLocation:location];
         
-        [self startWithAppId:appId appSignature:appSignature];
+        [self startWithAppId:appId appSignature:appSignature completion:nil];
         
         if ([self hasCachedInterstitialForLocation:location]) {
             [self didCacheInterstitial:location];
@@ -170,7 +213,7 @@
     if ([appId length] > 0 && [appSignature length] > 0) {
         [self setRewardedVideoEvent:event forLocation:location];
         
-        [self startWithAppId:appId appSignature:appSignature];
+        [self startWithAppId:appId appSignature:appSignature completion:nil];
         
         if ([self hasCachedRewardedVideoForLocation:location]) {
             [self didCacheRewardedVideo:location];
@@ -209,6 +252,18 @@
     [self.rewardedVideoEvents setObject:event forKey:location];
 }
 
+#pragma mark - ChartboostDelegate common methods
+
+- (void)didInitialize:(BOOL)status
+{
+    @synchronized (self) {
+        self.initialized = status ? InitializationStateSucceeded : InitializationStateFailed;
+        for (InitializationCompletion completion in self.initializationCompletions) {
+            completion(status);
+        }
+        [self.initializationCompletions removeAllObjects];
+    }
+}
 
 #pragma mark - ChartboostDelegate Interstitial methods
 
