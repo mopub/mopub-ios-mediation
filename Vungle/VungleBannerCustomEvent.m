@@ -29,26 +29,20 @@
 
 @implementation VungleBannerCustomEvent
 
-- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info {
+- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     self.placementId = [info objectForKey:kVunglePlacementIdKey];
     self.options = nil;
     self.bannerSize = size;
     self.bannerInfo = info;
     self.isAdCached = NO;
-
+    
     self.timeOutTimer = [NSTimer scheduledTimerWithTimeInterval:BANNER_TIMEOUT_INTERVAL repeats:NO block:^(NSTimer * _Nonnull timer) {
         if (!self.isAdCached) {
             [[VungleRouter sharedRouter] clearDelegateForRequestingBanner];
         }
     }];
-
+    
     [[VungleRouter sharedRouter] requestBannerAdWithCustomEventInfo:info size:size delegate:self];
-}
-
-- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    // Need to verify that we don't need to send the adMarkup string
-    [self requestAdWithSize:size customEventInfo:info];
-
 }
 
 - (void)dealloc {
@@ -68,16 +62,16 @@
         NSMutableDictionary *options = [NSMutableDictionary dictionary];
 
         // VunglePlayAdOptionKeyUser
-        if ([[NSUserDefaults standardUserDefaults] objectForKey:kVungleUserId]) {
-            NSString *userID = [[NSUserDefaults standardUserDefaults] objectForKey:kVungleUserId];
+        if ([self.localExtras objectForKey:kVungleUserId]) {
+            NSString *userID = [self.localExtras objectForKey:kVungleUserId];
             if (userID.length > 0) {
                 options[VunglePlayAdOptionKeyUser] = userID;
             }
         }
 
         // Ordinal
-        if ([[NSUserDefaults standardUserDefaults] objectForKey:kVungleOrdinal]) {
-            NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[[[NSUserDefaults standardUserDefaults] objectForKey:kVungleOrdinal] longLongValue]];
+        if ([self.localExtras objectForKey:kVungleOrdinal]) {
+            NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[[self.localExtras objectForKey:kVungleOrdinal] longLongValue]];
             NSUInteger ordinal = ordinalPlaceholder.unsignedIntegerValue;
             if (ordinal > 0) {
                 options[VunglePlayAdOptionKeyOrdinal] = @(ordinal);
@@ -85,8 +79,8 @@
         }
 
         // Start Muted
-        if ([[NSUserDefaults standardUserDefaults] objectForKey:kVungleStartMuted]) {
-            BOOL startMutedPlaceholder = [[[NSUserDefaults standardUserDefaults] objectForKey:kVungleStartMuted] boolValue];
+        if ([self.localExtras objectForKey:kVungleStartMuted]) {
+            BOOL startMutedPlaceholder = [[self.localExtras objectForKey:kVungleStartMuted] boolValue];
             options[VunglePlayAdOptionKeyStartMuted] = @(startMutedPlaceholder);
         } else {
             // Set mrec ad start-muted as default unless a user set.
@@ -118,6 +112,7 @@
 
 - (void)vungleAdDidAppear {
     MPLogInfo(@"Vungle video banner did appear");
+    [self.delegate trackImpression];
 }
 
 - (void)vungleAdWillDisappear
@@ -133,6 +128,7 @@
 - (void)vungleAdWasTapped
 {
     MPLogInfo(@"Vungle video banner was tapped");
+    [self.delegate trackClick];
 }
 
 - (void)vungleAdDidFailToLoad:(NSError *)error
