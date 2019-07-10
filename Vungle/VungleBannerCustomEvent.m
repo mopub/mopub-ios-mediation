@@ -50,6 +50,11 @@
 //    [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId];
 }
 
+- (BOOL)enableAutomaticImpressionAndClickTracking
+{
+    return NO;
+}
+
 #pragma mark - VungleRouterDelegate Methods
 
 - (void)vungleAdDidLoad
