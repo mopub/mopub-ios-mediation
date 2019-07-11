@@ -534,10 +534,6 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
     }
 
     if(targetDelegate) {
-        if ([info.didDownload isEqual:@YES]) {
-            [targetDelegate vungleAdWasTapped];
-        }
-
         if ([info.completedView boolValue] && [targetDelegate respondsToSelector:@selector(vungleAdShouldRewardUser)]) {
             [targetDelegate vungleAdShouldRewardUser];
         }

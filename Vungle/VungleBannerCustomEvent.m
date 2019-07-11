@@ -50,11 +50,6 @@
 //    [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId];
 }
 
-- (BOOL)enableAutomaticImpressionAndClickTracking
-{
-    return NO;
-}
-
 #pragma mark - VungleRouterDelegate Methods
 
 - (void)vungleAdDidLoad
@@ -117,7 +112,6 @@
 
 - (void)vungleAdDidAppear {
     MPLogInfo(@"Vungle video banner did appear");
-    [self.delegate trackImpression];
 }
 
 - (void)vungleAdWillDisappear
@@ -133,7 +127,6 @@
 - (void)vungleAdWasTapped
 {
     MPLogInfo(@"Vungle video banner was tapped");
-    [self.delegate trackClick];
 }
 
 - (void)vungleAdDidFailToLoad:(NSError *)error
