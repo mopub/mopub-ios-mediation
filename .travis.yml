@@ -10,9 +10,9 @@ before_install:
   - gem install cocoapods -v '0.32.1'
   - pod repo update
 script:
-  - chmod 777 ./travis/script/ios_automate_release.sh
-  - ./travis/script/ios_automate_release.sh
+  - chmod 777 ./ios-mediation/scripts/ios_automate_release.sh
+  - ./ios-mediation/scripts/ios_automate_release.sh
 # branch whitelist
 branches:
   only:
-  - Test-branch
+  - master
