@@ -54,16 +54,16 @@
         NSMutableDictionary *options = [NSMutableDictionary dictionary];
         
         // VunglePlayAdOptionKeyUser
-        if ([[NSUserDefaults standardUserDefaults] objectForKey:kVungleUserId]) {
-            NSString *userID = [[NSUserDefaults standardUserDefaults] objectForKey:kVungleUserId];
+        if ([self.localExtras objectForKey:kVungleUserId]) {
+            NSString *userID = [self.localExtras objectForKey:kVungleUserId];
             if (userID.length > 0) {
                 options[VunglePlayAdOptionKeyUser] = userID;
             }
         }
         
         // Ordinal
-        if ([[NSUserDefaults standardUserDefaults] objectForKey:kVungleOrdinal]) {
-            NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[[[NSUserDefaults standardUserDefaults] objectForKey:kVungleOrdinal] longLongValue]];
+        if ([self.localExtras objectForKey:kVungleOrdinal]) {
+            NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[[self.localExtras objectForKey:kVungleOrdinal] longLongValue]];
             NSUInteger ordinal = ordinalPlaceholder.unsignedIntegerValue;
             if (ordinal > 0) {
                 options[VunglePlayAdOptionKeyOrdinal] = @(ordinal);
@@ -71,8 +71,8 @@
         }
         
         // FlexVieAutoDismissSeconds
-        if ([[NSUserDefaults standardUserDefaults] objectForKey:kVungleFlexViewAutoDismissSeconds]) {
-            NSTimeInterval flexDismissTime = [[[NSUserDefaults standardUserDefaults] objectForKey:kVungleFlexViewAutoDismissSeconds] floatValue];
+        if ([self.localExtras objectForKey:kVungleFlexViewAutoDismissSeconds]) {
+            NSTimeInterval flexDismissTime = [[self.localExtras objectForKey:kVungleFlexViewAutoDismissSeconds] floatValue];
             if (flexDismissTime > 0) {
                 options[VunglePlayAdOptionKeyFlexViewAutoDismissSeconds] = @(flexDismissTime);
             }
