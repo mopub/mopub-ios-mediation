@@ -1,4 +1,8 @@
 ## Changelog
+  * 7.47.0.0
+    * This version of the adapters has been certified with AdMob 7.47.0.
+    * Fixed an issue where the control buttons of the video in native ads is not working properly.
+
   * 7.46.0.0
     * This version of the adapters has been certified with AdMob 7.46.0.
 
