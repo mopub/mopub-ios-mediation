@@ -139,7 +139,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
         self.interstitialAd = [[ALInterstitialAd alloc] initWithSdk: self.sdk];
         self.interstitialAd.adDisplayDelegate = self;
         self.interstitialAd.adVideoPlaybackDelegate = self;
-        [self.interstitialAd showOver: rootViewController.view.window andRender: preloadedAd];
+        [self.interstitialAd showAd: preloadedAd];
     }
     else
     {
@@ -227,7 +227,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
 
 - (void)videoPlaybackEndedInAd:(ALAd *)ad atPlaybackPercent:(NSNumber *)percentPlayed fullyWatched:(BOOL)wasFullyWatched
 {
-    MPLogInfo(@"Interstitial video playback ended at playback percent: %lu", percentPlayed.unsignedIntegerValue);
+    MPLogInfo(@"Interstitial video playback ended at playback percent: %lu", (unsigned long)percentPlayed.unsignedIntegerValue);
 }
 
 #pragma mark - Utility Methods

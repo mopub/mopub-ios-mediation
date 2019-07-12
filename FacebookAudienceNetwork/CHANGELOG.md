@@ -1,4 +1,21 @@
 ## Changelog
+* 5.4.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.4.0.
+
+* 5.3.2.1
+    * Fix mapping for native ads that causes invalid argument exceptions due to invalid URLs. 
+    * Update the initialilization logic in `FacebookAdapterConfiguration` to have completion callbacks.
+
+* 5.3.2.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.3.2.
+    * Removed dependency on `CoreLocation.framework`.
+
+* 5.3.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.3.0.
+
+* 5.2.0.1
+    * Nil out the 1-hour expiration timer to release memory after a rewarded video has been shown.
+
 * 5.2.0.0
     * This version of the adapters has been certified with Facebook Audience Network 5.2.0. 
     * Add `FacebookNativeAdRenderer` to render native ads using [predefined layouts from Facebook Audience Network](https://developers.facebook.com/docs/audience-network/ios/nativeadtemplate). You won't need to use a custom layout. Simply pass your `MPStaticNativeAdRendererSettings` to the `FacebookNativeAdRenderer`'s `rendererConfigurationWithRendererSettings:` call, and register that configuration with the ad request.

@@ -7,10 +7,17 @@
 
 #import "FacebookAdapterConfiguration.h"
 #import <FBAudienceNetwork/FBAudienceNetwork.h>
+#import "FacebookAdapterConfiguration.h"
 
 #if __has_include("MoPub.h")
 #import "MPLogging.h"
+#import "MPConstants.h"
 #endif
+
+#define FACEBOOK_ADAPTER_VERSION             @"5.4.0.0"
+#define MOPUB_NETWORK_NAME                   @"facebook"
+
+static NSString * const kFacebookPlacementIDs = @"placement_ids";
 
 @implementation FacebookAdapterConfiguration
 
@@ -34,7 +41,7 @@
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"5.2.0.0";
+    return FACEBOOK_ADAPTER_VERSION;
 }
 
 - (NSString *)biddingToken {
@@ -42,32 +49,36 @@
 }
 
 - (NSString *)moPubNetworkName {
-    return @"facebook";
+    return MOPUB_NETWORK_NAME;
 }
 
 - (NSString *)networkSdkVersion {
-    // `FBAdSettings` has no API to retrieve the Facebook Audience Network SDK version
-    return @"5.2.0";
+    return FB_AD_SDK_VERSION;
+}
+
++ (NSString*)mediationString {
+    return [NSString stringWithFormat:@"MOPUB_%@:%@", MP_SDK_VERSION, FACEBOOK_ADAPTER_VERSION];
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration
                                   complete:(void(^)(NSError *))complete {
-    // Facebook Audience Network does not have a SDK-level initialization that needs to
-    // be invoked prior to requesting ads.
-    
-    // However, we need to initialize an adview to trigger the internal
-    // `[FBAdUtility initializeAudienceNetwork]` method which is required to
-    // properly initialize the bidding tokens from FAN.
-    dispatch_async(dispatch_get_main_queue(), ^{
-        FBAdView * initHackforFacebook = [[FBAdView alloc] initWithPlacementID:@"" adSize:kFBAdSize320x50 rootViewController:[UIViewController new]];
-        if (initHackforFacebook) {
-            MPLogDebug(@"Initialized Facebook Audience Network");
-        }
-    });
-    
-    if (complete != nil) {
-        complete(nil);
-    }
+    FBAdInitSettings *fbSettings = [[FBAdInitSettings alloc]
+                                    initWithPlacementIDs:configuration[kFacebookPlacementIDs]
+                                    mediationService:[FacebookAdapterConfiguration mediationString]];
+    [FBAudienceNetworkAds
+     initializeWithSettings:fbSettings
+     completionHandler:^(FBAdInitResults *results) {
+         if (results.success) {
+             MPLogDebug(@"Initialized Facebook Audience Network");
+             complete(nil);
+         } else {
+             NSError *error =
+             [NSError errorWithDomain:@"FacebookAdapterConfiguration"
+                                 code:0
+                             userInfo:@{NSLocalizedDescriptionKey : results.message}];
+             complete(error);
+         }
+     }];
 }
 
 @end

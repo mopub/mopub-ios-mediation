@@ -1,4 +1,19 @@
 ## Changelog
+  * 12.3.1.2
+    * Remove duplicate `Tapjoy connect` calls in `TapjoyAdapterConfiguration`.
+    
+  * 12.3.1.1
+    * Update minimum compatible MoPub SDK version for adapters to v5.6.0.
+    
+  * 12.3.1.0
+    * This version of adapters has been certified with Tapjoy 12.3.1.
+    * Fix misleading logging for ad load success and ad show failure in `TapjoyRewardedVideoCustomEvent`.
+    * Add `didClick` callback support for interstitial and rewarded video ad clicks.
+
+  * 12.2.1.0
+    * This version of the adapters has been certified with Tapjoy 12.2.1.
+    * Pass MoPub's log level to Tapjoy. To adjust Tapjoy's log level via MoPub's log settings, reference the steps on [this page](https://developers.mopub.com/publishers/ios/test/#enable-logging).
+    
   * 12.2.0.4
     * Adapters now fetch only the core MoPub iOS SDK (excluding viewability SDKs). Publishers wishing to integrate viewability should fetch the `mopub-ios-sdk` dependency in their own Podfile.
 

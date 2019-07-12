@@ -1,4 +1,25 @@
 ## Changelog
+   * 6.7.1.0
+     * This version of the adapters has been certified with AppLovin SDK 6.7.1.
+
+   * 6.6.1.0
+     * This version of the adapters has been certified with AppLovin SDK 6.6.1.
+
+   * 6.6.0.0
+     * This version of the adapters has been certified with AppLovin SDK 6.6.0.
+
+   * 6.5.4.0
+     * This version of the adapters has been certified with AppLovin SDK 6.5.4.
+     * Fix compiler warnings.
+     * Remove `userDeclinedToViewAd:` rewarded video delegate method as prompts have been removed.
+
+   * 6.4.2.0
+     * This version of the adapters has been certified with AppLovin SDK 6.4.2.
+
+   * 6.4.0.0
+     * This version of the adapters has been certified with AppLovin SDK 6.4.0
+     * Pass MoPub's log level to AppLovin. To adjust AppLovin's log level via MoPub's log settings, reference [this page](https://developers.mopub.com/publishers/ios/test/#enable-logging).
+
    * 6.2.0.1
      * Persist the AppLovin SDK Key for Unity publishers without access to set it in the project's info.plist. Click [here](https://developers.mopub.com/publishers/mediation/networks/applovin/#download-and-integration) for further implementation instructions.
 
