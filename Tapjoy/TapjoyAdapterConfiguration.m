@@ -41,7 +41,7 @@ typedef NS_ENUM(NSInteger, TapjoyAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"12.2.1.0";
+    return @"12.3.1.2";
 }
 
 - (NSString *)biddingToken {
@@ -86,7 +86,7 @@ typedef NS_ENUM(NSInteger, TapjoyAdapterErrorCode) {
         
     }
     // Initialize from inputted configuration settings
-    if (sdkKey != nil) {
+    else if (sdkKey != nil) {
         MPLogInfo(@"Connecting to Tapjoy via MoPub dashboard settings");
         NSMutableDictionary *connectOptions = [[NSMutableDictionary alloc] init];
         [connectOptions setObject:@(enableDebug) forKey:TJC_OPTION_ENABLE_LOGGING];

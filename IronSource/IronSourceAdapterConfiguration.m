@@ -8,6 +8,9 @@
 #import <IronSource/IronSource.h>
 #import "IronSourceAdapterConfiguration.h"
 #import "IronSourceManager.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+#endif
 
 NSString * const kIronSourceAppkey = @"applicationKey";
 
@@ -29,7 +32,7 @@ NSString * const kIronSourceAppkey = @"applicationKey";
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"6.8.4.0.0";
+    return @"6.8.4.0.1";
 }
 
 - (NSString *)biddingToken {

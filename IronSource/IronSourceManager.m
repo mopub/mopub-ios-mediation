@@ -3,6 +3,10 @@
 //
 
 #import "IronSourceManager.h"
+#if __has_include("MoPub.h")
+    #import "MPLogging.h"
+    #import "MoPub.h"
+#endif
 
 @interface IronSourceManager ()
 
