@@ -61,12 +61,11 @@
         UADSMediationMetaData *mediationMetaData = [[UADSMediationMetaData alloc] init];
         [mediationMetaData setName:@"MoPub"];
         [mediationMetaData setVersion:[[MoPub sharedInstance] version]];
-        [mediationMetaData set:@"enable_metadata_load" value:[NSNumber numberWithBool:YES]];
         [mediationMetaData set:@"adapter_version"  value:ADAPTER_VERSION];
         [mediationMetaData commit];
         
         [UnityAdsBanner setDelegate:self];
-        [UnityAds initialize:gameId delegate:self];
+        [UnityAds initialize:gameId delegate:self testMode:false enablePerPlacementLoad:true];
     });
     [self setIfUnityAdsCollectsPersonalInfo];
 }
@@ -100,11 +99,8 @@
 
 - (void)requestVideoAdWithGameId:(NSString *)gameId placementId:(NSString *)placementId delegate:(id<UnityRouterDelegate>)delegate;
 {
-    //Call metadata load API
-    NSString *uniqueEventId = [[NSUUID UUID] UUIDString];
-    UADSMetaData *loadMetaData = [[UADSMetaData alloc] initWithCategory:@"load"];
-    [loadMetaData set:uniqueEventId value:placementId];
-    [loadMetaData commit];
+    //Call load first, to minimize reporting discrepencies
+    [UnityAds load:placementId];
     
     if([UnityAds getPlacementState:placementId] == kUnityAdsPlacementStateNoFill){
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
@@ -114,10 +110,13 @@
     
     if (!self.isAdPlaying) {
         [self.delegateMap setObject:delegate forKey:placementId];
-        [self initializeWithGameId:gameId];
+        
+        if (![UnityAds isInitialized]) {
+            [self initializeWithGameId:gameId];
+        }
 
         // Need to check immediately as an ad may be cached.
-        if ([self isAdAvailableForPlacementId:placementId]) {
+        if ([UnityAds isReady:placementId]) {
             [self unityAdsReady:placementId];
         }
         // MoPub timeout will handle the case for an ad failing to load.
