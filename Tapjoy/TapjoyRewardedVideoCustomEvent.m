@@ -11,7 +11,7 @@
 #endif
 #import "TapjoyGlobalMediationSettings.h"
 
-@interface TapjoyRewardedVideoCustomEvent () <TJPlacementDelegate, TJCVideoAdDelegate>
+@interface TapjoyRewardedVideoCustomEvent () <TJPlacementDelegate, TJPlacementVideoDelegate>
 @property (nonatomic, strong) TJPlacement *placement;
 @property (nonatomic, assign) BOOL isConnecting;
 @property (nonatomic, copy) NSString *placementName;
@@ -156,16 +156,16 @@
 #pragma mark - TJPlacementDelegate methods
 
 - (void)requestDidSucceed:(TJPlacement *)placement {
-    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.placementName);
     if (!placement.isContentAvailable) {
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
-        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementName);
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementName);
         [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
     }
 }
 
 - (void)contentIsReady:(TJPlacement *)placement {
     MPLogInfo(@"Tapjoy rewarded video content is ready");
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.placementName);
     [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
 }
 
@@ -175,7 +175,6 @@
 }
 
 - (void)contentDidAppear:(TJPlacement *)placement {
-    [Tapjoy setVideoAdDelegate:self];
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.placementName);
     [self.delegate rewardedVideoWillAppearForCustomEvent:self];
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.placementName);
@@ -191,10 +190,24 @@
     [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
 }
 
+- (void)didClick:(TJPlacement*)placement
+{
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.placementName);
+    [self.delegate rewardedVideoDidReceiveTapEventForCustomEvent:self];
+}
+
 #pragma mark Tapjoy Video
 
-- (void)videoAdCompleted {
+- (void)videoDidStart:(TJPlacement *)placement {
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.placement);
+}
+
+- (void)videoDidComplete:(TJPlacement*)placement {
     [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:[[MPRewardedVideoReward alloc] initWithCurrencyAmount:@(kMPRewardedVideoRewardCurrencyAmountUnspecified)]];
+}
+
+- (void)videoDidFail:(TJPlacement*)placement error:(NSString*)errorMsg {
+    MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:errorMsg], self.placement);
 }
 
 - (void)tjcConnectSuccess:(NSNotification*)notifyObj {

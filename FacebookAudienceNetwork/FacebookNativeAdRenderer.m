@@ -103,7 +103,7 @@
     }
     
     if ([self.adView respondsToSelector:@selector(nativePrivacyInformationIconImageView)]) {
-        FBAdOptionsView *adOptionsView = [[FBAdOptionsView alloc] init];
+        FBAdOptionsView *adOptionsView = (FBAdOptionsView *)adapter.privacyInformationIconView;
         adOptionsView.frame = self.adView.nativePrivacyInformationIconImageView.bounds;
         adOptionsView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         self.adView.nativePrivacyInformationIconImageView.userInteractionEnabled = YES;

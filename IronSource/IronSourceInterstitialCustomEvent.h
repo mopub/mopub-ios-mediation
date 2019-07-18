@@ -10,8 +10,11 @@
     #import "MPInterstitialCustomEvent.h"
 #endif
 #import <IronSource/IronSource.h>
+#import "IronSourceInterstitialDelegate.h"
+#import "IronSourceManager.h"
+#import "IronSourceUtils.h"
 
-@interface IronSourceInterstitialCustomEvent : MPInterstitialCustomEvent <ISDemandOnlyInterstitialDelegate>
+@interface IronSourceInterstitialCustomEvent : MPInterstitialCustomEvent
 
 
 @end

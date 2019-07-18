@@ -1,4 +1,10 @@
 ## Changelog
+  * 3.3.8.1.0
+    * This version of the adapters has been certified with AdColony 3.3.8.1.
+
+  * 3.3.8.0
+    * This version of the adapters has been certified with AdColony 3.3.8.
+
   * 3.3.7.1
     * Fail the adapters if the app ID and zone ID are empty.
 
