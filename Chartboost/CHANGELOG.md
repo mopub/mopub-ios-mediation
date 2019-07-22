@@ -1,6 +1,6 @@
 ## Changelog
-  * 8.0.0.0
-      * This version of the adapters has been certified with Chartboost 8.0.0.
+  * 8.0.1.0
+      * This version of the adapters has been certified with Chartboost 8.0.1.
       * Added banner adapter.
 
   * 7.5.0.0
