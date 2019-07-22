@@ -17,10 +17,16 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
- Provides adapter information back to the SDK and is the main access point
- for all adapter-level configuration.
- */
+* Provides adapter information back to the SDK and is the main access point
+* for all adapter-level configuration.
+*/
 @interface IronSourceAdapterConfiguration : MPBaseAdapterConfiguration
+/**
+* Extracts the parameters used for network SDK initialization and if all required
+* parameters are present, updates the cache.
+* @param parameters Ad response parameters
+*/
++ (void)updateInitializationParameters:(NSDictionary *)parameters;
 // MPAdapterConfiguration
 @property (nonatomic, copy, readonly) NSString * adapterVersion;
 @property (nonatomic, copy, readonly) NSString * biddingToken;
