@@ -102,16 +102,6 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
         
         MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], zoneIdentifier);
     }
-    else
-    {
-        NSString *failureReason = [NSString stringWithFormat: @"Adapter requested to display a banner with invalid size: %@.", NSStringFromCGSize(size)];
-        NSError *error = [NSError errorWithDomain: kALMoPubMediationErrorDomain
-                                             code: kALErrorCodeUnableToRenderAd
-                                         userInfo: @{NSLocalizedFailureReasonErrorKey : failureReason}];
-        
-        [self.delegate bannerCustomEvent: self didFailToLoadAdWithError: error];
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], zoneIdentifier);
-    }
 }
 
 - (BOOL)enableAutomaticImpressionAndClickTracking

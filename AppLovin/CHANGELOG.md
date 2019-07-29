@@ -1,6 +1,8 @@
 ## Changelog
    * 6.8.0.0
      * This version of the adapters has been certified with AppLovin SDK 6.8.0.
+
+    * 6.7.1.1
      * Fix banner size passing as part of ad format unification. This version is only compatible with the 5.8.0+ release of the MoPub SDK.
 
    * 6.7.1.0
