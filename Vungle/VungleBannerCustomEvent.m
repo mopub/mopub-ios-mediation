@@ -170,4 +170,8 @@
     return self.placementId;
 }
 
+- (CGSize)getBannerSize {
+    return self.bannerSize;
+}
+
 @end

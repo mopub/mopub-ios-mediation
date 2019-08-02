@@ -70,4 +70,9 @@ extern const CGSize kVNGMRECSize;
 
 - (void)vungleBannerAdDidLoadInView:(UIView *)view;
 
+/**
+ *  return banner size
+ */
+- (CGSize)getBannerSize;
+
 @end
