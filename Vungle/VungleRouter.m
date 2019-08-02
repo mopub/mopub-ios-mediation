@@ -283,7 +283,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
                                             delegate:delegate];
             }
         } else {
-            if ([[VungleSDK sharedSDK] loadPlacementWithID:placementID withSize:size error:&error]) {
+            if ([[VungleSDK sharedSDK] loadPlacementWithID:placementID withSize:[self getVungleBannerAdSizeType:size] error:&error]) {
                 NSLog(@"Vungle: Start to load an ad for Placement ID :%@", placementID);
             } else {
                 [self requestBannerAdFailedWithError:error
@@ -495,6 +495,18 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
         NSLog(@"Vungle: Unable to load an ad for Placement ID :%@, Error %@", placementID, error);
     }
     [delegate vungleAdDidFailToLoad:error];
+}
+
+- (VungleAdSize)getVungleBannerAdSizeType:(CGSize)size {
+    if (CGSizeEqualToSize(size, MOPUB_BANNER_SIZE)) {
+        return VungleAdSizeBanner;
+    } else if (CGSizeEqualToSize(size, CGSizeMake(300,50))) {
+        return VungleAdSizeBannerShort;
+    } else if (CGSizeEqualToSize(size, MOPUB_LEADERBOARD_SIZE)) {
+        return VungleAdSizeBannerLeaderboard;
+    }
+    
+    return VungleAdSizeUnknown;
 }
 
 #pragma mark - VungleSDKDelegate Methods
