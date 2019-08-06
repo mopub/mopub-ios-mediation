@@ -30,22 +30,25 @@
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.appID);
     
     if ([self.appID length] == 0 || [appSignature length] == 0) {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Failed to load Chartboost banner: missing either appId or appSignature"];
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Failed to load Chartboost banner: missing either appId or appSignature. Make sure you have a valid appId or appSignature entered on the MoPub dashboard."];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.appID);
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+        
         return;
     }
     
-    NSString *location = [info objectForKey:@"location"];
-    location = [location length] != 0 ? location: CBLocationDefault;
-    if (self.banner && (!CGSizeEqualToSize(self.banner.size, size) || ![self.banner.location isEqualToString:location])) {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Chartboost adapter failed to load ad: size or location in new request doesn't match the existing banner values."];
+    if (self.banner) {
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Chartboost adapter failed to load ad: requestAdWithSize called twice on the same event."];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.appID);
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+        
         return;
     }
     
     [ChartboostAdapterConfiguration updateInitializationParameters:info];
+    
+    NSString *location = [info objectForKey:@"location"];
+    location = [location length] != 0 ? location: CBLocationDefault;
     
     __weak typeof(self) weakSelf = self;
     [[ChartboostRouter sharedRouter] startWithAppId:self.appID appSignature:appSignature completion:^(BOOL initialized) {
@@ -129,6 +132,7 @@
 {
     NSString *description = [NSString stringWithFormat:@"Chartboost adapter failed to load ad with error %lu", (unsigned long)error.code];
     NSError *nserror = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:description];
+    
     return nserror;
 }
 
@@ -136,6 +140,7 @@
 {
     NSString *description = [NSString stringWithFormat:@"Chartboost adapter failed to show ad with error %lu", (unsigned long)error.code];
     NSError *nserror = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:description];
+    
     return nserror;
 }
 
@@ -143,6 +148,7 @@
 {
     NSString *description = [NSString stringWithFormat:@"Chartboost adapter failed to click ad with error %lu", (unsigned long)error.code];
     NSError *nserror = [NSError errorWithCode:MOPUBErrorUnknown localizedDescription:description];
+    
     return nserror;
 }
 
@@ -150,6 +156,7 @@
 {
     NSString *description = [NSString stringWithFormat:@"Chartboost adapter did finish handling click with error %lu", (unsigned long)error.code];
     NSError *nserror = [NSError errorWithCode:MOPUBErrorUnknown localizedDescription:description];
+    
     return nserror;
 }
 
