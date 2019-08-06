@@ -30,7 +30,7 @@
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.appID);
     
     if ([self.appID length] == 0 || [appSignature length] == 0) {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Failed to load Chartboost banner: missing either appId or appSignature"];
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Failed to load Chartboost banner: missing either appId or appSignature. Make sure you have a valid appId or appSignature entered on the MoPub dashboard."];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.appID);
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
         
