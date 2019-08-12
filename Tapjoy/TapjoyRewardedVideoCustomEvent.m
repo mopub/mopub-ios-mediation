@@ -98,6 +98,7 @@
     if (self.placementName != nil) {
         self.placement = [TJPlacement placementWithName:self.placementName mediationAgent:@"mopub" mediationId:nil delegate:self];
         self.placement.adapterVersion = MP_SDK_VERSION;
+        self.placement.videoDelegate = self;
         
         // Advanced bidding response
         if (adMarkup != nil) {
@@ -108,7 +109,7 @@
                 [self.placement setAuctionData:auctionData];
             }
         }
-
+        
         MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.placementName);
         [self.placement requestContent];
     }
@@ -199,7 +200,7 @@
 #pragma mark Tapjoy Video
 
 - (void)videoDidStart:(TJPlacement *)placement {
-    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.placement);
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.placementName);
 }
 
 - (void)videoDidComplete:(TJPlacement*)placement {
@@ -207,7 +208,7 @@
 }
 
 - (void)videoDidFail:(TJPlacement*)placement error:(NSString*)errorMsg {
-    MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:errorMsg], self.placement);
+    MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:[NSError errorWithCode:MOPUBErrorUnknown localizedDescription:errorMsg]], self.placementName);
 }
 
 - (void)tjcConnectSuccess:(NSNotification*)notifyObj {
