@@ -109,7 +109,7 @@
                 [self.placement setAuctionData:auctionData];
             }
         }
-        
+
         MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.placementName);
         [self.placement requestContent];
     }
