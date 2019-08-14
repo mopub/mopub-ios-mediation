@@ -16,6 +16,8 @@
 
 // If you need to play ads with vungle options, you may modify playVungleAdFromRootViewController and create an options dictionary and call the playAd:withOptions: method on the vungle SDK.
 
+static const CGFloat kVGNMoPubMRECWidthFor280Height = 336.0f;
+
 @interface VungleBannerCustomEvent () <VungleRouterDelegate>
 
 @property (nonatomic, copy) NSString *placementId;
@@ -32,6 +34,12 @@
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     self.placementId = [info objectForKey:kVunglePlacementIdKey];
     self.options = nil;
+    
+    // Since MoPub supports two sizes MREC Ad (300 x 250 and 336 x 280)),
+    // if they pass 336 x 280 size, we will convert it to 300 x 250 size
+    if (CGSizeEqualToSize(size, CGSizeMake(kVGNMoPubMRECWidthFor280Height, kMPPresetMaxAdSize280Height.height))) {
+        size = kVGNMRECSize;
+    }
     self.bannerSize = size;
     self.bannerInfo = info;
     self.isAdCached = NO;
@@ -90,7 +98,7 @@
         self.options = options.count ? options : nil;
 
         // generate view with size
-        UIView *mrecAdView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, MOPUB_MEDIUM_RECT_SIZE.width, MOPUB_MEDIUM_RECT_SIZE.height)];
+        UIView *mrecAdView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bannerSize.width, self.bannerSize.height)];
 
         // router call to add ad view to view - should return the updated view.
         mrecAdView = [[VungleRouter sharedRouter] renderBannerAdInView:mrecAdView options:self.options forPlacementID:self.placementId];
