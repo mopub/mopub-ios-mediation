@@ -126,18 +126,6 @@
     }
 }
 
--(void)requestBannerAdWithGameId:(NSString *)gameId placementId:(NSString *)placementId delegate:(id <UnityAdsBannerDelegate>)delegate {
-    [self initializeWithGameId:gameId];
-    self.bannerDelegate = delegate;
-
-    if ([UnityAds isReady:placementId]) {
-        [UnityAdsBanner loadBanner:placementId];
-    } else {
-        self.bannerLoadRequested = YES;
-        self.bannerPlacementId = placementId;
-    }
-}
-
 - (BOOL)isAdAvailableForPlacementId:(NSString *)placementId
 {
     return [UnityAds isReady:placementId];
@@ -238,28 +226,6 @@
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorUnknown userInfo:nil];
         [delegate unityAdsDidFailWithError:error];
     }
-}
-
-#pragma mark - UnityAdsBannerDelegate
-
--(void)unityAdsBannerDidLoad:(NSString *)placementId view:(UIView *)view {
-    [self.bannerDelegate unityAdsBannerDidLoad:placementId view:view];
-}
-
--(void)unityAdsBannerDidUnload:(NSString *)placementId {
-    [self.bannerDelegate unityAdsBannerDidUnload:placementId];
-}
--(void)unityAdsBannerDidShow:(NSString *)placementId {
-    [self.bannerDelegate unityAdsBannerDidShow:placementId];
-}
--(void)unityAdsBannerDidHide:(NSString *)placementId {
-    [self.bannerDelegate unityAdsBannerDidHide:placementId];
-}
--(void)unityAdsBannerDidClick:(NSString *)placementId {
-    [self.bannerDelegate unityAdsBannerDidClick:placementId];
-}
--(void)unityAdsBannerDidError:(NSString *)message {
-    [self.bannerDelegate unityAdsBannerDidError:message];
 }
 
 @end
