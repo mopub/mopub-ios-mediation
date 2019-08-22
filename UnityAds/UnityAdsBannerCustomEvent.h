@@ -8,6 +8,6 @@
     #import "MPBannerCustomEvent.h"
 #endif
 
-@interface UnityAdsBannerCustomEvent : MPBannerCustomEvent<UnityAdsBannerDelegate>
+@interface UnityAdsBannerCustomEvent : MPBannerCustomEvent<UADSBannerAdViewDelegate>
 
 @end
