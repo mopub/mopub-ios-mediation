@@ -96,7 +96,7 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
     NSString * userId = configuration[kUserIdKey];
 
     MPLogInfo(@"Attempting to initialize the AdColony SDK with:\n%@", configuration);
-    [AdColonyController initializeAdColonyCustomEventWithAppId:appId allZoneIds:allZoneIds userId:userId callback:^{
+    [AdColonyController initializeAdColonyCustomEventWithAppId:appId allZoneIds:allZoneIds userId:userId callback:^(NSError *error){
         if (complete != nil) {
             complete(nil);
         }

@@ -8,10 +8,11 @@
 #import <AdColony/AdColony.h>
 #import "AdColonyAdapterConfiguration.h"
 #import "AdColonyInterstitialCustomEvent.h"
+#import "AdColonyController.h"
+#import "AdColonyAdapterUtility.h"
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
 #endif
-#import "AdColonyController.h"
 
 @interface AdColonyInterstitialCustomEvent ()
 
@@ -25,21 +26,17 @@
 #pragma mark - MPInterstitialCustomEvent Subclass Methods
 
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info {
-
-    NSString *appId = [info objectForKey:@"appId"];
-    NSArray *allZoneIds = [info objectForKey:@"allZoneIds"];
-    if (![self paramsAreValid:appId withAllZoneIds:allZoneIds]) {
+    NSString *appId = info[@"appId"];
+    NSArray *allZoneIds = info[@"allZoneIds"];
+    NSError *error = [AdColonyAdapterUtility validateAppId:appId andZoneIds:allZoneIds];
+    if (error) {
+        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
     
-    self.zoneId = [info objectForKey:@"zoneId"];
-    if (self.zoneId == nil || [self.zoneId length] == 0) {
-        if (allZoneIds != nil && allZoneIds.count > 0) {
-            NSString *firstZoneId = allZoneIds[0];
-            if (firstZoneId != nil && [self.zoneId length] > 0) {
-                self.zoneId = firstZoneId;
-            }
-        }
+    self.zoneId = info[@"zoneId"];
+    if (self.zoneId.length == 0) {
+        self.zoneId = allZoneIds[0];
     }
     
     NSString *userId = [info objectForKey:@"userId"];
@@ -47,7 +44,7 @@
     // Cache the initialization parameters
     [AdColonyAdapterConfiguration updateInitializationParameters:info];
     
-    [AdColonyController initializeAdColonyCustomEventWithAppId:appId allZoneIds:allZoneIds userId:userId callback:^{
+    [AdColonyController initializeAdColonyCustomEventWithAppId:appId allZoneIds:allZoneIds userId:userId callback:^(NSError *error){
         __weak AdColonyInterstitialCustomEvent *weakSelf = self;
         [AdColony requestInterstitialInZone:[self getAdNetworkId] options:nil success:^(AdColonyInterstitial * _Nonnull ad) {
             weakSelf.ad = ad;
@@ -99,7 +96,7 @@
             
             MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
         } else {
-            NSError *error = [self createErrorWith:@"Failed to show AdColony video"
+            NSError *error = [AdColonyAdapterUtility createErrorWith:@"Failed to show AdColony video"
                                          andReason:@"Unknown Error"
                                      andSuggestion:@""];
             MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
@@ -107,7 +104,7 @@
             [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
         }
     } else {
-        NSError *error = [self createErrorWith:@"Failed to show AdColony video"
+        NSError *error = [AdColonyAdapterUtility createErrorWith:@"Failed to show AdColony video"
                                      andReason:@"ad is not available"
                                  andSuggestion:@""];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
@@ -118,47 +115,6 @@
 
 - (NSString *) getAdNetworkId {
     return self.zoneId;
-}
-
-- (NSError *)createErrorWith:(NSString *)description andReason:(NSString *)reason andSuggestion:(NSString *)suggestion {
-    NSDictionary *userInfo = @{
-                               NSLocalizedDescriptionKey: NSLocalizedString(description, nil),
-                               NSLocalizedFailureReasonErrorKey: NSLocalizedString(reason, nil),
-                               NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(suggestion, nil)
-                               };
-    
-    return [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:userInfo];
-}
-
-- (Boolean) paramsAreValid:(NSString *)appId withAllZoneIds:(NSArray *)allZoneIds {
-    if (appId == nil || [appId length] == 0) {
-        NSError *error = [self createErrorWith:@"AdColony adapter failed to request interstitial"
-                                     andReason:@"App Id is nil/empty"
-                                 andSuggestion:@"Make sure the App Id is configured on the MoPub UI."];
-        
-        MPLogDebug(@"%@. %@. %@", error.localizedDescription, error.localizedFailureReason, error.localizedRecoverySuggestion);
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
-        
-        return false;
-    }
-    
-    if (allZoneIds != nil && allZoneIds.count > 0) {
-        NSString *firstZoneId = allZoneIds[0];
-        if (firstZoneId != nil || [firstZoneId length] > 0) {
-            return true;
-        }
-    } else if (allZoneIds == nil || allZoneIds.count == 0) {
-        allZoneIds = [NSArray arrayWithObjects:@""];
-    }
-    
-    NSError *error = [self createErrorWith:@"AdColony adapter failed to request interstitial"
-                                 andReason:@"Zone Id is nil/empty"
-                             andSuggestion:@"Make sure the Zone Id is configured on the MoPub UI."];
-    
-    MPLogDebug(@"%@. %@. %@", error.localizedDescription, error.localizedFailureReason, error.localizedRecoverySuggestion);
-    [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
-    
-    return false;
 }
 
 @end

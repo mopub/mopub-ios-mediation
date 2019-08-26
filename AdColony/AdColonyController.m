@@ -27,7 +27,7 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
 
 @implementation AdColonyController
 
-+ (void)initializeAdColonyCustomEventWithAppId:(NSString *)appId allZoneIds:(NSArray *)allZoneIds userId:(NSString *)userId callback:(void(^)())callback {
++ (void)initializeAdColonyCustomEventWithAppId:(NSString *)appId allZoneIds:(NSArray *)allZoneIds userId:(NSString *)userId callback:(void(^)(NSError *error))callback {
     AdColonyController *instance = [AdColonyController sharedInstance];
 
     @synchronized (instance) {
@@ -36,7 +36,7 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
 
         if (instance.initState == INIT_STATE_INITIALIZED && zoneIdsSame) {
             if (callback) {
-                callback();
+                callback(nil);
             }
         } else {
             if (instance.initState != INIT_STATE_INITIALIZING) {
@@ -80,7 +80,7 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
                     }
                     
                     if (callback != nil) {
-                        callback();
+                        callback(nil);
                     }
                 }];
             }

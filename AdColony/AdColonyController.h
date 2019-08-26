@@ -33,7 +33,7 @@ typedef enum {
  * @param allZoneIds All the possible zone IDs the application may use across all ad formats.
  * @param userId The user ID to attribute ads/rewards.
  */
-+ (void)initializeAdColonyCustomEventWithAppId:(NSString *)appId allZoneIds:(NSArray *)allZoneIds userId:(NSString *)userId callback:(void(^)())callback;
++ (void)initializeAdColonyCustomEventWithAppId:(NSString *)appId allZoneIds:(NSArray *)allZoneIds userId:(NSString *)userId callback:(void(^)(NSError *error))callback;
 
 /*
  * Enables test ads for your application without changing dashboard settings.

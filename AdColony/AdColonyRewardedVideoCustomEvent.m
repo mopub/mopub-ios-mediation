@@ -10,6 +10,7 @@
 #import "AdColonyRewardedVideoCustomEvent.h"
 #import "AdColonyInstanceMediationSettings.h"
 #import "AdColonyController.h"
+#import "AdColonyAdapterUtility.h"
 #if __has_include("MoPub.h")
     #import "MoPub.h"
     #import "MPLogging.h"
@@ -31,54 +32,49 @@
 - (void)initializeSdkWithParameters:(NSDictionary *)parameters {
     // Do not wait for the callback since this method may be run on app
     // launch on the main thread.
-    [self initializeSdkWithParameters:parameters callback:^{
-        MPLogInfo(@"AdColony SDK initialization complete");
+    [self initializeSdkWithParameters:parameters callback:^(NSError *error){
+        if (error) {
+            MPLogInfo(@"AdColony SDK initialization failed");
+        }else{
+            MPLogInfo(@"AdColony SDK initialization complete");
+        }
     }];
 }
 
-- (void)initializeSdkWithParameters:(NSDictionary *)parameters callback:(void(^)(void))completionCallback {
-    NSString *appId = [parameters objectForKey:@"appId"];
-    NSArray *allZoneIds = [parameters objectForKey:@"allZoneIds"];
-    
-    if (![self paramsAreValid:appId withAllZoneIds:allZoneIds]) {
+- (void)initializeSdkWithParameters:(NSDictionary *)parameters callback:(void(^)(NSError *error))completionCallback {
+    NSString *appId = parameters[@"appId"];
+    NSArray *allZoneIds = parameters[@"allZoneIds"];
+    NSError *error = [AdColonyAdapterUtility validateAppId:appId andZoneIds:allZoneIds];
+    if (error) {
+        if (completionCallback) {
+            completionCallback(error);
+        }
         return;
     }
     
+    self.zoneId = parameters[@"zoneId"];
+    if (self.zoneId.length == 0) {
+        self.zoneId = allZoneIds[0];
+    }
+    
+    // Cache the initialization parameters
+    [AdColonyAdapterConfiguration updateInitializationParameters:parameters];
     NSString *userId = [parameters objectForKey:@"userId"];
     
     [AdColonyController initializeAdColonyCustomEventWithAppId:appId allZoneIds:allZoneIds userId:userId callback:completionCallback];
 }
 
-- (NSError *)createErrorWith:(NSString *)description andReason:(NSString *)reason andSuggestion:(NSString *)suggestion {
-    NSDictionary *userInfo = @{
-                               NSLocalizedDescriptionKey: NSLocalizedString(description, nil),
-                               NSLocalizedFailureReasonErrorKey: NSLocalizedString(reason, nil),
-                               NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(suggestion, nil)
-                               };
-    
-    return [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:userInfo];
-}
-
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info {
-    NSString *appId = [info objectForKey:@"appId"];
-    NSArray *allZoneIds = [info objectForKey:@"allZoneIds"];
-    
-    if (![self paramsAreValid:appId withAllZoneIds:allZoneIds]) {
-        return;
-    }
-    
-    self.zoneId = [info objectForKey:@"zoneId"];
-    [self assignFirstAvailableZoneIdIfNecessary:allZoneIds];
-    
-    // Cache the initialization parameters
-    [AdColonyAdapterConfiguration updateInitializationParameters:info];
-    
     // Update the user ID
     NSString *customerId = [self.delegate customerIdForRewardedVideoCustomEvent:self];
     NSMutableDictionary *newInfo = [NSMutableDictionary dictionaryWithDictionary:info];
     newInfo[@"userId"] = customerId;
     
-    [self initializeSdkWithParameters:newInfo callback:^{
+    [self initializeSdkWithParameters:newInfo callback:^(NSError *error){
+        if (error) {
+            [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+            return;
+        }
         
         AdColonyInstanceMediationSettings *settings = [self.delegate instanceMediationSettingsForClass:[AdColonyInstanceMediationSettings class]];
         BOOL showPrePopup = (settings) ? settings.showPrePopup : NO;
@@ -167,48 +163,6 @@
 
 - (NSString *) getAdNetworkId {
     return self.zoneId;
-}
-
-- (BOOL) paramsAreValid:(NSString *)appId withAllZoneIds:(NSArray *)allZoneIds {
-    // Fail if app id is missing
-    if (appId == nil || [appId length] == 0) {
-        [self logAndFailAdapters:@"App Id"];
-        return false;
-    }
-    
-    // Fail if allZoneIds array is missing a valid first element
-    if (![self hasValidFirstElement:allZoneIds]) {
-        [self logAndFailAdapters:@"Zone Id"];
-        return false;
-    }
-    return true;
-}
-
-- (void) assignFirstAvailableZoneIdIfNecessary:(NSArray *)allZoneIds {
-    if ((self.zoneId == nil || [self.zoneId length] == 0)) {
-        self.zoneId = allZoneIds[0];
-    }
-}
-
-- (BOOL) hasValidFirstElement:(NSArray *)allZoneIds {
-    if (allZoneIds != nil && allZoneIds.count > 0) {
-        NSString *firstZoneId = allZoneIds[0];
-        if (firstZoneId != nil || [firstZoneId length] > 0) {
-            return true;
-        }
-    }
-    [self logAndFailAdapters:@"Zone Id"];
-    return false;
-}
-
-- (void) logAndFailAdapters:(NSString *)missingParam {
-    NSError *error = [self createErrorWith:@"AdColony adapter failed to request rewarded video"
-                                 andReason:[NSString stringWithFormat:@"%@ is nil/empty", missingParam]
-                             andSuggestion:[NSString stringWithFormat:@"Make sure the %@ is configured on the MoPub UI.", missingParam]];
-    
-    MPLogDebug(@"%@. %@. %@", error.localizedDescription, error.localizedFailureReason, error.localizedRecoverySuggestion);
-    [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
-    return;
 }
 
 @end
