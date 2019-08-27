@@ -44,12 +44,15 @@
     [AdColonyAdapterConfiguration updateInitializationParameters:info];
     NSString *userId = [info objectForKey:@"userId"];
     [AdColonyController initializeAdColonyCustomEventWithAppId:appId allZoneIds:allZoneIds userId:userId callback:^(NSError *error){
-        AdColonyAdSize adSize = AdColonyAdSizeFromCGSize(size);
-        UIViewController *viewController = [self.delegate viewControllerForPresentingModalView];
-        [AdColony requestAdViewInZone:self.zoneId withSize:adSize viewController:viewController andDelegate:self];
+        if (error) {
+            [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+        }else{
+            AdColonyAdSize adSize = AdColonyAdSizeFromCGSize(size);
+            UIViewController *viewController = [self.delegate viewControllerForPresentingModalView];
+            [AdColony requestAdViewInZone:self.zoneId withSize:adSize viewController:viewController andDelegate:self];
+        }
     }];
 }
-
 
 #pragma mark - Banner Delegate
 - (void)adColonyAdViewDidLoad:(AdColonyAdView *)adView{
@@ -69,16 +72,15 @@
 
 - (void)adColonyAdViewWillOpen:(AdColonyAdView *)adView{
     MPLogAdEvent([MPLogEvent adWillPresentModalForAdapter:NSStringFromClass(self.class)], self.zoneId);
-    [self.delegate bannerCustomEventWillExpandAd:self ];
+    [self.delegate bannerCustomEventWillBeginAction:self];
 }
 
 - (void)adColonyAdViewDidClose:(AdColonyAdView *)adView{
     MPLogAdEvent([MPLogEvent adDidDismissModalForAdapter:NSStringFromClass(self.class)], self.zoneId);
-    [self.delegate bannerCustomEventDidCollapseAd:self ];
+    [self.delegate bannerCustomEventDidFinishAction:self];
 }
 
 - (void)adColonyAdViewDidReceiveClick:(AdColonyAdView *)adView{
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.zoneId);
-    [self.delegate trackClick];
 }
 @end
