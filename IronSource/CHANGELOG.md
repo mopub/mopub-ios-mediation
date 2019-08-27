@@ -1,4 +1,10 @@
 ## Changelog
+* 6.8.4.2.0
+    * This version of the adapters has been certified with ironSource 6.8.4.2.
+
+* 6.8.4.1.0
+    * This version of the adapters has been certified with ironSource 6.8.4.1.
+
  * 6.8.4.0.1
     * Fix missing `MPLogging.h` import to avoid build errors.
 

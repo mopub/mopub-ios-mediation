@@ -1,4 +1,10 @@
 ## Changelog
+* 5.5.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.5.0.
+
+* 5.4.0.1
+    * Fix banner size passing as part of ad format unification. This version is only compatible with the 5.8.0+ release of the MoPub SDK.
+
 * 5.4.0.0
     * This version of the adapters has been certified with Facebook Audience Network 5.4.0.
 

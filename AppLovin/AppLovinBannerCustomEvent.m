@@ -41,11 +41,6 @@
 static NSString *const kALMoPubMediationErrorDomain = @"com.applovin.sdk.mediation.mopub.errorDomain";
 static NSString *zoneIdentifier;
 
-static const CGFloat kALBannerHeightOffsetTolerance = 10.0f;
-static const CGFloat kALBannerStandardHeight = 50.0f;
-static const CGFloat kALLeaderHeightOffsetTolerance = 16.0f;
-static const CGFloat kALLeaderStandardHeight = 90.0f;
-
 // A dictionary of Zone -> AdView to be shared by instances of the custom event.
 static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 
@@ -78,47 +73,34 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
     [AppLovinAdapterConfiguration setCachedInitializationParameters: info];
     // Convert requested size to AppLovin Ad Size
     ALAdSize *adSize = [self appLovinAdSizeFromRequestedSize: size];
-    if ( adSize )
+    BOOL hasAdMarkup = adMarkup.length > 0;
+    
+    MPLogInfo(@"Requesting AppLovin banner of size %@ with info: %@ and with ad markup: %d", NSStringFromCGSize(size), info, hasAdMarkup);
+    
+    zoneIdentifier = ZONE_FROM_INFO(info);
+    
+    // Create adview based off of zone (if any)
+    self.adView = [[self class] adViewForFrame: CGRectMake(0, 0, adSize.width, adSize.height)
+                                        adSize: adSize
+                                zoneIdentifier: zoneIdentifier
+                                   customEvent: self
+                                           sdk: self.sdk];
+    
+    // Use token API
+    if ( hasAdMarkup )
     {
-        BOOL hasAdMarkup = adMarkup.length > 0;
+        // Ad load delegate attached to Ad Service as well as adview
+        AppLovinMoPubTokenBannerDelegate *tokenDelegate = [[AppLovinMoPubTokenBannerDelegate alloc] initWithCustomEvent: self];
+        [self.sdk.adService loadNextAdForAdToken: adMarkup andNotify: tokenDelegate];
         
-        MPLogInfo(@"Requesting AppLovin banner of size %@ with info: %@ and with ad markup: %d", NSStringFromCGSize(size), info, hasAdMarkup);
-        
-        zoneIdentifier = ZONE_FROM_INFO(info);
-        
-        // Create adview based off of zone (if any)
-        self.adView = [[self class] adViewForFrame: CGRectMake(0, 0, size.width, size.height)
-                                            adSize: adSize
-                                    zoneIdentifier: zoneIdentifier
-                                       customEvent: self
-                                               sdk: self.sdk];
-        
-        // Use token API
-        if ( hasAdMarkup )
-        {
-            // Ad load delegate attached to Ad Service as well as adview
-            AppLovinMoPubTokenBannerDelegate *tokenDelegate = [[AppLovinMoPubTokenBannerDelegate alloc] initWithCustomEvent: self];
-            [self.sdk.adService loadNextAdForAdToken: adMarkup andNotify: tokenDelegate];
-            
-            MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], zoneIdentifier);
-        }
-        // Zone/regular ad load
-        else
-        {
-            [self.adView loadNextAd];
-            
-            MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], zoneIdentifier);
-        }
+        MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], zoneIdentifier);
     }
+    // Zone/regular ad load
     else
     {
-        NSString *failureReason = [NSString stringWithFormat: @"Adapter requested to display a banner with invalid size: %@.", NSStringFromCGSize(size)];
-        NSError *error = [NSError errorWithDomain: kALMoPubMediationErrorDomain
-                                             code: kALErrorCodeUnableToRenderAd
-                                         userInfo: @{NSLocalizedFailureReasonErrorKey : failureReason}];
+        [self.adView loadNextAd];
         
-        [self.delegate bannerCustomEvent: self didFailToLoadAdWithError: error];
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], zoneIdentifier);
+        MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], zoneIdentifier);
     }
 }
 
@@ -131,37 +113,18 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 
 - (ALAdSize *)appLovinAdSizeFromRequestedSize:(CGSize)size
 {
-    if ( CGSizeEqualToSize(size, MOPUB_BANNER_SIZE) )
-    {
-        return [ALAdSize sizeBanner];
-    }
-    else if ( CGSizeEqualToSize(size, MOPUB_MEDIUM_RECT_SIZE) )
-    {
-        return [ALAdSize sizeMRec];
-    }
-    else if ( CGSizeEqualToSize(size, MOPUB_LEADERBOARD_SIZE) )
-    {
-        return [ALAdSize sizeLeader];
-    }
-    // This is not a one of MoPub's predefined size
-    else
-    {
-        // Assume fluid width, and check for height with offset tolerance
-        
-        CGFloat bannerOffset = ABS(kALBannerStandardHeight - size.height);
-        CGFloat leaderOffset = ABS(kALLeaderStandardHeight - size.height);
-        
-        if ( bannerOffset <= kALBannerHeightOffsetTolerance )
-        {
-            return [ALAdSize sizeBanner];
-        }
-        else if ( leaderOffset <= kALLeaderHeightOffsetTolerance )
-        {
-            return [ALAdSize sizeLeader];
-        }
+    // Default to standard banner size
+    ALAdSize * adSize = [ALAdSize sizeBanner];
+    
+    // Size can contain an AppLovin leaderboard ad size of 728x90
+    if (size.width >= 728 && size.height >= 90) {
+        adSize = [ALAdSize sizeLeader];
+    } else if (size.width >= 300 && size.height >= 250) {
+        // Size can contain an AppLovin medium rectangle
+        adSize = [ALAdSize sizeMRec];
     }
     
-    return nil;
+    return adSize;
 }
 
 - (MOPUBErrorCode)toMoPubErrorCode:(int)appLovinErrorCode

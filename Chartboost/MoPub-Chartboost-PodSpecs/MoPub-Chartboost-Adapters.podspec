@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'MoPub-Chartboost-Adapters'
-s.version          = '7.5.0.0'
+s.version          = '8.0.1.0'
 s.summary          = 'Chartboost Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats: Interstitial, Rewarded Video.\n
@@ -23,7 +23,7 @@ s.subspec 'MoPub' do |ms|
 end
 s.subspec 'Network' do |ns|
   ns.source_files = 'Chartboost/*.{h,m}'
-  ns.dependency 'ChartboostSDK', '7.5.0'
+  ns.dependency 'ChartboostSDK', '8.0.1'
   ns.dependency 'mopub-ios-sdk/Core', '~> 5.5'
 end
 end

@@ -32,7 +32,7 @@ NSString * const kIronSourceAppkey = @"applicationKey";
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"6.8.4.0.1";
+    return @"6.8.4.2.0";
 }
 
 - (NSString *)biddingToken {

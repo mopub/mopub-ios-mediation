@@ -1,4 +1,10 @@
 ## Changelog
+  * 12.3.1.3
+    * Set video delegate correctly to receive `TJPlacementVideoDelegate` callbacks so that the user is rewarded after video completion.
+
+  * 12.3.1.2
+    * Remove duplicate `Tapjoy connect` calls in `TapjoyAdapterConfiguration`.
+    
   * 12.3.1.1
     * Update minimum compatible MoPub SDK version for adapters to v5.6.0.
     

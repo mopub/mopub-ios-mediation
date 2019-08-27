@@ -45,7 +45,7 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"3.3.8.1.0";
+    return @"3.3.8.1.1";
 }
 
 - (NSString *)biddingToken {
@@ -81,7 +81,7 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
         return;
     }
     
-    NSArray * allZoneIds = configuration[kZoneIdsKey];
+   NSArray * allZoneIds = [self extractAllZoneIds:configuration];
     if (allZoneIds.count == 0) {
         NSError * error = [NSError errorWithDomain:kAdapterErrorDomain code:AdColonyAdapterErrorCodeMissingZoneIds userInfo:@{ NSLocalizedDescriptionKey: @"AdColony's initialization skipped. The allZoneIds field is empty. Ensure it is properly configured on the MoPub dashboard." }];
         MPLogEvent([MPLogEvent error:error message:nil]);
@@ -101,6 +101,25 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
             complete(nil);
         }
     }];
+}
+
+- (NSArray *)extractAllZoneIds:(NSDictionary<NSString *, id> *)configuration
+{
+    NSArray *allZoneIds = [configuration valueForKeyPath:kZoneIdsKey];
+    NSString *zoneIdsToString = [allZoneIds description];
+    NSData * dataToCheck = [zoneIdsToString dataUsingEncoding:NSUTF8StringEncoding];
+    NSError * error = nil;
+    // fetch zone ID array, encode to Json Onject to handle Unity prefab values and decode before passing it to AdColony.
+    id jsonObject = [NSJSONSerialization JSONObjectWithData:dataToCheck options:0 error:&error];
+    
+    if (jsonObject != nil) {
+        NSData* data = [zoneIdsToString dataUsingEncoding:NSUTF8StringEncoding];
+        NSError *e1;
+        NSMutableArray *jsonZoneIds = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&e1];
+        return jsonZoneIds;
+    } else {
+        return allZoneIds;
+    }
 }
 
 @end

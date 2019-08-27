@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
 s.name             = 'MoPub-Verizon-Adapters'
-s.version          = '1.1.2.0'
+s.version          = '1.1.4.0'
 s.summary          = 'Verizon Adapters for mediating through MoPub.'
 s.description      = <<-DESC
 Supported ad formats: Banner, and Interstitial.\n
@@ -23,7 +23,7 @@ s.subspec 'MoPub' do |ms|
 end
 s.subspec 'Network' do |ns|
   ns.source_files = 'Verizon/*.{h,m}'
-  ns.dependency 'Verizon-Ads-StandardEdition','1.1.2'
+  ns.dependency 'Verizon-Ads-StandardEdition','1.1.4'
   ns.dependency 'mopub-ios-sdk/Core', '~> 5.5'
 end
 end

@@ -5,7 +5,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'MoPub-Applovin-Adapters'
-  s.version          = '6.7.1.0'
+  s.version          = '6.8.1.0'
   s.summary          = 'Applovin Adapters for mediating through MoPub.'
   s.description      = <<-DESC
 Supported ad formats: Banners, Interstitial, Rewarded Video and Native.\n
@@ -19,11 +19,11 @@ For inquiries and support, please visit https://www.applovin.com/support \n
   s.ios.deployment_target = '9.0'
   s.static_framework = true
   s.subspec 'MoPub' do |ms|
-    ms.dependency 'mopub-ios-sdk/Core', '~> 5.5'
+    ms.dependency 'mopub-ios-sdk/Core', '~> 5.8'
   end
   s.subspec 'Network' do |ns|
     ns.source_files = 'Applovin/*.{h,m}'
-    ns.dependency 'AppLovinSDK', '6.7.1'
-    ns.dependency 'mopub-ios-sdk/Core', '~> 5.5'
+    ns.dependency 'AppLovinSDK', '6.8.1'
+    ns.dependency 'mopub-ios-sdk/Core', '~> 5.8'
   end
 end

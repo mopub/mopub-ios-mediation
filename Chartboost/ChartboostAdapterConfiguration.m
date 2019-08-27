@@ -7,7 +7,7 @@
 #import "MPLogging.h"
 #endif
 
-#define CHARTBOOST_ADAPTER_VERSION             @"7.5.0.0"
+#define CHARTBOOST_ADAPTER_VERSION             @"8.0.1.0"
 #define MOPUB_NETWORK_NAME                     @"chartboost"
 
 // Constants
@@ -82,18 +82,18 @@ typedef NS_ENUM(NSInteger, ChartboostAdapterErrorCode) {
     }
     
     // Initialize the router
-    [[ChartboostRouter sharedRouter] startWithAppId:appId appSignature:appSignature];
-    if (complete != nil) {
-        complete(nil);
-    }
+    [[ChartboostRouter sharedRouter] startWithAppId:appId appSignature:appSignature completion:^(BOOL initialized) {
+        if (complete != nil) {
+            complete(nil);
+        }
+    }];
     
-    MPBLogLevel mopubLogLevel = [[MoPub sharedInstance] logLevel];
-    CBLoggingLevel * chartboostLogLevel = [ChartboostAdapterConfiguration getChartboostLogLevel:mopubLogLevel];
-
+    MPBLogLevel mopubLogLevel = [MPLogging consoleLogLevel];
+    CBLoggingLevel chartboostLogLevel = [ChartboostAdapterConfiguration getChartboostLogLevel:mopubLogLevel];
     [Chartboost setLoggingLevel:chartboostLogLevel];
 }
 
-+ (CBLoggingLevel *)getChartboostLogLevel:(MPBLogLevel *)logLevel
++ (CBLoggingLevel)getChartboostLogLevel:(MPBLogLevel)logLevel
 {
     int logLevelVal = logLevel;
     

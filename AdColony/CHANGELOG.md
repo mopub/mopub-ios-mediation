@@ -1,4 +1,7 @@
 ## Changelog
+  * 3.3.8.1.1
+    * Update extracting zone IDs `initializeNetworkWithConfiguration` to accommodate Unity MoPubManager changes.
+    
   * 3.3.8.1.0
     * This version of the adapters has been certified with AdColony 3.3.8.1.
 
