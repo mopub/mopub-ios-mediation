@@ -14,7 +14,7 @@
 #endif
 #import "VungleInstanceMediationSettings.h"
 
-static NSString *const VungleAdapterVersion = @"6.4.2.0";
+static NSString *const VungleAdapterVersion = @"6.4.2.1";
 
 NSString *const kVungleAppIdKey = @"appId";
 NSString *const kVunglePlacementIdKey = @"pid";
