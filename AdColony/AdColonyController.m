@@ -9,6 +9,7 @@
 #import <AdColony/AdColony.h>
 #import "AdColonyController.h"
 #import "AdColonyGlobalMediationSettings.h"
+#import "AdColonyAdapterConfiguration.h"
 #if __has_include("MoPub.h")
     #import "MoPub.h"
     #import "MPRewardedVideo.h"
@@ -43,8 +44,10 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
                 instance.initState = INIT_STATE_INITIALIZING;
 
                 AdColonyGlobalMediationSettings *settings = [[MoPub sharedInstance] globalMediationSettingsForClass:[AdColonyGlobalMediationSettings class]];
+                AdColonyAdapterConfiguration *adapterConfiguration = [[AdColonyAdapterConfiguration alloc] init];
                 AdColonyAppOptions *options = [AdColonyAppOptions new];
-
+                [options setMediationNetwork:ADCMoPub];
+                [options setMediationNetworkVersion:adapterConfiguration.adapterVersion];
                 if (userId && userId.length > 0) {
                     options.userID = userId;
                 } else if (settings && settings.customId.length > 0) {
