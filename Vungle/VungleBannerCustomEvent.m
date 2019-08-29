@@ -31,6 +31,11 @@ static const CGFloat kVGNMoPubMRECWidthFor280Height = 336.0f;
 
 @implementation VungleBannerCustomEvent
 
+- (BOOL)enableAutomaticImpressionAndClickTracking
+{
+    return NO;
+}
+
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     self.placementId = [info objectForKey:kVunglePlacementIdKey];
     self.options = nil;
@@ -135,6 +140,7 @@ static const CGFloat kVGNMoPubMRECWidthFor280Height = 336.0f;
 - (void)vungleAdWasTapped
 {
     MPLogInfo(@"Vungle video banner was tapped");
+    [self.delegate trackClick];
 }
 
 - (void)vungleAdDidFailToLoad:(NSError *)error
