@@ -68,6 +68,11 @@
     [[VungleRouter sharedRouter] invalidateBannerAdViewForPlacementID:self.placementId delegate:self];
 }
 
+// Secret MoPub API to allow us to detach the custom event from (shared instance) routers synchronously
+- (void) invalidate{
+     [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId];
+}
+
 #pragma mark - VungleRouterDelegate Methods
 
 - (void)vungleAdDidLoad
