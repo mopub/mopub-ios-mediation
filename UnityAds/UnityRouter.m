@@ -55,6 +55,7 @@
 
 - (void)initializeWithGameId:(NSString *)gameId
 {
+    [self setIfUnityAdsCollectsPersonalInfo];
     static dispatch_once_t unityInitToken;
     dispatch_once(&unityInitToken, ^{
         UADSMediationMetaData *mediationMetaData = [[UADSMediationMetaData alloc] init];
@@ -65,7 +66,6 @@
         
         [UnityAds initialize:gameId delegate:self testMode:false enablePerPlacementLoad:true];
     });
-    [self setIfUnityAdsCollectsPersonalInfo];
 }
 
 - (void) setIfUnityAdsCollectsPersonalInfo
