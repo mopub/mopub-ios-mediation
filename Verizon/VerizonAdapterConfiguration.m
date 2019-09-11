@@ -2,7 +2,7 @@
 #import <VerizonAdsCore/VerizonAdsCore.h>
 #import "VerizonAdapterConfiguration.h"
 
-NSString * const kMoPubVASAdapterVersion = @"1.1.4.0";
+NSString * const kMoPubVASAdapterVersion = @"1.1.4.1";
 NSString * const kMoPubVASNetworkSdkVersion = @"1.1.4";
 
 NSString * const kMoPubVASAdapterErrorWho = @"MoPubVASAdapter";
