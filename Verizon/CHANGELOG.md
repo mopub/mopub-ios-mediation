@@ -1,4 +1,7 @@
 ## Changelog
+ * 1.1.4.1
+    * Add support for rewarded video and native ad formats.
+    
  * 1.1.4.0
     * This version of the adapters has been certified with Verizon 1.1.4.
 
