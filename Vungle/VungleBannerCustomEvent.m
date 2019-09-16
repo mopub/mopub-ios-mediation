@@ -135,11 +135,6 @@ static const CGFloat kVGNMoPubMRECWidthFor280Height = 336.0f;
     [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:loadFailError];
 }
 
-- (void)vungleAdDidFailToPlay:(NSError *)error
-{
-    MPLogInfo(@"Vungle video banner failed to play with error: %@", error.localizedDescription);
-}
-
 - (void)vungleAdWillLeaveApplication {
     MPLogInfo(@"Vungle video banner will leave the application");
     [self.delegate bannerCustomEventWillLeaveApplication:self];
