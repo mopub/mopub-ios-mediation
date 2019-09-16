@@ -118,25 +118,6 @@ static const CGFloat kVGNMoPubMRECWidthFor280Height = 336.0f;
         }
 }
 
-- (void)vungleAdWillAppear
-{
-    MPLogInfo(@"Vungle video banner will appear");
-}
-
-- (void)vungleAdDidAppear {
-    MPLogInfo(@"Vungle video banner did appear");
-}
-
-- (void)vungleAdWillDisappear
-{
-    MPLogInfo(@"Vungle video banner will disappear");
-}
-
-- (void)vungleAdDidDisappear
-{
-    MPLogInfo(@"Vungle video banner did disappear");
-}
-
 - (void)vungleAdWasTapped
 {
     MPLogInfo(@"Vungle video banner was tapped");
@@ -152,12 +133,6 @@ static const CGFloat kVGNMoPubMRECWidthFor280Height = 336.0f;
     }
 
     [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:loadFailError];
-}
-
-- (void)vungleAdDidFailToPlay:(NSError *)error
-{
-    // verify - is this necessary?
-    MPLogInfo(@"Vungle video banner failed to play with error: %@", error.localizedDescription);
 }
 
 - (void)vungleAdWillLeaveApplication {
