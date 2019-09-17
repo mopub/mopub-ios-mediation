@@ -510,14 +510,14 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
         targetDelegate = [self.delegatesDic objectForKey:placementID];
     }
 
-    if (targetDelegate) {
+    if (targetDelegate && [targetDelegate respondsToSelector:@selector(vungleAdWillAppear)]) {
         [targetDelegate vungleAdWillAppear];
     }
 }
 
 - (void)vungleDidShowAdForPlacementID:(NSString *)placementID {
     id<VungleRouterDelegate> targetDelegate = [self.delegatesDic objectForKey:placementID];
-    if (targetDelegate) {
+    if (targetDelegate && [targetDelegate respondsToSelector:@selector(vungleAdDidAppear)]) {
         [targetDelegate vungleAdDidAppear];
     }
 }
@@ -543,8 +543,10 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
         if ([info.completedView boolValue] && [targetDelegate respondsToSelector:@selector(vungleAdShouldRewardUser)]) {
             [targetDelegate vungleAdShouldRewardUser];
         }
-
-        [targetDelegate vungleAdWillDisappear];
+        
+        if ([targetDelegate respondsToSelector:@selector(vungleAdWillDisappear)]) {
+            [targetDelegate vungleAdWillDisappear];
+        }
         self.isAdPlaying = NO;
     }
 }
@@ -564,7 +566,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
         targetDelegate = [self.delegatesDic objectForKey:placementID];
     }
 
-    if (targetDelegate) {
+    if (targetDelegate && [targetDelegate respondsToSelector:@selector(vungleAdDidDisappear)]) {
         [targetDelegate vungleAdDidDisappear];
     }
 }
