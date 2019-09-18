@@ -16,22 +16,15 @@
 #endif
 
 static const NSInteger FacebookNoFillErrorCode = 1001;
-static BOOL gVideoEnabled = NO;
 
 @interface FacebookNativeCustomEvent () <FBNativeAdDelegate>
 
 @property (nonatomic, readwrite, strong) FBNativeAd *fbNativeAd;
-@property (nonatomic) BOOL videoEnabled;
 @property (nonatomic, copy) NSString *fbPlacementId;
 
 @end
 
 @implementation FacebookNativeCustomEvent
-
-+ (void)setVideoEnabled:(BOOL)enabled
-{
-    gVideoEnabled = enabled;
-}
 
 - (void)requestAdWithCustomEventInfo:(NSDictionary *)info
 {
@@ -41,12 +34,6 @@ static BOOL gVideoEnabled = NO;
 - (void)requestAdWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
      self.fbPlacementId = [info objectForKey:@"placement_id"];
-
-    if ([info objectForKey:kFBVideoAdsEnabledKey] == nil) {
-        self.videoEnabled = gVideoEnabled;
-    } else {
-        self.videoEnabled = [[info objectForKey:kFBVideoAdsEnabledKey] boolValue];
-    }
 
     if (self.fbPlacementId) {
         self.fbNativeAd = [[FBNativeAd alloc] initWithPlacementID:self.fbPlacementId];
@@ -76,7 +63,7 @@ static BOOL gVideoEnabled = NO;
 
 - (void)nativeAdDidLoad:(FBNativeAd *)nativeAd
 {
-    FacebookNativeAdAdapter *adAdapter = [[FacebookNativeAdAdapter alloc] initWithFBNativeAd:nativeAd adProperties:@{kFBVideoAdsEnabledKey:@(self.videoEnabled)}];
+    FacebookNativeAdAdapter *adAdapter = [[FacebookNativeAdAdapter alloc] initWithFBNativeAd:nativeAd adProperties:nil];
     MPNativeAd *interfaceAd = [[MPNativeAd alloc] initWithAdAdapter:adAdapter];
 
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
