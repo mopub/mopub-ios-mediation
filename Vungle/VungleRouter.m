@@ -14,7 +14,7 @@
 #endif
 #import "VungleInstanceMediationSettings.h"
 
-static NSString *const VungleAdapterVersion = @"6.4.3.0";
+static NSString *const VungleAdapterVersion = @"6.4.4.0";
 
 NSString *const kVungleAppIdKey = @"appId";
 NSString *const kVunglePlacementIdKey = @"pid";
@@ -208,11 +208,13 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
     [self collectConsentStatusFromMoPub];
 
     // Verify if PlacementID is nil (first MREC request) or PlacementID is the same one requested
-    if (self.bannerPlacementID != nil && ![[info objectForKey:kVunglePlacementIdKey] isEqualToString:self.bannerPlacementID]) {
-
-        MPLogInfo(@"A banner ad type has been already instanciated. Multiple banner ads are not supported with Vungle iOS SDK version %@ and adapter version %@.", VungleSDKVersion, VungleAdapterVersion);
-        [delegate vungleAdDidFailToLoad:nil];
-        return;
+    if (self.bannerDelegates.count > 0) {
+        if (self.bannerPlacementID != nil && ![[info objectForKey:kVunglePlacementIdKey] isEqualToString:self.bannerPlacementID]) {
+            
+            MPLogInfo(@"A banner ad type has been already instanciated. Multiple banner ads are not supported with Vungle iOS SDK version %@ and adapter version %@.", VungleSDKVersion, VungleAdapterVersion);
+            [delegate vungleAdDidFailToLoad:nil];
+            return;
+        }
     }
 
     if ([self validateInfoData:info] && CGSizeEqualToSize(size, kVGNMRECSize)) {
@@ -410,11 +412,13 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
     if (placementID) {
         [self.delegatesDic removeObjectForKey:placementID];
     } else if (state != BannerRouterDelegateStateUnknown) {
+        NSMutableArray *tempArray = [NSMutableArray new];
         for (int i = 0; i < self.bannerDelegates.count; i++) {
             if ((BannerRouterDelegateState)[[self.bannerDelegates[i] valueForKey:kVungleBannerDelegateStateKey] intValue] == state) {
-                [self.bannerDelegates removeObjectAtIndex:i];
+                [tempArray addObject:self.bannerDelegates[i]];
             }
         }
+        [self.bannerDelegates removeObjectsInArray:tempArray];
     }
 }
 
@@ -456,6 +460,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 
 - (void)vungleAdPlayabilityUpdate:(BOOL)isAdPlayable placementID:(NSString *)placementID error:(NSError *)error {
     if ([placementID isEqualToString:self.bannerPlacementID]) {
+        BOOL needsToClear = NO;
         for (int i = 0; i < self.bannerDelegates.count; i++) {
             if ((BannerRouterDelegateState)[[self.bannerDelegates[i] valueForKey:kVungleBannerDelegateStateKey] intValue] == BannerRouterDelegateStateRequesting) {
                 if (isAdPlayable) {
@@ -472,9 +477,12 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
                         [[self.bannerDelegates[i] objectForKey:kVungleBannerDelegateKey] vungleAdDidFailToLoad:playabilityError];
                     }
                     [self.bannerDelegates[i] setObject:[NSNumber numberWithInt:BannerRouterDelegateStateClosed] forKey:kVungleBannerDelegateStateKey];
-                    [self clearDelegateWithState:BannerRouterDelegateStateClosed placementID:nil];
+                    needsToClear = YES;
                 }
             }
+        }
+        if (needsToClear) {
+            [self clearDelegateWithState:BannerRouterDelegateStateClosed placementID:nil];
         }
     }
     else {
@@ -554,12 +562,16 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 - (void)vungleDidCloseAdWithViewInfo:(VungleViewInfo *)info placementID:(NSString *)placementID {
     id<VungleRouterDelegate> targetDelegate;
     if ([placementID isEqualToString:self.bannerPlacementID]) {
+        BOOL needsToClear = NO;
         for (int i = 0; i < self.bannerDelegates.count; i++) {
             if ((BannerRouterDelegateState)[[self.bannerDelegates[i] valueForKey:kVungleBannerDelegateStateKey] intValue] == BannerRouterDelegateStateClosing) {
                 targetDelegate = [self.bannerDelegates[i] objectForKey:kVungleBannerDelegateKey];
                 [self.bannerDelegates[i] setObject:[NSNumber numberWithInt:BannerRouterDelegateStateClosed] forKey:kVungleBannerDelegateStateKey];
-                [self clearDelegateWithState:BannerRouterDelegateStateClosed placementID:nil];
+                needsToClear = YES;
             }
+        }
+        if (needsToClear) {
+            [self clearDelegateWithState:BannerRouterDelegateStateClosed placementID:nil];
         }
     }
     else {

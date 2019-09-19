@@ -17,6 +17,7 @@
 // If you need to play ads with vungle options, you may modify playVungleAdFromRootViewController and create an options dictionary and call the playAd:withOptions: method on the vungle SDK.
 
 static const CGFloat kVGNMoPubMRECWidthFor280Height = 336.0f;
+static const CGFloat kVGNMoPubMREC280Height = 280.0f;
 
 @interface VungleBannerCustomEvent () <VungleRouterDelegate>
 
@@ -42,7 +43,7 @@ static const CGFloat kVGNMoPubMRECWidthFor280Height = 336.0f;
     
     // Since MoPub supports two sizes MREC Ad (300 x 250 and 336 x 280)),
     // if they pass 336 x 280 size, we will convert it to 300 x 250 size
-    if (CGSizeEqualToSize(size, CGSizeMake(kVGNMoPubMRECWidthFor280Height, kMPPresetMaxAdSize280Height.height))) {
+    if (CGSizeEqualToSize(size, CGSizeMake(kVGNMoPubMRECWidthFor280Height, kVGNMoPubMREC280Height))) {
         size = kVGNMRECSize;
     }
     self.bannerSize = size;
