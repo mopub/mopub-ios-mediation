@@ -72,37 +72,28 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 
 #pragma mark - UADSBannerViewDelegate
 
--(void)unityAdsBannerDidLoad:(UADSBannerView *)bannerAdView {
+- (void)bannerViewDidLoad:(UADSBannerView *)bannerView {
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate bannerCustomEvent:self didLoadAd:bannerAdView];
+    [self.delegate bannerCustomEvent:self didLoadAd:bannerView];
 }
 
--(void)unityAdsBannerDidUnload:(UADSBannerView *)bannerAdView {
-    MPLogInfo(@"Unity Banner did unload for %@", bannerAdView.viewId);
-}
-
--(void)unityAdsBannerDidShow:(UADSBannerView *)bannerAdView {
-    MPLogInfo(@"Unity Banner did show for %@", bannerAdView.viewId);
-}
-
--(void)unityAdsBannerDidHide:(UADSBannerView *)bannerAdView {
-    MPLogInfo(@"Unity Banner did hide for %@", bannerAdView.viewId);
-}
-
--(void)unityAdsBannerDidClick:(UADSBannerView *)bannerAdView {
+- (void)bannerViewDidClick:(UADSBannerView *)bannerView {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate trackClick];
+}
+
+- (void)bannerViewDidLeaveApplication:(UADSBannerView *)bannerView {
     [self.delegate bannerCustomEventWillLeaveApplication:self];
 }
 
--(void)unityAdsBannerDidError:(UADSBannerView *)bannerAdView error:(UADSBannerError *)error  {
-    if (error == UADSBannerErrorCodeNoFillError) {
-        NSError *error = [self createErrorWith:@"Unity Ads Banner returned no fill" andReason:@"" andSuggestion:@""];
-    } else {
-        NSError *error = [self createErrorWith:@"Unity Ads failed to load an ad" andReason:@"" andSuggestion:@""];
+- (void)bannerViewDidError:(UADSBannerView *)bannerView error:(UADSBannerError *)error{
+    if ([error code] == UADSBannerErrorCodeNoFillError) {
+        NSError *mopubAdaptorErrorMessage = [self createErrorWith:@"Unity Ads Banner returned no fill" andReason:@"" andSuggestion:@""];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:mopubAdaptorErrorMessage], [self getAdNetworkId]);
     }
-    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+
     [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nil];
 }
 
