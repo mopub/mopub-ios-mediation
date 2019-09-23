@@ -1,4 +1,7 @@
 ## Changelog
+* 5.5.1.0
+* This version of the adapters has been certified with Facebook Audience Network 5.5.1.
+
 * 5.5.0.1
     * Remove native video handling code and associated comments. Publishers can enable/disable video on the Facebook Audience Network dashboard.
 
