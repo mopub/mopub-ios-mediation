@@ -103,7 +103,7 @@ static const CGFloat kVGNMoPubMREC280Height = 280.0f;
             options[VunglePlayAdOptionKeyStartMuted] = @(startMutedPlaceholder);
         } else {
             // Set mrec ad start-muted as default unless a user set.
-            options[VunglePlayAdOptionKeyStartMuted] = @(NO);
+            options[VunglePlayAdOptionKeyStartMuted] = @(YES);
         }
 
         self.options = options.count ? options : nil;
