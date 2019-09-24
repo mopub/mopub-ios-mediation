@@ -60,6 +60,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 
 @property (nonatomic, copy) NSString *bannerPlacementID;
 @property (nonatomic, strong) NSMutableArray *bannerDelegates;
+@property (nonatomic, assign) BOOL isInvalidatedBannerForPlacementID;
 
 @end
 
@@ -219,6 +220,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 
     if ([self validateInfoData:info] && CGSizeEqualToSize(size, kVGNMRECSize)) {
         self.bannerPlacementID = [info objectForKey:kVunglePlacementIdKey];
+        self.isInvalidatedBannerForPlacementID = NO;
 
         if (self.sdkInitializeState == SDKInitializeStateNotInitialized) {
             if (![self.waitingListDic objectForKey:[info objectForKey:kVunglePlacementIdKey]]) {
@@ -357,6 +359,21 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
             if ((BannerRouterDelegateState)[[self.bannerDelegates[i] valueForKey:kVungleBannerDelegateStateKey] intValue] == BannerRouterDelegateStatePlaying) {
                 [[VungleSDK sharedSDK] finishedDisplayingAd];
                 [self.bannerDelegates[i] setObject:[NSNumber numberWithInt:BannerRouterDelegateStateClosing] forKey:kVungleBannerDelegateStateKey];
+            }
+        }
+    }
+}
+
+- (void)invalidateBannerAdViewForPlacementID:(NSString *)placementID delegate:(id<VungleRouterDelegate>)delegate {
+    if (placementID) {
+        NSLog(@"Vungle: Triggering an ad completion call for %@", placementID);
+        for (int i = 0; i < self.bannerDelegates.count; i++) {
+            if ([self.bannerDelegates[i] valueForKey:kVungleBannerDelegateKey] != delegate) return;
+            if (([self.bannerDelegates[i] valueForKey:kVungleBannerDelegateKey] == delegate) && ((BannerRouterDelegateState)[[self.bannerDelegates[i] valueForKey:kVungleBannerDelegateStateKey] intValue] == BannerRouterDelegateStatePlaying)) {
+                [[VungleSDK sharedSDK] finishedDisplayingAd];
+                [self.bannerDelegates[i] setObject:[NSNumber numberWithInt:BannerRouterDelegateStateClosing] forKey:kVungleBannerDelegateStateKey];
+                self.isInvalidatedBannerForPlacementID = YES;
+                break;
             }
         }
     }
@@ -572,6 +589,11 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
         }
         if (needsToClear) {
             [self clearDelegateWithState:BannerRouterDelegateStateClosed placementID:nil];
+        }
+        
+        if (self.isInvalidatedBannerForPlacementID) {
+            self.bannerPlacementID = nil;
+            self.isInvalidatedBannerForPlacementID = NO;
         }
     }
     else {

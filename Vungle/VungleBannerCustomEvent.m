@@ -66,7 +66,7 @@ static const CGFloat kVGNMoPubMREC280Height = 280.0f;
 
 // Secret MoPub API to allow us to detach the custom event from (shared instance) routers synchronously
 - (void) invalidate{
-    [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId];
+    [[VungleRouter sharedRouter] invalidateBannerAdViewForPlacementID:self.placementId delegate:self];
 }
 
 #pragma mark - VungleRouterDelegate Methods
