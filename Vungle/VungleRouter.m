@@ -33,6 +33,9 @@ static NSString *const kVungleBannerDelegateKey = @"bannerDelegate";
 static NSString *const kVungleBannerDelegateStateKey = @"bannerState";
 
 const CGSize kVNGMRECSize = {.width = 300.0f, .height = 250.0f};
+const CGSize kVNGBannerSize = {.width = 320.0f, .height = 50.0f};
+const CGSize kVNGShortBannerSize = {.width = 300.0f, .height = 50.0f};
+const CGSize kVNGLeaderboardBannerSize = {.width = 728.0f, .height = 90.0f};
 
 typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     SDKInitializeStateNotInitialized,
@@ -275,7 +278,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
         [self.bannerDelegates addObject:tempDic];
 
         NSError *error = nil;
-        if (CGSizeEqualToSize(size, MOPUB_MEDIUM_RECT_SIZE)) {
+        if (CGSizeEqualToSize(size, kVNGMRECSize)) {
             if ([[VungleSDK sharedSDK] loadPlacementWithID:placementID error:&error]) {
                 MPLogInfo(@"Vungle: Start to load an ad for Placement ID :%@", placementID);
             } else {
@@ -497,11 +500,11 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 }
 
 - (VungleAdSize)getVungleBannerAdSizeType:(CGSize)size {
-    if (CGSizeEqualToSize(size, MOPUB_BANNER_SIZE)) {
+    if (CGSizeEqualToSize(size, kVNGBannerSize)) {
         return VungleAdSizeBanner;
-    } else if (CGSizeEqualToSize(size, CGSizeMake(300,50))) {
+    } else if (CGSizeEqualToSize(size, kVNGShortBannerSize)) {
         return VungleAdSizeBannerShort;
-    } else if (CGSizeEqualToSize(size, MOPUB_LEADERBOARD_SIZE)) {
+    } else if (CGSizeEqualToSize(size, kVNGLeaderboardBannerSize)) {
         return VungleAdSizeBannerLeaderboard;
     }
     
