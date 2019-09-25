@@ -22,6 +22,9 @@ extern NSString *const kVungleSDKMinSpaceForAdRequest;
 extern NSString *const kVungleSDKMinSpaceForAssetLoad;
 
 extern const CGSize kVNGMRECSize;
+extern const CGSize kVNGBannerSize;
+extern const CGSize kVNGShortBannerSize;
+extern const CGSize kVNGLeaderboardBannerSize;
 
 @protocol VungleRouterDelegate;
 @class VungleInstanceMediationSettings;

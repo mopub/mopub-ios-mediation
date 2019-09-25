@@ -36,7 +36,7 @@
 {
     self.placementId = [info objectForKey:kVunglePlacementIdKey];
     self.options = nil;
-    
+
     NSString *format = [info objectForKey:@"adunit_format"];
     BOOL isMediumRectangleFormat = (format != nil ? [[format lowercaseString] containsString:@"medium_rectangle"] : NO);
     
