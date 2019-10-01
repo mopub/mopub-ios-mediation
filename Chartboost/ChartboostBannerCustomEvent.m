@@ -49,12 +49,13 @@
     
     NSString *location = [info objectForKey:@"location"];
     location = [location length] != 0 ? location: CBLocationDefault;
+    CGSize integerSize = CGSizeMake(floor(size.width), floor(size.height));
     
     __weak typeof(self) weakSelf = self;
     [[ChartboostRouter sharedRouter] startWithAppId:self.appID appSignature:appSignature completion:^(BOOL initialized) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (!weakSelf.banner) {
-                weakSelf.banner = [[CHBBanner alloc] initWithSize:size location:location delegate:weakSelf];
+                weakSelf.banner = [[CHBBanner alloc] initWithSize:integerSize location:location delegate:weakSelf];
                 weakSelf.banner.automaticallyRefreshesContent = NO;
             }
             
