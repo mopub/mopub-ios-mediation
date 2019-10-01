@@ -1,4 +1,8 @@
 ## Changelog
+
+  * 8.0.1.0
+      * Parsed banner request sizes to integer values before passing to Chartboost SDK.
+
   * 8.0.1.0
       * This version of the adapters has been certified with Chartboost 8.0.1.
       * Added banner adapter.
