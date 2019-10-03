@@ -1,4 +1,5 @@
 #import <VerizonAdsNativePlacement/VerizonAdsNativePlacement.h>
+#import <VerizonAdsVerizonNativeController/VerizonAdsVerizonNativeController.h>
 #import "MPVerizonNativeAdAdapter.h"
 #import "MPNativeAdConstants.h"
 #import "MPLogging.h"
@@ -39,52 +40,71 @@ static NSString * const kVideoCompId        = @"video";
     
     self.vasAdProperties = [NSMutableDictionary dictionary];
     
-    VASTextView *titleView = [vasNativeAd text:kTitleCompId];
-    if (titleView.text) {
-        self.vasAdProperties[kAdTitleKey] = titleView.text;
+    id<VASComponent> titleComponent = [vasNativeAd component:kTitleCompId];
+    if ([titleComponent conformsToProtocol:@protocol(VASNativeTextComponent)]) {
+        NSString *titleText = ((id<VASNativeTextComponent>) titleComponent).text;
+        if (titleText) {
+            self.vasAdProperties[kAdTitleKey] = titleText;
+        }
     }
     
-    VASTextView *bodyView = [vasNativeAd text:kBodyCompId];
-    if (bodyView.text) {
-        self.vasAdProperties[kAdTextKey] = bodyView.text;
+    id<VASComponent> bodyComponent = [vasNativeAd component:kBodyCompId];
+    if ([bodyComponent conformsToProtocol:@protocol(VASNativeTextComponent)]) {
+        NSString *bodyText = ((id<VASNativeTextComponent>) bodyComponent).text;
+        if (bodyText) {
+            self.vasAdProperties[kAdTextKey] = bodyText;
+        }
     }
     
-    VASTextView *ctaView = [vasNativeAd text:kCTACompId];
-    if (ctaView.text) {
-        self.vasAdProperties[kAdCTATextKey] = ctaView.text;
+    id<VASComponent> ctaComponent = [vasNativeAd component:kCTACompId];
+    if ([ctaComponent conformsToProtocol:@protocol(VASNativeTextComponent)]) {
+        NSString *ctaText = ((id<VASNativeTextComponent>) ctaComponent).text;
+        if (ctaText) {
+            self.vasAdProperties[kAdCTATextKey] = ctaText;
+        }
     }
     
-    VASTextView *ratingView = [vasNativeAd text:kRatingCompId];
-    if (ratingView.text) {
-        self.vasAdProperties[kAdStarRatingKey] = @(ratingView.text.integerValue);
+    id<VASComponent> ratingComponent = [vasNativeAd component:kRatingCompId];
+    if ([ratingComponent conformsToProtocol:@protocol(VASNativeTextComponent)]) {
+        NSString *ratingText = ((id<VASNativeTextComponent>) ratingComponent).text;
+        if (ratingText) {
+            self.vasAdProperties[kAdStarRatingKey] = @(ratingText.integerValue);
+        }
     }
     
-    VASDisplayMediaView *mainImageView = [vasNativeAd displayMedia:kMainImageCompId];
-    if (mainImageView) {
-        self.vasAdProperties[kAdMainMediaViewKey] = mainImageView;
+    id<VASComponent> mainImageComponent = [vasNativeAd component:kMainImageCompId];
+    if ([mainImageComponent conformsToProtocol:@protocol(VASViewComponent)]) {
+        UIView *mainImageView = ((id<VASViewComponent>) mainImageComponent).view;
+        if (mainImageView) {
+            self.vasAdProperties[kAdMainMediaViewKey] = mainImageView;
+        }
     }
     
-    VASDisplayMediaView *iconImageView = [vasNativeAd displayMedia:kIconImageCompId];
-    if (iconImageView) {
-        self.vasAdProperties[kAdIconImageViewKey] = iconImageView;
+    id<VASComponent> iconImageComponent = [vasNativeAd component:kIconImageCompId];
+    if ([iconImageComponent conformsToProtocol:@protocol(VASViewComponent)]) {
+        UIView *iconView = ((id<VASViewComponent>) iconImageComponent).view;
+        if (iconView) {
+            self.vasAdProperties[kAdIconImageViewKey] = iconView;
+        }
     }
     
     // Verizon Native Properties
     
-    VASDisplayMediaView *videoView = [vasNativeAd displayMedia:kVideoCompId];
-    if (videoView) {
-        self.vasAdProperties[kVASVideoViewKey] = videoView;
+    id<VASComponent> disclaimerComponent = [vasNativeAd component:kDisclaimerCompId];
+    if ([disclaimerComponent conformsToProtocol:@protocol(VASNativeTextComponent)]) {
+        NSString *disclaimerTest = ((id<VASNativeTextComponent>) disclaimerComponent).text;
+        if (disclaimerTest) {
+            self.vasAdProperties[kVASDisclaimerKey] = disclaimerTest;
+        }
     }
     
-    VASTextView *disclaimerView = [vasNativeAd text:kDisclaimerCompId];
-    if (disclaimerView.text) {
-        self.vasAdProperties[kVASDisclaimerKey] = disclaimerView.text;
+    id<VASComponent> videoComponent = [vasNativeAd component:kVideoCompId];
+    if ([videoComponent conformsToProtocol:@protocol(VASViewComponent)]) {
+        UIView *videoView = ((id<VASViewComponent>) videoComponent).view;
+        if (videoView) {
+            self.vasAdProperties[kVASVideoViewKey] = videoView;
+        }
     }
-}
-
--(void)dealloc
-{
-    MPLogTrace(@"Deallocating %@.", self);
 }
 
 #pragma mark - MPNativeAdAdapter
@@ -143,7 +163,8 @@ static NSString * const kVideoCompId        = @"video";
 
 #pragma mark - VASNativeAdDelegate
 
-- (void)nativeAdClickedWithComponentBundle:(nonnull id<VASNativeComponentBundle>)nativeComponentBundle
+- (void)nativeAdClicked:(VASNativeAd *)nativeAd
+          withComponent:(id<VASComponent>)component;
 {
     __weak __typeof__(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{

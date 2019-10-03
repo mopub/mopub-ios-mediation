@@ -1,4 +1,7 @@
 ## Changelog
+ * 1.2.0.0
+ 	* Update to support native API changes from Verizon 1.2.0.
+
  * 1.1.4.2
     * Stop implementing deprecated request API.
 
