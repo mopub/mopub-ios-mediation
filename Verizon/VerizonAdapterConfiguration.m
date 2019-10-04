@@ -64,11 +64,14 @@ NSTimeInterval kMoPubVASAdapterSATimeoutInterval = 600;
 
 - (NSString *)networkSdkVersion
 {
+    NSString *editionName = [[[VASAds sharedInstance] configuration] stringForDomain:@"com.verizon.ads"
+                                                                                 key:@"editionName"
+                                                                         withDefault:nil];
     NSString *editionVersion = [[[VASAds sharedInstance] configuration] stringForDomain:@"com.verizon.ads"
                                                                                     key:@"editionVersion"
                                                                             withDefault:nil];
-    if (editionVersion.length > 0) {
-        return editionVersion;
+    if (editionName.length > 0 && editionVersion.length > 0) {
+        return [NSString stringWithFormat:@"%@-%@", editionName, editionVersion];
     }
     
     NSString *adapterVersion = [self adapterVersion];
