@@ -63,14 +63,9 @@
     [[VungleRouter sharedRouter] requestBannerAdWithCustomEventInfo:info size:self.bannerSize delegate:self];
 }
 
-- (void) invalidate
-{
-    [[VungleRouter sharedRouter] invalidateBannerAdViewForPlacementID:self.placementId delegate:self];
-}
-
 // Secret MoPub API to allow us to detach the custom event from (shared instance) routers synchronously
 - (void) invalidate{
-     [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId];
+     [[VungleRouter sharedRouter] invalidateBannerAdViewForPlacementID:self.placementId delegate:self];
 }
 
 #pragma mark - VungleRouterDelegate Methods
@@ -127,6 +122,7 @@
             // call router event to transmit close to SDK for report ad finalization / clean up
             [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId];
             [self.delegate bannerCustomEvent:self didLoadAd:bannerAdView];
+            [self.delegate trackImpression];
             self.isAdCached = YES;
         } else {
             [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nil];

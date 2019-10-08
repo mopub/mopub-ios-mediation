@@ -60,7 +60,7 @@ typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration
                                   complete:(void(^)(NSError *))complete {
     NSString * appId = configuration[kVungleAppIdKey];
-    
+
     if (configuration[kVungleSDKCollectDevice]) {
         // Check if publisher has set this value and update Vungle here.
         // Even if we don't have an app ID, we want to update the SDK with this value now.
