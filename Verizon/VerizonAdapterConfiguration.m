@@ -67,6 +67,7 @@ NSTimeInterval kMoPubVASAdapterSATimeoutInterval = 600;
     NSString *editionName = [[[VASAds sharedInstance] configuration] stringForDomain:@"com.verizon.ads"
                                                                                  key:@"editionName"
                                                                          withDefault:nil];
+
     NSString *editionVersion = [[[VASAds sharedInstance] configuration] stringForDomain:@"com.verizon.ads"
                                                                                     key:@"editionVersion"
                                                                             withDefault:nil];

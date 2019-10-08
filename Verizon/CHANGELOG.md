@@ -1,6 +1,7 @@
 ## Changelog
  * 1.2.0.0
- 	* Update to support native API changes from Verizon 1.2.0.
+    * Update to support native API changes from Verizon 1.2.0.
+    * This version of the adapters has been certified with Verizon 1.2.0 and is compatible with iOS 13.
 
  * 1.1.4.2
     * Stop implementing deprecated request API.
