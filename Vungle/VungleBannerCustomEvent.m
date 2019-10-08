@@ -16,9 +16,6 @@
 
 // If you need to play ads with vungle options, you may modify playVungleAdFromRootViewController and create an options dictionary and call the playAd:withOptions: method on the vungle SDK.
 
-static const CGFloat kVGNMoPubMRECWidthFor280Height = 336.0f;
-static const CGFloat kVGNMoPubMREC280Height = 280.0f;
-
 @interface VungleBannerCustomEvent () <VungleRouterDelegate>
 
 @property (nonatomic, copy) NSString *placementId;
@@ -41,12 +38,20 @@ static const CGFloat kVGNMoPubMREC280Height = 280.0f;
     self.placementId = [info objectForKey:kVunglePlacementIdKey];
     self.options = nil;
     
-    // Since MoPub supports two sizes MREC Ad (300 x 250 and 336 x 280)),
-    // if they pass 336 x 280 size, we will convert it to 300 x 250 size
-    if (CGSizeEqualToSize(size, CGSizeMake(kVGNMoPubMRECWidthFor280Height, kVGNMoPubMREC280Height))) {
-        size = kVGNMRECSize;
+    NSString * format = [info objectForKey:@"adunit_format"];
+    BOOL isMediumRectangleFormat = (format != nil ? [[format lowercaseString] containsString:@"medium_rectangle"] : NO);
+    
+    //Vungle only supports Medium Rectangle
+    if (!isMediumRectangleFormat) {
+        MPLogInfo(@"Please ensure your MoPub adunit's format is Medium Rectangle. Vungle only supports 300*250 sized ads.");
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid sizes received. Vungle only supports 300 x 250 ads."];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
+        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nil];
+        
+        return;
     }
-    self.bannerSize = size;
+
+    self.bannerSize = kVNGMRECSize;
     self.bannerInfo = info;
     self.isAdCached = NO;
     
@@ -118,6 +123,7 @@ static const CGFloat kVGNMoPubMREC280Height = 280.0f;
             // call router event to transmit close to SDK for report ad finalization / clean up
             [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId];
             [self.delegate bannerCustomEvent:self didLoadAd:mrecAdView];
+            [self.delegate trackImpression];
             self.isAdCached = YES;
         } else {
             [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nil];

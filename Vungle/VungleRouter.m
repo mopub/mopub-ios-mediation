@@ -32,7 +32,7 @@ NSString *const kVungleSDKMinSpaceForAssetLoad = @"vungleMinimumFileSystemSizeFo
 static NSString *const kVungleBannerDelegateKey = @"bannerDelegate";
 static NSString *const kVungleBannerDelegateStateKey = @"bannerState";
 
-const CGSize kVGNMRECSize = {.width = 300.0f, .height = 250.0f};
+const CGSize kVNGMRECSize = {.width = 300.0f, .height = 250.0f};
 
 typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     SDKInitializeStateNotInitialized,
@@ -218,7 +218,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
         }
     }
 
-    if ([self validateInfoData:info] && CGSizeEqualToSize(size, kVGNMRECSize)) {
+    if ([self validateInfoData:info] && CGSizeEqualToSize(size, kVNGMRECSize)) {
         self.bannerPlacementID = [info objectForKey:kVunglePlacementIdKey];
         self.isInvalidatedBannerForPlacementID = NO;
 

@@ -20,7 +20,7 @@ extern NSString *const kVungleSDKMinSpaceForInit;
 extern NSString *const kVungleSDKMinSpaceForAdRequest;
 extern NSString *const kVungleSDKMinSpaceForAssetLoad;
 
-extern const CGSize kVGNMRECSize;
+extern const CGSize kVNGMRECSize;
 
 @protocol VungleRouterDelegate;
 @class VungleInstanceMediationSettings;
