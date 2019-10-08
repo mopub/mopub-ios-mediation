@@ -86,15 +86,15 @@
     }
     
     if ([self.adView respondsToSelector:@selector(nativeIconImageView)]) {
-        UIView *mediaView = [adapter.properties objectForKey:kAdIconImageKey];
+        UIView *iconView = [adapter.properties objectForKey:kAdIconImageViewKey];
         UIView *iconImageView = [self.adView nativeIconImageView];
         
-        mediaView.frame = iconImageView.bounds;
-        mediaView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        mediaView.userInteractionEnabled = YES;
+        iconView.frame = iconImageView.bounds;
+        iconView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        iconView.userInteractionEnabled = YES;
         iconImageView.userInteractionEnabled = YES;
         
-        [iconImageView addSubview:mediaView];
+        [iconImageView addSubview:iconView];
     }
     
     if ([self.adView respondsToSelector:@selector(nativeVideoView)]) {
