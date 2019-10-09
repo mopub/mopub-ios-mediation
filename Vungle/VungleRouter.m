@@ -242,7 +242,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
             [self requestBannerAdWithPlacementID:placementID size:size delegate:delegate];
         }
     } else {
-        MPLogInfo(@"A banner ad type was requested with the size which Vungle SDK doesn't support.");
+        MPLogError(@"A banner ad type was requested with the size which Vungle SDK doesn't support.");
         [delegate vungleAdDidFailToLoad:nil];
     }
 }
