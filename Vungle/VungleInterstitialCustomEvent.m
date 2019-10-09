@@ -53,14 +53,6 @@
         
         NSMutableDictionary *options = [NSMutableDictionary dictionary];
         
-        // VunglePlayAdOptionKeyUser
-        if ([self.localExtras objectForKey:kVungleUserId] != nil) {
-            NSString *userID = [self.localExtras objectForKey:kVungleUserId];
-            if (userID.length > 0) {
-                options[VunglePlayAdOptionKeyUser] = userID;
-            }
-        }
-        
         // Ordinal
         if ([self.localExtras objectForKey:kVungleOrdinal] != nil) {
             NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[[self.localExtras objectForKey:kVungleOrdinal] longLongValue]];
@@ -76,6 +68,24 @@
             if (flexDismissTime > 0) {
                 options[VunglePlayAdOptionKeyFlexViewAutoDismissSeconds] = @(flexDismissTime);
             }
+        }
+
+        // Muted
+        if ([self.localExtras objectForKey:kVungleStartMuted] != nil) {
+            BOOL startMutedPlaceholder = [[self.localExtras objectForKey:kVungleStartMuted] boolValue];
+            options[VunglePlayAdOptionKeyStartMuted] = @(startMutedPlaceholder);
+        }
+
+        // Orientations
+        if ([self.localExtras objectForKey:kVungleSupportedOrientations] != nil) {
+            int appOrientation = [[self.localExtras objectForKey:kVungleSupportedOrientations] intValue];
+            NSNumber *orientations = @(UIInterfaceOrientationMaskAll);
+            if (appOrientation == 1) {
+                orientations = @(UIInterfaceOrientationMaskLandscape);
+            } else if (appOrientation == 2) {
+                orientations = @(UIInterfaceOrientationMaskPortrait);
+            }
+            options[VunglePlayAdOptionKeyOrientations] = orientations;
         }
 
         self.options = options.count ? options : nil;
