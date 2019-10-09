@@ -126,10 +126,10 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
     });
 }
 
-- (void)setShouldCollect:(BOOL)shouldCollect {
+- (void)setShouldCollectDeviceId:(BOOL)shouldCollectDeviceId {
     // This should ONLY be set if the SDK has not be initialized
     if (self.sdkInitializeState == SDKInitializeStateNotInitialized) {
-        [VungleSDK setPublishIDFV:shouldCollect];
+        [VungleSDK setPublishIDFV:shouldCollectDeviceId];
     }
 }
 
@@ -236,7 +236,6 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
             [self requestBannerMrecAdWithPlacementID:placementID delegate:delegate];
         }
     } else {
-        // if size is incorrect, should we send that back as an error response?
         [delegate vungleAdDidFailToLoad:nil];
     }
 }

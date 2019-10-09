@@ -1,9 +1,8 @@
 //
 //  VungleBannerCustomEvent.m
-//  VungleMoPubAdapter
+//  MoPubSDK
 //
-//  Created by Clarke Bishop on 9/24/18.
-//  Copyright © 2018 Vungle. All rights reserved.
+//  Copyright © 2019 MoPub. All rights reserved.
 //
 
 #import <VungleSDK/VungleSDK.h>
@@ -13,8 +12,6 @@
     #import "MoPub.h"
 #endif
 #import "VungleRouter.h"
-
-// If you need to play ads with vungle options, you may modify playVungleAdFromRootViewController and create an options dictionary and call the playAd:withOptions: method on the vungle SDK.
 
 @interface VungleBannerCustomEvent () <VungleRouterDelegate>
 
@@ -61,12 +58,7 @@
         }
     }];
     
-    [[VungleRouter sharedRouter] requestBannerAdWithCustomEventInfo:info size:size delegate:self];
-}
-
-- (void)dealloc {
-    // call router event to transmit close to SDK for report ad finalization / clean up
-//    [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId];
+    [[VungleRouter sharedRouter] requestBannerAdWithCustomEventInfo:info size:self.bannerSize delegate:self];
 }
 
 // Secret MoPub API to allow us to detach the custom event from (shared instance) routers synchronously
@@ -86,7 +78,7 @@
         NSMutableDictionary *options = [NSMutableDictionary dictionary];
 
         // VunglePlayAdOptionKeyUser
-        if ([self.localExtras objectForKey:kVungleUserId]) {
+        if ([self.localExtras objectForKey:kVungleUserId] != nil) {
             NSString *userID = [self.localExtras objectForKey:kVungleUserId];
             if (userID.length > 0) {
                 options[VunglePlayAdOptionKeyUser] = userID;
@@ -94,7 +86,7 @@
         }
 
         // Ordinal
-        if ([self.localExtras objectForKey:kVungleOrdinal]) {
+        if ([self.localExtras objectForKey:kVungleOrdinal] != nil) {
             NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[[self.localExtras objectForKey:kVungleOrdinal] longLongValue]];
             NSUInteger ordinal = ordinalPlaceholder.unsignedIntegerValue;
             if (ordinal > 0) {
@@ -103,7 +95,7 @@
         }
 
         // Start Muted
-        if ([self.localExtras objectForKey:kVungleStartMuted]) {
+        if ([self.localExtras objectForKey:kVungleStartMuted] != nil) {
             BOOL startMutedPlaceholder = [[self.localExtras objectForKey:kVungleStartMuted] boolValue];
             options[VunglePlayAdOptionKeyStartMuted] = @(startMutedPlaceholder);
         } else {

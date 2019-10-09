@@ -30,7 +30,7 @@ extern const CGSize kVNGMRECSize;
 + (VungleRouter *)sharedRouter;
 
 - (void)initializeSdkWithInfo:(NSDictionary *)info;
-- (void)setShouldCollect:(BOOL)shouldCollect;
+- (void)setShouldCollectDeviceId:(BOOL)shouldCollectDeviceId;
 - (void)setSDKOptions:(NSDictionary *)sdkOptions;
 - (void)requestInterstitialAdWithCustomEventInfo:(NSDictionary *)info delegate:(id<VungleRouterDelegate>)delegate;
 - (void)requestRewardedVideoAdWithCustomEventInfo:(NSDictionary *)info delegate:(id<VungleRouterDelegate>)delegate;

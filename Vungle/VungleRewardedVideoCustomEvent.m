@@ -32,7 +32,7 @@
     [[VungleRouter sharedRouter] initializeSdkWithInfo:parameters];
 }
 
-- (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info
+- (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     self.placementId = [info objectForKey:kVunglePlacementIdKey];
 
