@@ -82,6 +82,7 @@
      the playAd:withOptions: method on the Vungle SDK. */
     NSMutableDictionary *options = [NSMutableDictionary dictionary];
     
+    // VunglePlayAdOptionKeyUser
     if (self.localExtras != nil && [self.localExtras count] > 0) {
         NSString *userId = [self.localExtras objectForKey:kVungleUserId];
         if (userId != nil) {
@@ -90,7 +91,8 @@
                 options[VunglePlayAdOptionKeyUser] = userID;
             }
         }
-        
+
+        // Ordinal
         NSString *ordinal = [self.localExtras objectForKey:kVungleUserId];
         if (ordinal != nil) {
             NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[ordinal longLongValue]];
@@ -100,7 +102,8 @@
                 options[VunglePlayAdOptionKeyOrdinal] = @(ordinal);
             }
         }
-        
+
+        // Start Muted
         NSString *muted = [self.localExtras objectForKey:kVungleStartMuted];
         if (muted != nil) {
             BOOL startMutedPlaceholder = [muted boolValue];
