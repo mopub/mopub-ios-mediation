@@ -81,8 +81,8 @@ typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
     
     if ( completionBlock ) completionBlock( error );
     
-    MPBLogLevel logLevel = [MPLogging consoleLogLevel];
-    BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
+    MPLogLevel logLevel = [MPLogging consoleLogLevel];
+    BOOL verboseLoggingEnabled = (logLevel == MPLogLevelDebug);
 
     [[ALSdk sharedWithKey: AppLovinAdapterConfiguration.sdkKey].settings setIsVerboseLogging: verboseLoggingEnabled];
 }
