@@ -13,17 +13,14 @@
 #endif
 #import "VungleRouter.h"
 
-static const CGFloat kVGNMoPubMRECWidthFor280Height = 336.0f;
-static const CGFloat kVGNMoPubMREC280Height = 280.0f;
-
 @interface VungleBannerCustomEvent () <VungleRouterDelegate>
 
 @property (nonatomic, copy) NSString *placementId;
 @property (nonatomic, copy) NSDictionary *options;
-@property (nonatomic) CGSize bannerSize;
 @property (nonatomic, assign) NSDictionary *bannerInfo;
 @property (nonatomic, assign) NSTimer *timeOutTimer;
 @property (nonatomic, assign) BOOL isAdCached;
+@property (nonatomic) CGSize bannerSize;
 
 @end
 
@@ -39,20 +36,20 @@ static const CGFloat kVGNMoPubMREC280Height = 280.0f;
     self.placementId = [info objectForKey:kVunglePlacementIdKey];
     self.options = nil;
     
-    NSString * format = [info objectForKey:@"adunit_format"];
+    NSString *format = [info objectForKey:@"adunit_format"];
     BOOL isMediumRectangleFormat = (format != nil ? [[format lowercaseString] containsString:@"medium_rectangle"] : NO);
     
     //Vungle only supports Medium Rectangle
     if (!isMediumRectangleFormat) {
-        MPLogInfo(@"Please ensure your MoPub adunit's format is Medium Rectangle. Vungle only supports 300*250 sized ads.");
+        MPLogInfo(@"Vungle only supports 300*250 ads. Please ensure your MoPub ad unit format is Medium Rectangle.");
         NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid sizes received. Vungle only supports 300 x 250 ads."];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nil];
         
         return;
     }
-    
-    self.bannerSize = kVGNMRECSize;
+
+    self.bannerSize = kVNGMRECSize;
     self.bannerInfo = info;
     self.isAdCached = NO;
     
@@ -79,26 +76,32 @@ static const CGFloat kVGNMoPubMREC280Height = 280.0f;
         self.options = nil;
     }
     
-    // If you need to play ads with Vungle options, you may modify playVungleAdFromRootViewController and create an options dictionary and call the playAd:withOptions: method on the Vungle SDK.
+    /** If you need to play ads with Vungle options, you may modify
+     playVungleAdFromRootViewController and create an options dictionary and call
+     the playAd:withOptions: method on the Vungle SDK. */
     NSMutableDictionary *options = [NSMutableDictionary dictionary];
     
-    if ([self.localExtras objectForKey:kVungleUserId] != nil) {
-        NSString *userID = [self.localExtras objectForKey:kVungleUserId];
+    NSString *userId = [self.localExtras objectForKey:kVungleUserId];
+    if (userId != nil) {
+        NSString *userID = userId;
         if (userID.length > 0) {
             options[VunglePlayAdOptionKeyUser] = userID;
         }
     }
     
-    if ([self.localExtras objectForKey:kVungleOrdinal] != nil) {
-        NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[[self.localExtras objectForKey:kVungleOrdinal] longLongValue]];
+    NSString *ordinal = [self.localExtras objectForKey:kVungleUserId];
+    if (ordinal != nil) {
+        NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[ordinal longLongValue]];
         NSUInteger ordinal = ordinalPlaceholder.unsignedIntegerValue;
+        
         if (ordinal > 0) {
             options[VunglePlayAdOptionKeyOrdinal] = @(ordinal);
         }
     }
     
-    if ([self.localExtras objectForKey:kVungleStartMuted] != nil) {
-        BOOL startMutedPlaceholder = [[self.localExtras objectForKey:kVungleStartMuted] boolValue];
+    NSString *muted = [self.localExtras objectForKey:kVungleUserId];
+    if (muted != nil) {
+        BOOL startMutedPlaceholder = [muted boolValue];
         options[VunglePlayAdOptionKeyStartMuted] = @(startMutedPlaceholder);
     } else {
         options[VunglePlayAdOptionKeyStartMuted] = @(YES);
@@ -129,7 +132,7 @@ static const CGFloat kVGNMoPubMREC280Height = 280.0f;
 - (void)vungleAdDidFailToLoad:(NSError *)error
 {
     NSError *loadFailError = nil;
-    if(error) {
+    if (error) {
         loadFailError = error;
         MPLogInfo(@"Vungle video banner failed to load with error: %@", error.localizedDescription);
     }

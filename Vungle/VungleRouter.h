@@ -20,7 +20,7 @@ extern NSString *const kVungleSDKMinSpaceForInit;
 extern NSString *const kVungleSDKMinSpaceForAdRequest;
 extern NSString *const kVungleSDKMinSpaceForAssetLoad;
 
-extern const CGSize kVGNMRECSize;
+extern const CGSize kVNGMRECSize;
 
 @protocol VungleRouterDelegate;
 @class VungleInstanceMediationSettings;
@@ -64,14 +64,9 @@ extern const CGSize kVGNMRECSize;
 
 - (void)vungleAdShouldRewardUser;
 
-/**
- *  @note This should only be used with banner ads
- */
+// @note This should only be used with banner ads
 - (void)vungleAdWillLeaveApplication;
 
-/**
- *
- */
 - (void)vungleBannerAdDidLoadInView:(UIView *)view;
 
 @end

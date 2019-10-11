@@ -60,15 +60,13 @@ typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration
                                   complete:(void(^)(NSError *))complete {
     NSString * appId = configuration[kVungleAppIdKey];
-
-    // If there is no user configuration value for `shouldCollectDeviceId`, default it to YES.
-    self.shouldCollectDeviceId = YES;
     
     if (configuration[kVungleSDKCollectDevice]) {
+        // Check if publisher has set this value and update Vungle here.
+        // Even if we don't have an app ID, we want to update the SDK with this value now.
         self.shouldCollectDeviceId = [configuration[kVungleSDKCollectDevice] boolValue];
+        [VungleRouter.sharedRouter setShouldCollectDeviceId:self.shouldCollectDeviceId];
     }
-    
-    [VungleRouter.sharedRouter setShouldCollectDeviceId:self.shouldCollectDeviceId];
     
     NSMutableDictionary *sizeOverrideDict = [NSMutableDictionary dictionary];
     if (configuration[kVNGSDKOptionsMinSpaceForInit]) {
