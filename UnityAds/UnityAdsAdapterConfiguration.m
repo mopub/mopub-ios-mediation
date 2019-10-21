@@ -77,7 +77,7 @@ typedef NS_ENUM(NSInteger, UnityAdsAdapterErrorCode) {
         complete(nil);
     }
     
-    MPBLogLevel * logLevel = [[MoPub sharedInstance] logLevel];
+    MPBLogLevel logLevel = [[MoPub sharedInstance] logLevel];
     BOOL debugModeEnabled = logLevel == MPBLogLevelDebug;
 
     [UnityAds setDebugMode:debugModeEnabled];
