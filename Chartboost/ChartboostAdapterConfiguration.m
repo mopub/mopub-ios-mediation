@@ -95,9 +95,7 @@ typedef NS_ENUM(NSInteger, ChartboostAdapterErrorCode) {
 
 + (CBLoggingLevel)getChartboostLogLevel:(MPBLogLevel)logLevel
 {
-    int logLevelVal = logLevel;
-    
-    switch (logLevelVal) {
+    switch (logLevel) {
         case MPBLogLevelDebug:
             return CBLoggingLevelVerbose;
         case MPBLogLevelInfo:
