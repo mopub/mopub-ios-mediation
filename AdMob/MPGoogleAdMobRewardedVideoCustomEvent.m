@@ -23,7 +23,7 @@
     });
 }
 
-- (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info {
+- (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     [self initializeSdkWithParameters:info];
     
     // Cache the network initialization parameters

@@ -24,7 +24,7 @@
 
 #pragma mark - MPInterstitialCustomEvent Subclass Methods
 
-- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info {
+- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
 
     NSString *appId = [info objectForKey:@"appId"];
     NSArray *allZoneIds = [info objectForKey:@"allZoneIds"];

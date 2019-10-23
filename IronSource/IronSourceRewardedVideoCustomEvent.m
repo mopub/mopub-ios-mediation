@@ -19,7 +19,7 @@
 
 #pragma mark Mopub IronSourceRewardedVideoCustomEvent Methods
 
-- (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info {
+- (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     MPLogInfo(@"IronSource requestRewardedVideoWithCustomEventInfo with: %@", info);
     
     // Collect and pass the user's consent from MoPub onto the ironSource SDK

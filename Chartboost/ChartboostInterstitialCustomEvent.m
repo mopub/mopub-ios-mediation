@@ -41,7 +41,7 @@ static NSString *appId = nil;
 
 #pragma mark - MPInterstitialCustomEvent Subclass Methods
 
-- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info
+- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     appId = [info objectForKey:@"appId"];
     if (!appId) {

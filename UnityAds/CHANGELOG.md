@@ -1,5 +1,13 @@
 
 ## Changelog
+* 3.3.0.0
+  * This version of the adapters has been certified with Unity Ads 3.3.0 and is compatible with iOS 13.
+  * Update the banner adapter to use new load API.
+  * Fix banner ads refresh to render correctly.
+
+* 3.2.0.1
+  * Stop implementing deprecated request API.
+
 * 3.2.0.0
   * This version of the adapters has been certified with Unity Ads 3.2.0.
   * **Note**:On MoPub adunit refresh, Unity Banners may not render correctly and this issue will be fixed in the upcoming Unity SDK versions. This behavior is inconsistent and there is no suggested workaround at the moment

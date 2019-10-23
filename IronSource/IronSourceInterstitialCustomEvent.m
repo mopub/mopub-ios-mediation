@@ -19,7 +19,7 @@
 
 #pragma mark MoPub IronSourceInterstitialCustomEvent Methods
 
-- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info {
+- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     MPLogInfo(@"Attempting to send ad request to IronSource:requestInterstitialWithCustomEventInfo");
     
     // Collect and pass the user's consent from MoPub onto the ironSource SDK

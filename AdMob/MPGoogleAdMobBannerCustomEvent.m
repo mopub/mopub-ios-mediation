@@ -36,8 +36,12 @@
 }
 
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info {
+    [self requestAdWithSize:size customEventInfo:info adMarkup:nil];
+}
+
+- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
   
-  self.adBannerView.frame = [self frameForCustomEventInfo:info];
+  self.adBannerView.frame = [self frameForCustomEventInfo:size];
   self.adBannerView.adUnitID = [info objectForKey:@"adUnitID"];
   self.adBannerView.rootViewController = [self.delegate viewControllerForPresentingModalView];
     
@@ -90,9 +94,9 @@
   [self.adBannerView loadRequest:request];
 }
 
-- (CGRect)frameForCustomEventInfo:(NSDictionary *)info {
-  CGFloat width = [[info objectForKey:@"adWidth"] floatValue];
-  CGFloat height = [[info objectForKey:@"adHeight"] floatValue];
+- (CGRect)frameForCustomEventInfo:(CGSize)size {
+  CGFloat width = size.width;
+  CGFloat height = size.height;
 
   if (width < GAD_SIZE_320x50.width && height < GAD_SIZE_320x50.height) {
     width = GAD_SIZE_320x50.width;
