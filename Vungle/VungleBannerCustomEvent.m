@@ -17,10 +17,10 @@
 
 @property (nonatomic, copy) NSString *placementId;
 @property (nonatomic, copy) NSDictionary *options;
-@property (nonatomic) CGSize bannerSize;
 @property (nonatomic, assign) NSDictionary *bannerInfo;
 @property (nonatomic, assign) NSTimer *timeOutTimer;
 @property (nonatomic, assign) BOOL isAdCached;
+@property (nonatomic) CGSize bannerSize;
 
 @end
 
@@ -31,16 +31,17 @@
     return NO;
 }
 
-- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
+- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
+{
     self.placementId = [info objectForKey:kVunglePlacementIdKey];
     self.options = nil;
     
-    NSString * format = [info objectForKey:@"adunit_format"];
+    NSString *format = [info objectForKey:@"adunit_format"];
     BOOL isMediumRectangleFormat = (format != nil ? [[format lowercaseString] containsString:@"medium_rectangle"] : NO);
     
     //Vungle only supports Medium Rectangle
     if (!isMediumRectangleFormat) {
-        MPLogInfo(@"Please ensure your MoPub adunit's format is Medium Rectangle. Vungle only supports 300*250 sized ads.");
+        MPLogInfo(@"Vungle only supports 300*250 ads. Please ensure your MoPub ad unit format is Medium Rectangle.");
         NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid sizes received. Vungle only supports 300 x 250 ads."];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nil];
@@ -61,8 +62,8 @@
     [[VungleRouter sharedRouter] requestBannerAdWithCustomEventInfo:info size:self.bannerSize delegate:self];
 }
 
-// Secret MoPub API to allow us to detach the custom event from (shared instance) routers synchronously
-- (void) invalidate{
+- (void) invalidate
+{
     [[VungleRouter sharedRouter] invalidateBannerAdViewForPlacementID:self.placementId delegate:self];
 }
 
@@ -131,20 +132,22 @@
 - (void)vungleAdDidFailToLoad:(NSError *)error
 {
     NSError *loadFailError = nil;
-    if(error) {
+    if (error) {
         loadFailError = error;
         MPLogInfo(@"Vungle video banner failed to load with error: %@", error.localizedDescription);
     }
-
+    
     [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:loadFailError];
 }
 
-- (void)vungleAdWillLeaveApplication {
+- (void)vungleAdWillLeaveApplication
+{
     MPLogInfo(@"Vungle video banner will leave the application");
     [self.delegate bannerCustomEventWillLeaveApplication:self];
 }
 
-- (NSString *)getPlacementID {
+- (NSString *)getPlacementID
+{
     return self.placementId;
 }
 

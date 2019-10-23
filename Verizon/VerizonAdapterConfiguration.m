@@ -1,24 +1,21 @@
 #import <VerizonAdsStandardEdition/VerizonAdsStandardEdition.h>
 #import <VerizonAdsCore/VerizonAdsCore.h>
 #import "VerizonAdapterConfiguration.h"
-#if __has_include("MoPub.h")
-#import "MoPub.h"
-#endif
 
-NSErrorDomain const kMoPubVASAdapterErrorDomain = @"com.verizon.ads.mopubvasadapter.ErrorDomain";
+NSString * const kMoPubVASAdapterVersion = @"1.2.1.0";
+
 NSString * const kMoPubVASAdapterErrorWho = @"MoPubVASAdapter";
 NSString * const kMoPubVASAdapterPlacementId = @"placementId";
 NSString * const kMoPubVASAdapterSiteId = @"siteId";
-NSString * const kMoPubMillennialAdapterPlacementId = @"adUnitID";
-NSString * const kMoPubMillennialAdapterSiteId = @"dcn";
-NSString * const kMoPubVASAdapterVersion = @"1.1.4.0";
+
+NSErrorDomain const kMoPubVASAdapterErrorDomain = @"com.verizon.ads.mopubvasadapter.ErrorDomain";
 NSTimeInterval kMoPubVASAdapterSATimeoutInterval = 600;
 
 @implementation VerizonAdapterConfiguration
 
 + (NSString *)appMediator
 {
-    return [NSString stringWithFormat:@"MoPubVAS-%@",kMoPubVASAdapterVersion];
+    return [NSString stringWithFormat:@"MoPubVAS-%@", kMoPubVASAdapterVersion];
 }
 
 + (void)updateInitializationParameters:(NSDictionary *)parameters {}
@@ -26,20 +23,24 @@ NSTimeInterval kMoPubVASAdapterSATimeoutInterval = 600;
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration complete:(void(^ _Nullable)(NSError * _Nullable))complete
 {
     NSString *siteId = configuration[kMoPubVASAdapterSiteId];
-    if (siteId.length > 0 && [VASStandardEdition initializeWithSiteId:siteId])
-    {
-        MPLogInfo(@"VAS adapter version: %@", kMoPubVASAdapterVersion);
-    }
-    if (complete)
-    {
-        complete(nil);
+    if (siteId.length > 0) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([VASStandardEdition initializeWithSiteId:siteId]) {
+                MPLogInfo(@"VAS adapter version: %@", kMoPubVASAdapterVersion);
+            }
+            if (complete) {
+                complete(nil);
+            }
+        });
+    } else {
+        if (complete) {
+            complete(nil);
+        }
     }
     
-    MPBLogLevel * logLevel = [[MoPub sharedInstance] logLevel];
-
-    if (logLevel == MPBLogLevelDebug) {
+    if (MPLogging.consoleLogLevel == MPBLogLevelDebug) {
         [VASAds setLogLevel:VASLogLevelDebug];
-    } else if (logLevel == MPBLogLevelInfo) {
+    } else if (MPLogging.consoleLogLevel == MPBLogLevelInfo) {
         [VASAds setLogLevel:VASLogLevelInfo];
     }
 }
@@ -61,16 +62,21 @@ NSTimeInterval kMoPubVASAdapterSATimeoutInterval = 600;
 
 - (NSString *)networkSdkVersion
 {
-    return VASAds.sdkInfo.version;
-}
+    NSString *editionName = [[[VASAds sharedInstance] configuration] stringForDomain:@"com.verizon.ads"
+                                                                                 key:@"editionName"
+                                                                         withDefault:nil];
 
-@end
-
-@implementation MillennialAdapterConfiguration
-
-- (NSString *)moPubNetworkName
-{
-    return @"Millennial";
+    NSString *editionVersion = [[[VASAds sharedInstance] configuration] stringForDomain:@"com.verizon.ads"
+                                                                                    key:@"editionVersion"
+                                                                            withDefault:nil];
+    if (editionName.length > 0 && editionVersion.length > 0) {
+        return [NSString stringWithFormat:@"%@-%@", editionName, editionVersion];
+    }
+    
+    NSString *adapterVersion = [self adapterVersion];
+    NSRange range = [adapterVersion rangeOfString:@"." options:NSBackwardsSearch];
+    
+    return adapterVersion.length > range.location ? [adapterVersion substringToIndex:range.location] : @"";
 }
 
 @end

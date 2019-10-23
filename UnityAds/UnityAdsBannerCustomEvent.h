@@ -1,4 +1,4 @@
-#import <UnityAds/UADSBanner.h>
+#import <UnityAds/UADSBannerViewDelegate.h>
 
 #if __has_include(<MoPub/MoPub.h>)
     #import <MoPub/MoPub.h>
@@ -8,6 +8,5 @@
     #import "MPBannerCustomEvent.h"
 #endif
 
-@interface UnityAdsBannerCustomEvent : MPBannerCustomEvent<UnityAdsBannerDelegate>
-
+@interface UnityAdsBannerCustomEvent : MPBannerCustomEvent <UADSBannerViewDelegate>
 @end

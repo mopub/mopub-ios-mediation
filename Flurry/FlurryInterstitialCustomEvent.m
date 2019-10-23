@@ -26,7 +26,7 @@
 
 #pragma mark - MPInterstitialCustomEvent Subclass Methods
 
-- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info
+- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     self.apiKey = [info objectForKey:@"apiKey"];
     NSString *adSpaceName = [info objectForKey:@"adSpaceName"];

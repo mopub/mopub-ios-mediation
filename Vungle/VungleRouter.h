@@ -65,14 +65,9 @@ extern const CGSize kVNGMRECSize;
 
 - (void)vungleAdShouldRewardUser;
 
-/**
- *  @note This should only be used with banner ads
- */
+// @note This should only be used with banner ads
 - (void)vungleAdWillLeaveApplication;
 
-/**
- *
- */
 - (void)vungleBannerAdDidLoadInView:(UIView *)view;
 
 @end

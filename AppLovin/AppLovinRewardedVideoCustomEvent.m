@@ -69,6 +69,20 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
     }
     
     self.sdk = [self SDKFromCustomEventInfo: info];
+    
+    if (self.sdk == nil) {
+        NSString *failureReason = @"ALSdk instance is nil likely because no AppLovin SDK key is available. Failing ad request";
+        
+        NSError *error = [NSError errorWithDomain: kALMoPubMediationErrorDomain
+                                             code: kALErrorCodeSdkDisabled
+                                         userInfo: @{NSLocalizedFailureReasonErrorKey: failureReason}];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], @"");
+        
+        [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error: error];
+
+        return;
+    }
+
     self.sdk.mediationProvider = ALMediationProviderMoPub;
     [self.sdk setPluginVersion: AppLovinAdapterConfiguration.pluginVersion];
     
