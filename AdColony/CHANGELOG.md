@@ -1,6 +1,6 @@
 ## Changelog
-  * 4.1.1.0
-    * This version of the adapters has been certified with AdColony 4.1.1.
+  * 4.1.2.0
+    * This version of the adapters has been certified with AdColony 4.1.2.
     * Added support banners.
    
   * 3.3.8.1.1
