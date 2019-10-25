@@ -26,9 +26,6 @@
 
 @property NSMutableDictionary* delegateMap;
 
-@property BOOL bannerLoadRequested;
-@property NSString* bannerPlacementId;
-
 @property (nonatomic, assign) int impressionOrdinal;
 @property (nonatomic, assign) int missedImpressionOrdinal;
 
@@ -100,24 +97,12 @@
     //Call load first, to minimize reporting discrepencies
     [UnityAds load:placementId];
     
-    if([UnityAds getPlacementState:placementId] == kUnityAdsPlacementStateNoFill){
-        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
-        [delegate unityAdsDidFailWithError:error];
-        return;
-    }
-    
     if (!self.isAdPlaying) {
         [self.delegateMap setObject:delegate forKey:placementId];
         
         if (![UnityAds isInitialized]) {
             [self initializeWithGameId:gameId];
         }
-
-        // Need to check immediately as an ad may be cached.
-        if ([UnityAds isReady:placementId]) {
-            [self unityAdsReady:placementId];
-        }
-        // MoPub timeout will handle the case for an ad failing to load.
     } else {
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorUnknown userInfo:nil];
         [delegate unityAdsDidFailWithError:error];
@@ -167,9 +152,7 @@
 
 - (void)unityAdsReady:(NSString *)placementId
 {
-    if ([placementId isEqualToString:self.bannerPlacementId] && self.bannerLoadRequested) {
-        self.bannerLoadRequested = NO;
-    } else if (!self.isAdPlaying) {
+    if (!self.isAdPlaying) {
         id delegate = [self getDelegate:placementId];
         if (delegate != nil) {
             [delegate unityAdsReady:placementId];
