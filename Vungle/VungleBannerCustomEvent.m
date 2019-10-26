@@ -71,56 +71,57 @@
 
 - (void)vungleAdDidLoad
 {
-        if (self.options) {
-            // In the event that options have been updated
-            self.options = nil;
-        }
-
-        NSMutableDictionary *options = [NSMutableDictionary dictionary];
-
-        // VunglePlayAdOptionKeyUser
-        if ([self.localExtras objectForKey:kVungleUserId] != nil) {
-            NSString *userID = [self.localExtras objectForKey:kVungleUserId];
+    if (self.options) {
+        // In the event that options have been updated
+        self.options = nil;
+    }
+    
+    /** If you need to play ads with Vungle options, you may modify
+     playVungleAdFromRootViewController and create an options dictionary and call
+     the playAd:withOptions: method on the Vungle SDK. */
+    NSMutableDictionary *options = [NSMutableDictionary dictionary];
+    
+    if (self.localExtras != nil && [self.localExtras count] > 0) {
+        NSString *userId = [self.localExtras objectForKey:kVungleUserId];
+        if (userId != nil) {
+            NSString *userID = userId;
             if (userID.length > 0) {
                 options[VunglePlayAdOptionKeyUser] = userID;
             }
         }
-
-        // Ordinal
-        if ([self.localExtras objectForKey:kVungleOrdinal] != nil) {
-            NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[[self.localExtras objectForKey:kVungleOrdinal] longLongValue]];
+        
+        NSString *ordinal = [self.localExtras objectForKey:kVungleUserId];
+        if (ordinal != nil) {
+            NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[ordinal longLongValue]];
             NSUInteger ordinal = ordinalPlaceholder.unsignedIntegerValue;
+            
             if (ordinal > 0) {
                 options[VunglePlayAdOptionKeyOrdinal] = @(ordinal);
             }
         }
-
-        // Start Muted
-        if ([self.localExtras objectForKey:kVungleStartMuted] != nil) {
-            BOOL startMutedPlaceholder = [[self.localExtras objectForKey:kVungleStartMuted] boolValue];
+        
+        NSString *muted = [self.localExtras objectForKey:kVungleStartMuted];
+        if (muted != nil) {
+            BOOL startMutedPlaceholder = [muted boolValue];
             options[VunglePlayAdOptionKeyStartMuted] = @(startMutedPlaceholder);
         } else {
-            // Set mrec ad start-muted as default unless a user set.
             options[VunglePlayAdOptionKeyStartMuted] = @(YES);
         }
-
-        self.options = options.count ? options : nil;
-
-        // generate view with size
-        UIView *mrecAdView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bannerSize.width, self.bannerSize.height)];
-
-        // router call to add ad view to view - should return the updated view.
-        mrecAdView = [[VungleRouter sharedRouter] renderBannerAdInView:mrecAdView options:self.options forPlacementID:self.placementId];
-        // if a view is returned, then we hit the methods below.
-        if (mrecAdView) {
-            // call router event to transmit close to SDK for report ad finalization / clean up
-            [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId];
-            [self.delegate bannerCustomEvent:self didLoadAd:mrecAdView];
-            [self.delegate trackImpression];
-            self.isAdCached = YES;
-        } else {
-            [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nil];
-        }
+    }
+    self.options = options.count ? options : nil;
+    
+    UIView *mrecAdView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bannerSize.width, self.bannerSize.height)];
+    
+    mrecAdView = [[VungleRouter sharedRouter] renderBannerAdInView:mrecAdView options:self.options forPlacementID:self.placementId];
+    
+    if (mrecAdView) {
+        [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId];
+        [self.delegate bannerCustomEvent:self didLoadAd:mrecAdView];
+        [self.delegate trackImpression];
+        self.isAdCached = YES;
+    } else {
+        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nil];
+    }
 }
 
 - (void)vungleAdWasTapped

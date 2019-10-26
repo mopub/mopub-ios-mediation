@@ -53,39 +53,43 @@
         
         NSMutableDictionary *options = [NSMutableDictionary dictionary];
         
-        // Ordinal
-        if ([self.localExtras objectForKey:kVungleOrdinal] != nil) {
-            NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[[self.localExtras objectForKey:kVungleOrdinal] longLongValue]];
-            NSUInteger ordinal = ordinalPlaceholder.unsignedIntegerValue;
-            if (ordinal > 0) {
-                options[VunglePlayAdOptionKeyOrdinal] = @(ordinal);
+        if (self.localExtras != nil && [self.localExtras count] > 0) {
+            NSString *ordinal = [self.localExtras objectForKey:kVungleOrdinal];
+            if (ordinal != nil) {
+                NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[ordinal longLongValue]];
+                NSUInteger ordinal = ordinalPlaceholder.unsignedIntegerValue;
+                if (ordinal > 0) {
+                    options[VunglePlayAdOptionKeyOrdinal] = @(ordinal);
+                }
             }
-        }
-        
-        // FlexVieAutoDismissSeconds
-        if ([self.localExtras objectForKey:kVungleFlexViewAutoDismissSeconds] != nil) {
-            NSTimeInterval flexDismissTime = [[self.localExtras objectForKey:kVungleFlexViewAutoDismissSeconds] floatValue];
-            if (flexDismissTime > 0) {
-                options[VunglePlayAdOptionKeyFlexViewAutoDismissSeconds] = @(flexDismissTime);
+            
+            NSString *flexVieAutoDismissSeconds = [self.localExtras objectForKey:kVungleFlexViewAutoDismissSeconds];
+            if (flexVieAutoDismissSeconds != nil) {
+                NSTimeInterval flexDismissTime = [flexVieAutoDismissSeconds floatValue];
+                if (flexDismissTime > 0) {
+                    options[VunglePlayAdOptionKeyFlexViewAutoDismissSeconds] = @(flexDismissTime);
+                }
             }
-        }
-
-        // Muted
-        if ([self.localExtras objectForKey:kVungleStartMuted] != nil) {
-            BOOL startMutedPlaceholder = [[self.localExtras objectForKey:kVungleStartMuted] boolValue];
-            options[VunglePlayAdOptionKeyStartMuted] = @(startMutedPlaceholder);
-        }
-
-        // Orientations
-        if ([self.localExtras objectForKey:kVungleSupportedOrientations] != nil) {
-            int appOrientation = [[self.localExtras objectForKey:kVungleSupportedOrientations] intValue];
-            NSNumber *orientations = @(UIInterfaceOrientationMaskAll);
-            if (appOrientation == 1) {
-                orientations = @(UIInterfaceOrientationMaskLandscape);
-            } else if (appOrientation == 2) {
-                orientations = @(UIInterfaceOrientationMaskPortrait);
+            
+            NSString *muted = [self.localExtras objectForKey:kVungleStartMuted];
+            if ( muted != nil) {
+                BOOL startMutedPlaceholder = [muted boolValue];
+                options[VunglePlayAdOptionKeyStartMuted] = @(startMutedPlaceholder);
             }
-            options[VunglePlayAdOptionKeyOrientations] = orientations;
+            
+            NSString *supportedOrientation = [self.localExtras objectForKey:kVungleSupportedOrientations];
+            if ( supportedOrientation != nil) {
+                int appOrientation = [supportedOrientation intValue];
+                NSNumber *orientations = @(UIInterfaceOrientationMaskAll);
+                
+                if (appOrientation == 1) {
+                    orientations = @(UIInterfaceOrientationMaskLandscape);
+                } else if (appOrientation == 2) {
+                    orientations = @(UIInterfaceOrientationMaskPortrait);
+                }
+                
+                options[VunglePlayAdOptionKeyOrientations] = orientations;
+            }
         }
 
         self.options = options.count ? options : nil;
