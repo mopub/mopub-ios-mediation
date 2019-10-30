@@ -1,5 +1,9 @@
 
 ## Changelog
+* 3.3.0.1
+  * Update adapter to handle Unity Ads load behaviors seamlessly for fullscreen ads.
+  * Fix incompatible type warning for MoPub `logLevel`. 
+  
 * 3.3.0.0
   * This version of the adapters has been certified with Unity Ads 3.3.0 and is compatible with iOS 13.
   * Update the banner adapter to use new load API.
