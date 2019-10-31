@@ -39,18 +39,19 @@
 
     NSString *format = [info objectForKey:@"adunit_format"];
     BOOL isMediumRectangleFormat = (format != nil ? [[format lowercaseString] containsString:@"medium_rectangle"] : NO);
-    
-    //Vungle only supports Medium Rectangle
-    if (!isMediumRectangleFormat) {
-        MPLogInfo(@"Vungle only supports 300*250 ads. Please ensure your MoPub ad unit format is Medium Rectangle.");
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid sizes received. Vungle only supports 300 x 250 ads."];
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementId);
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nil];
+    BOOL isBannerFormat = (format != nil ? [[format lowercaseString] containsString:@"banner"] : NO);
+
+    //Vungle only supports Medium Rectangle or Banner
+    if (!isMediumRectangleFormat && !isBannerFormat) {
+        MPLogInfo(@"Please ensure your MoPub adunit's format is Medium Rectangle or Banner. Vungle only supports 300*250, 320*50 and 728*90 sized ads.");
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid sizes received. Vungle only supports 300 x 250, 320 x 50 and 728 x 90 ads."];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
+        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
         
         return;
     }
 
-    self.bannerSize = kVNGMRECSize;
+    self.bannerSize = isMediumRectangleFormat ? kVNGMRECSize : size;
     self.bannerInfo = info;
     self.isAdCached = NO;
     
