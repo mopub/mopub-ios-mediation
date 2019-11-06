@@ -26,25 +26,19 @@
 #pragma mark - MPInterstitialCustomEvent Subclass Methods
 
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info {
-    NSString *appId = info[@"appId"];
-    NSArray *allZoneIds = info[@"allZoneIds"];
-    NSError *error = [AdColonyAdapterUtility validateAppId:appId andZoneIds:allZoneIds];
+    NSString *appId = info[ADC_APPLICATION_ID_KEY];
+    NSArray *allZoneIds = info[ADC_ALL_ZONE_IDS_KEY];
+    self.zoneId = info[ADC_ZONE_ID_KEY];
+    NSError *error = [AdColonyAdapterUtility validateAppId:appId zonesList:allZoneIds andZone:self.zoneId];
     if (error) {
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
     
-    self.zoneId = info[@"zoneId"];
-    if (self.zoneId.length == 0) {
-        self.zoneId = allZoneIds[0];
-    }
-    
-    NSString *userId = [info objectForKey:@"userId"];
-    
     // Cache the initialization parameters
     [AdColonyAdapterConfiguration updateInitializationParameters:info];
     
-    [AdColonyController initializeAdColonyCustomEventWithAppId:appId allZoneIds:allZoneIds userId:userId callback:^(NSError *error){
+    [AdColonyController initializeAdColonyCustomEventWithAppId:appId allZoneIds:allZoneIds userId:nil callback:^(NSError *error){
         __weak AdColonyInterstitialCustomEvent *weakSelf = self;
         [AdColony requestInterstitialInZone:[self getAdNetworkId] options:nil success:^(AdColonyInterstitial * _Nonnull ad) {
             weakSelf.ad = ad;

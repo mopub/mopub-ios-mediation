@@ -42,19 +42,15 @@
 }
 
 - (void)initializeSdkWithParameters:(NSDictionary *)parameters callback:(void(^)(NSError *error))completionCallback {
-    NSString *appId = parameters[@"appId"];
-    NSArray *allZoneIds = parameters[@"allZoneIds"];
-    NSError *error = [AdColonyAdapterUtility validateAppId:appId andZoneIds:allZoneIds];
+    NSString *appId = parameters[ADC_APPLICATION_ID_KEY];
+    NSArray *allZoneIds = parameters[ADC_ALL_ZONE_IDS_KEY];
+    self.zoneId = parameters[ADC_ZONE_ID_KEY];
+    NSError *error = [AdColonyAdapterUtility validateAppId:appId zonesList:allZoneIds andZone:self.zoneId];
     if (error) {
         if (completionCallback) {
             completionCallback(error);
         }
         return;
-    }
-    
-    self.zoneId = parameters[@"zoneId"];
-    if (self.zoneId.length == 0) {
-        self.zoneId = allZoneIds[0];
     }
     
     // Cache the initialization parameters

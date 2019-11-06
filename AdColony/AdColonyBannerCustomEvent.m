@@ -21,24 +21,18 @@
 #pragma mark - MPBannerCustomEvent Overridden Methods
 
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info {
-    NSString *appId = info[@"appId"];
-    NSArray *allZoneIds = info[@"allZoneIds"];
-    NSError *error = [AdColonyAdapterUtility validateAppId:appId andZoneIds:allZoneIds];
+    NSString *appId = info[ADC_APPLICATION_ID_KEY];
+    NSArray *allZoneIds = info[ADC_ALL_ZONE_IDS_KEY];
+    self.zoneId = info[ADC_ZONE_ID_KEY];
+    NSError *error = [AdColonyAdapterUtility validateAppId:appId zonesList:allZoneIds andZone:self.zoneId];
     if (error) {
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
     
-    self.zoneId = info[@"zoneId"];
-    if (self.zoneId.length == 0) {
-        self.zoneId = allZoneIds[0];
-    }
-    
-    
     // Cache the initialization parameters
     [AdColonyAdapterConfiguration updateInitializationParameters:info];
-    NSString *userId = [info objectForKey:@"userId"];
-    [AdColonyController initializeAdColonyCustomEventWithAppId:appId allZoneIds:allZoneIds userId:userId callback:^(NSError *error){
+    [AdColonyController initializeAdColonyCustomEventWithAppId:appId allZoneIds:allZoneIds userId:nil callback:^(NSError *error){
         if (error) {
             [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
         }else{
