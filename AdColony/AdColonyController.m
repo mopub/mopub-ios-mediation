@@ -10,6 +10,7 @@
 #import "AdColonyController.h"
 #import "AdColonyGlobalMediationSettings.h"
 #import "AdColonyAdapterConfiguration.h"
+#import "AdColonyAdapterUtility.h"
 #if __has_include("MoPub.h")
     #import "MoPub.h"
     #import "MPRewardedVideo.h"
@@ -77,13 +78,20 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
                     }
                 }
 
-                [AdColony configureWithAppID:appId zoneIDs:allZoneIds options:options completion:^(NSArray<AdColonyZone *> * _Nonnull zones) {
+                [AdColony configureWithAppID:appId zoneIDs:allZoneIds options:options completion:^(NSArray<AdColonyZone *> *zones) {
                     @synchronized (instance) {
                         instance.initState = INIT_STATE_INITIALIZED;
                     }
                     
                     if (callback != nil) {
-                        callback(nil);
+                        if (zones.count == 0) {
+                            NSError *error = [AdColonyAdapterUtility createErrorWith:@"AdColony's initialization failed."
+                                andReason:@"Failed to get zones list"
+                            andSuggestion:@"Ensure values of 'appId' and 'zoneId' fields on the MoPub dashboard are valid."];
+                            callback(error);
+                        }else{
+                            callback(nil);
+                        }
                     }
                 }];
             }

@@ -10,6 +10,8 @@
 NSString *const ADC_APPLICATION_ID_KEY = @"appId";
 NSString *const ADC_ALL_ZONE_IDS_KEY = @"allZoneIds";
 NSString *const ADC_ZONE_ID_KEY = @"zoneId";
+NSString *const ADC_USER_ID_KEY = @"userId";
+NSString *const ADC_ADAPTER_ERROR_DOMAIN = @"com.mopub.mopub-ios-sdk.mopub-adcolony-adapters";
 
 @implementation AdColonyAdapterUtility
 
@@ -54,7 +56,7 @@ NSString *const ADC_ZONE_ID_KEY = @"zoneId";
                                NSLocalizedRecoverySuggestionErrorKey: NSLocalizedString(suggestion, nil)
                                };
     
-    return [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:userInfo];
+    return [NSError errorWithDomain:ADC_ADAPTER_ERROR_DOMAIN code:0 userInfo:userInfo];
 }
 
 @end

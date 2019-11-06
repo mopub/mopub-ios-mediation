@@ -8,18 +8,10 @@
 #import <AdColony/AdColony.h>
 #import "AdColonyAdapterConfiguration.h"
 #import "AdColonyController.h"
+#import "AdColonyAdapterUtility.h"
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
 #endif
-
-// Initialization configuration keys
-static NSString * const kApplicationIdKey = @"appId";
-static NSString * const kUserIdKey        = @"userId";
-static NSString * const kZoneIdsKey       = @"allZoneIds";
-static NSString * const kZoneIdKey        = @"zoneId";
-
-// Errors
-static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-adcolony-adapters";
 
 typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
     AdColonyAdapterErrorCodeMissingAppId,
@@ -33,11 +25,11 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
 + (void)updateInitializationParameters:(NSDictionary *)parameters {
     // These should correspond to the required parameters checked in
     // `initializeNetworkWithConfiguration:complete:`
-    NSString * appId = parameters[kApplicationIdKey];
-    NSArray * allZoneIds = parameters[kZoneIdsKey];
+    NSString * appId = parameters[ADC_APPLICATION_ID_KEY];
+    NSArray * allZoneIds = parameters[ADC_ALL_ZONE_IDS_KEY];
     
     if (appId != nil && allZoneIds.count > 0) {
-        NSDictionary * configuration = @{ kApplicationIdKey: appId, kZoneIdsKey:allZoneIds };
+        NSDictionary * configuration = @{ ADC_APPLICATION_ID_KEY: appId, ADC_ALL_ZONE_IDS_KEY:allZoneIds };
         [AdColonyAdapterConfiguration setCachedInitializationParameters:configuration];
     }
 }
@@ -70,9 +62,9 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
         return;
     }
     
-    NSString * appId = configuration[kApplicationIdKey];
+    NSString * appId = configuration[ADC_APPLICATION_ID_KEY];
     if (appId == nil) {
-        NSError * error = [NSError errorWithDomain:kAdapterErrorDomain code:AdColonyAdapterErrorCodeMissingAppId userInfo:@{ NSLocalizedDescriptionKey: @"AdColony's initialization skipped. The appId field is empty. Ensure it is properly configured on the MoPub dashboard." }];
+        NSError * error = [NSError errorWithDomain:ADC_ADAPTER_ERROR_DOMAIN code:AdColonyAdapterErrorCodeMissingAppId userInfo:@{ NSLocalizedDescriptionKey: @"AdColony's initialization skipped. The appId field is empty. Ensure it is properly configured on the MoPub dashboard." }];
         MPLogEvent([MPLogEvent error:error message:nil]);
         
         if (complete != nil) {
@@ -83,7 +75,7 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
     
    NSArray * allZoneIds = [self extractAllZoneIds:configuration];
     if (allZoneIds.count == 0) {
-        NSError * error = [NSError errorWithDomain:kAdapterErrorDomain code:AdColonyAdapterErrorCodeMissingZoneIds userInfo:@{ NSLocalizedDescriptionKey: @"AdColony's initialization skipped. The allZoneIds field is empty. Ensure it is properly configured on the MoPub dashboard." }];
+        NSError * error = [NSError errorWithDomain:ADC_ADAPTER_ERROR_DOMAIN code:AdColonyAdapterErrorCodeMissingZoneIds userInfo:@{ NSLocalizedDescriptionKey: @"AdColony's initialization skipped. The allZoneIds field is empty. Ensure it is properly configured on the MoPub dashboard." }];
         MPLogEvent([MPLogEvent error:error message:nil]);
         
         if (complete != nil) {
@@ -93,19 +85,19 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
     }
     
     // Attempt to retrieve a userId
-    NSString * userId = configuration[kUserIdKey];
+    NSString * userId = configuration[ADC_USER_ID_KEY];
 
     MPLogInfo(@"Attempting to initialize the AdColony SDK with:\n%@", configuration);
     [AdColonyController initializeAdColonyCustomEventWithAppId:appId allZoneIds:allZoneIds userId:userId callback:^(NSError *error){
         if (complete != nil) {
-            complete(nil);
+            complete(error);
         }
     }];
 }
 
 - (NSArray *)extractAllZoneIds:(NSDictionary<NSString *, id> *)configuration
 {
-    NSArray *allZoneIds = [configuration valueForKeyPath:kZoneIdsKey];
+    NSArray *allZoneIds = [configuration valueForKeyPath:ADC_ALL_ZONE_IDS_KEY];
     NSString *zoneIdsToString = [allZoneIds description];
     NSData * dataToCheck = [zoneIdsToString dataUsingEncoding:NSUTF8StringEncoding];
     NSError * error = nil;

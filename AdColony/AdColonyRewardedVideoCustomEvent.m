@@ -69,6 +69,7 @@
     [self initializeSdkWithParameters:newInfo callback:^(NSError *error){
         if (error) {
             [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
             return;
         }
         

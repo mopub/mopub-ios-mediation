@@ -39,6 +39,13 @@
     [AdColonyAdapterConfiguration updateInitializationParameters:info];
     
     [AdColonyController initializeAdColonyCustomEventWithAppId:appId allZoneIds:allZoneIds userId:nil callback:^(NSError *error){
+        
+        if (error) {
+            [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+            return;
+        }
+        
         __weak AdColonyInterstitialCustomEvent *weakSelf = self;
         [AdColony requestInterstitialInZone:[self getAdNetworkId] options:nil success:^(AdColonyInterstitial * _Nonnull ad) {
             weakSelf.ad = ad;
