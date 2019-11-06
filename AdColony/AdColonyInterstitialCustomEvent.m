@@ -14,7 +14,7 @@
     #import "MPLogging.h"
 #endif
 
-@interface AdColonyInterstitialCustomEvent ()
+@interface AdColonyInterstitialCustomEvent () <AdColonyInterstitialDelegate>
 
 @property (nonatomic, retain) AdColonyInterstitial *ad;
 @property (nonatomic, copy) NSString *zoneId;
@@ -37,53 +37,13 @@
     
     // Cache the initialization parameters
     [AdColonyAdapterConfiguration updateInitializationParameters:info];
-    
     [AdColonyController initializeAdColonyCustomEventWithAppId:appId allZoneIds:allZoneIds userId:nil callback:^(NSError *error){
-        
         if (error) {
             [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
             MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
             return;
         }
-        
-        __weak AdColonyInterstitialCustomEvent *weakSelf = self;
-        [AdColony requestInterstitialInZone:[self getAdNetworkId] options:nil success:^(AdColonyInterstitial * _Nonnull ad) {
-            weakSelf.ad = ad;
-            
-            MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
-
-            [ad setOpen:^{
-                [weakSelf.delegate interstitialCustomEventDidAppear:weakSelf];
-                
-                MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-                MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-            }];
-            [ad setClose:^{
-                MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-                [weakSelf.delegate interstitialCustomEventWillDisappear:weakSelf];
-                
-                MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-                [weakSelf.delegate interstitialCustomEventDidDisappear:weakSelf];
-            }];
-            [ad setExpire:^{
-                [weakSelf.delegate interstitialCustomEventDidExpire:weakSelf];
-            }];
-            [ad setLeftApplication:^{
-                [weakSelf.delegate interstitialCustomEventWillLeaveApplication:weakSelf];
-            }];
-            [ad setClick:^{
-                [weakSelf.delegate interstitialCustomEventDidReceiveTapEvent:weakSelf];
-                MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-            }];
-            
-            [weakSelf.delegate interstitialCustomEvent:weakSelf didLoadAd:(id)ad];
-            MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-        } failure:^(AdColonyAdRequestError * _Nonnull error) {
-            weakSelf.ad = nil;
-            [weakSelf.delegate interstitialCustomEvent:weakSelf didFailToLoadAdWithError:error];
-            
-            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-        }];
+        [AdColony requestInterstitialInZone:[self getAdNetworkId] options:nil andDelegate:self];
     }];
 }
 
@@ -118,4 +78,44 @@
     return self.zoneId;
 }
 
+
+#pragma mark - AdColony Interstitial Delegate Methods
+- (void)adColonyInterstitialDidLoad:(AdColonyInterstitial * _Nonnull)interstitial {
+    self.ad = interstitial;
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
+    [self.delegate interstitialCustomEvent:self didLoadAd:(id)interstitial];
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+}
+
+- (void)adColonyInterstitialDidFailToLoad:(AdColonyAdRequestError * _Nonnull)error {
+    self.ad = nil;
+    [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+}
+
+- (void)adColonyInterstitialWillOpen:(AdColonyInterstitial * _Nonnull)interstitial {
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate interstitialCustomEventDidAppear:self];
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+}
+
+- (void)adColonyInterstitialDidClose:(AdColonyInterstitial * _Nonnull)interstitial {
+    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate interstitialCustomEventWillDisappear:self];
+    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate interstitialCustomEventDidDisappear:self];
+}
+
+- (void)adColonyInterstitialExpired:(AdColonyInterstitial * _Nonnull)interstitial {
+    [self.delegate interstitialCustomEventDidExpire:self];
+}
+
+- (void)adColonyInterstitialWillLeaveApplication:(AdColonyInterstitial * _Nonnull)interstitial {
+     [self.delegate interstitialCustomEventWillLeaveApplication:self];
+}
+
+- (void)adColonyInterstitialDidReceiveClick:(AdColonyInterstitial * _Nonnull)interstitial {
+    [self.delegate interstitialCustomEventDidReceiveTapEvent:self];
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+}
 @end

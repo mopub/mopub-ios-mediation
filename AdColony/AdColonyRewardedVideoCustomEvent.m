@@ -19,7 +19,7 @@
 
 #define ADCOLONY_INITIALIZATION_TIMEOUT dispatch_time(DISPATCH_TIME_NOW, 30 * NSEC_PER_SEC)
 
-@interface AdColonyRewardedVideoCustomEvent ()
+@interface AdColonyRewardedVideoCustomEvent () <AdColonyInterstitialDelegate>
 
 @property (nonatomic, retain) AdColonyInterstitial *ad;
 @property (nonatomic, retain) AdColonyZone *zone;
@@ -81,57 +81,7 @@
         options.showPrePopup = showPrePopup;
         options.showPostPopup = showPostPopup;
         
-        __weak AdColonyRewardedVideoCustomEvent *weakSelf = self;
-        
-        [AdColony requestInterstitialInZone:[self zoneId] options:options success:^(AdColonyInterstitial * _Nonnull ad) {
-            
-            MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
-            
-            weakSelf.zone = [AdColony zoneForID:[self getAdNetworkId]];
-            weakSelf.ad = ad;
-            
-            [ad setOpen:^{
-                [weakSelf.delegate rewardedVideoWillAppearForCustomEvent:weakSelf];
-                MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-
-                [weakSelf.delegate rewardedVideoDidAppearForCustomEvent:weakSelf];
-                
-                MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-                MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-            }];
-            [ad setClose:^{
-                MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-                [weakSelf.delegate rewardedVideoWillDisappearForCustomEvent:weakSelf];
-
-                MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-                [weakSelf.delegate rewardedVideoDidDisappearForCustomEvent:weakSelf];
-            }];
-            [ad setExpire:^{
-                [weakSelf.delegate rewardedVideoDidExpireForCustomEvent:weakSelf];
-            }];
-            [ad setLeftApplication:^{
-                [weakSelf.delegate rewardedVideoWillLeaveApplicationForCustomEvent:weakSelf];
-            }];
-            [ad setClick:^{
-                [weakSelf.delegate rewardedVideoDidReceiveTapEventForCustomEvent:weakSelf];
-                MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-            }];
-            
-            [weakSelf.zone setReward:^(BOOL success, NSString * _Nonnull name, int amount) {
-                if (!success) {
-                    MPLogInfo(@"AdColony reward failure in zone %@", [self getAdNetworkId]);
-                    return;
-                }
-                [weakSelf.delegate rewardedVideoShouldRewardUserForCustomEvent:weakSelf reward:[[MPRewardedVideoReward alloc] initWithCurrencyType:name amount:@(amount)]];
-            }];
-            
-            [weakSelf.delegate rewardedVideoDidLoadAdForCustomEvent:weakSelf];
-            MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-        } failure:^(AdColonyAdRequestError * _Nonnull error) {
-            weakSelf.ad = nil;
-            [weakSelf.delegate rewardedVideoDidFailToLoadAdForCustomEvent:weakSelf error:error];
-            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-        }];
+        [AdColony requestInterstitialInZone:self.zoneId options:nil andDelegate:self];
     }];
 }
 
@@ -162,4 +112,57 @@
     return self.zoneId;
 }
 
+#pragma mark - AdColony Interstitial Delegate Methods
+
+- (void)adColonyInterstitialDidLoad:(AdColonyInterstitial * _Nonnull)interstitial {
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
+    self.zone = [AdColony zoneForID:[self getAdNetworkId]];
+    self.ad = interstitial;
+    
+    __weak AdColonyRewardedVideoCustomEvent *weakSelf = self;
+    [weakSelf.zone setReward:^(BOOL success, NSString * _Nonnull name, int amount) {
+        if (!success) {
+            MPLogInfo(@"AdColony reward failure in zone %@",weakSelf.zoneId);
+            return;
+        }
+        [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:[[MPRewardedVideoReward alloc] initWithCurrencyType:name amount:@(amount)]];
+    }];
+    
+    [self.delegate rewardedVideoDidLoadAdForCustomEvent:weakSelf];
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+}
+
+- (void)adColonyInterstitialDidFailToLoad:(AdColonyAdRequestError * _Nonnull)error {
+    self.ad = nil;
+    [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+}
+
+- (void)adColonyInterstitialWillOpen:(AdColonyInterstitial * _Nonnull)interstitial {
+    [self.delegate rewardedVideoWillAppearForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate rewardedVideoDidAppearForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+}
+
+- (void)adColonyInterstitialDidClose:(AdColonyInterstitial * _Nonnull)interstitial {
+    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
+}
+
+- (void)adColonyInterstitialExpired:(AdColonyInterstitial * _Nonnull)interstitial {
+    [self.delegate rewardedVideoDidExpireForCustomEvent:self];
+}
+
+- (void)adColonyInterstitialWillLeaveApplication:(AdColonyInterstitial * _Nonnull)interstitial {
+    [self.delegate rewardedVideoWillLeaveApplicationForCustomEvent:self];
+}
+
+- (void)adColonyInterstitialDidReceiveClick:(AdColonyInterstitial * _Nonnull)interstitial {
+    [self.delegate rewardedVideoDidReceiveTapEventForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+}
 @end
