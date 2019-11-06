@@ -20,12 +20,7 @@
 
 #pragma mark - MPBannerCustomEvent Overridden Methods
 
-- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info
-{
-    [self requestAdWithSize: size customEventInfo: info adMarkup: nil];
-}
-
-- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup{
+- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info {
     NSString *appId = info[@"appId"];
     NSArray *allZoneIds = info[@"allZoneIds"];
     NSError *error = [AdColonyAdapterUtility validateAppId:appId andZoneIds:allZoneIds];
