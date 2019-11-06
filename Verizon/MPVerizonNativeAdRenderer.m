@@ -1,6 +1,8 @@
 #import "MPVerizonNativeAdRenderer.h"
 #import "MPVerizonNativeAdAdapter.h"
+#if __has_include("MoPub.h")
 #import "MPNativeAdRendererConfiguration.h"
+#endif
 #import <VerizonAdsSupport/VerizonAdsSupport.h>
 
 @interface MPVerizonNativeAdRenderer () <MPNativeAdRendererImageHandlerDelegate>

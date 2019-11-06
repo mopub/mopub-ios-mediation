@@ -1,6 +1,8 @@
 #import "MPVerizonNativeCustomEvent.h"
+#if __has_include("MoPub.h")
 #import "MPNativeAdError.h"
 #import "MPLogging.h"
+#endif
 #import "MPVerizonNativeAdAdapter.h"
 #import "MPVerizonBidCache.h"
 #import "VerizonAdapterConfiguration.h"
