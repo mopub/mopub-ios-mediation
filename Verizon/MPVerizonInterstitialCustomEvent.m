@@ -53,8 +53,7 @@
                                            description:[NSString stringWithFormat:@"Error occurred while fetching content for requestor [%@]", NSStringFromClass([self class])]
                                             underlying:nil];
         
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
-        
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error],  [self getAdNetworkId]);
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
@@ -73,17 +72,31 @@
         return;
     }
     
-    [VASAds sharedInstance].locationEnabled = [MoPub sharedInstance].locationUpdatesEnabled;
+    [VerizonAdapterConfiguration setCachedInitializationParameters:info];
     
-    VASRequestMetadataBuilder *metaDataBuilder = [[VASRequestMetadataBuilder alloc] init];
-    [metaDataBuilder setAppMediator:VerizonAdapterConfiguration.appMediator];
+    [VASAds sharedInstance].locationEnabled = [MoPub sharedInstance].locationUpdatesEnabled;
+
     self.interstitialAdFactory = [[VASInterstitialAdFactory alloc] initWithPlacementId:placementId vasAds:[VASAds sharedInstance] delegate:self];
-    [self.interstitialAdFactory setRequestMetadata:metaDataBuilder.build];
     
     VASBid *bid = [MPVerizonBidCache.sharedInstance bidForPlacementId:placementId];
     if (bid) {
         [self.interstitialAdFactory loadBid:bid interstitialAdDelegate:self];
     } else {
+        VASRequestMetadataBuilder *metadataBuilder = [[VASRequestMetadataBuilder alloc] initWithRequestMetadata:[VASAds sharedInstance].requestMetadata];
+        [metadataBuilder setAppMediator:VerizonAdapterConfiguration.appMediator];
+        
+        if (adMarkup.length > 0) {
+            NSMutableDictionary<NSString *, id> *placementData =
+            [NSMutableDictionary dictionaryWithDictionary:
+             @{
+               kMoPubRequestMetadataAdContent : adMarkup,
+               @"overrideWaterfallProvider"  : @"waterfallprovider/sideloading"
+               }
+             ];
+            [metadataBuilder setPlacementData:placementData];
+        }
+        
+        [self.interstitialAdFactory setRequestMetadata:metadataBuilder.build];
         [self.interstitialAdFactory load:self];
     }
     
