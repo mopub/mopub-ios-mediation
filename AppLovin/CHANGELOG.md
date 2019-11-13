@@ -1,4 +1,8 @@
 ## Changelog
+   * 6.10.0.0
+     * This version of the adapters has been certified with AppLovin SDK 6.10.0.
+     * Remove the ability to test and query test mode as it was deprecated in v6.10.0 of the AppLovin SDK.
+
    * 6.9.5.0
      * This version of the adapters has been certified with AppLovin SDK 6.9.5.
 
