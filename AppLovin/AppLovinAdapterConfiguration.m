@@ -20,7 +20,7 @@ static ALSdk *__nullable AppLovinAdapterConfigurationSDK;
 
 static NSString *const kAppLovinSDKInfoPlistKey = @"AppLovinSdkKey";
 static NSString *const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-applovin-adapters";
-static NSString *const kAdapterVersion = @"6.9.5.0";
+static NSString *const kAdapterVersion = @"6.10.0.0";
 
 static NSString *gSdkKey = nil;
 
@@ -28,16 +28,6 @@ typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
 {
     AppLovinAdapterErrorCodeMissingSDKKey,
 };
-
-#pragma mark - Test Mode
-
-+ (BOOL)isTestMode {
-    return AppLovinAdapterConfigurationSDK.settings.isTestAdsEnabled;
-}
-
-+ (void)setIsTestMode:(BOOL)isTestMode {
-    AppLovinAdapterConfigurationSDK.settings.isTestAdsEnabled = isTestMode;
-}
 
 #pragma mark - MPAdapterConfiguration
 
