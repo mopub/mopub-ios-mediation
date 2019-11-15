@@ -77,11 +77,11 @@
         BOOL showPrePopup = (settings) ? settings.showPrePopup : NO;
         BOOL showPostPopup = (settings) ? settings.showPostPopup : NO;
         
-        AdColonyAdOptions *options = [AdColonyAdOptions new];
-        options.showPrePopup = showPrePopup;
-        options.showPostPopup = showPostPopup;
+        AdColonyAdOptions *adOptions = [AdColonyAdOptions new];
+        adOptions.showPrePopup = showPrePopup;
+        adOptions.showPostPopup = showPostPopup;
         
-        [AdColony requestInterstitialInZone:self.zoneId options:nil andDelegate:self];
+        [AdColony requestInterstitialInZone:self.zoneId options:adOptions andDelegate:self];
     }];
 }
 

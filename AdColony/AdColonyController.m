@@ -16,9 +16,6 @@
     #import "MPRewardedVideo.h"
 #endif
 
-NSString *const kAdColonyExplicitConsentGiven = @"explicit_consent_given";
-NSString *const kAdColonyConsentResponse = @"consent_response";
-
 @interface AdColonyController()
 
 @property (atomic, assign, readwrite) InitState initState;
@@ -46,39 +43,36 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
 
                 AdColonyGlobalMediationSettings *settings = [[MoPub sharedInstance] globalMediationSettingsForClass:[AdColonyGlobalMediationSettings class]];
                 AdColonyAdapterConfiguration *adapterConfiguration = [[AdColonyAdapterConfiguration alloc] init];
-                AdColonyAppOptions *options = [AdColonyAppOptions new];
-                [options setMediationNetwork:ADCMoPub];
-                [options setMediationNetworkVersion:adapterConfiguration.adapterVersion];
+                AdColonyAppOptions *appOptions = [AdColonyAppOptions new];
+                [appOptions setMediationNetwork:ADCMoPub];
+                [appOptions setMediationNetworkVersion:adapterConfiguration.adapterVersion];
                 if (userId && userId.length > 0) {
-                    options.userID = userId;
+                    appOptions.userID = userId;
                 } else if (settings && settings.customId.length > 0) {
-                    options.userID = settings.customId;
+                    appOptions.userID = settings.customId;
                 }
 
                 instance.currentAllZoneIds = allZoneIdsSet;
-                options.testMode = instance.testModeEnabled;
+                appOptions.testMode = instance.testModeEnabled;
 
-                if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes){
-                    if ([[MoPub sharedInstance] allowLegitimateInterest] == YES){
-                        if ([[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDenied
-                            || [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDoNotTrack) {
-                            
-                            [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
-                            [options setOption:kAdColonyConsentResponse withNumericValue:@NO];
+                MoPub *moPub = [MoPub sharedInstance];
+                if ([moPub isGDPRApplicable] == MPBoolYes) {
+                    appOptions.gdprRequired = YES;
+                    if ([moPub allowLegitimateInterest] == YES) {
+                        if ([moPub currentConsentStatus] == MPConsentStatusDenied ||
+                            [moPub currentConsentStatus] == MPConsentStatusDoNotTrack) {
+                            appOptions.gdprConsentString = @"0";
+                        } else {
+                            appOptions.gdprConsentString = @"1";
                         }
-                        else {
-                            [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
-                            [options setOption:kAdColonyConsentResponse withNumericValue:@YES];
-                        }
+                    }else if ([moPub canCollectPersonalInfo]) {
+                        appOptions.gdprConsentString = @"1";
                     } else {
-                        if ([[MoPub sharedInstance] canCollectPersonalInfo]) {
-                            [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
-                            [options setOption:kAdColonyConsentResponse withNumericValue:@(MoPub.sharedInstance.canCollectPersonalInfo)];
-                        }
+                        appOptions.gdprConsentString = @"0";
                     }
                 }
 
-                [AdColony configureWithAppID:appId zoneIDs:allZoneIds options:options completion:^(NSArray<AdColonyZone *> *zones) {
+                [AdColony configureWithAppID:appId zoneIDs:allZoneIds options:appOptions completion:^(NSArray<AdColonyZone *> *zones) {
                     @synchronized (instance) {
                         instance.initState = INIT_STATE_INITIALIZED;
                     }
