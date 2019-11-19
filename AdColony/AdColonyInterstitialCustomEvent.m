@@ -9,7 +9,6 @@
 #import "AdColonyAdapterConfiguration.h"
 #import "AdColonyInterstitialCustomEvent.h"
 #import "AdColonyController.h"
-#import "AdColonyAdapterUtility.h"
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
 #endif
@@ -25,97 +24,116 @@
 
 #pragma mark - MPInterstitialCustomEvent Subclass Methods
 
-- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info {
-    NSString *appId = info[ADC_APPLICATION_ID_KEY];
-    NSArray *allZoneIds = info[ADC_ALL_ZONE_IDS_KEY];
-    self.zoneId = info[ADC_ZONE_ID_KEY];
-    NSError *error = [AdColonyAdapterUtility validateAppId:appId zonesList:allZoneIds andZone:self.zoneId];
-    if (error) {
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
+    NSString * const appId      = info[APPLICATION_ID_KEY];
+    NSString * const zoneId     = info[ZONE_ID_KEY];
+    NSArray  * const allZoneIds = info[ALL_ZONE_IDS_KEY];
+    
+    NSError *appIdError = [AdColonyAdapterConfiguration validateParameter:appId forOperation:@"interstitial ad request"];
+    if (appIdError) {
+        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:appIdError];
         return;
     }
     
-    // Cache the initialization parameters
+    NSError *zoneIdError = [AdColonyAdapterConfiguration validateParameter:zoneId forOperation:@"interstitial ad request"];
+    if (zoneIdError) {
+        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:zoneIdError];
+        return;
+    }
+    self.zoneId = zoneId;
+    
+    NSError *allZoneIdsError = [AdColonyAdapterConfiguration validateZoneIds:allZoneIds forOperation:@"interstitial ad request"];
+    if (allZoneIdsError) {
+        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:allZoneIdsError];
+        return;
+    }
+    
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class)
+                                       dspCreativeId:nil
+                                             dspName:nil], self.zoneId);
     [AdColonyAdapterConfiguration updateInitializationParameters:info];
-    [AdColonyController initializeAdColonyCustomEventWithAppId:appId allZoneIds:allZoneIds userId:nil callback:^(NSError *error){
+    [AdColonyController initializeAdColonyCustomEventWithAppId:appId
+                                                    allZoneIds:allZoneIds
+                                                        userId:nil
+                                                      callback:^(NSError *error) {
         if (error) {
+            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class)
+                                                      error:error], self.zoneId);
             [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
-            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
             return;
         }
-        [AdColony requestInterstitialInZone:[self getAdNetworkId] options:nil andDelegate:self];
+        
+        [AdColony requestInterstitialInZone:self.zoneId
+                                    options:nil
+                                andDelegate:self];
     }];
 }
 
 - (void)showInterstitialFromRootViewController:(UIViewController *)rootViewController {
-    
-    MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.zoneId);
     
     if (self.ad) {
         if ([self.ad showWithPresentingViewController:rootViewController]) {
+            MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.zoneId);
             [self.delegate interstitialCustomEventWillAppear:self];
-            
-            MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
         } else {
-            NSError *error = [AdColonyAdapterUtility createErrorWith:@"Failed to show AdColony video"
-                                         andReason:@"Unknown Error"
-                                     andSuggestion:@""];
-            MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-            
-            [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+            NSError *unknownError = [AdColonyAdapterConfiguration createErrorWith:@"Failed to show AdColony Interstitial"
+                                                                        andReason:@"AdColony SDK failed to show"
+                                                                    andSuggestion:@""];
+            MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class)
+                                                      error:unknownError], self.zoneId);
+            [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:unknownError];
         }
     } else {
-        NSError *error = [AdColonyAdapterUtility createErrorWith:@"Failed to show AdColony video"
-                                     andReason:@"ad is not available"
-                                 andSuggestion:@""];
-        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+        NSError *adNotAvailableError = [AdColonyAdapterConfiguration createErrorWith:@"Failed to show AdColony Interstitial"
+                                                                           andReason:@"Ad is not available"
+                                                                       andSuggestion:@""];
+        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:adNotAvailableError], self.zoneId);
         
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:adNotAvailableError];
     }
 }
 
-- (NSString *) getAdNetworkId {
-    return self.zoneId;
-}
-
-
 #pragma mark - AdColony Interstitial Delegate Methods
 - (void)adColonyInterstitialDidLoad:(AdColonyInterstitial * _Nonnull)interstitial {
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.zoneId);
     self.ad = interstitial;
-    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
     [self.delegate interstitialCustomEvent:self didLoadAd:(id)interstitial];
-    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void)adColonyInterstitialDidFailToLoad:(AdColonyAdRequestError * _Nonnull)error {
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.zoneId);
     self.ad = nil;
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
-    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
 }
 
 - (void)adColonyInterstitialWillOpen:(AdColonyInterstitial * _Nonnull)interstitial {
-    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.zoneId);
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.zoneId);
     [self.delegate interstitialCustomEventDidAppear:self];
-    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void)adColonyInterstitialDidClose:(AdColonyInterstitial * _Nonnull)interstitial {
-    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.zoneId);
     [self.delegate interstitialCustomEventWillDisappear:self];
-    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    
+    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.zoneId);
     [self.delegate interstitialCustomEventDidDisappear:self];
 }
 
 - (void)adColonyInterstitialExpired:(AdColonyInterstitial * _Nonnull)interstitial {
+    MPLogInfo(@"AdColony Interstitial has expired");
     [self.delegate interstitialCustomEventDidExpire:self];
 }
 
 - (void)adColonyInterstitialWillLeaveApplication:(AdColonyInterstitial * _Nonnull)interstitial {
-     [self.delegate interstitialCustomEventWillLeaveApplication:self];
+    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], self.zoneId);
+    [self.delegate interstitialCustomEventWillLeaveApplication:self];
 }
 
 - (void)adColonyInterstitialDidReceiveClick:(AdColonyInterstitial * _Nonnull)interstitial {
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.zoneId);
     [self.delegate interstitialCustomEventDidReceiveTapEvent:self];
-    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
+
 @end

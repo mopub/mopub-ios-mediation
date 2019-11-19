@@ -30,6 +30,11 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)updateInitializationParameters:(NSDictionary *)parameters;
 
 // MPAdapterConfiguration
+extern NSString * const APPLICATION_ID_KEY;
+extern NSString * const ZONE_ID_KEY;
+extern NSString * const ALL_ZONE_IDS_KEY;
+extern NSString * const USER_ID_KEY;
+
 @property (nonatomic, copy, readonly) NSString * adapterVersion;
 @property (nonatomic, copy, readonly) NSString * biddingToken;
 @property (nonatomic, copy, readonly) NSString * moPubNetworkName;
@@ -37,6 +42,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration
                                   complete:(void(^ _Nullable)(NSError * _Nullable))complete;
+
++ (NSError *)validateParameter:(NSString *)parameter forOperation:(NSString *)operation;
+
++ (NSError *)validateZoneIds:(NSArray *)zoneIds forOperation:(NSString *)operation;
+
++ (NSError *)createErrorForOperation:(NSString *)operation forParameter:(NSString *)parameter;
+
++ (NSError *)createErrorWith:(NSString *)description andReason:(NSString *)reason andSuggestion:(NSString *)suggestion;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -10,7 +10,6 @@
 #import "AdColonyController.h"
 #import "AdColonyGlobalMediationSettings.h"
 #import "AdColonyAdapterConfiguration.h"
-#import "AdColonyAdapterUtility.h"
 #if __has_include("MoPub.h")
     #import "MoPub.h"
     #import "MPRewardedVideo.h"
@@ -55,35 +54,37 @@
                 instance.currentAllZoneIds = allZoneIdsSet;
                 appOptions.testMode = instance.testModeEnabled;
 
-                MoPub *moPub = [MoPub sharedInstance];
-                if ([moPub isGDPRApplicable] == MPBoolYes) {
+                if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
                     appOptions.gdprRequired = YES;
-                    if ([moPub allowLegitimateInterest] == YES) {
-                        if ([moPub currentConsentStatus] == MPConsentStatusDenied ||
-                            [moPub currentConsentStatus] == MPConsentStatusDoNotTrack) {
+                    if ([[MoPub sharedInstance] allowLegitimateInterest] == YES) {
+                        if ([[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDenied ||
+                            [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDoNotTrack) {
                             appOptions.gdprConsentString = @"0";
                         } else {
                             appOptions.gdprConsentString = @"1";
                         }
-                    }else if ([moPub canCollectPersonalInfo]) {
+                    } else if ([[MoPub sharedInstance] canCollectPersonalInfo]) {
                         appOptions.gdprConsentString = @"1";
                     } else {
                         appOptions.gdprConsentString = @"0";
                     }
                 }
 
-                [AdColony configureWithAppID:appId zoneIDs:allZoneIds options:appOptions completion:^(NSArray<AdColonyZone *> *zones) {
+                [AdColony configureWithAppID:appId
+                                     zoneIDs:allZoneIds
+                                     options:appOptions
+                                  completion:^(NSArray<AdColonyZone *> * zones) {
                     @synchronized (instance) {
                         instance.initState = INIT_STATE_INITIALIZED;
                     }
                     
                     if (callback != nil) {
                         if (zones.count == 0) {
-                            NSError *error = [AdColonyAdapterUtility createErrorWith:@"AdColony's initialization failed."
-                                andReason:@"Failed to get zones list"
-                            andSuggestion:@"Ensure values of 'appId' and 'zoneId' fields on the MoPub dashboard are valid."];
+                            NSError *error = [AdColonyAdapterConfiguration createErrorWith:@"AdColony's initialization failed."
+                                                                                 andReason:@"Failed to get Zone Ids array"
+                                                                             andSuggestion:@"Ensure values of 'appId' and 'zoneId' fields on the MoPub dashboard are valid."];
                             callback(error);
-                        }else{
+                        } else {
                             callback(nil);
                         }
                     }
