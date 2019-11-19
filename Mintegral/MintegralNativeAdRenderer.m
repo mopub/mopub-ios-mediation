@@ -1,0 +1,162 @@
+//
+//  MintegralNativeVideoRender.m
+//  MopubMintegralDemo
+//
+//  Created by Damon on 2019/11/17.
+//  Copyright © 2019 mintegral. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "MintegralNativeAdRenderer.h"
+
+#if __has_include("MoPub.h")
+#import "MPLogging.h"
+#import "MPNativeAdAdapter.h"
+#import "MPNativeAdConstants.h"
+#import "MPNativeAdError.h"
+#import "MPNativeAdRendererConfiguration.h"
+#import "MPNativeAdRendererImageHandler.h"
+#import "MPNativeAdRendering.h"
+#import "MPNativeAdRenderingImageLoader.h"
+#import "MPNativeView.h"
+#import "MPStaticNativeAdRendererSettings.h"
+#import "MPURLRequest.h"
+#import "MPHTTPNetworkSession.h"
+#import "MPMemoryCache.h"
+#endif
+#import "MintegralNativeAdAdapter.h"
+#import <MTGSDK/MTGAdChoicesView.h>
+@interface MintegralNativeAdRenderer () <MPNativeAdRendererSettings>
+
+@property (nonatomic, strong) UIView<MPNativeAdRendering> *adView;
+@property (nonatomic, strong) MintegralNativeAdAdapter *adapter;
+@property (nonatomic, strong) Class renderingViewClass;
+
+
+
+@end
+
+@implementation MintegralNativeAdRenderer
+
+- (instancetype)initWithRendererSettings:(id<MPNativeAdRendererSettings>)rendererSettings
+{
+    if (self = [super init]) {
+        MPStaticNativeAdRendererSettings *settings = (MPStaticNativeAdRendererSettings *)rendererSettings;
+        _renderingViewClass = settings.renderingViewClass;
+        _viewSizeHandler = [settings.viewSizeHandler copy];
+
+    }
+    
+    return self;
+}
+
++ (MPNativeAdRendererConfiguration *)rendererConfigurationWithRendererSettings:(id<MPNativeAdRendererSettings>)rendererSettings
+{
+    MPNativeAdRendererConfiguration *config = [[MPNativeAdRendererConfiguration alloc] init];
+    config.rendererClass = [self class];
+    config.rendererSettings = rendererSettings;
+    config.supportedCustomEvents = @[@"MintegralNativeCustomEvent"];
+    
+    return config;
+}
+
+- (UIView *)retrieveViewWithAdapter:(id<MPNativeAdAdapter>)adapter error:(NSError **)error
+{
+    if (!adapter || ![adapter isKindOfClass:[MintegralNativeAdAdapter class]]) {
+        if (error) {
+            *error = MPNativeAdNSErrorForRenderValueTypeError();
+        }
+        
+        return nil;
+    }
+    
+    self.adapter = adapter;
+    
+    
+    if ([self.renderingViewClass respondsToSelector:@selector(nibForAd)]) {
+        self.adView = (UIView<MPNativeAdRendering> *)[[[self.renderingViewClass nibForAd] instantiateWithOwner:nil options:nil] firstObject];
+    } else {
+        self.adView = [[self.renderingViewClass alloc] init];
+    }
+    
+    self.adView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    
+ 
+    if ([self.adView respondsToSelector:@selector(nativeMainTextLabel)]) {
+        self.adView.nativeMainTextLabel.text = [adapter.properties objectForKey:kAdTextKey];
+    }
+    
+    if ([self.adView respondsToSelector:@selector(nativeTitleTextLabel)]) {
+        self.adView.nativeTitleTextLabel.text = [adapter.properties objectForKey:kAdTitleKey];
+    }
+    
+    if ([self.adView respondsToSelector:@selector(nativeCallToActionTextLabel)] && self.adView.nativeCallToActionTextLabel) {
+        self.adView.nativeCallToActionTextLabel.text = [adapter.properties objectForKey:kAdCTATextKey];
+    }
+    
+    if ([self.adView respondsToSelector:@selector(nativePrivacyInformationIconImageView)]) {
+        
+        MTGAdChoicesView *adChoicesView = (MTGAdChoicesView *)adapter.privacyInformationIconView;
+        adChoicesView.frame = self.adView.nativePrivacyInformationIconImageView.bounds;
+        adChoicesView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        self.adView.nativePrivacyInformationIconImageView.userInteractionEnabled = YES;
+        [self.adView.nativePrivacyInformationIconImageView addSubview:adChoicesView];
+        self.adView.nativePrivacyInformationIconImageView.hidden = NO;
+        
+//    self.adView.nativePrivacyInformationIconImageView.userInteractionEnabled = YES;
+//
+//        self.adView.nativePrivacyInformationIconImageView.hidden = NO;
+    }
+    
+
+    
+    if ([self shouldLoadMediaView]) {
+        UIView *mediaView = [self.adapter mainMediaView];
+        UIView *mainImageView = [self.adView nativeMainImageView];
+        
+        mediaView.frame = mainImageView.bounds;
+        mediaView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        mainImageView.userInteractionEnabled = YES;
+        
+        [mainImageView addSubview:mediaView];
+    }
+    
+    // See if the ad contains a star rating and notify the view if it does.
+    if ([self.adView respondsToSelector:@selector(layoutStarRating:)]) {
+        NSNumber *starRatingNum = [adapter.properties objectForKey:kAdStarRatingKey];
+        
+        if ([starRatingNum isKindOfClass:[NSNumber class]] && starRatingNum.floatValue >= kStarRatingMinValue && starRatingNum.floatValue <= kStarRatingMaxValue) {
+            [self.adView layoutStarRating:starRatingNum];
+        }
+    }
+    
+    return self.adView;
+}
+
+- (BOOL)shouldLoadMediaView
+{
+    return [self.adapter respondsToSelector:@selector(mainMediaView)]
+    && [self.adapter mainMediaView]
+    && [self.adView respondsToSelector:@selector(nativeMainImageView)];
+}
+
+- (BOOL)hasIconView
+{
+    return [self.adapter respondsToSelector:@selector(iconMediaView)]
+    && [self.adapter iconMediaView]
+    && [self.adView respondsToSelector:@selector(nativeIconImageView)];
+}
+
+- (void)onPrivacyIconTapped
+{
+    if ([self.adapter respondsToSelector:@selector(displayContentForDAAIconTap)]) {
+        [self.adapter displayContentForDAAIconTap];
+    }
+}
+
+
+
+
+
+@end
+
