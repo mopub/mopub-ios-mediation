@@ -28,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param parameters Ad response parameters
  */
 + (void)updateInitializationParameters:(NSDictionary *)parameters;
++ (void)setNpaString:(NSString *)string;
 
 // MPAdapterConfiguration
 @property (nonatomic, copy, readonly) NSString * adapterVersion;
