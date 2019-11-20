@@ -13,13 +13,13 @@
     #import "MPNativeAdAdapter.h"
 #endif
 
-@class FBNativeAd;
+@class FBNativeAdBase;
 
 @interface FacebookNativeAdAdapter : NSObject <MPNativeAdAdapter>
 
 @property (nonatomic, weak) id<MPNativeAdAdapterDelegate> delegate;
-@property (nonatomic, readonly) FBNativeAd *fbNativeAd;
+@property (nonatomic, readonly) FBNativeAdBase *fbNativeAdBase;
 
-- (instancetype)initWithFBNativeAd:(FBNativeAd *)fbNativeAd adProperties:(NSDictionary *)adProps;
+- (instancetype)initWithFBNativeAdBase:(FBNativeAdBase *)fbNativeAdBase adProperties:(NSDictionary *)adProps;
 
 @end

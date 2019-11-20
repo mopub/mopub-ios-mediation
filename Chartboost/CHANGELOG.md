@@ -1,4 +1,16 @@
 ## Changelog
+  * 8.0.3.0
+      * This version of the adapters has been certified with Chartboost 8.0.3 and is compatible with iOS 13.
+
+  * 8.0.1.3
+      * Stop downcasting log level to `int`.
+
+  * 8.0.1.2
+      * Convert banner width and height to integers before passing them to Chartboost.
+
+  * 8.0.1.1
+      * Stop implementing deprecated request API.
+
   * 8.0.1.0
       * This version of the adapters has been certified with Chartboost 8.0.1.
       * Added banner adapter.

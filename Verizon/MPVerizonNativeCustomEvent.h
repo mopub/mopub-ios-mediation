@@ -15,6 +15,3 @@
 @property (nonatomic, readonly) NSString *version;
 
 @end
-
-@interface MillennialNativeCustomEvent : MPVerizonNativeCustomEvent
-@end

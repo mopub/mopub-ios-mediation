@@ -2,14 +2,11 @@
 #import <VerizonAdsCore/VerizonAdsCore.h>
 #import "VerizonAdapterConfiguration.h"
 
-NSString * const kMoPubVASAdapterVersion = @"1.1.4.1";
-NSString * const kMoPubVASNetworkSdkVersion = @"1.1.4";
+NSString * const kMoPubVASAdapterVersion = @"1.2.1.1";
 
 NSString * const kMoPubVASAdapterErrorWho = @"MoPubVASAdapter";
 NSString * const kMoPubVASAdapterPlacementId = @"placementId";
 NSString * const kMoPubVASAdapterSiteId = @"siteId";
-NSString * const kMoPubMillennialAdapterPlacementId = @"adUnitID";
-NSString * const kMoPubMillennialAdapterSiteId = @"dcn";
 
 NSErrorDomain const kMoPubVASAdapterErrorDomain = @"com.verizon.ads.mopubvasadapter.ErrorDomain";
 NSTimeInterval kMoPubVASAdapterSATimeoutInterval = 600;
@@ -26,13 +23,19 @@ NSTimeInterval kMoPubVASAdapterSATimeoutInterval = 600;
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration complete:(void(^ _Nullable)(NSError * _Nullable))complete
 {
     NSString *siteId = configuration[kMoPubVASAdapterSiteId];
-    if (siteId.length > 0 && [VASStandardEdition initializeWithSiteId:siteId])
-    {
-        MPLogInfo(@"VAS adapter version: %@", kMoPubVASAdapterVersion);
-    }
-    if (complete)
-    {
-        complete(nil);
+    if (siteId.length > 0) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if ([VASStandardEdition initializeWithSiteId:siteId]) {
+                MPLogInfo(@"VAS adapter version: %@", kMoPubVASAdapterVersion);
+            }
+            if (complete) {
+                complete(nil);
+            }
+        });
+    } else {
+        if (complete) {
+            complete(nil);
+        }
     }
     
     if (MPLogging.consoleLogLevel == MPBLogLevelDebug) {
@@ -59,16 +62,21 @@ NSTimeInterval kMoPubVASAdapterSATimeoutInterval = 600;
 
 - (NSString *)networkSdkVersion
 {
-    return kMoPubVASNetworkSdkVersion;
-}
+    NSString *editionName = [[[VASAds sharedInstance] configuration] stringForDomain:@"com.verizon.ads"
+                                                                                 key:@"editionName"
+                                                                         withDefault:nil];
 
-@end
-
-@implementation MillennialAdapterConfiguration
-
-- (NSString *)moPubNetworkName
-{
-    return @"Millennial";
+    NSString *editionVersion = [[[VASAds sharedInstance] configuration] stringForDomain:@"com.verizon.ads"
+                                                                                    key:@"editionVersion"
+                                                                            withDefault:nil];
+    if (editionName.length > 0 && editionVersion.length > 0) {
+        return [NSString stringWithFormat:@"%@-%@", editionName, editionVersion];
+    }
+    
+    NSString *adapterVersion = [self adapterVersion];
+    NSRange range = [adapterVersion rangeOfString:@"." options:NSBackwardsSearch];
+    
+    return adapterVersion.length > range.location ? [adapterVersion substringToIndex:range.location] : @"";
 }
 
 @end

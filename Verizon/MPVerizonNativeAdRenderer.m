@@ -1,6 +1,8 @@
 #import "MPVerizonNativeAdRenderer.h"
 #import "MPVerizonNativeAdAdapter.h"
+#if __has_include("MoPub.h")
 #import "MPNativeAdRendererConfiguration.h"
+#endif
 #import <VerizonAdsSupport/VerizonAdsSupport.h>
 
 @interface MPVerizonNativeAdRenderer () <MPNativeAdRendererImageHandlerDelegate>
@@ -19,7 +21,7 @@
     MPNativeAdRendererConfiguration *config = [[MPNativeAdRendererConfiguration alloc] init];
     config.rendererClass = [self class];
     config.rendererSettings = rendererSettings;
-    config.supportedCustomEvents = @[@"MPVerizonNativeCustomEvent", @"MillennialNativeCustomEvent"];
+    config.supportedCustomEvents = @[@"MPVerizonNativeCustomEvent"];
     
     return config;
 }
@@ -86,15 +88,15 @@
     }
     
     if ([self.adView respondsToSelector:@selector(nativeIconImageView)]) {
-        UIView *mediaView = [adapter.properties objectForKey:kAdIconImageKey];
+        UIView *iconView = [adapter.properties objectForKey:kAdIconImageViewKey];
         UIView *iconImageView = [self.adView nativeIconImageView];
         
-        mediaView.frame = iconImageView.bounds;
-        mediaView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        mediaView.userInteractionEnabled = YES;
+        iconView.frame = iconImageView.bounds;
+        iconView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        iconView.userInteractionEnabled = YES;
         iconImageView.userInteractionEnabled = YES;
         
-        [iconImageView addSubview:mediaView];
+        [iconImageView addSubview:iconView];
     }
     
     if ([self.adView respondsToSelector:@selector(nativeVideoView)]) {

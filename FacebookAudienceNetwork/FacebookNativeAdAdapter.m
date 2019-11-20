@@ -13,7 +13,7 @@
     #import "MPLogging.h"
 #endif
 
-@interface FacebookNativeAdAdapter () <FBNativeAdDelegate>
+@interface FacebookNativeAdAdapter () <FBNativeAdDelegate, FBNativeBannerAdDelegate>
 
 @property (nonatomic, readonly) FBAdOptionsView *adOptionsView;
 @property (nonatomic, readonly) FBMediaView *mediaView;
@@ -25,11 +25,16 @@
 
 @synthesize properties = _properties;
 
-- (instancetype)initWithFBNativeAd:(FBNativeAd *)fbNativeAd adProperties:(NSDictionary *)adProps
+- (instancetype)initWithFBNativeAdBase:(FBNativeAdBase *)fbNativeAdBase adProperties:(NSDictionary *)adProps
 {
     if (self = [super init]) {
-        _fbNativeAd = fbNativeAd;
-        _fbNativeAd.delegate = self;
+        _fbNativeAdBase = fbNativeAdBase;
+
+        if ([_fbNativeAdBase class] == [FBNativeBannerAd class]){
+            ((FBNativeBannerAd *) _fbNativeAdBase).delegate = self;
+        } else if ([_fbNativeAdBase class] == [FBNativeAd class]){
+            ((FBNativeAd *) _fbNativeAdBase).delegate = self;
+        }
         _mediaView = [[FBMediaView alloc] init];
         _iconView = [[FBAdIconView alloc] init];
 
@@ -40,40 +45,44 @@
             properties = [NSMutableDictionary dictionary];
         }
 
-        if (fbNativeAd.headline) {
-            [properties setObject:fbNativeAd.headline forKey:kAdTitleKey];
+        if (_fbNativeAdBase.headline) {
+            [properties setObject:_fbNativeAdBase.headline forKey:kAdTitleKey];
         }
 
-        if (fbNativeAd.bodyText) {
-            [properties setObject:fbNativeAd.bodyText forKey:kAdTextKey];
+        if (_fbNativeAdBase.bodyText) {
+            [properties setObject:_fbNativeAdBase.bodyText forKey:kAdTextKey];
         }
 
-        if (fbNativeAd.callToAction) {
-            [properties setObject:fbNativeAd.callToAction forKey:kAdCTATextKey];
+        if (_fbNativeAdBase.callToAction) {
+            [properties setObject:_fbNativeAdBase.callToAction forKey:kAdCTATextKey];
         }
         
         /* Per Facebook's requirements, either the ad title or the advertiser name
         will be displayed, depending on the FB SDK version. Therefore, mapping both
         to the MoPub's ad title asset */
-        if (fbNativeAd.advertiserName) {
-            [properties setObject:fbNativeAd.advertiserName forKey:kAdTitleKey];
+        if (_fbNativeAdBase.advertiserName) {
+            [properties setObject:_fbNativeAdBase.advertiserName forKey:kAdTitleKey];
         }
         
         [properties setObject:_iconView forKey:kAdIconImageViewKey];
         [properties setObject:_mediaView forKey:kAdMainMediaViewKey];
 
-        if (fbNativeAd.placementID) {
-            [properties setObject:fbNativeAd.placementID forKey:@"placementID"];
+        if (_fbNativeAdBase.placementID) {
+            [properties setObject:_fbNativeAdBase.placementID forKey:@"placementID"];
         }
 
-        if (fbNativeAd.socialContext) {
-            [properties setObject:fbNativeAd.socialContext forKey:@"socialContext"];
+        if (_fbNativeAdBase.socialContext) {
+            [properties setObject:_fbNativeAdBase.socialContext forKey:@"socialContext"];
+        }
+        
+        if (_fbNativeAdBase.sponsoredTranslation) {
+            [properties setObject:_fbNativeAdBase.sponsoredTranslation forKey:@"sponsoredTranslation"];
         }
 
         _properties = properties;
 
         _adOptionsView = [[FBAdOptionsView alloc] init];
-        _adOptionsView.nativeAd = fbNativeAd;
+        _adOptionsView.nativeAd = _fbNativeAdBase;
         _adOptionsView.backgroundColor = [UIColor clearColor];
     }
 
@@ -95,13 +104,21 @@
 
 - (void)willAttachToView:(UIView *)view
 {
-    [self.fbNativeAd registerViewForInteraction:view mediaView:self.mediaView iconView:self.iconView viewController:[self.delegate viewControllerForPresentingModalView]];
+    if ([_fbNativeAdBase class] == [FBNativeBannerAd class]) {
+        [((FBNativeBannerAd *) self.fbNativeAdBase) registerViewForInteraction:view iconView:self.iconView viewController:[self.delegate viewControllerForPresentingModalView]];
+    } else if ([_fbNativeAdBase class] == [FBNativeAd class]) {
+        [((FBNativeAd *) self.fbNativeAdBase) registerViewForInteraction:view mediaView:self.mediaView iconView:self.iconView viewController:[self.delegate viewControllerForPresentingModalView]];
+    }
 }
 
 - (void)willAttachToView:(UIView *)view withAdContentViews:(NSArray *)adContentViews
 {
     if ( adContentViews.count > 0 ) {
-        [self.fbNativeAd registerViewForInteraction:view mediaView:self.mediaView iconView:self.iconView viewController:[self.delegate viewControllerForPresentingModalView] clickableViews:adContentViews];
+        if ([_fbNativeAdBase class] == [FBNativeBannerAd class]){
+             [((FBNativeBannerAd *) self.fbNativeAdBase) registerViewForInteraction:view iconView:self.iconView viewController:[self.delegate viewControllerForPresentingModalView] clickableViews:adContentViews];
+         } else if ([_fbNativeAdBase class] == [FBNativeAd class]){
+             [((FBNativeAd *) self.fbNativeAdBase) registerViewForInteraction:view mediaView:self.mediaView iconView:self.iconView viewController:[self.delegate viewControllerForPresentingModalView] clickableViews:adContentViews];
+         }
     } else {
         [self willAttachToView:view];
     }
@@ -127,8 +144,9 @@
 - (void)nativeAdWillLogImpression:(FBNativeAd *)nativeAd
 {
     if ([self.delegate respondsToSelector:@selector(nativeAdWillLogImpression:)]) {
-        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.fbNativeAd.placementID);
-        MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.fbNativeAd.placementID);
+        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.fbNativeAdBase.placementID);
+        MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.fbNativeAdBase.placementID);
+
         [self.delegate nativeAdWillLogImpression:self];
     } else {
         MPLogInfo(@"Delegate does not implement impression tracking callback. Impressions likely not being tracked.");
@@ -138,21 +156,57 @@
 - (void)nativeAdDidClick:(FBNativeAd *)nativeAd
 {
     if ([self.delegate respondsToSelector:@selector(nativeAdDidClick:)]) {
-        MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.fbNativeAd.placementID);
+        MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.fbNativeAdBase.placementID);
         [self.delegate nativeAdDidClick:self];
     } else {
         MPLogInfo(@"Delegate does not implement click tracking callback. Clicks likely not being tracked.");
     }
 
-    MPLogAdEvent([MPLogEvent adWillPresentModalForAdapter:NSStringFromClass(self.class)], self.fbNativeAd.placementID);
+    MPLogAdEvent([MPLogEvent adWillPresentModalForAdapter:NSStringFromClass(self.class)], self.fbNativeAdBase.placementID);
 
     [self.delegate nativeAdWillPresentModalForAdapter:self];
 }
 
 - (void)nativeAdDidFinishHandlingClick:(FBNativeAd *)nativeAd
 {
-    MPLogAdEvent([MPLogEvent adDidDismissModalForAdapter:NSStringFromClass(self.class)], self.fbNativeAd.placementID);
+    MPLogAdEvent([MPLogEvent adDidDismissModalForAdapter:NSStringFromClass(self.class)], self.fbNativeAdBase.placementID);
 
+    [self.delegate nativeAdDidDismissModalForAdapter:self];
+}
+
+#pragma mark - FBNativeBannerAdDelegate
+
+- (void)nativeBannerAdWillLogImpression:(FBNativeBannerAd *)nativeBannerAd
+{
+    if ([self.delegate respondsToSelector:@selector(nativeAdWillLogImpression:)]) {
+        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.fbNativeAdBase.placementID);
+        MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.fbNativeAdBase.placementID);
+
+        [self.delegate nativeAdWillLogImpression:self];
+    } else {
+        MPLogInfo(@"Delegate does not implement impression tracking callback. Impressions likely not being tracked.");
+    }
+}
+
+- (void)nativeBannerAdDidClick:(FBNativeBannerAd *)nativeBannerAd
+{
+    if ([self.delegate respondsToSelector:@selector(nativeAdDidClick:)]) {
+        MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.fbNativeAdBase.placementID);
+
+        [self.delegate nativeAdDidClick:self];
+    } else {
+        MPLogInfo(@"Delegate does not implement click tracking callback. Clicks likely not being tracked.");
+    }
+    
+    MPLogAdEvent([MPLogEvent adWillPresentModalForAdapter:NSStringFromClass(self.class)], self.fbNativeAdBase.placementID);
+    
+    [self.delegate nativeAdWillPresentModalForAdapter:self];
+}
+
+- (void)nativeBannerAdDidFinishHandlingClick:(FBNativeBannerAd *)nativeBannerAd
+{
+    MPLogAdEvent([MPLogEvent adDidDismissModalForAdapter:NSStringFromClass(self.class)], self.fbNativeAdBase.placementID);
+    
     [self.delegate nativeAdDidDismissModalForAdapter:self];
 }
 

@@ -15,6 +15,3 @@
                        completion:(void (^_Nonnull)(VASBid * _Nullable bid, VASErrorInfo * _Nullable error))completion;
 
 @end
-
-@interface MPMillennialInterstitialCustomEvent: MPVerizonInterstitialCustomEvent
-@end

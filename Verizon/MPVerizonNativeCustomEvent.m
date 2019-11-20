@@ -1,6 +1,8 @@
 #import "MPVerizonNativeCustomEvent.h"
+#if __has_include("MoPub.h")
 #import "MPNativeAdError.h"
 #import "MPLogging.h"
+#endif
 #import "MPVerizonNativeAdAdapter.h"
 #import "MPVerizonBidCache.h"
 #import "VerizonAdapterConfiguration.h"
@@ -29,12 +31,7 @@
     return self = [super init];
 }
 
--(void)dealloc
-{
-    MPLogTrace(@"Deallocating %@.", self);
-}
-
-- (void)requestAdWithCustomEventInfo:(NSDictionary *)info
+- (void)requestAdWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.siteId);
     
@@ -43,16 +40,7 @@
     __strong __typeof__(self.delegate) delegate = self.delegate;
     
     self.siteId = info[kMoPubVASAdapterSiteId];
-    if (self.siteId.length == 0)
-    {
-        self.siteId = info[kMoPubMillennialAdapterSiteId];
-    }
-    
     NSString *placementId = info[kMoPubVASAdapterPlacementId];
-    if (placementId.length == 0)
-    {
-        placementId = info[kMoPubMillennialAdapterPlacementId];
-    }
     
     if (self.siteId.length == 0 || placementId.length == 0)
     {
@@ -130,7 +118,4 @@
     });
 }
 
-@end
-
-@implementation MillennialNativeCustomEvent
 @end

@@ -1,4 +1,11 @@
 ## Changelog
+  * 10.0.2.0
+    * This version of adapters has been certified with Flurry 10.0.2.
+    * Stop implementing deprecated request API.
+
+  * 10.0.0.0
+    * This version is adapters has been certified with Flurry 10.0.0.
+    
   * 9.3.1.0
     * This version of the adapters has been certified with Flurry 9.3.1.
     * Fix `apiKey` null check in `requestInterstitialWithCustomEventInfo` that causes incorrect ad failures.

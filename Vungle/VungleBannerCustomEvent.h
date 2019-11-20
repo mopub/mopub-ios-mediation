@@ -1,4 +1,9 @@
-#import <UnityAds/UADSBannerViewDelegate.h>
+//
+//  VungleBannerCustomEvent.h
+//  MoPubSDK
+//
+//  Copyright © 2019 MoPub. All rights reserved.
+//
 
 #if __has_include(<MoPub/MoPub.h>)
     #import <MoPub/MoPub.h>
@@ -8,5 +13,7 @@
     #import "MPBannerCustomEvent.h"
 #endif
 
-@interface UnityAdsBannerCustomEvent : MPBannerCustomEvent <UADSBannerViewDelegate>
+@interface VungleBannerCustomEvent : MPBannerCustomEvent
+
 @end
+

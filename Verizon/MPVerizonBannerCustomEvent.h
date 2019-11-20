@@ -15,7 +15,3 @@
                           adSizes:(nonnull NSArray<VASInlineAdSize *> *)adSizes
                        completion:(void (^_Nonnull)(VASBid * _Nullable bid, VASErrorInfo * _Nullable error))completion;
 @end
-
-
-@interface MPMillennialBannerCustomEvent: MPVerizonBannerCustomEvent
-@end

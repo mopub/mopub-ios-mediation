@@ -37,15 +37,8 @@
     MPLogInfo(@"Requesting VAS banner with event info %@.", info);
     
     NSString *siteId = info[kMoPubVASAdapterSiteId];
-    if (siteId.length == 0)
-    {
-        siteId = info[kMoPubMillennialAdapterSiteId];
-    }
     NSString *placementId = info[kMoPubVASAdapterPlacementId];
-    if (placementId.length == 0)
-    {
-        placementId = info[kMoPubMillennialAdapterPlacementId];
-    }
+
     if (siteId.length == 0 || placementId.length == 0)
     {
         NSError *error = [VASErrorInfo errorWithDomain:kMoPubVASAdapterErrorDomain
@@ -240,6 +233,4 @@
 }
 
 
-@end
-@implementation MPMillennialBannerCustomEvent
 @end

@@ -36,6 +36,10 @@
 }
 
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info {
+    [self requestAdWithSize:size customEventInfo:info adMarkup:nil];
+}
+
+- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
   
   self.adBannerView.frame = [self frameForCustomEventInfo:size];
   self.adBannerView.adUnitID = [info objectForKey:@"adUnitID"];

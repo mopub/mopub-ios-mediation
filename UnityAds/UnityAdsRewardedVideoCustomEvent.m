@@ -42,7 +42,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     [[UnityRouter sharedRouter] initializeWithGameId:gameId];
 }
 
-- (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info
+- (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     NSString *gameId = [info objectForKey:kMPUnityRewardedVideoGameId];
     if (gameId == nil) {
