@@ -13,10 +13,10 @@
 #endif
 
 // Initialization configuration keys
-NSString * const APPLICATION_ID_KEY = @"appId";
-NSString * const ZONE_ID_KEY        = @"zoneId";
-NSString * const ALL_ZONE_IDS_KEY   = @"allZoneIds";
-NSString * const USER_ID_KEY        = @"userId";
+NSString * const ADC_APPLICATION_ID_KEY = @"appId";
+NSString * const ADC_ZONE_ID_KEY        = @"zoneId";
+NSString * const ADC_ALL_ZONE_IDS_KEY   = @"allZoneIds";
+NSString * const ADC_USER_ID_KEY        = @"userId";
 
 // Errors
 static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-adcolony-adapters";
@@ -33,13 +33,13 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
 + (void)updateInitializationParameters:(NSDictionary *)parameters {
     // These should correspond to the required parameters checked in
     // `initializeNetworkWithConfiguration:complete:`
-    NSString * appId      = parameters[APPLICATION_ID_KEY];
-    NSArray  * allZoneIds = parameters[ALL_ZONE_IDS_KEY];
+    NSString * appId      = parameters[ADC_APPLICATION_ID_KEY];
+    NSArray  * allZoneIds = parameters[ADC_ALL_ZONE_IDS_KEY];
     
     if (appId != nil && allZoneIds.count > 0) {
         NSDictionary * configuration = @{
-            APPLICATION_ID_KEY: appId,
-            ALL_ZONE_IDS_KEY:allZoneIds
+            ADC_APPLICATION_ID_KEY: appId,
+            ADC_ALL_ZONE_IDS_KEY:allZoneIds
         };
         [AdColonyAdapterConfiguration setCachedInitializationParameters:configuration];
     }
@@ -73,8 +73,8 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
         return;
     }
     
-    NSString * appId = configuration[APPLICATION_ID_KEY];
-    NSError  * appIdError = [AdColonyAdapterConfiguration validateParameter:appId forOperation:@"initialization"];
+    NSString * appId = configuration[ADC_APPLICATION_ID_KEY];
+    NSError  * appIdError = [AdColonyAdapterConfiguration validateParameter:appId withName:@"appId" forOperation:@"initialization"];
     if (appIdError) {
         MPLogEvent([MPLogEvent error:appIdError message:nil]);
         if (complete != nil) {
@@ -82,7 +82,6 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
         }
         return;
     }
-    
     
     NSArray * allZoneIds = [self extractAllZoneIds:configuration];
     NSError * allZoneIdsError = [AdColonyAdapterConfiguration validateZoneIds:allZoneIds forOperation:@"initialization"];
@@ -95,7 +94,7 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
     }
     
     // Parameter userId is specific to Rewarded Videos in iOS, and is a custom user identifier that can be used by the publishers for reward verification. We should pass it to AdColony, if it's present.
-    NSString * userId = configuration[USER_ID_KEY];
+    NSString * userId = configuration[ADC_USER_ID_KEY];
 
     MPLogInfo(@"Attempting to initialize the AdColony SDK with:\n%@", configuration);
     [AdColonyController initializeAdColonyCustomEventWithAppId:appId
@@ -103,13 +102,13 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
                                                         userId:userId
                                                       callback:^(NSError *error) {
         if (complete != nil) {
-            complete(nil);
+            complete(error);
         }
     }];
 }
 
 - (NSArray *)extractAllZoneIds:(NSDictionary<NSString *, id> *)configuration {
-    NSArray  * allZoneIds = [configuration valueForKeyPath:ALL_ZONE_IDS_KEY];
+    NSArray  * allZoneIds = [configuration valueForKeyPath:ADC_ALL_ZONE_IDS_KEY];
     NSString * zoneIdsToString = [allZoneIds description];
     NSData   * dataToCheck = [zoneIdsToString dataUsingEncoding:NSUTF8StringEncoding];
     NSError  * error = nil;
@@ -127,11 +126,12 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
     }
 }
 
-+ (NSError *)validateParameter:(NSString *)parameter forOperation:(NSString *)operation {
++ (NSError *)validateParameter:(NSString *)parameter withName:(NSString *)parameterName forOperation:(NSString *)operation {
     if (parameter != nil && parameter.length > 0) {
         return nil;
     }
-    NSError * error = [self createErrorForOperation:operation forParameter:parameter];
+    
+    NSError * error = [self createErrorForOperation:operation forParameterName:parameterName];
     return error;
 }
 
@@ -140,15 +140,13 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
         return nil;
     }
     
-    NSError *error = [self createErrorForOperation:operation forParameter:zoneIds];
+    NSError *error = [self createErrorForOperation:operation forParameterName:@"zoneIds"];
     return error;
 }
 
-+ (NSError *)createErrorForOperation:(NSString *)operation forParameter:(NSString *)parameter {
-    NSString * parameterName = @"appId and/or zoneId";
-    if (parameter != nil) {
-        #define VariableName(arg) (@""#arg)
-        NSString * parameterName = VariableName(parameter);
++ (NSError *)createErrorForOperation:(NSString *)operation forParameterName:(NSString *)parameterName {
+    if (parameterName == nil) {
+        parameterName = @"appId and/or zoneId";
     }
     
     NSString * description = [NSString stringWithFormat:@"AdColony adapter unable to proceed with %@", operation];

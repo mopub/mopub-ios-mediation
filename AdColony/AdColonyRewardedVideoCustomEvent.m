@@ -41,12 +41,12 @@
 }
 
 - (void)initializeSdkWithParameters:(NSDictionary *)parameters callback:(void(^)(NSError *error))completionCallback {
-    NSString * const appId      = parameters[APPLICATION_ID_KEY];
-    NSString * const zoneId     = parameters[ZONE_ID_KEY];
-    NSArray  * const allZoneIds = parameters[ALL_ZONE_IDS_KEY];
-    NSString * const userId     = [parameters objectForKey:USER_ID_KEY]; // Optional
+    NSString * const appId      = parameters[ADC_APPLICATION_ID_KEY];
+    NSString * const zoneId     = parameters[ADC_ZONE_ID_KEY];
+    NSArray  * const allZoneIds = parameters[ADC_ALL_ZONE_IDS_KEY];
+    NSString * const userId     = [parameters objectForKey:ADC_USER_ID_KEY]; // Optional
     
-    NSError *appIdError = [AdColonyAdapterConfiguration validateParameter:appId forOperation:@"rewarded video ad request"];
+    NSError *appIdError = [AdColonyAdapterConfiguration validateParameter:appId withName:@"appId" forOperation:@"rewarded video ad request"];
     if (appIdError) {
         if (completionCallback) {
             completionCallback(appIdError);
@@ -54,7 +54,7 @@
         return;
     }
     
-    NSError *zoneIdError = [AdColonyAdapterConfiguration validateParameter:zoneId forOperation:@"rewarded video ad request"];
+    NSError *zoneIdError = [AdColonyAdapterConfiguration validateParameter:zoneId withName:@"zoneId" forOperation:@"rewarded video ad request"];
     if (zoneIdError) {
         if (completionCallback) {
             completionCallback(zoneIdError);

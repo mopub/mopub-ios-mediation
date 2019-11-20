@@ -25,17 +25,17 @@
 #pragma mark - MPInterstitialCustomEvent Subclass Methods
 
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    NSString * const appId      = info[APPLICATION_ID_KEY];
-    NSString * const zoneId     = info[ZONE_ID_KEY];
-    NSArray  * const allZoneIds = info[ALL_ZONE_IDS_KEY];
+    NSString * const appId      = info[ADC_APPLICATION_ID_KEY];
+    NSString * const zoneId     = info[ADC_ZONE_ID_KEY];
+    NSArray  * const allZoneIds = info[ADC_ALL_ZONE_IDS_KEY];
     
-    NSError *appIdError = [AdColonyAdapterConfiguration validateParameter:appId forOperation:@"interstitial ad request"];
+    NSError *appIdError = [AdColonyAdapterConfiguration validateParameter:appId withName:@"appId" forOperation:@"interstitial ad request"];
     if (appIdError) {
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:appIdError];
         return;
     }
     
-    NSError *zoneIdError = [AdColonyAdapterConfiguration validateParameter:zoneId forOperation:@"interstitial ad request"];
+    NSError *zoneIdError = [AdColonyAdapterConfiguration validateParameter:zoneId withName:@"zoneId" forOperation:@"interstitial ad request"];
     if (zoneIdError) {
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:zoneIdError];
         return;
