@@ -1,9 +1,6 @@
 //
 //  MintegralNativeCustomEvent.h
-//  MoPubSampleApp
-//
-//  Copyright © 2016年 MoPub. All rights reserved.
-//
+
 
 #if __has_include(<MoPub/MoPub.h>)
     #import <MoPub/MoPub.h>

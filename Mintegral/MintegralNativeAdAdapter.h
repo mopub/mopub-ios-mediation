@@ -1,9 +1,6 @@
 //
 //  MintegralNativeAdAdapter.h
-//  MoPubSampleApp
-//
-//  Copyright © 2016年 MoPub. All rights reserved.
-//
+
 
 #import <Foundation/Foundation.h>
 #if __has_include(<MoPub/MoPub.h>)

@@ -1,26 +1,16 @@
 //
 //  MintegralBannerCustomEvent.m
-//  MoPubSampleApp
-//
-//  Created by Lucas on 2019/4/25.
-//  Copyright © 2019 MoPub. All rights reserved.
-//
 
 #import "MintegralBannerCustomEvent.h"
-
 #import <MTGSDK/MTGSDK.h>
-
-#import "MintegralAdapterHelper.h"
+#import "MintegralAdapterConfiguration.h"
 #import <MTGSDKBanner/MTGBannerAdView.h>
 #import <MTGSDKBanner/MTGBannerAdViewDelegate.h>
-
-
 #if __has_include(<MoPubSDKFramework/MoPub.h>)
 #import <MoPubSDKFramework/MoPub.h>
 #else
 #import "MoPub.h"
 #endif
-
 #if __has_include(<MoPubSDKFramework/MPLogging.h>)
 #import <MoPubSDKFramework/MPLogging.h>
 #else
@@ -32,11 +22,10 @@ typedef enum {
     MintegralErrorBannerCamPaignListEmpty,
 }MintegralBannerErrorCode;
 
-
 @interface MintegralBannerCustomEvent() <MTGBannerAdViewDelegate>
 
 @property(nonatomic,strong) MTGBannerAdView *bannerAdView;
-@property (nonatomic, strong) NSString * currentUnitID;
+@property (nonatomic, strong) NSString * adUnitId;
 @property (nonatomic, assign) CGSize currentSize;
 @property (nonatomic, copy) NSString *adm;
 @end
@@ -44,13 +33,13 @@ typedef enum {
 @implementation MintegralBannerCustomEvent
 
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup{
+    MPLogInfo(@"requestAdWithSize for Mintegral");
     NSString *appId = [info objectForKey:@"appId"];
     NSString *appKey = [info objectForKey:@"appKey"];
     NSString *unitId = [info objectForKey:@"unitId"];
     
     NSString *errorMsg = nil;
-//    if (!appId) errorMsg = @"Invalid Mintegral appId";
-//    if (!appKey) errorMsg = @"Invalid Mintegral appKey";
+
     if (!unitId) errorMsg = @"Invalid Mintegral unitId";
     
     if (errorMsg) {
@@ -61,33 +50,28 @@ typedef enum {
         return;
     }
     
-
-    if (![MintegralAdapterHelper isSDKInitialized]) {
-        
-        [MintegralAdapterHelper setGDPRInfo:info];
+    if (![MintegralAdapterConfiguration isSDKInitialized]) {
+        [MintegralAdapterConfiguration setGDPRInfo:info];
         [[MTGSDK sharedInstance] setAppID:appId ApiKey:appKey];
-        [MintegralAdapterHelper sdkInitialized];
+        [MintegralAdapterConfiguration sdkInitialized];
     }
-    
-    _currentUnitID = unitId;
+    _adUnitId = unitId;
     _currentSize = size;
     
     UIViewController * vc =  [UIApplication sharedApplication].keyWindow.rootViewController;
     _bannerAdView = [[MTGBannerAdView alloc] initBannerAdViewWithAdSize:size unitId:unitId rootViewController:vc];
     _bannerAdView.delegate = self;
-//    adMarkup = @"7546804272925719591  ";
+
     self.adm = adMarkup;
     if (self.adm) {
+        MPLogInfo(@"Loading Mintegral Banner ad markup for Advanced Bidding");
         [_bannerAdView loadBannerAdWithBidToken:self.adm];
     }else{
-    
+        MPLogInfo(@"Loading Mintegral native ad");
         [_bannerAdView loadBannerAd];
     }
 }
 
-
-
-#pragma mark --
 #pragma mark -- MTGBannerAdViewDelegate
 - (void)adViewLoadSuccess:(MTGBannerAdView *)adView {
     if ([self.delegate respondsToSelector:@selector(bannerCustomEvent: didLoadAd:)]) {
@@ -99,7 +83,6 @@ typedef enum {
     if ([self.delegate respondsToSelector:@selector(bannerCustomEvent: didFailToLoadAdWithError:)]) {
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
     }
-    
 }
 
 - (void)adViewWillLogImpression:(MTGBannerAdView *)adView{
@@ -107,7 +90,6 @@ typedef enum {
         [self.delegate trackImpression];
     }
 }
-
 
 - (void)adViewDidClicked:(MTGBannerAdView *)adView {
     if ([self.delegate respondsToSelector:@selector(trackClick)]) {
@@ -132,11 +114,8 @@ typedef enum {
 #pragma mark - Turn off auto impression and click
 - (BOOL)enableAutomaticImpressionAndClickTracking
 {
-    // Subclasses may override this method to return NO to perform impression and click tracking
-    // manually.
     return NO;
 }
-
 
 @end
 

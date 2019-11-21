@@ -1,20 +1,19 @@
 //
 //  MintegralAdapterConfiguration.m
-//  MoPubSampleApp
-//
-//  Created by Damon on 2019/11/12.
-//  Copyright © 2019 MoPub. All rights reserved.
-//
 
 #import <Foundation/Foundation.h>
 #import "MintegralAdapterConfiguration.h"
 #import <MTGSDK/MTGSDK.h>
 #import <MTGSDKBidding/MTGBiddingSDK.h>
 #import <MoPub.h>
-#import "MintegralAdapterHelper.h"
+
 @interface MintegralAdapterConfiguration()
 
 @end
+
+static BOOL mintegralSDKInitialized = NO;
+
+NSString *const kMintegralErrorDomain = @"com.mintegral.iossdk.mopub";
 
 @implementation MintegralAdapterConfiguration
 
@@ -25,7 +24,6 @@
 }
 
 - (NSString *)biddingToken {
-//    return @"";
     return [MTGBiddingSDK buyerUID];
 }
 
@@ -38,8 +36,7 @@
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *,id> *)configuration complete:(void (^)(NSError * _Nullable))complete{
-    NSLog(@"initializeNetworkWithConfiguration");
-//    NSLog(@"buyeruid: %@", self.biddingToken);
+    MPLogInfo(@"initializeNetworkWithConfiguration for Mintegral");
     
     NSString* appId = [configuration objectForKey:@"appId"];
     NSString* appKey = [configuration objectForKey:@"appKey"];
@@ -49,27 +46,59 @@
     if (!appKey) errorMsg = @"Invalid Mintegral appKey";
     
     if (errorMsg) {
-        
         NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:MPErrorNetworkConnectionFailed userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
         if (complete != nil) {
             complete(error);
         }
-        
         return;
-        
     }
 
-    if (![MintegralAdapterHelper isSDKInitialized]) {
+    if (![MintegralAdapterConfiguration isSDKInitialized]) {
 
-        [MintegralAdapterHelper setGDPRInfo:configuration];
+        [MintegralAdapterConfiguration setGDPRInfo:configuration];
         [[MTGSDK sharedInstance] setAppID:appId ApiKey:appKey];
-        [MintegralAdapterHelper sdkInitialized];
+        [MintegralAdapterConfiguration sdkInitialized];
     }
     if (complete != nil) {
         complete(nil);
     }
-    
 }
 
++(BOOL)isSDKInitialized{
+    return mintegralSDKInitialized;
+}
+
++(void)sdkInitialized{
+#ifdef DEBUG
+    if (DEBUG) {
+        MPLogInfo(@"The version of current Mintegral Adapter is: %@",MintegralAdapterVersion);
+    }
+#endif
+    Class class = NSClassFromString(@"MTGSDK");
+    SEL selector = NSSelectorFromString(@"setChannelFlag:");
+    NSString *pluginNumber = @"Y+H6DFttYrPQYcIA+F2F+F5/Hv==";
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    if ([class respondsToSelector:selector]) {
+        [class performSelector:selector withObject:pluginNumber];
+    }
+    #pragma clang diagnostic pop
+    mintegralSDKInitialized = YES;
+    MPLogInfo(@"Mintegral sdkInitialized");
+}
+
++(void)setGDPRInfo:(NSDictionary *)info{
+    if([[MoPub sharedInstance] canCollectPersonalInfo])
+    {
+        [[MTGSDK sharedInstance] setConsentStatus:YES];
+         NSString *privateInfo = @"Can send GDPR";
+         MPLogInfo(@"%@", privateInfo);
+    }else{
+        [[MTGSDK sharedInstance] setConsentStatus:NO];
+        NSString *privateInfo = @"Cannot send GDPR";
+        MPLogInfo(@"%@", privateInfo);
+    }
+   
+}
 
 @end

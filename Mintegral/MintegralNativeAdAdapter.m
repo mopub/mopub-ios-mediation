@@ -1,16 +1,11 @@
 //
 //  MintegralNativeAdAdapter.m
-//  MoPubSampleApp
-//
-//  Copyright © 2016年 MoPub. All rights reserved.
-//
 
 #import "MintegralNativeAdAdapter.h"
 #import <MTGSDK/MTGNativeAdManager.h>
 #import <MTGSDK/MTGCampaign.h>
 #import <MTGSDK/MTGMediaView.h>
 #import <MTGSDK/MTGAdChoicesView.h>
-
 #if __has_include(<MoPubSDKFramework/MPNativeAdConstants.h>)
 #import <MoPubSDKFramework/MPNativeAdConstants.h>
 #else
@@ -33,7 +28,7 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 @implementation MintegralNativeAdAdapter
 
 - (instancetype)initWithNativeAds:(NSArray *)nativeAds nativeAdManager:(MTGNativeAdManager *)nativeAdManager withUnitId:(NSString *)unitId videoSupport:(BOOL)videoSupport{
-
+    MPLogInfo(@"initWithNativeAds for Mintegral");
     if (self = [super init]) {
         _nativeAdManager = nativeAdManager;
         _nativeAdManager.delegate = self;
@@ -55,15 +50,12 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
                 [properties setValue:@([[campaign valueForKey:@"star"] intValue])forKey:kAdStarRatingKey];
             }
             
-            
-
             if (campaign.iconUrl.length > 0) {
                 [properties setObject:campaign.iconUrl forKey:kAdIconImageKey];
             }
 
             _campaign = campaign;
-            
-            // If video ad is enabled, use mediaView, otherwise use coverImage.
+
             if (videoSupport) {
                 [self mediaView];
             } else {
@@ -82,10 +74,8 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 }
 
 -(void)dealloc{
-
     _nativeAdManager.delegate = nil;
     _nativeAdManager = nil;
-
     _mediaView.delegate = nil;
     _mediaView = nil;
 }
@@ -146,10 +136,10 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 - (UIView *)privacyInformationIconView
 {
     if (CGSizeEqualToSize(_campaign.adChoiceIconSize, CGSizeZero)) {
-        NSLog(@"adchoice size is 0");
+        MPLogInfo(@"adchoice size is 0");
         return nil;
     } else {
-        NSLog(@"adchoice size is normal");
+        MPLogInfo(@"adchoice size is normal");
         MTGAdChoicesView * adChoicesView = [[MTGAdChoicesView alloc] initWithFrame:CGRectMake(0, 0, _campaign.adChoiceIconSize.width, _campaign.adChoiceIconSize.height)];
         adChoicesView.campaign = _campaign;
         return adChoicesView;
@@ -163,17 +153,13 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 }
 
 -(MTGMediaView *)mediaView{
-
     if (_mediaView) {
         return _mediaView;
     }
-    
     MTGMediaView *mediaView = [[MTGMediaView alloc] initWithFrame:CGRectZero];
     mediaView.delegate = self;
     _mediaView = mediaView;
-
     return mediaView;
 }
-
 
 @end

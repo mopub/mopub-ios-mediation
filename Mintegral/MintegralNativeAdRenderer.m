@@ -1,14 +1,8 @@
 //
 //  MintegralNativeVideoRender.m
-//  MopubMintegralDemo
-//
-//  Created by Damon on 2019/11/17.
-//  Copyright © 2019 mintegral. All rights reserved.
-//
 
 #import <Foundation/Foundation.h>
 #import "MintegralNativeAdRenderer.h"
-
 #if __has_include("MoPub.h")
 #import "MPLogging.h"
 #import "MPNativeAdAdapter.h"
@@ -32,8 +26,6 @@
 @property (nonatomic, strong) MintegralNativeAdAdapter *adapter;
 @property (nonatomic, strong) Class renderingViewClass;
 
-
-
 @end
 
 @implementation MintegralNativeAdRenderer
@@ -44,9 +36,7 @@
         MPStaticNativeAdRendererSettings *settings = (MPStaticNativeAdRendererSettings *)rendererSettings;
         _renderingViewClass = settings.renderingViewClass;
         _viewSizeHandler = [settings.viewSizeHandler copy];
-
     }
-    
     return self;
 }
 
@@ -71,7 +61,6 @@
     }
     
     self.adapter = adapter;
-    
     
     if ([self.renderingViewClass respondsToSelector:@selector(nibForAd)]) {
         self.adView = (UIView<MPNativeAdRendering> *)[[[self.renderingViewClass nibForAd] instantiateWithOwner:nil options:nil] firstObject];
@@ -103,25 +92,17 @@
         [self.adView.nativePrivacyInformationIconImageView addSubview:adChoicesView];
         self.adView.nativePrivacyInformationIconImageView.hidden = NO;
         
-//    self.adView.nativePrivacyInformationIconImageView.userInteractionEnabled = YES;
-//
-//        self.adView.nativePrivacyInformationIconImageView.hidden = NO;
     }
-    
-
     
     if ([self shouldLoadMediaView]) {
         UIView *mediaView = [self.adapter mainMediaView];
         UIView *mainImageView = [self.adView nativeMainImageView];
-        
         mediaView.frame = mainImageView.bounds;
         mediaView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         mainImageView.userInteractionEnabled = YES;
-        
         [mainImageView addSubview:mediaView];
     }
-    
-    // See if the ad contains a star rating and notify the view if it does.
+
     if ([self.adView respondsToSelector:@selector(layoutStarRating:)]) {
         NSNumber *starRatingNum = [adapter.properties objectForKey:kAdStarRatingKey];
         
@@ -129,7 +110,6 @@
             [self.adView layoutStarRating:starRatingNum];
         }
     }
-    
     return self.adView;
 }
 
@@ -153,10 +133,6 @@
         [self.adapter displayContentForDAAIconTap];
     }
 }
-
-
-
-
 
 @end
 
