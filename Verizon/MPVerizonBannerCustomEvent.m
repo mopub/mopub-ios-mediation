@@ -51,7 +51,7 @@
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
-
+    
     if (![VASAds sharedInstance].initialized &&
         ![VASStandardEdition initializeWithSiteId:siteId])
     {
@@ -67,14 +67,14 @@
     }
     
     [VerizonAdapterConfiguration setCachedInitializationParameters:info];
+    VASInlineAdSize *requestedSize = [[VASInlineAdSize alloc] initWithWidth:size.width height:size.height];
     
     [VASAds sharedInstance].locationEnabled = [MoPub sharedInstance].locationUpdatesEnabled;
     
-    VASInlineAdSize *requestedSize = [[VASInlineAdSize alloc] initWithWidth:size.width height:size.height];
-
     self.inlineFactory = [[VASInlineAdFactory alloc] initWithPlacementId:placementId adSizes:@[requestedSize] vasAds:[VASAds sharedInstance] delegate:self];
     
     VASBid *bid = [MPVerizonBidCache.sharedInstance bidForPlacementId:placementId];
+    
     if (bid) {
         [self.inlineFactory loadBid:bid inlineAdDelegate:self];
     } else {
@@ -82,13 +82,10 @@
         [metadataBuilder setAppMediator:VerizonAdapterConfiguration.appMediator];
 
         if (adMarkup.length > 0) {
-            NSMutableDictionary<NSString *, id> *placementData =
-            [NSMutableDictionary dictionaryWithDictionary:
-             @{
-               kMoPubRequestMetadataAdContent : adMarkup,
-               @"overrideWaterfallProvider"  : @"waterfallprovider/sideloading"
-               }
-             ];
+            NSMutableDictionary<NSString *, id> *placementData = [NSMutableDictionary dictionaryWithDictionary:@{
+                kMoPubRequestMetadataAdContent : adMarkup,
+                @"overrideWaterfallProvider"   : @"waterfallprovider/sideloading"}];
+
             [metadataBuilder setPlacementData:placementData];
         }
 
@@ -99,7 +96,7 @@
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
 }
 
-- (NSString *)getAdNetworkId {
+- (NSString *) getAdNetworkId {
     return (self.inlineAd) ? self.inlineAd.placementId : @"";
 }
 

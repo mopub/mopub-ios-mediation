@@ -67,9 +67,10 @@
         NSError *error = [VASErrorInfo errorWithDomain:kMoPubVASAdapterErrorDomain
                                                   code:MoPubVASAdapterErrorNotInitialized
                                                    who:kMoPubVASAdapterErrorWho
-                                           description:[NSString stringWithFormat:@"Advanced Bidding for native placements is not supported at this time. ServerExtras key \" %@ \" should have no value.", kMoPubServerExtrasAdContent]
+                                           description:[NSString stringWithFormat:@"Advanced Bidding for native placements is not supported at this time. serverExtras key \" %@ \" should have no value.", kMoPubServerExtrasAdContent]
                                             underlying:nil];
-        MPLogError(@"%@", [error localizedDescription]);
+
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.siteId);
         [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
         
         return;

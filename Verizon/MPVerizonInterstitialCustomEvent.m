@@ -53,7 +53,8 @@
                                            description:[NSString stringWithFormat:@"Error occurred while fetching content for requestor [%@]", NSStringFromClass([self class])]
                                             underlying:nil];
         
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error],  [self getAdNetworkId]);
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
+        
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
@@ -72,9 +73,8 @@
         return;
     }
     
-    [VerizonAdapterConfiguration setCachedInitializationParameters:info];
-    
     [VASAds sharedInstance].locationEnabled = [MoPub sharedInstance].locationUpdatesEnabled;
+    [VerizonAdapterConfiguration setCachedInitializationParameters:info];
 
     self.interstitialAdFactory = [[VASInterstitialAdFactory alloc] initWithPlacementId:placementId vasAds:[VASAds sharedInstance] delegate:self];
     
@@ -86,13 +86,10 @@
         [metadataBuilder setAppMediator:VerizonAdapterConfiguration.appMediator];
         
         if (adMarkup.length > 0) {
-            NSMutableDictionary<NSString *, id> *placementData =
-            [NSMutableDictionary dictionaryWithDictionary:
-             @{
-               kMoPubRequestMetadataAdContent : adMarkup,
-               @"overrideWaterfallProvider"  : @"waterfallprovider/sideloading"
-               }
-             ];
+            NSMutableDictionary<NSString *, id> *placementData = [NSMutableDictionary dictionaryWithDictionary:@{
+                kMoPubRequestMetadataAdContent : adMarkup,
+                @"overrideWaterfallProvider"   : @"waterfallprovider/sideloading"}];
+
             [metadataBuilder setPlacementData:placementData];
         }
         

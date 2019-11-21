@@ -31,13 +31,15 @@ static NSString * const kVASEditionVersionKey   = @"editionVersion";
 
 @implementation VerizonAdapterConfiguration
 
-+ (NSString *)appMediator {
++ (NSString *)appMediator
+{
     static NSString *_appMediator = nil;
     static dispatch_once_t onceToken;
+    
     dispatch_once(&onceToken, ^{
-        _appMediator =
-        [NSString stringWithFormat:@"MoPubVAS-%@", kMoPubVASAdapterVersion];
+        _appMediator = [NSString stringWithFormat:@"MoPubVAS-%@", kMoPubVASAdapterVersion];
     });
+    
     return _appMediator;
 }
 
@@ -79,14 +81,9 @@ static NSString * const kVASEditionVersionKey   = @"editionVersion";
 - (NSString *)biddingToken
 {
     VASRequestMetadataBuilder *builder = [[VASRequestMetadataBuilder alloc] initWithRequestMetadata:[[VASAds sharedInstance] requestMetadata]];
-    
     [builder setAppMediator:kMoPubVASAdapterVersion];
-    
-    NSString *token = [self buildBiddingTokenWithRequestMetadata:[builder build]];
-                       
-    MPLogDebug(@"Requesting bidding token: %@", token);
-                       
-    return token;
+        
+    return [self buildBiddingTokenWithRequestMetadata:[builder build]];
 }
 
 - (NSString *)moPubNetworkName
@@ -99,6 +96,7 @@ static NSString * const kVASEditionVersionKey   = @"editionVersion";
     NSString *editionName = [[[VASAds sharedInstance] configuration] stringForDomain:@"com.verizon.ads"
                                                                                  key:@"editionName"
                                                                          withDefault:nil];
+
     NSString *editionVersion = [[[VASAds sharedInstance] configuration] stringForDomain:@"com.verizon.ads"
                                                                                     key:@"editionVersion"
                                                                             withDefault:nil];
@@ -114,13 +112,9 @@ static NSString * const kVASEditionVersionKey   = @"editionVersion";
 
 - (NSString *)buildBiddingTokenWithRequestMetadata:(VASRequestMetadata *)metadata
 {
-    NSMutableDictionary<NSString *, id> *biddingTokenDictionary =
-    [NSMutableDictionary dictionaryWithDictionary:
-     @{
-       @"env" : NULL_OR_VALUE([self buildEnvironmentInfoJSON]),
-       @"req" : NULL_OR_VALUE([self buildRequestInfoJSONWithRequestMetadata:metadata])
-       }
-     ];
+    NSMutableDictionary<NSString *, id> *biddingTokenDictionary = [NSMutableDictionary dictionaryWithDictionary:@{
+        @"env" : NULL_OR_VALUE([self buildEnvironmentInfoJSON]),
+        @"req" : NULL_OR_VALUE([self buildRequestInfoJSONWithRequestMetadata:metadata])}];
     
     NSError *error;
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:biddingTokenDictionary
@@ -142,44 +136,37 @@ static NSString * const kVASEditionVersionKey   = @"editionVersion";
     // Location Info
     NSMutableDictionary<NSString *, id> *locationDictionary = nil;
     CLLocation *currentLocation = envInfo.locationInfo;
+
     if (currentLocation) {
-        locationDictionary =
-            [NSMutableDictionary dictionaryWithDictionary:
-             @{@"ts"        : @([[self getUnixTimeFromDate:currentLocation.timestamp] longValue]),
-               @"horizAcc"  : @(currentLocation.horizontalAccuracy),
-               @"vertAcc"   : @(currentLocation.verticalAccuracy),
-               @"lat"       : @(currentLocation.coordinate.latitude),
-               @"lon"       : @(currentLocation.coordinate.longitude),
-               @"speed"     : @(currentLocation.speed),
-               @"alt"       : @(currentLocation.altitude),
-               @"bearing"   : @(currentLocation.course),
-               @"src"       : @"coreLocation"
-             }
-         ];
+        locationDictionary = [NSMutableDictionary dictionaryWithDictionary:@{
+            @"ts"        : @([[self getUnixTimeFromDate:currentLocation.timestamp] longValue]),
+            @"horizAcc"  : @(currentLocation.horizontalAccuracy),
+            @"vertAcc"   : @(currentLocation.verticalAccuracy),
+            @"lat"       : @(currentLocation.coordinate.latitude),
+            @"lon"       : @(currentLocation.coordinate.longitude),
+            @"speed"     : @(currentLocation.speed),
+            @"alt"       : @(currentLocation.altitude),
+            @"bearing"   : @(currentLocation.course),
+            @"src"       : @"coreLocation"}];
     }
     
     // SDK Info
     NSMutableDictionary<NSString *, id> *sdkPluginsDictionary = [[NSMutableDictionary<NSString *, id> alloc] init];
+    
     for (VASPlugin *plugin in [VASAds sharedInstance].registeredPlugins) {
-        sdkPluginsDictionary[plugin.identifier] =
-            @{
-                @"name"         : NULL_OR_VALUE(plugin.name),
-                @"version"      : NULL_OR_VALUE(plugin.version),
-                @"author"       : NULL_OR_VALUE(plugin.author),
-                @"minApiLevel"  : @(plugin.minApiLevel),
-                @"email"        : NULL_OR_VALUE([plugin.email absoluteString]),
-                @"website"      : NULL_OR_VALUE([plugin.website absoluteString]),
-                @"enabled"      : @([[VASAds sharedInstance] isPluginEnabled:plugin.identifier])
-            };
+        sdkPluginsDictionary[plugin.identifier] = @{
+            @"name"         : NULL_OR_VALUE(plugin.name),
+            @"version"      : NULL_OR_VALUE(plugin.version),
+            @"author"       : NULL_OR_VALUE(plugin.author),
+            @"minApiLevel"  : @(plugin.minApiLevel),
+            @"email"        : NULL_OR_VALUE([plugin.email absoluteString]),
+            @"website"      : NULL_OR_VALUE([plugin.website absoluteString]),
+            @"enabled"      : @([[VASAds sharedInstance] isPluginEnabled:plugin.identifier])};
     }
     
-    NSMutableDictionary<NSString *, id> *sdkInfo =
-        [NSMutableDictionary dictionaryWithDictionary:
-         @{
-             @"coreVer"     : NULL_OR_VALUE(VASAds.sdkInfo.version),
-             @"sdkPlugins"  : NULL_OR_VALUE(sdkPluginsDictionary)
-         }
-         ];
+    NSMutableDictionary<NSString *, id> *sdkInfo = [NSMutableDictionary dictionaryWithDictionary:@{
+        @"coreVer"     : NULL_OR_VALUE(VASAds.sdkInfo.version),
+        @"sdkPlugins"  : NULL_OR_VALUE(sdkPluginsDictionary)}];
     
     NSString *editionName = [[VASAds sharedInstance].configuration stringForDomain:kDomainVASAds key:kVASEditionNameKey withDefault:nil];
     NSString *editionVersion = [[VASAds sharedInstance].configuration stringForDomain:kDomainVASAds key:kVASEditionVersionKey withDefault:nil];
@@ -193,40 +180,29 @@ static NSString * const kVASEditionVersionKey   = @"editionVersion";
     NSNumber *rearCameraAllowed = envInfo.rearCameraFeatureAllowed;
     NSNumber *micAllowed = envInfo.micFeatureAllowed;
     NSNumber *gpsAllowed = envInfo.gpsFeatureAllowed;
-    NSMutableDictionary<NSString *, id> *deviceFeatures =
-        [NSMutableDictionary dictionaryWithDictionary:
-         @{
-             @"cameraFront" : frontCameraAllowed != nil ? frontCameraAllowed : [NSNull null],
-             @"cameraRear"  : rearCameraAllowed != nil ? rearCameraAllowed : [NSNull null],
-             @"mic"         : micAllowed != nil ? micAllowed : [NSNull null],
-             @"gps"         : gpsAllowed != nil ? gpsAllowed : [NSNull null],
-         }
-         ];
+    NSMutableDictionary<NSString *, id> *deviceFeatures = [NSMutableDictionary dictionaryWithDictionary:@{
+        @"cameraFront" : frontCameraAllowed != nil ? frontCameraAllowed : [NSNull null],
+        @"cameraRear"  : rearCameraAllowed != nil ? rearCameraAllowed : [NSNull null],
+        @"mic"         : micAllowed != nil ? micAllowed : [NSNull null],
+        @"gps"         : gpsAllowed != nil ? gpsAllowed : [NSNull null],}];
     
     // Environment Info
     NSNumber *headphonesArePresent = envInfo.headphonesArePresent;
-    NSMutableDictionary<NSString *, id> *environmentInfo =
-        [NSMutableDictionary dictionaryWithDictionary:
-         @{
-           @"sdkInfo"       : NULL_OR_VALUE(sdkInfo),
-           @"loc"           : NULL_OR_VALUE(locationDictionary),
-           @"deviceFeatures": NULL_OR_VALUE(deviceFeatures),
-           
-           @"mcc"       : NULL_OR_VALUE(envInfo.networkInfo.carrier.mobileCountryCode),
-           @"mnc"       : NULL_OR_VALUE(envInfo.networkInfo.carrier.mobileNetworkCode),
-           @"ip"        : NULL_OR_VALUE(envInfo.ipAddress),
-           @"lang"      : NULL_OR_VALUE(VASEnvironmentInfo.language),
-           @"natOrient" : NULL_OR_VALUE(envInfo.naturalOrientation),
-           
-           @"secureContent" : @(VASEnvironmentInfo.isSecureTransportEnabled),
-        
-           @"headphones" :  headphonesArePresent != nil ? headphonesArePresent : [NSNull null],
-           @"vol"        : envInfo.outputVolume != nil ? @((NSInteger)([envInfo.outputVolume floatValue] * 100)) : [NSNull null],
-           @"storage"    : envInfo.availableStorage != nil ? @([envInfo.availableStorage longLongValue]) : [NSNull null],
-           @"charging"   : envInfo.batteryInfo != nil ? @(envInfo.batteryInfo.charging) : [NSNull null],
-           @"charge"     : envInfo.batteryInfo != nil ? @((envInfo.batteryInfo.level >= 0) ? (NSInteger) (envInfo.batteryInfo.level * 100.0) : 0) : [NSNull null],
-         }
-         ];
+    NSMutableDictionary<NSString *, id> *environmentInfo = [NSMutableDictionary dictionaryWithDictionary:@{
+        @"sdkInfo"       : NULL_OR_VALUE(sdkInfo),
+        @"loc"           : NULL_OR_VALUE(locationDictionary),
+        @"deviceFeatures": NULL_OR_VALUE(deviceFeatures),
+        @"mcc"           : NULL_OR_VALUE(envInfo.networkInfo.carrier.mobileCountryCode),
+        @"mnc"           : NULL_OR_VALUE(envInfo.networkInfo.carrier.mobileNetworkCode),
+        @"ip"            : NULL_OR_VALUE(envInfo.ipAddress),
+        @"lang"          : NULL_OR_VALUE(VASEnvironmentInfo.language),
+        @"natOrient"     : NULL_OR_VALUE(envInfo.naturalOrientation),
+        @"secureContent" : @(VASEnvironmentInfo.isSecureTransportEnabled),
+        @"headphones"    : headphonesArePresent != nil ? headphonesArePresent : [NSNull null],
+        @"vol"           : envInfo.outputVolume != nil ? @((NSInteger)([envInfo.outputVolume floatValue] * 100)) : [NSNull null],
+        @"storage"       : envInfo.availableStorage != nil ? @([envInfo.availableStorage longLongValue]) : [NSNull null],
+        @"charging"      : envInfo.batteryInfo != nil ? @(envInfo.batteryInfo.charging) : [NSNull null],
+        @"charge"        : envInfo.batteryInfo != nil ? @((envInfo.batteryInfo.level >= 0) ? (NSInteger) (envInfo.batteryInfo.level * 100.0) : 0) : [NSNull null],}];
     
     return [environmentInfo vas_prune];
 }
@@ -236,18 +212,15 @@ static NSString * const kVASEditionVersionKey   = @"editionVersion";
     NSNumber *isProtectedByGDPR = [self isProtectedByGDPR];
     NSDictionary<NSString *, id> *consentData = [[VASAds sharedInstance].configuration objectForDomain:kVASConfigurationCoreDomain key:kVASConfigUserConsentDataKey withDefault:nil];
     
-    NSDictionary<NSString *, id> *requestInfo =
-        [NSMutableDictionary dictionaryWithDictionary:
-         @{
-             @"gdpr" : isProtectedByGDPR != nil ? isProtectedByGDPR : [NSNull null],
-             @"consentstrings" : NULL_OR_VALUE(consentData),
-             @"refreshRate" : NULL_OR_VALUE(metadata.placementData[@"refreshRate"]),
-             @"grp" : NULL_OR_VALUE(metadata.placementData[@"impressionGroup"]),
-             @"mediator": NULL_OR_VALUE(metadata.appData[@"mediator"]),
-             @"targeting" : NULL_OR_VALUE(metadata.customTargeting),
-             @"keywords": NULL_OR_VALUE(metadata.keywords)
-         }
-         ];
+    NSDictionary<NSString *, id> *requestInfo = [NSMutableDictionary dictionaryWithDictionary:@{
+        @"gdpr" : isProtectedByGDPR != nil ? isProtectedByGDPR : [NSNull null],
+        @"consentstrings" : NULL_OR_VALUE(consentData),
+        @"refreshRate" : NULL_OR_VALUE(metadata.placementData[@"refreshRate"]),
+        @"grp" : NULL_OR_VALUE(metadata.placementData[@"impressionGroup"]),
+        @"mediator": NULL_OR_VALUE(metadata.appData[@"mediator"]),
+        @"targeting" : NULL_OR_VALUE(metadata.customTargeting),
+        @"keywords": NULL_OR_VALUE(metadata.keywords)}];
+
     return [requestInfo vas_prune];
 }
 
@@ -261,18 +234,6 @@ static NSString * const kVASEditionVersionKey   = @"editionVersion";
 
 - (NSNumber *)isProtectedByGDPR
 {
-    /*
-     origin -> restricted origin
-     location -> IP location requires consent
-     origin  location  GDPR
-     YES      unknown   YES
-     NO       unknown   nil
-     YES      YES       YES
-     YES      NO        YES
-     NO       YES       YES
-     NO       NO        NO
-     */
-    
     BOOL isRestrictedOrigin = [[VASAds sharedInstance].configuration booleanForDomain:kVASConfigurationCoreDomain key:kVASConfigUserRestrictedOriginKey withDefault:NO];
     BOOL isLocationConsentDetermined = [[VASAds sharedInstance].configuration existsForDomain:kVASConfigurationCoreDomain key:kVASConfigLocationRequiresConsentKey];
     
