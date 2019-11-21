@@ -1,4 +1,8 @@
 ## Changelog
+  * 6.4.5.1
+    * Pass mute and ad orientations settings for interstitial ad.
+    * Remove passing user ID setting for interstitial ad.
+
   * 6.4.5.0
     * This version of adapters has been certified with Vungle 6.4.5 and is compatible with iOS 13.
     * Stop implementing deprecated request API.

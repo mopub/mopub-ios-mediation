@@ -7,7 +7,7 @@
 #import "MPLogging.h"
 #endif
 
-#define CHARTBOOST_ADAPTER_VERSION             @"8.0.1.3"
+#define CHARTBOOST_ADAPTER_VERSION             @"8.0.3.0"
 #define MOPUB_NETWORK_NAME                     @"chartboost"
 
 // Constants

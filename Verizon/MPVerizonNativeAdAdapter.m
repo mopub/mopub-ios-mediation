@@ -1,8 +1,10 @@
 #import <VerizonAdsNativePlacement/VerizonAdsNativePlacement.h>
 #import <VerizonAdsVerizonNativeController/VerizonAdsVerizonNativeController.h>
 #import "MPVerizonNativeAdAdapter.h"
+#if __has_include("MoPub.h")
 #import "MPNativeAdConstants.h"
 #import "MPLogging.h"
+#endif
 
 NSString * const kVASDisclaimerKey = @"vasdisclaimer";
 NSString * const kVASVideoViewKey = @"vasvideoview";

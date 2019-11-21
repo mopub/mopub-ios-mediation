@@ -81,32 +81,33 @@
      the playAd:withOptions: method on the Vungle SDK. */
     NSMutableDictionary *options = [NSMutableDictionary dictionary];
     
-    NSString *userId = [self.localExtras objectForKey:kVungleUserId];
-    if (userId != nil) {
-        NSString *userID = userId;
-        if (userID.length > 0) {
-            options[VunglePlayAdOptionKeyUser] = userID;
+    if (self.localExtras != nil && [self.localExtras count] > 0) {
+        NSString *userId = [self.localExtras objectForKey:kVungleUserId];
+        if (userId != nil) {
+            NSString *userID = userId;
+            if (userID.length > 0) {
+                options[VunglePlayAdOptionKeyUser] = userID;
+            }
         }
-    }
-    
-    NSString *ordinal = [self.localExtras objectForKey:kVungleUserId];
-    if (ordinal != nil) {
-        NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[ordinal longLongValue]];
-        NSUInteger ordinal = ordinalPlaceholder.unsignedIntegerValue;
         
-        if (ordinal > 0) {
-            options[VunglePlayAdOptionKeyOrdinal] = @(ordinal);
+        NSString *ordinal = [self.localExtras objectForKey:kVungleUserId];
+        if (ordinal != nil) {
+            NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[ordinal longLongValue]];
+            NSUInteger ordinal = ordinalPlaceholder.unsignedIntegerValue;
+            
+            if (ordinal > 0) {
+                options[VunglePlayAdOptionKeyOrdinal] = @(ordinal);
+            }
+        }
+        
+        NSString *muted = [self.localExtras objectForKey:kVungleStartMuted];
+        if (muted != nil) {
+            BOOL startMutedPlaceholder = [muted boolValue];
+            options[VunglePlayAdOptionKeyStartMuted] = @(startMutedPlaceholder);
+        } else {
+            options[VunglePlayAdOptionKeyStartMuted] = @(YES);
         }
     }
-    
-    NSString *muted = [self.localExtras objectForKey:kVungleUserId];
-    if (muted != nil) {
-        BOOL startMutedPlaceholder = [muted boolValue];
-        options[VunglePlayAdOptionKeyStartMuted] = @(startMutedPlaceholder);
-    } else {
-        options[VunglePlayAdOptionKeyStartMuted] = @(YES);
-    }
-    
     self.options = options.count ? options : nil;
     
     UIView *mrecAdView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bannerSize.width, self.bannerSize.height)];

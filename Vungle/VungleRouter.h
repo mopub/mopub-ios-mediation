@@ -15,6 +15,7 @@ extern NSString *const kVungleFlexViewAutoDismissSeconds;
 extern NSString *const kVungleUserId;
 extern NSString *const kVungleOrdinal;
 extern NSString *const kVungleStartMuted;
+extern NSString *const kVungleSupportedOrientations;
 extern NSString *const kVungleSDKCollectDevice;
 extern NSString *const kVungleSDKMinSpaceForInit;
 extern NSString *const kVungleSDKMinSpaceForAdRequest;

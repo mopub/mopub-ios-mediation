@@ -13,8 +13,7 @@
     #import "MoPub.h"
 #endif
 #import "VungleInstanceMediationSettings.h"
-
-static NSString *const VungleAdapterVersion = @"6.4.5.0";
+#import "VungleAdapterConfiguration.h"
 
 NSString *const kVungleAppIdKey = @"appId";
 NSString *const kVunglePlacementIdKey = @"pid";
@@ -106,6 +105,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 
 - (void)initializeSdkWithInfo:(NSDictionary *)info {
     NSString *appId = [info objectForKey:kVungleAppIdKey];
+
     if (!self.vungleAppID) {
         self.vungleAppID = appId;
     }
@@ -113,7 +113,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
     dispatch_once(&vungleInitToken, ^{
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
-        [[VungleSDK sharedSDK] performSelector:@selector(setPluginName:version:) withObject:@"mopub" withObject:VungleAdapterVersion];
+        [[VungleSDK sharedSDK] performSelector:@selector(setPluginName:version:) withObject:@"mopub" withObject:[[[VungleAdapterConfiguration alloc] init] adapterVersion]];
 #pragma clang diagnostic pop
         
         self.sdkInitializeState = SDKInitializeStateInitializing;
@@ -215,7 +215,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
     if (self.bannerDelegates.count > 0) {
         if (self.bannerPlacementID != nil && ![[info objectForKey:kVunglePlacementIdKey] isEqualToString:self.bannerPlacementID]) {
             
-            MPLogInfo(@"A banner ad type has been already instantiated. Multiple banner ads are not supported with Vungle iOS SDK version %@ and adapter version %@.", VungleSDKVersion, VungleAdapterVersion);
+            MPLogInfo(@"A banner ad type has been already instantiated. Multiple banner ads are not supported with Vungle iOS SDK version %@ and adapter version %@.", VungleSDKVersion, [[[VungleAdapterConfiguration alloc] init] adapterVersion]);
             [delegate vungleAdDidFailToLoad:nil];
             return;
         }

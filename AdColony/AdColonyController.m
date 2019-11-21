@@ -9,13 +9,11 @@
 #import <AdColony/AdColony.h>
 #import "AdColonyController.h"
 #import "AdColonyGlobalMediationSettings.h"
+#import "AdColonyAdapterConfiguration.h"
 #if __has_include("MoPub.h")
     #import "MoPub.h"
     #import "MPRewardedVideo.h"
 #endif
-
-NSString *const kAdColonyExplicitConsentGiven = @"explicit_consent_given";
-NSString *const kAdColonyConsentResponse = @"consent_response";
 
 @interface AdColonyController()
 
@@ -27,7 +25,7 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
 
 @implementation AdColonyController
 
-+ (void)initializeAdColonyCustomEventWithAppId:(NSString *)appId allZoneIds:(NSArray *)allZoneIds userId:(NSString *)userId callback:(void(^)())callback {
++ (void)initializeAdColonyCustomEventWithAppId:(NSString *)appId allZoneIds:(NSArray *)allZoneIds userId:(NSString *)userId callback:(void(^)(NSError *error))callback {
     AdColonyController *instance = [AdColonyController sharedInstance];
 
     @synchronized (instance) {
@@ -36,51 +34,59 @@ NSString *const kAdColonyConsentResponse = @"consent_response";
 
         if (instance.initState == INIT_STATE_INITIALIZED && zoneIdsSame) {
             if (callback) {
-                callback();
+                callback(nil);
             }
         } else {
             if (instance.initState != INIT_STATE_INITIALIZING) {
                 instance.initState = INIT_STATE_INITIALIZING;
 
                 AdColonyGlobalMediationSettings *settings = [[MoPub sharedInstance] globalMediationSettingsForClass:[AdColonyGlobalMediationSettings class]];
-                AdColonyAppOptions *options = [AdColonyAppOptions new];
-
+                AdColonyAdapterConfiguration *adapterConfiguration = [[AdColonyAdapterConfiguration alloc] init];
+                AdColonyAppOptions *appOptions = [AdColonyAppOptions new];
+                [appOptions setMediationNetwork:ADCMoPub];
+                [appOptions setMediationNetworkVersion:adapterConfiguration.adapterVersion];
                 if (userId && userId.length > 0) {
-                    options.userID = userId;
+                    appOptions.userID = userId;
                 } else if (settings && settings.customId.length > 0) {
-                    options.userID = settings.customId;
+                    appOptions.userID = settings.customId;
                 }
 
                 instance.currentAllZoneIds = allZoneIdsSet;
-                options.testMode = instance.testModeEnabled;
+                appOptions.testMode = instance.testModeEnabled;
 
-                if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes){
-                    if ([[MoPub sharedInstance] allowLegitimateInterest] == YES){
-                        if ([[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDenied
-                            || [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDoNotTrack) {
-                            
-                            [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
-                            [options setOption:kAdColonyConsentResponse withNumericValue:@NO];
+                if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
+                    appOptions.gdprRequired = YES;
+                    if ([[MoPub sharedInstance] allowLegitimateInterest] == YES) {
+                        if ([[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDenied ||
+                            [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDoNotTrack) {
+                            appOptions.gdprConsentString = @"0";
+                        } else {
+                            appOptions.gdprConsentString = @"1";
                         }
-                        else {
-                            [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
-                            [options setOption:kAdColonyConsentResponse withNumericValue:@YES];
-                        }
+                    } else if ([[MoPub sharedInstance] canCollectPersonalInfo]) {
+                        appOptions.gdprConsentString = @"1";
                     } else {
-                        if ([[MoPub sharedInstance] canCollectPersonalInfo]) {
-                            [options setOption:kAdColonyExplicitConsentGiven withNumericValue:@YES];
-                            [options setOption:kAdColonyConsentResponse withNumericValue:@(MoPub.sharedInstance.canCollectPersonalInfo)];
-                        }
+                        appOptions.gdprConsentString = @"0";
                     }
                 }
 
-                [AdColony configureWithAppID:appId zoneIDs:allZoneIds options:options completion:^(NSArray<AdColonyZone *> * _Nonnull zones) {
+                [AdColony configureWithAppID:appId
+                                     zoneIDs:allZoneIds
+                                     options:appOptions
+                                  completion:^(NSArray<AdColonyZone *> * zones) {
                     @synchronized (instance) {
                         instance.initState = INIT_STATE_INITIALIZED;
                     }
                     
                     if (callback != nil) {
-                        callback();
+                        if (zones.count == 0) {
+                            NSError *error = [AdColonyAdapterConfiguration createErrorWith:@"AdColony's initialization failed."
+                                                                                 andReason:@"Failed to get Zone Ids array"
+                                                                             andSuggestion:@"Ensure values of 'appId' and 'zoneId' fields on the MoPub dashboard are valid."];
+                            callback(error);
+                        } else {
+                            callback(nil);
+                        }
                     }
                 }];
             }

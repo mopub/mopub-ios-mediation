@@ -1,4 +1,7 @@
 ## Changelog
+ * 1.2.1.1
+    * Guard MoPub import statements to avoid compilation issues.
+
  * 1.2.1.0
     * This version of the adapters has been certified with Verizon 1.2.1.
 

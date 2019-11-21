@@ -1,6 +1,8 @@
 #import "MPVerizonRewardedVideoCustomEvent.h"
 #import "MPVerizonInterstitialCustomEvent.h"
+#if __has_include("MoPub.h")
 #import "MPLogging.h"
+#endif
 #import <VerizonAdsStandardEdition/VerizonAdsStandardEdition.h>
 #import <VerizonAdsInterstitialPlacement/VASInterstitialAd.h>
 #import <VerizonAdsInterstitialPlacement/VASInterstitialAdFactory.h>
