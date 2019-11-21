@@ -1,31 +1,27 @@
-//
-//  MintegralRewardVideoCustomEvent.m
-
 #import "MintegralRewardedVideoCustomEvent.h"
 #import <MTGSDK/MTGSDK.h>
 #import <MTGSDKReward/MTGRewardAdManager.h>
 #import <MTGSDKReward/MTGBidRewardAdManager.h>
 #import "MintegralAdapterConfiguration.h"
 #if __has_include(<MoPubSDKFramework/MoPub.h>)
-#import <MoPubSDKFramework/MoPub.h>
+    #import <MoPubSDKFramework/MoPub.h>
 #else
-#import "MoPub.h"
+    #import "MoPub.h"
 #endif
 #if __has_include(<MoPubSDKFramework/MPLogging.h>)
-#import <MoPubSDKFramework/MPLogging.h>
+    #import <MoPubSDKFramework/MPLogging.h>
 #else
-#import "MPLogging.h"
+    #import "MPLogging.h"
 #endif
 #if __has_include(<MoPubSDKFramework/MPRewardedVideoReward.h>)
-#import <MoPubSDKFramework/MPRewardedVideoReward.h>
+    #import <MoPubSDKFramework/MPRewardedVideoReward.h>
 #else
-#import "MPRewardedVideoReward.h"
+    #import "MPRewardedVideoReward.h"
 #endif
 
 @interface MintegralRewardedVideoCustomEvent () <MTGRewardAdLoadDelegate,MTGRewardAdShowDelegate>
 
 @property (nonatomic, copy) NSString *adUnitId;
-@property (nonatomic, copy) NSString *rewardId;
 @property (nonatomic, copy) NSString *adm;
 
 @end
@@ -39,36 +35,32 @@
     NSString *appId = [info objectForKey:@"appId"];
     NSString *appKey = [info objectForKey:@"appKey"];
     NSString *unitId = [info objectForKey:@"unitId"];
-    NSString *rewardId = [info objectForKey:@"rewardId"];
     
     NSString *errorMsg = nil;
+    if (!appId) errorMsg = @"Invalid Mintegral appId";
+    if (!appKey) errorMsg = @"Invalid Mintegral appKey";
     if (!unitId) errorMsg = @"Invalid Mintegral unitId";
-    if (!rewardId) errorMsg = @"Invalid Mintegral rewardId";
-        
+    
     if (errorMsg) {
         NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:MPRewardedVideoAdErrorInvalidAdUnitID userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
         [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
         return;
     }
-
-    if (![MintegralAdapterConfiguration isSDKInitialized]) {
-        [MintegralAdapterConfiguration setGDPRInfo:info];
-        [[MTGSDK sharedInstance] setAppID:appId ApiKey:appKey];
-        [MintegralAdapterConfiguration sdkInitialized];
-    }
     
+    [MintegralAdapterConfiguration initializeMintegral:info setAppID:appId appKey:appKey];
     self.adUnitId = unitId;
-    self.rewardId = rewardId;
-        
     self.adm = adMarkup;
     if (self.adm) {
         MPLogInfo(@"Loading Mintegral Reward ad markup for Advanced Bidding");
         [[MTGBidRewardAdManager sharedInstance] loadVideoWithBidToken:self.adm unitId:self.adUnitId delegate:self];
+        MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.adUnitId);
     }else{
         MPLogInfo(@"Loading Mintegral Reward ad");
         [[MTGRewardAdManager sharedInstance] loadVideo:self.adUnitId delegate:self];
+        MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.adUnitId);
     }
-
+    
 }
 
 - (BOOL)hasAdAvailable
@@ -83,21 +75,23 @@
 - (void)presentRewardedVideoFromViewController:(UIViewController *)viewController
 {
     if ([self hasAdAvailable]) {
-
+        
         NSString *customerId = [self.delegate customerIdForRewardedVideoCustomEvent:self];
-
+        
         if ([[MTGRewardAdManager sharedInstance] respondsToSelector:@selector(showVideo:withRewardId:userId:delegate:viewController:)]) {
             
+            MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.adUnitId);
+            
+            MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.adUnitId);
             if (self.adm) {
-                [[MTGBidRewardAdManager sharedInstance] showVideo:self.adUnitId withRewardId:self.rewardId userId:customerId delegate:self viewController:viewController];
+                [[MTGBidRewardAdManager sharedInstance] showVideo:self.adUnitId withRewardId:@"1" userId:customerId delegate:self viewController:viewController];
             }else{
-                [[MTGRewardAdManager sharedInstance] showVideo:self.adUnitId withRewardId:self.rewardId userId:customerId delegate:self viewController:viewController];
+                [[MTGRewardAdManager sharedInstance] showVideo:self.adUnitId withRewardId:@"1" userId:customerId delegate:self viewController:viewController];
             }
         }
-
     } else {
-        
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
+        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.adUnitId);
         [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
     }
 }
@@ -110,6 +104,7 @@
 - (void)handleAdPlayedForCustomEventNetwork
 {
     if (![self hasAdAvailable]) {
+        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:@"mintegral ad unavailable"], self.adUnitId);
         [self.delegate rewardedVideoDidExpireForCustomEvent:self];
     }
 }
@@ -121,21 +116,17 @@
 
 #pragma mark GADRewardBasedVideoAdDelegate
 - (void)onVideoAdLoadSuccess:(nullable NSString *)unitId{
-
-    if ([self hasAdAvailable]) {
-        [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
-    }else{
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:nil];
-    }
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.adUnitId);
+    [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
 }
 
 - (void)onVideoAdLoadFailed:(nullable NSString *)unitId error:(nonnull NSError *)error{
-    
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
     [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
 }
 
 - (void)onVideoAdShowSuccess:(nullable NSString *)unitId{
-    
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.adUnitId);
     [self.delegate rewardedVideoWillAppearForCustomEvent:self];
     [self.delegate rewardedVideoDidAppearForCustomEvent:self];
     
@@ -144,18 +135,17 @@
     } else {
         MPLogWarn(@"Delegate does not implement impression tracking callback. Impressions likely not being tracked.");
     }
-    
 }
 
 - (void)onVideoAdShowFailed:(nullable NSString *)unitId withError:(nonnull NSError *)error{
-    
+    MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.adUnitId);
     [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
 }
 
 - (void)onVideoAdClicked:(nullable NSString *)unitId{
-    
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.adUnitId);
     [self.delegate rewardedVideoDidReceiveTapEventForCustomEvent:self];
-
+    
     if ([self.delegate respondsToSelector:@selector(trackClick)]) {
         [self.delegate trackClick];
     } else {
@@ -164,17 +154,16 @@
 }
 
 - (void)onVideoAdDismissed:(nullable NSString *)unitId withConverted:(BOOL)converted withRewardInfo:(nullable MTGRewardAdInfo *)rewardInfo{
-
+    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.adUnitId);
     [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.adUnitId);
     [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
-
     if (!converted || !rewardInfo) {
+        MPLogInfo(@"not deliver the reward unless the ad is watched fully.");
         return;
     }
-
     MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyType:rewardInfo.rewardName amount:[NSNumber numberWithInteger:rewardInfo.rewardAmount]];
     [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:reward];
-
 }
 
 @end

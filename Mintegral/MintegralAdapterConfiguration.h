@@ -1,6 +1,3 @@
-//
-//  MintegralAdapterConfig.h
-
 #if __has_include(<MoPub/MoPub.h>)
     #import <MoPub/MoPub.h>
 #elif __has_include(<MoPubSDKFramework/MoPub.h>)
@@ -12,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define MintegralAdapterVersion  MTGSDKVersion@".1"
+#define MintegralAdapterVersion  MTGSDKVersion@".0"
 
 extern NSString *const kMintegralErrorDomain;
 
@@ -42,6 +39,8 @@ extern NSString *const kMintegralErrorDomain;
 +(void)sdkInitialized;
 
 +(void)setGDPRInfo:(NSDictionary *)info;
+
++(void)initializeMintegral:(NSDictionary *)info setAppID:(nonnull NSString *)appId appKey:(nonnull NSString *)appKey;
 
 @end
 

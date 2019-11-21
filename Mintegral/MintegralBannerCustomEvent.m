@@ -1,20 +1,17 @@
-//
-//  MintegralBannerCustomEvent.m
-
 #import "MintegralBannerCustomEvent.h"
 #import <MTGSDK/MTGSDK.h>
 #import "MintegralAdapterConfiguration.h"
 #import <MTGSDKBanner/MTGBannerAdView.h>
 #import <MTGSDKBanner/MTGBannerAdViewDelegate.h>
 #if __has_include(<MoPubSDKFramework/MoPub.h>)
-#import <MoPubSDKFramework/MoPub.h>
+    #import <MoPubSDKFramework/MoPub.h>
 #else
-#import "MoPub.h"
+    #import "MoPub.h"
 #endif
 #if __has_include(<MoPubSDKFramework/MPLogging.h>)
-#import <MoPubSDKFramework/MPLogging.h>
+    #import <MoPubSDKFramework/MPLogging.h>
 #else
-#import "MPLogging.h"
+    #import "MPLogging.h"
 #endif
 
 typedef enum {
@@ -39,48 +36,52 @@ typedef enum {
     NSString *unitId = [info objectForKey:@"unitId"];
     
     NSString *errorMsg = nil;
-
+    if (!appId) errorMsg = @"Invalid Mintegral appId";
+    if (!appKey) errorMsg = @"Invalid Mintegral appKey";
     if (!unitId) errorMsg = @"Invalid Mintegral unitId";
     
     if (errorMsg) {
+        
         NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:MintegralErrorBannerParaUnresolveable userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
         if ([self.description respondsToSelector:@selector(bannerCustomEvent: didFailToLoadAdWithError:)]) {
+            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
             [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
         }
         return;
     }
-    
-    if (![MintegralAdapterConfiguration isSDKInitialized]) {
-        [MintegralAdapterConfiguration setGDPRInfo:info];
-        [[MTGSDK sharedInstance] setAppID:appId ApiKey:appKey];
-        [MintegralAdapterConfiguration sdkInitialized];
-    }
+    [MintegralAdapterConfiguration initializeMintegral:info setAppID:appId appKey:appKey];
     _adUnitId = unitId;
     _currentSize = size;
     
     UIViewController * vc =  [UIApplication sharedApplication].keyWindow.rootViewController;
     _bannerAdView = [[MTGBannerAdView alloc] initBannerAdViewWithAdSize:size unitId:unitId rootViewController:vc];
     _bannerAdView.delegate = self;
-
+    
     self.adm = adMarkup;
     if (self.adm) {
         MPLogInfo(@"Loading Mintegral Banner ad markup for Advanced Bidding");
         [_bannerAdView loadBannerAdWithBidToken:self.adm];
+        MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.adUnitId);
     }else{
         MPLogInfo(@"Loading Mintegral native ad");
         [_bannerAdView loadBannerAd];
+        MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.adUnitId);
     }
 }
 
 #pragma mark -- MTGBannerAdViewDelegate
 - (void)adViewLoadSuccess:(MTGBannerAdView *)adView {
     if ([self.delegate respondsToSelector:@selector(bannerCustomEvent: didLoadAd:)]) {
+        MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.adUnitId);
+        MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.adUnitId);
+        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.adUnitId);
         [self.delegate bannerCustomEvent:self didLoadAd:adView];
     }
 }
 
 - (void)adViewLoadFailedWithError:(NSError *)error adView:(MTGBannerAdView *)adView {
     if ([self.delegate respondsToSelector:@selector(bannerCustomEvent: didFailToLoadAdWithError:)]) {
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
     }
 }
@@ -93,21 +94,25 @@ typedef enum {
 
 - (void)adViewDidClicked:(MTGBannerAdView *)adView {
     if ([self.delegate respondsToSelector:@selector(trackClick)]) {
+        MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.adUnitId);
         [self.delegate trackClick];
+        [self.delegate bannerCustomEventWillBeginAction:self];
     }
 }
 
 - (void)adViewWillLeaveApplication:(MTGBannerAdView *)adView {
     if ([self.delegate respondsToSelector:@selector(bannerCustomEventWillLeaveApplication:)]) {
+        MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], self.adUnitId);
         [self.delegate bannerCustomEventWillLeaveApplication:self];
     }
 }
 
 - (void)adViewWillOpenFullScreen:(MTGBannerAdView *)adView {
-    
+    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], self.adUnitId);
 }
 
 - (void)adViewCloseFullScreen:(MTGBannerAdView *)adView {
+    MPLogAdEvent([MPLogEvent adDidDismissModalForAdapter:NSStringFromClass(self.class)], self.adUnitId);
 }
 
 

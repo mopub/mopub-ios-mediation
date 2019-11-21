@@ -1,6 +1,3 @@
-//
-//  MintegralAdapterConfiguration.m
-
 #import <Foundation/Foundation.h>
 #import "MintegralAdapterConfiguration.h"
 #import <MTGSDK/MTGSDK.h>
@@ -38,8 +35,8 @@ NSString *const kMintegralErrorDomain = @"com.mintegral.iossdk.mopub";
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *,id> *)configuration complete:(void (^)(NSError * _Nullable))complete{
     MPLogInfo(@"initializeNetworkWithConfiguration for Mintegral");
     
-    NSString* appId = [configuration objectForKey:@"appId"];
-    NSString* appKey = [configuration objectForKey:@"appKey"];
+    NSString *appId = [configuration objectForKey:@"appId"];
+    NSString *appKey = [configuration objectForKey:@"appKey"];
     
     NSString *errorMsg = nil;
     if (!appId) errorMsg = @"Invalid Mintegral appId";
@@ -52,15 +49,17 @@ NSString *const kMintegralErrorDomain = @"com.mintegral.iossdk.mopub";
         }
         return;
     }
-
-    if (![MintegralAdapterConfiguration isSDKInitialized]) {
-
-        [MintegralAdapterConfiguration setGDPRInfo:configuration];
-        [[MTGSDK sharedInstance] setAppID:appId ApiKey:appKey];
-        [MintegralAdapterConfiguration sdkInitialized];
-    }
+    [MintegralAdapterConfiguration initializeMintegral:configuration setAppID:appId appKey:appKey];
     if (complete != nil) {
         complete(nil);
+    }
+}
+
++(void)initializeMintegral:(NSDictionary *)info setAppID:(nonnull NSString *)appId appKey:(nonnull NSString *)appKey{
+    if (![MintegralAdapterConfiguration isSDKInitialized]) {
+        [MintegralAdapterConfiguration setGDPRInfo:info];
+        [[MTGSDK sharedInstance] setAppID:appId ApiKey:appKey];
+        [MintegralAdapterConfiguration sdkInitialized];
     }
 }
 
@@ -77,12 +76,12 @@ NSString *const kMintegralErrorDomain = @"com.mintegral.iossdk.mopub";
     Class class = NSClassFromString(@"MTGSDK");
     SEL selector = NSSelectorFromString(@"setChannelFlag:");
     NSString *pluginNumber = @"Y+H6DFttYrPQYcIA+F2F+F5/Hv==";
-    #pragma clang diagnostic push
-    #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
     if ([class respondsToSelector:selector]) {
         [class performSelector:selector withObject:pluginNumber];
     }
-    #pragma clang diagnostic pop
+#pragma clang diagnostic pop
     mintegralSDKInitialized = YES;
     MPLogInfo(@"Mintegral sdkInitialized");
 }
@@ -91,14 +90,14 @@ NSString *const kMintegralErrorDomain = @"com.mintegral.iossdk.mopub";
     if([[MoPub sharedInstance] canCollectPersonalInfo])
     {
         [[MTGSDK sharedInstance] setConsentStatus:YES];
-         NSString *privateInfo = @"Can send GDPR";
-         MPLogInfo(@"%@", privateInfo);
+        NSString *privateInfo = @"Can send GDPR";
+        MPLogInfo(@"%@", privateInfo);
     }else{
         [[MTGSDK sharedInstance] setConsentStatus:NO];
         NSString *privateInfo = @"Cannot send GDPR";
         MPLogInfo(@"%@", privateInfo);
     }
-   
+    
 }
 
 @end

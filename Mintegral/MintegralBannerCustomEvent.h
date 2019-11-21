@@ -1,10 +1,7 @@
-//
-//  MintegralBannerCustomEvent.h
-
 #if __has_include(<MoPubSDKFramework/MoPub.h>)
-#import <MoPubSDKFramework/MoPub.h>
+    #import <MoPubSDKFramework/MoPub.h>
 #else
-#import "MPBannerCustomEvent.h"
+    #import "MPBannerCustomEvent.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN

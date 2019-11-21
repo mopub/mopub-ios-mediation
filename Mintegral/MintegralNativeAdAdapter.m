@@ -1,15 +1,12 @@
-//
-//  MintegralNativeAdAdapter.m
-
 #import "MintegralNativeAdAdapter.h"
 #import <MTGSDK/MTGNativeAdManager.h>
 #import <MTGSDK/MTGCampaign.h>
 #import <MTGSDK/MTGMediaView.h>
 #import <MTGSDK/MTGAdChoicesView.h>
 #if __has_include(<MoPubSDKFramework/MPNativeAdConstants.h>)
-#import <MoPubSDKFramework/MPNativeAdConstants.h>
+    #import <MoPubSDKFramework/MPNativeAdConstants.h>
 #else
-#import "MPNativeAdConstants.h"
+    #import "MPNativeAdConstants.h"
 #endif
 
 NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
@@ -34,7 +31,7 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
         _nativeAdManager.delegate = self;
         
         NSMutableDictionary *properties = [NSMutableDictionary dictionary];
-
+        
         if (nativeAds.count > 0) {
             MTGCampaign *campaign = nativeAds[0];
             [properties setObject:campaign.appName forKey:kAdTitleKey];
@@ -53,9 +50,9 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
             if (campaign.iconUrl.length > 0) {
                 [properties setObject:campaign.iconUrl forKey:kAdIconImageKey];
             }
-
+            
             _campaign = campaign;
-
+            
             if (videoSupport) {
                 [self mediaView];
             } else {
@@ -63,7 +60,7 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
                     [properties setObject:campaign.imageUrl forKey:kAdMainImageKey];
                 }
             }
-
+            
         }
         _nativeAds = nativeAds;
         _mtgAdProperties = properties;
@@ -86,17 +83,16 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 - (void)nativeAdDidClick:(nonnull MTGCampaign *)nativeAd
 {
     if ([self.delegate respondsToSelector:@selector(nativeAdDidClick:)]) {
+        MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.unitId);
         [self.delegate nativeAdDidClick:self];
     }
-}
-
-- (void)nativeAdClickUrlDidEndJump:(nullable NSURL *)finalUrl
-                             error:(nullable NSError *)error{
 }
 
 - (void)nativeAdImpressionWithType:(MTGAdSourceType)type nativeManager:(nonnull MTGNativeAdManager *)nativeManager{
     if (type == MTGAD_SOURCE_API_OFFER) {
         if ([self.delegate respondsToSelector:@selector(nativeAdWillLogImpression:)]){
+            MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.unitId);
+            MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.unitId);
             [self.delegate nativeAdWillLogImpression:self];
         }
     }
@@ -105,6 +101,8 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 - (void)nativeAdImpressionWithType:(MTGAdSourceType)type mediaView:(MTGMediaView *)mediaView{
     if (type == MTGAD_SOURCE_API_OFFER) {
         if ([self.delegate respondsToSelector:@selector(nativeAdWillLogImpression:)]){
+            MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.unitId);
+            MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.unitId);
             [self.delegate nativeAdWillLogImpression:self];
         }
     }
@@ -136,10 +134,8 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 - (UIView *)privacyInformationIconView
 {
     if (CGSizeEqualToSize(_campaign.adChoiceIconSize, CGSizeZero)) {
-        MPLogInfo(@"adchoice size is 0");
         return nil;
     } else {
-        MPLogInfo(@"adchoice size is normal");
         MTGAdChoicesView * adChoicesView = [[MTGAdChoicesView alloc] initWithFrame:CGRectMake(0, 0, _campaign.adChoiceIconSize.width, _campaign.adChoiceIconSize.height)];
         adChoicesView.campaign = _campaign;
         return adChoicesView;
