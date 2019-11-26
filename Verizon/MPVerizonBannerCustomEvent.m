@@ -66,22 +66,33 @@
         return;
     }
     
+    [VerizonAdapterConfiguration setCachedInitializationParameters:info];
     VASInlineAdSize *requestedSize = [[VASInlineAdSize alloc] initWithWidth:size.width height:size.height];
     
     [VASAds sharedInstance].locationEnabled = [MoPub sharedInstance].locationUpdatesEnabled;
     
-    VASRequestMetadataBuilder *metaDataBuilder = [[VASRequestMetadataBuilder alloc] init];
-    [metaDataBuilder setAppMediator:VerizonAdapterConfiguration.appMediator];
     self.inlineFactory = [[VASInlineAdFactory alloc] initWithPlacementId:placementId adSizes:@[requestedSize] vasAds:[VASAds sharedInstance] delegate:self];
-    [self.inlineFactory setRequestMetadata:metaDataBuilder.build];
     
     VASBid *bid = [MPVerizonBidCache.sharedInstance bidForPlacementId:placementId];
     
     if (bid) {
         [self.inlineFactory loadBid:bid inlineAdDelegate:self];
     } else {
+        VASRequestMetadataBuilder *metadataBuilder = [[VASRequestMetadataBuilder alloc] initWithRequestMetadata:[VASAds sharedInstance].requestMetadata];
+        [metadataBuilder setAppMediator:VerizonAdapterConfiguration.appMediator];
+
+        if (adMarkup.length > 0) {
+            NSMutableDictionary<NSString *, id> *placementData = [NSMutableDictionary dictionaryWithDictionary:@{
+                kMoPubRequestMetadataAdContent : adMarkup,
+                @"overrideWaterfallProvider"   : @"waterfallprovider/sideloading"}];
+
+            [metadataBuilder setPlacementData:placementData];
+        }
+
+        [self.inlineFactory setRequestMetadata:metadataBuilder.build];
         [self.inlineFactory load:self];
     }
+
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
 }
 

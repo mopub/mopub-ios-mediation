@@ -78,6 +78,8 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
         return;
     }
     
+    [VerizonAdapterConfiguration setCachedInitializationParameters:info];
+    
     [VASAds sharedInstance].locationEnabled = [MoPub sharedInstance].locationUpdatesEnabled;
     
     VASRequestMetadataBuilder *metaDataBuilder = [[VASRequestMetadataBuilder alloc] init];

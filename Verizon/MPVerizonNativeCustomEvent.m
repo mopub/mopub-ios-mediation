@@ -33,11 +33,7 @@
 
 - (void)requestAdWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
-    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.siteId);
-    
-    MPLogDebug(@"Requesting VAS native with event info %@.", info);
-    
-    __strong __typeof__(self.delegate) delegate = self.delegate;
+    MPLogInfo(@"Requesting VAS native with event info %@.", info);
     
     self.siteId = info[kMoPubVASAdapterSiteId];
     NSString *placementId = info[kMoPubVASAdapterPlacementId];
@@ -50,7 +46,7 @@
                                            description:[NSString stringWithFormat:@"Invalid configuration while initializing [%@]", NSStringFromClass([self class])]
                                             underlying:nil];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.siteId);
-        [delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
     
@@ -63,17 +59,28 @@
                                            description:[NSString stringWithFormat:@"VAS adapter not properly intialized yet."]
                                             underlying:nil];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.siteId);
-        [delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
+        return;
+    }
+
+    if (adMarkup.length > 0) {
+        NSError *error = [VASErrorInfo errorWithDomain:kMoPubVASAdapterErrorDomain
+                                                  code:MoPubVASAdapterErrorNotInitialized
+                                                   who:kMoPubVASAdapterErrorWho
+                                           description:[NSString stringWithFormat:@"Advanced Bidding for native placements is not supported at this time. serverExtras key \" %@ \" should have no value.", kMoPubServerExtrasAdContent]
+                                            underlying:nil];
+
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.siteId);
+        [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
+        
         return;
     }
     
+    [VerizonAdapterConfiguration setCachedInitializationParameters:info];
+
     [VASAds sharedInstance].locationEnabled = [MoPub sharedInstance].locationUpdatesEnabled;
     
-    VASRequestMetadataBuilder *metaDataBuilder = [[VASRequestMetadataBuilder alloc] init];
-    [metaDataBuilder setAppMediator:VerizonAdapterConfiguration.appMediator];
     self.nativeAdFactory = [[VASNativeAdFactory alloc] initWithPlacementId:placementId adTypes:@[@"inline"] vasAds:[VASAds sharedInstance] delegate:self];
-    [self.nativeAdFactory setRequestMetadata:metaDataBuilder.build];
-
     self.nativeAdapter = [[MPVerizonNativeAdAdapter alloc] initWithSiteId:self.siteId];
 
     VASBid *bid = [MPVerizonBidCache.sharedInstance bidForPlacementId:placementId];
@@ -82,6 +89,8 @@
     } else {
         [self.nativeAdFactory load:self.nativeAdapter];
     }
+    
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.siteId);
 }
 
 - (NSString *)version

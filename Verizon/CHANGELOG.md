@@ -1,4 +1,7 @@
 ## Changelog
+ * 1.2.1.2
+    * Add support for Advanced Bidding for banner and interstitial.
+
  * 1.2.1.1
     * Guard MoPub import statements to avoid compilation issues.
 
