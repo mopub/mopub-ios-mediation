@@ -4,20 +4,20 @@
 #import <MTGSDKBanner/MTGBannerAdView.h>
 #import <MTGSDKBanner/MTGBannerAdViewDelegate.h>
 #if __has_include(<MoPubSDKFramework/MoPub.h>)
-    #import <MoPubSDKFramework/MoPub.h>
+#import <MoPubSDKFramework/MoPub.h>
 #else
-    #import "MoPub.h"
+#import "MoPub.h"
 #endif
 #if __has_include(<MoPubSDKFramework/MPLogging.h>)
-    #import <MoPubSDKFramework/MPLogging.h>
+#import <MoPubSDKFramework/MPLogging.h>
 #else
-    #import "MPLogging.h"
+#import "MPLogging.h"
 #endif
 
 typedef enum {
     MintegralErrorBannerParaUnresolveable = 19,
     MintegralErrorBannerCamPaignListEmpty,
-}MintegralBannerErrorCode;
+} MintegralBannerErrorCode;
 
 @interface MintegralBannerCustomEvent() <MTGBannerAdViewDelegate>
 
@@ -30,6 +30,7 @@ typedef enum {
 
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup{
     MPLogInfo(@"requestAdWithSize for Mintegral");
+    
     NSString *appId = [info objectForKey:@"appId"];
     NSString *appKey = [info objectForKey:@"appKey"];
     NSString *unitId = [info objectForKey:@"unitId"];
@@ -40,31 +41,33 @@ typedef enum {
     if (!unitId) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral unitId;"];
     
     if (errorMsg) {
-        
         NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:MintegralErrorBannerParaUnresolveable userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
+        
         if ([self.description respondsToSelector:@selector(bannerCustomEvent: didFailToLoadAdWithError:)]) {
             MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
             [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
         }
         return;
     }
-    [MintegralAdapterConfiguration initializeMintegral:info setAppID:appId appKey:appKey];
+    
+    self.adm = adMarkup;
     _adUnitId = unitId;
     
-    UIViewController * vc =  [UIApplication sharedApplication].keyWindow.rootViewController;
+    [MintegralAdapterConfiguration initializeMintegral:info setAppID:appId appKey:appKey];
+    
+    UIViewController *vc =  [UIApplication sharedApplication].keyWindow.rootViewController;
     _bannerAdView = [[MTGBannerAdView alloc] initBannerAdViewWithAdSize:size unitId:unitId rootViewController:vc];
     _bannerAdView.delegate = self;
     
-    self.adm = adMarkup;
     if (self.adm) {
-        MPLogInfo(@"Loading Mintegral Banner ad markup for Advanced Bidding");
+        MPLogInfo(@"Loading Mintegral banner ad markup for Advanced Bidding");
         [_bannerAdView loadBannerAdWithBidToken:self.adm];
-        MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.adUnitId);
-    }else{
-        MPLogInfo(@"Loading Mintegral Banner ad");
+    } else {
+        MPLogInfo(@"Loading Mintegral banner ad");
         [_bannerAdView loadBannerAd];
-        MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.adUnitId);
     }
+    
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.adUnitId);
 }
 
 #pragma mark -- MTGBannerAdViewDelegate
@@ -112,7 +115,6 @@ typedef enum {
 - (void)adViewCloseFullScreen:(MTGBannerAdView *)adView {
     MPLogAdEvent([MPLogEvent adDidDismissModalForAdapter:NSStringFromClass(self.class)], self.adUnitId);
 }
-
 
 #pragma mark - Turn off auto impression and click
 - (BOOL)enableAutomaticImpressionAndClickTracking

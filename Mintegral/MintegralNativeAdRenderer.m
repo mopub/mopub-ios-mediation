@@ -1,19 +1,19 @@
 #import <Foundation/Foundation.h>
 #import "MintegralNativeAdRenderer.h"
 #if __has_include("MoPub.h")
-    #import "MPLogging.h"
-    #import "MPNativeAdAdapter.h"
-    #import "MPNativeAdConstants.h"
-    #import "MPNativeAdError.h"
-    #import "MPNativeAdRendererConfiguration.h"
-    #import "MPNativeAdRendererImageHandler.h"
-    #import "MPNativeAdRendering.h"
-    #import "MPNativeAdRenderingImageLoader.h"
-    #import "MPNativeView.h"
-    #import "MPStaticNativeAdRendererSettings.h"
-    #import "MPURLRequest.h"
-    #import "MPHTTPNetworkSession.h"
-    #import "MPMemoryCache.h"
+#import "MPLogging.h"
+#import "MPNativeAdAdapter.h"
+#import "MPNativeAdConstants.h"
+#import "MPNativeAdError.h"
+#import "MPNativeAdRendererConfiguration.h"
+#import "MPNativeAdRendererImageHandler.h"
+#import "MPNativeAdRendering.h"
+#import "MPNativeAdRenderingImageLoader.h"
+#import "MPNativeView.h"
+#import "MPStaticNativeAdRendererSettings.h"
+#import "MPURLRequest.h"
+#import "MPHTTPNetworkSession.h"
+#import "MPMemoryCache.h"
 #endif
 #import "MintegralNativeAdAdapter.h"
 #import <MTGSDK/MTGAdChoicesView.h>
@@ -39,6 +39,7 @@
         _rendererImageHandler = [MPNativeAdRendererImageHandler new];
         _rendererImageHandler.delegate = self;
     }
+
     return self;
 }
 
@@ -93,15 +94,16 @@
         self.adView.nativePrivacyInformationIconImageView.userInteractionEnabled = YES;
         [self.adView.nativePrivacyInformationIconImageView addSubview:adChoicesView];
         self.adView.nativePrivacyInformationIconImageView.hidden = NO;
-        
     }
     
     if ([self shouldLoadMediaView]) {
         UIView *mediaView = [self.adapter mainMediaView];
         UIView *mainImageView = [self.adView nativeMainImageView];
+
         mediaView.frame = mainImageView.bounds;
         mediaView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         mainImageView.userInteractionEnabled = YES;
+
         [mainImageView addSubview:mediaView];
     }
     

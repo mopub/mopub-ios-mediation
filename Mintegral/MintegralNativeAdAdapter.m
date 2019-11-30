@@ -4,14 +4,14 @@
 #import <MTGSDK/MTGMediaView.h>
 #import <MTGSDK/MTGAdChoicesView.h>
 #if __has_include(<MoPubSDKFramework/MPNativeAdConstants.h>)
-    #import <MoPubSDKFramework/MPNativeAdConstants.h>
+#import <MoPubSDKFramework/MPNativeAdConstants.h>
 #else
-    #import "MPNativeAdConstants.h"
+#import "MPNativeAdConstants.h"
 #endif
 
 NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 
-@interface MintegralNativeAdAdapter () <MTGNativeAdManagerDelegate,MTGMediaViewDelegate,MTGMediaViewDelegate>
+@interface MintegralNativeAdAdapter () <MTGNativeAdManagerDelegate, MTGMediaViewDelegate, MTGMediaViewDelegate>
 
 @property (nonatomic, readonly) MTGNativeAdManager *nativeAdManager;
 @property (nonatomic, readonly) MTGCampaign *campaign;
@@ -26,6 +26,7 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 
 - (instancetype)initWithNativeAds:(NSArray *)nativeAds nativeAdManager:(MTGNativeAdManager *)nativeAdManager withUnitId:(NSString *)unitId videoSupport:(BOOL)videoSupport{
     MPLogInfo(@"initWithNativeAds for Mintegral");
+    
     if (self = [super init]) {
         _nativeAdManager = nativeAdManager;
         _nativeAdManager.delegate = self;
@@ -60,12 +61,10 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
                     [properties setObject:campaign.imageUrl forKey:kAdMainImageKey];
                 }
             }
-            
         }
         _nativeAds = nativeAds;
         _mtgAdProperties = properties;
         _unitId = unitId;
-        
     }
     return self;
 }
@@ -77,7 +76,6 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
     _mediaView = nil;
 }
 
-
 #pragma mark - MVSDK NativeAdManager Delegate
 
 - (void)nativeAdDidClick:(nonnull MTGCampaign *)nativeAd
@@ -85,6 +83,8 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
     if ([self.delegate respondsToSelector:@selector(nativeAdDidClick:)]) {
         MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.unitId);
         [self.delegate nativeAdDidClick:self];
+        [self.delegate nativeAdWillPresentModalForAdapter:self];
+        [self.delegate nativeAdWillLeaveApplicationFromAdapter:self];
     }
 }
 
@@ -128,6 +128,7 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
         UIView *sView = _mediaView.superview;
         [sView.superview bringSubviewToFront:sView];
     }
+    
     [self.nativeAdManager registerViewForInteraction:view withCampaign:_campaign];
 }
 
@@ -138,6 +139,7 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
     } else {
         MTGAdChoicesView * adChoicesView = [[MTGAdChoicesView alloc] initWithFrame:CGRectMake(0, 0, _campaign.adChoiceIconSize.width, _campaign.adChoiceIconSize.height)];
         adChoicesView.campaign = _campaign;
+        
         return adChoicesView;
     }
 }
@@ -152,9 +154,11 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
     if (_mediaView) {
         return _mediaView;
     }
+    
     MTGMediaView *mediaView = [[MTGMediaView alloc] initWithFrame:CGRectZero];
     mediaView.delegate = self;
     _mediaView = mediaView;
+    
     return mediaView;
 }
 

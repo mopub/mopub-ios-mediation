@@ -4,9 +4,9 @@
 #import <MTGSDKInterstitialVideo/MTGBidInterstitialVideoAdManager.h>
 #import "MintegralAdapterConfiguration.h"
 #if __has_include(<MoPubSDKFramework/MoPub.h>)
-    #import <MoPubSDKFramework/MoPub.h>
+#import <MoPubSDKFramework/MoPub.h>
 #else
-    #import "MoPub.h"
+#import "MoPub.h"
 #endif
 
 @interface MintegralInterstitialCustomEvent()<MTGInterstitialVideoDelegate, MTGBidInterstitialVideoDelegate>
@@ -16,7 +16,7 @@
 @property (nonatomic, copy) NSString *adm;
 
 @property (nonatomic, readwrite, strong) MTGInterstitialVideoAdManager *mtgInterstitialVideoAdManager;
-@property (nonatomic,strong)  MTGBidInterstitialVideoAdManager *ivBidAdManager;
+@property (nonatomic,strong) MTGBidInterstitialVideoAdManager *ivBidAdManager;
 @end
 
 @implementation MintegralInterstitialCustomEvent
@@ -35,30 +35,38 @@
     
     if (errorMsg) {
         NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:-1500 userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
+        
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+        
         return;
     }
     
-    [MintegralAdapterConfiguration initializeMintegral:info setAppID:appId appKey:appKey];
     self.adUnitId = unitId;
     self.adm = adMarkup;
+    
+    [MintegralAdapterConfiguration initializeMintegral:info setAppID:appId appKey:appKey];
+    
     if (self.adm) {
-        MPLogInfo(@"Loading Mintegral Interstitial ad markup for Advanced Bidding");
+        MPLogInfo(@"Loading Mintegral interstitial ad markup for Advanced Bidding");
+        
         if (!_ivBidAdManager ) {
             _ivBidAdManager  = [[MTGBidInterstitialVideoAdManager alloc] initWithUnitID:self.adUnitId delegate:self];
             _ivBidAdManager.delegate = self;
         }
+        
         [_ivBidAdManager loadAdWithBidToken:self.adm];
-        MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.adUnitId);
-    }else{
-        MPLogInfo(@"Loading Mintegral Interstitial ad");
+    } else {
+        MPLogInfo(@"Loading Mintegral interstitial ad");
+        
         if (!_mtgInterstitialVideoAdManager) {
             _mtgInterstitialVideoAdManager = [[MTGInterstitialVideoAdManager alloc] initWithUnitID:self.adUnitId delegate:self];
         }
+        
         [_mtgInterstitialVideoAdManager loadAd];
-        MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.adUnitId);
     }
+    
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.adUnitId);
 }
 
 - (BOOL)enableAutomaticImpressionAndClickTracking
@@ -71,7 +79,7 @@
     if (self.adm) {
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.adUnitId);
         [_ivBidAdManager showFromViewController:rootViewController];
-    }else{
+    } else {
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.adUnitId);
         [_mtgInterstitialVideoAdManager showFromViewController:rootViewController];
     }
@@ -96,15 +104,18 @@
 
 - (void)onInterstitialVideoShowSuccess:(MTGInterstitialVideoAdManager *_Nonnull)adManager
 {
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.adUnitId);
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(interstitialCustomEventWillAppear:)]) {
         MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.adUnitId);
         [self.delegate interstitialCustomEventWillAppear:self ];
     }
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(interstitialCustomEventDidAppear:)]) {
         MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.adUnitId);
         [self.delegate interstitialCustomEventDidAppear:self ];
     }
-    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.adUnitId);
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(trackImpression)]) {
         [self.delegate trackImpression];
     }
@@ -122,6 +133,7 @@
     if (self.delegate && [self.delegate respondsToSelector:@selector(trackClick)]) {
         [self.delegate trackClick];
     }
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(interstitialCustomEventDidReceiveTapEvent:)]) {
         [self.delegate interstitialCustomEventDidReceiveTapEvent:self ];
     }
@@ -130,10 +142,13 @@
 - (void)onInterstitialVideoAdDismissedWithConverted:(BOOL)converted adManager:(MTGInterstitialVideoAdManager *_Nonnull)adManager
 {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.adUnitId);
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(interstitialCustomEventWillDisappear:)]) {
         [self.delegate interstitialCustomEventWillDisappear:self ];
     }
+    
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.adUnitId);
+    
     if (self.delegate && [self.delegate respondsToSelector:@selector(interstitialCustomEventDidDisappear:)]) {
         [self.delegate interstitialCustomEventDidDisappear:self ];
     }

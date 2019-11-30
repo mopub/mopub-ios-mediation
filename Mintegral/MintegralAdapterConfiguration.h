@@ -1,15 +1,15 @@
 #if __has_include(<MoPub/MoPub.h>)
-    #import <MoPub/MoPub.h>
+#import <MoPub/MoPub.h>
 #elif __has_include(<MoPubSDKFramework/MoPub.h>)
-    #import <MoPubSDKFramework/MoPub.h>
+#import <MoPubSDKFramework/MoPub.h>
 #else
-    #import "MPBaseAdapterConfiguration.h"
+#import "MPBaseAdapterConfiguration.h"
 #endif
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define MintegralAdapterVersion  MTGSDKVersion@".0"
+#define MintegralAdapterVersion MTGSDKVersion@".0"
 
 extern NSString *const kMintegralErrorDomain;
 
