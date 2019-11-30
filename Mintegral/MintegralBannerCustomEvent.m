@@ -23,7 +23,6 @@ typedef enum {
 
 @property(nonatomic,strong) MTGBannerAdView *bannerAdView;
 @property (nonatomic, strong) NSString * adUnitId;
-@property (nonatomic, assign) CGSize currentSize;
 @property (nonatomic, copy) NSString *adm;
 @end
 
@@ -36,9 +35,9 @@ typedef enum {
     NSString *unitId = [info objectForKey:@"unitId"];
     
     NSString *errorMsg = nil;
-    if (!appId) errorMsg = @"Invalid Mintegral appId";
-    if (!appKey) errorMsg = @"Invalid Mintegral appKey";
-    if (!unitId) errorMsg = @"Invalid Mintegral unitId";
+    if (!appId) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral appId;"];
+    if (!appKey) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral appKey;"];
+    if (!unitId) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral unitId;"];
     
     if (errorMsg) {
         
@@ -51,7 +50,6 @@ typedef enum {
     }
     [MintegralAdapterConfiguration initializeMintegral:info setAppID:appId appKey:appKey];
     _adUnitId = unitId;
-    _currentSize = size;
     
     UIViewController * vc =  [UIApplication sharedApplication].keyWindow.rootViewController;
     _bannerAdView = [[MTGBannerAdView alloc] initBannerAdViewWithAdSize:size unitId:unitId rootViewController:vc];
@@ -63,7 +61,7 @@ typedef enum {
         [_bannerAdView loadBannerAdWithBidToken:self.adm];
         MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.adUnitId);
     }else{
-        MPLogInfo(@"Loading Mintegral native ad");
+        MPLogInfo(@"Loading Mintegral Banner ad");
         [_bannerAdView loadBannerAd];
         MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.adUnitId);
     }

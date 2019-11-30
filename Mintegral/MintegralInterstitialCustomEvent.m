@@ -29,9 +29,9 @@
     NSString *unitId = [info objectForKey:@"unitId"];
     
     NSString *errorMsg = nil;
-    if (!appId) errorMsg = @"Invalid Mintegral appId";
-    if (!appKey) errorMsg = @"Invalid Mintegral appKey";
-    if (!unitId) errorMsg = @"Invalid Mintegral unitId";
+    if (!appId) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral appId;"];
+    if (!appKey) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral appKey;"];
+    if (!unitId) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral unitId;"];
     
     if (errorMsg) {
         NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:-1500 userInfo:@{NSLocalizedDescriptionKey : errorMsg}];

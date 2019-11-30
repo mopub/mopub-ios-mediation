@@ -37,9 +37,9 @@
     NSString *unitId = [info objectForKey:@"unitId"];
     
     NSString *errorMsg = nil;
-    if (!appId) errorMsg = @"Invalid Mintegral appId";
-    if (!appKey) errorMsg = @"Invalid Mintegral appKey";
-    if (!unitId) errorMsg = @"Invalid Mintegral unitId";
+    if (!appId) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral appId;"];
+    if (!appKey) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral appKey;"];
+    if (!unitId) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral unitId;"];
     
     if (errorMsg) {
         NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:MPRewardedVideoAdErrorInvalidAdUnitID userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
@@ -143,6 +143,7 @@
 }
 
 - (void)onVideoAdClicked:(nullable NSString *)unitId{
+    NSLog(@"onVideoAdClicked");
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.adUnitId);
     [self.delegate rewardedVideoDidReceiveTapEventForCustomEvent:self];
     
@@ -154,16 +155,20 @@
 }
 
 - (void)onVideoAdDismissed:(nullable NSString *)unitId withConverted:(BOOL)converted withRewardInfo:(nullable MTGRewardAdInfo *)rewardInfo{
+    
+    if (rewardInfo) {
+        MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyType:rewardInfo.rewardName amount:[NSNumber numberWithInteger:rewardInfo.rewardAmount]];
+        [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:reward];
+        
+    }else{
+        MPLogInfo(@"not deliver the reward unless the ad is watched fully.");
+    }
+        
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.adUnitId);
     [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.adUnitId);
     [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
-    if (!converted || !rewardInfo) {
-        MPLogInfo(@"not deliver the reward unless the ad is watched fully.");
-        return;
-    }
-    MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyType:rewardInfo.rewardName amount:[NSNumber numberWithInteger:rewardInfo.rewardAmount]];
-    [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:reward];
+    
 }
 
 @end

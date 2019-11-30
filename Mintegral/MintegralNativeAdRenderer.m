@@ -17,15 +17,18 @@
 #endif
 #import "MintegralNativeAdAdapter.h"
 #import <MTGSDK/MTGAdChoicesView.h>
-@interface MintegralNativeAdRenderer () <MPNativeAdRendererSettings>
+@interface MintegralNativeAdRenderer () <MPNativeAdRendererImageHandlerDelegate>
 
 @property (nonatomic, strong) UIView<MPNativeAdRendering> *adView;
 @property (nonatomic, strong) MintegralNativeAdAdapter *adapter;
 @property (nonatomic, strong) Class renderingViewClass;
+@property (nonatomic, strong) MPNativeAdRendererImageHandler *rendererImageHandler;
+@property (nonatomic, assign) BOOL adViewInViewHierarchy;
 
 @end
 
 @implementation MintegralNativeAdRenderer
+
 
 - (instancetype)initWithRendererSettings:(id<MPNativeAdRendererSettings>)rendererSettings
 {
@@ -33,6 +36,8 @@
         MPStaticNativeAdRendererSettings *settings = (MPStaticNativeAdRendererSettings *)rendererSettings;
         _renderingViewClass = settings.renderingViewClass;
         _viewSizeHandler = [settings.viewSizeHandler copy];
+        _rendererImageHandler = [MPNativeAdRendererImageHandler new];
+        _rendererImageHandler.delegate = self;
     }
     return self;
 }
@@ -129,6 +134,32 @@
     if ([self.adapter respondsToSelector:@selector(displayContentForDAAIconTap)]) {
         [self.adapter displayContentForDAAIconTap];
     }
+}
+
+- (void)adViewWillMoveToSuperview:(UIView *)superview
+{
+    self.adViewInViewHierarchy = (superview != nil);
+    if (superview) {
+        if (![self hasIconView] && [self.adapter.properties objectForKey:kAdIconImageKey] && [self.adView respondsToSelector:@selector(nativeIconImageView)]) {
+            [self.rendererImageHandler loadImageForURL:[NSURL URLWithString:[self.adapter.properties objectForKey:kAdIconImageKey]] intoImageView:self.adView.nativeIconImageView];
+        }
+        if (!([self.adapter respondsToSelector:@selector(mainMediaView)] && [self.adapter mainMediaView])) {
+            if ([self.adapter.properties objectForKey:kAdMainImageKey] && [self.adView respondsToSelector:@selector(nativeMainImageView)]) {
+                [self.rendererImageHandler loadImageForURL:[NSURL URLWithString:[self.adapter.properties objectForKey:kAdMainImageKey]] intoImageView:self.adView.nativeMainImageView];
+            }
+        }
+        if ([self.adView respondsToSelector:@selector(layoutCustomAssetsWithProperties:imageLoader:)]) {
+            MPNativeAdRenderingImageLoader *imageLoader = [[MPNativeAdRenderingImageLoader alloc] initWithImageHandler:self.rendererImageHandler];
+            [self.adView layoutCustomAssetsWithProperties:self.adapter.properties imageLoader:imageLoader];
+        }
+    }
+}
+
+#pragma mark - MPNativeAdRendererImageHandlerDelegate
+
+- (BOOL)nativeAdViewInViewHierarchy
+{
+    return self.adViewInViewHierarchy;
 }
 
 @end

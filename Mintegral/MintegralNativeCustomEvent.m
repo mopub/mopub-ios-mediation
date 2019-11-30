@@ -36,9 +36,9 @@ static BOOL mVideoEnabled = NO;
     NSString *appKey = [info objectForKey:@"appKey"];
     NSString *unitId = [info objectForKey:@"unitId"];
     NSString *errorMsg = nil;
-    if (!appId) errorMsg = @"Invalid Mintegral appId";
-    if (!appKey) errorMsg = @"Invalid Mintegral appKey";
-    if (!unitId) errorMsg = @"Invalid Mintegral unitId";
+    if (!appId) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral appId;"];
+    if (!appKey) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral appKey;"];
+    if (!unitId) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral unitId;"];
     if (errorMsg) {
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:MPNativeAdNSErrorForInvalidAdServerResponse(errorMsg)], self.adUnitId);
         [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidAdServerResponse(errorMsg)];

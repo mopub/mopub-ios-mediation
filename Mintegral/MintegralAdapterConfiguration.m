@@ -11,6 +11,8 @@
 static BOOL mintegralSDKInitialized = NO;
 
 NSString *const kMintegralErrorDomain = @"com.mintegral.iossdk.mopub";
+NSString *const kPluginNumber = @"Y+H6DFttYrPQYcIA+F2F+F5/Hv==";
+NSString *const kNetworkName = @"Mintegral";
 
 @implementation MintegralAdapterConfiguration
 
@@ -25,7 +27,7 @@ NSString *const kMintegralErrorDomain = @"com.mintegral.iossdk.mopub";
 }
 
 - (NSString *)moPubNetworkName {
-    return @"Mintegral";
+    return kNetworkName;
 }
 
 - (NSString *)networkSdkVersion {
@@ -39,8 +41,8 @@ NSString *const kMintegralErrorDomain = @"com.mintegral.iossdk.mopub";
     NSString *appKey = [configuration objectForKey:@"appKey"];
     
     NSString *errorMsg = nil;
-    if (!appId) errorMsg = @"Invalid Mintegral appId";
-    if (!appKey) errorMsg = @"Invalid Mintegral appKey";
+    if (!appId) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral appId;"];
+    if (!appKey) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral appKey;"];
     
     if (errorMsg) {
         NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:MPErrorNetworkConnectionFailed userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
@@ -68,18 +70,12 @@ NSString *const kMintegralErrorDomain = @"com.mintegral.iossdk.mopub";
 }
 
 +(void)sdkInitialized{
-#ifdef DEBUG
-    if (DEBUG) {
-        MPLogInfo(@"The version of current Mintegral Adapter is: %@",MintegralAdapterVersion);
-    }
-#endif
     Class class = NSClassFromString(@"MTGSDK");
     SEL selector = NSSelectorFromString(@"setChannelFlag:");
-    NSString *pluginNumber = @"Y+H6DFttYrPQYcIA+F2F+F5/Hv==";
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
     if ([class respondsToSelector:selector]) {
-        [class performSelector:selector withObject:pluginNumber];
+        [class performSelector:selector withObject:kPluginNumber];
     }
 #pragma clang diagnostic pop
     mintegralSDKInitialized = YES;
