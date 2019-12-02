@@ -22,7 +22,7 @@ typedef enum {
 @interface MintegralBannerCustomEvent() <MTGBannerAdViewDelegate>
 
 @property(nonatomic,strong) MTGBannerAdView *bannerAdView;
-@property (nonatomic, strong) NSString * adUnitId;
+@property (nonatomic, strong) NSString *adUnitId;
 @property (nonatomic, copy) NSString *adm;
 @end
 

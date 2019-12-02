@@ -14,7 +14,7 @@ static BOOL mintegralSDKInitialized = NO;
 
 NSString *const kMintegralErrorDomain = @"com.mintegral.iossdk.mopub";
 NSString *const kPluginNumber = @"Y+H6DFttYrPQYcIA+F2F+F5/Hv==";
-NSString *const kNetworkName = @"Mintegral";
+NSString *const kNetworkName = @"mintegral";
 
 @implementation MintegralAdapterConfiguration
 
