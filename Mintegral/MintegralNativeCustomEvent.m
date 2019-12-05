@@ -13,8 +13,6 @@
 #import "MPNativeAdError.h"
 #endif
 
-static BOOL mVideoEnabled = NO;
-
 @interface MintegralNativeCustomEvent()<MTGMediaViewDelegate, MTGBidNativeAdManagerDelegate>
 
 @property (nonatomic, readwrite, strong) MTGNativeAdManager *mtgNativeAdManager;
@@ -44,12 +42,6 @@ static BOOL mVideoEnabled = NO;
         [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidAdServerResponse(errorMsg)];
         
         return;
-    }
-    
-    if ([info objectForKey:kMTGVideoAdsEnabledKey] == nil) {
-        self.videoEnabled = mVideoEnabled;
-    } else {
-        self.videoEnabled = [[info objectForKey:kMTGVideoAdsEnabledKey] boolValue];
     }
     
     MTGAdTemplateType reqNum = [info objectForKey:@"reqNum"] ?[[info objectForKey:@"reqNum"] integerValue]:1;
@@ -86,7 +78,7 @@ static BOOL mVideoEnabled = NO;
 - (void)nativeAdsLoaded:(nullable NSArray *)nativeAds {
     MPLogInfo(@"Mintegral nativeAdsLoaded");
     
-    MintegralNativeAdAdapter *adAdapter = [[MintegralNativeAdAdapter alloc] initWithNativeAds:nativeAds nativeAdManager:_mtgNativeAdManager withUnitId:self.adUnitId videoSupport:self.videoEnabled];
+    MintegralNativeAdAdapter *adAdapter = [[MintegralNativeAdAdapter alloc] initWithNativeAds:nativeAds nativeAdManager:_mtgNativeAdManager withUnitId:self.adUnitId];
     MPNativeAd *interfaceAd = [[MPNativeAd alloc] initWithAdAdapter:adAdapter];
     
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.adUnitId);
@@ -94,7 +86,7 @@ static BOOL mVideoEnabled = NO;
 }
 
 - (void)nativeAdsFailedToLoadWithError:(nonnull NSError *)error {
-    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:MPNativeAdNSErrorForInvalidAdServerResponse(error)], self.adUnitId);
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:MPNativeAdNSErrorForInvalidAdServerResponse(error.localizedDescription)], self.adUnitId);
     [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
 }
 

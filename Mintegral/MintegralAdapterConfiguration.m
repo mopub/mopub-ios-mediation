@@ -96,4 +96,14 @@ NSString *const kNetworkName = @"Mintegral";
     }
 }
 
++(void)setTargeting:(NSInteger)age gender:(MTGGender)gender latitude:(NSString *)latitude longitude:(NSString *)longitude pay:(MTGUserPayType)pay{
+    MTGUserInfo  *user = [[MTGUserInfo alloc]init];
+    user.age = age;
+    user.gender = gender;
+    user.latitude = latitude;
+    user.longitude = longitude;
+    user.pay = pay;
+    [[MTGSDK sharedInstance] setUserInfo:user];
+}
+
 @end

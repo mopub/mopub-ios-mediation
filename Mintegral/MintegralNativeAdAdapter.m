@@ -24,7 +24,7 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 @end
 @implementation MintegralNativeAdAdapter
 
-- (instancetype)initWithNativeAds:(NSArray *)nativeAds nativeAdManager:(MTGNativeAdManager *)nativeAdManager withUnitId:(NSString *)unitId videoSupport:(BOOL)videoSupport{
+- (instancetype)initWithNativeAds:(NSArray *)nativeAds nativeAdManager:(MTGNativeAdManager *)nativeAdManager withUnitId:(NSString *)unitId{
     MPLogInfo(@"initWithNativeAds for Mintegral");
     
     if (self = [super init]) {
@@ -51,16 +51,11 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
             if (campaign.iconUrl.length > 0) {
                 [properties setObject:campaign.iconUrl forKey:kAdIconImageKey];
             }
-            
-            _campaign = campaign;
-            
-            if (videoSupport) {
-                [self mediaView];
-            } else {
-                if (campaign.imageUrl.length > 0) {
-                    [properties setObject:campaign.imageUrl forKey:kAdMainImageKey];
-                }
+            if (campaign.imageUrl.length > 0) {
+                [properties setObject:campaign.imageUrl forKey:kAdMainImageKey];
             }
+            _campaign = campaign;
+            [self mediaView];
         }
         _nativeAds = nativeAds;
         _mtgAdProperties = properties;
@@ -148,6 +143,10 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 {
     [_mediaView setMediaSourceWithCampaign:_campaign unitId:_unitId];
     return _mediaView;
+}
+
+- (BOOL)hasVideoContent{
+    return [_mediaView isVideoContent];
 }
 
 -(MTGMediaView *)mediaView{

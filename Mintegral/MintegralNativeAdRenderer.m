@@ -121,6 +121,7 @@
 {
     return [self.adapter respondsToSelector:@selector(mainMediaView)]
     && [self.adapter mainMediaView]
+    && [self.adapter hasVideoContent]
     && [self.adView respondsToSelector:@selector(nativeMainImageView)];
 }
 
