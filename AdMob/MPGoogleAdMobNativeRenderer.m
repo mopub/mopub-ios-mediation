@@ -79,7 +79,7 @@
     return nil;
   }
 
-  self.adapter = (MPGoogleAdMobNativeAdAdapter *)adapter;\
+  self.adapter = (MPGoogleAdMobNativeAdAdapter *)adapter;
   self.unifiedNativeAdView = self.adapter.adMobUnifiedNativeAdView;
   self.unifiedNativeAdView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
 
