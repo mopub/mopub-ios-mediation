@@ -165,7 +165,7 @@
         [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:reward];
         
     }else{
-        MPLogInfo(@"not deliver the reward unless the ad is watched fully.");
+        MPLogInfo(@"The rewarded video was not watched until completion. The user will not get rewarded.");
     }
         
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.adUnitId);
