@@ -99,11 +99,9 @@
     if ([self shouldLoadMediaView]) {
         UIView *mediaView = [self.adapter mainMediaView];
         UIView *mainImageView = [self.adView nativeMainImageView];
-
         mediaView.frame = mainImageView.bounds;
         mediaView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         mainImageView.userInteractionEnabled = YES;
-
         [mainImageView addSubview:mediaView];
     }
     
@@ -121,7 +119,6 @@
 {
     return [self.adapter respondsToSelector:@selector(mainMediaView)]
     && [self.adapter mainMediaView]
-    && [self.adapter hasVideoContent]
     && [self.adView respondsToSelector:@selector(nativeMainImageView)];
 }
 

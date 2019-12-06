@@ -17,6 +17,4 @@ extern NSString *const kMTGVideoAdsEnabledKey;
 
 - (instancetype)initWithNativeAds:(NSArray *)nativeAds nativeAdManager:(MTGNativeAdManager *)nativeAdManager withUnitId:(NSString *)unitId;
 
-- (BOOL)hasVideoContent;
-
 @end

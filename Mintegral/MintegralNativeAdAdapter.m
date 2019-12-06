@@ -145,10 +145,6 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
     return _mediaView;
 }
 
-- (BOOL)hasVideoContent{
-    return [_mediaView isVideoContent];
-}
-
 -(MTGMediaView *)mediaView{
     if (_mediaView) {
         return _mediaView;
