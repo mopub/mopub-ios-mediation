@@ -36,9 +36,10 @@
     NSString *unitId = [info objectForKey:@"unitId"];
     
     NSString *errorMsg = nil;
-    if (!appId) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral appId. Failing ad request. Ensure the app ID is valid on the MoPub dashboard."];
-    if (!appKey) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral appKey. Failing ad request. Ensure the app key is valid on the MoPub dashboard."];
-    if (!unitId) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral unitId. Failing ad request. Ensure the unit ID is valid on the MoPub dashboard."];
+    
+    if (!appId) errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appId. Failing ad request. Ensure the app ID is valid on the MoPub dashboard."];
+    if (!appKey) errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appKey. Failing ad request. Ensure the app key is valid on the MoPub dashboard."];
+    if (!unitId) errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral unitId. Failing ad request. Ensure the unit ID is valid on the MoPub dashboard."];
     
     if (errorMsg) {
         NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:MPRewardedVideoAdErrorInvalidAdUnitID userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
@@ -146,8 +147,9 @@
 }
 
 - (void)onVideoAdClicked:(nullable NSString *)unitId{
-    NSLog(@"onVideoAdClicked");
+    MPLogInfo(@"onVideoAdClicked");
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.adUnitId);
+    
     [self.delegate rewardedVideoDidReceiveTapEventForCustomEvent:self];
     [self.delegate rewardedVideoWillLeaveApplicationForCustomEvent:self];
     

@@ -24,7 +24,7 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 @end
 @implementation MintegralNativeAdAdapter
 
-- (instancetype)initWithNativeAds:(NSArray *)nativeAds nativeAdManager:(MTGNativeAdManager *)nativeAdManager withUnitId:(NSString *)unitId{
+- (instancetype)initWithNativeAds:(NSArray *)nativeAds nativeAdManager:(MTGNativeAdManager *)nativeAdManager withUnitId:(NSString *)unitId {
     MPLogInfo(@"initWithNativeAds for Mintegral");
     
     if (self = [super init]) {
@@ -64,7 +64,7 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
     return self;
 }
 
--(void)dealloc{
+-(void)dealloc {
     _nativeAdManager.delegate = nil;
     _nativeAdManager = nil;
     _mediaView.delegate = nil;
