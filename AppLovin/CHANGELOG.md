@@ -1,4 +1,7 @@
 ## Changelog
+   * 6.10.1.1
+     * Fix compiler warnings.
+
    * 6.10.1.0
      * This version of the adapters has been certified with AppLovin SDK 6.10.1.
 
