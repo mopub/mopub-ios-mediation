@@ -1,4 +1,7 @@
 ## Changelog
+  * 7.52.0.3
+    * Fix an issue with native ads not responding to playback controls.
+
   * 7.52.0.2
     * Map banner ad sizes starting from largest height x width.
 
