@@ -83,14 +83,19 @@
         [self.interstitialAdFactory loadBid:bid interstitialAdDelegate:self];
     } else {
         VASRequestMetadataBuilder *metadataBuilder = [[VASRequestMetadataBuilder alloc] initWithRequestMetadata:[VASAds sharedInstance].requestMetadata];
-        [metadataBuilder setAppMediator:VerizonAdapterConfiguration.appMediator];
+        metadataBuilder.mediator = VerizonAdapterConfiguration.mediator;
         
         if (adMarkup.length > 0) {
-            NSMutableDictionary<NSString *, id> *placementData = [NSMutableDictionary dictionaryWithDictionary:@{
-                kMoPubRequestMetadataAdContent : adMarkup,
-                @"overrideWaterfallProvider"   : @"waterfallprovider/sideloading"}];
+            NSError *error = [VASErrorInfo errorWithDomain:kMoPubVASAdapterErrorDomain
+                                                      code:MoPubVASAdapterErrorNotInitialized
+                                                       who:kMoPubVASAdapterErrorWho
+                                               description:[NSString stringWithFormat:@"Advanced Bidding for interstitial placements is not supported at this time. serverExtras key \" %@ \" should have no value.", kMoPubServerExtrasAdContent]
+                                                underlying:nil];
 
-            [metadataBuilder setPlacementData:placementData];
+            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], siteId);
+            [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+            
+            return;
         }
         
         [self.interstitialAdFactory setRequestMetadata:metadataBuilder.build];
@@ -254,7 +259,7 @@
                        completion:(nonnull VASBidRequestCompletionHandler)completion
 {
     VASRequestMetadataBuilder *metaDataBuilder = [[VASRequestMetadataBuilder alloc] init];
-    [metaDataBuilder setAppMediator:VerizonAdapterConfiguration.appMediator];
+    metaDataBuilder.mediator = VerizonAdapterConfiguration.mediator;
     [VASInterstitialAdFactory requestBidForPlacementId:placementId requestMetadata:metaDataBuilder.build vasAds:[VASAds sharedInstance] completionHandler:^(VASBid * _Nullable bid, VASErrorInfo * _Nullable errorInfo) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (bid) {

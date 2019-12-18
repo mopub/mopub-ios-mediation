@@ -95,7 +95,7 @@
 
 - (NSString *)version
 {
-    return VerizonAdapterConfiguration.appMediator;
+    return VerizonAdapterConfiguration.mediator;
 }
 
 #pragma mark - VASInlineAdFactoryDelegate
