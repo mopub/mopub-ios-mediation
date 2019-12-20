@@ -82,16 +82,14 @@
         metadataBuilder.mediator = VerizonAdapterConfiguration.mediator;
 
         if (adMarkup.length > 0) {
-            NSError *error = [VASErrorInfo errorWithDomain:kMoPubVASAdapterErrorDomain
-                                                      code:MoPubVASAdapterErrorNotInitialized
-                                                       who:kMoPubVASAdapterErrorWho
-                                               description:[NSString stringWithFormat:@"Advanced Bidding for inline placements is not supported at this time. serverExtras key \" %@ \" should have no value.", kMoPubServerExtrasAdContent]
-                                                underlying:nil];
-
-            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], siteId);
-            [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
-            
-            return;
+            NSMutableDictionary<NSString *, id> *placementData =
+            [NSMutableDictionary dictionaryWithDictionary:
+             @{
+               kMoPubRequestMetadataAdContent : adMarkup,
+               @"overrideWaterfallProvider"  : @"waterfallprovider/sideloading"
+               }
+             ];
+            [metadataBuilder setPlacementData:placementData];
         }
 
         [self.inlineFactory setRequestMetadata:metadataBuilder.build];

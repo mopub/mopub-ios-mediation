@@ -77,7 +77,7 @@ static NSString * const kVASEditionVersionKey   = @"editionVersion";
 
 - (NSString *)biddingToken
 {
-    return nil;
+    return @"test_token";
 }
 
 - (NSString *)moPubNetworkName
