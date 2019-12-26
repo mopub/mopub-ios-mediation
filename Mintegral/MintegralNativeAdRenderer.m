@@ -1,22 +1,23 @@
 #import <Foundation/Foundation.h>
 #import "MintegralNativeAdRenderer.h"
 #if __has_include("MoPub.h")
-#import "MPLogging.h"
-#import "MPNativeAdAdapter.h"
-#import "MPNativeAdConstants.h"
-#import "MPNativeAdError.h"
-#import "MPNativeAdRendererConfiguration.h"
-#import "MPNativeAdRendererImageHandler.h"
-#import "MPNativeAdRendering.h"
-#import "MPNativeAdRenderingImageLoader.h"
-#import "MPNativeView.h"
-#import "MPStaticNativeAdRendererSettings.h"
-#import "MPURLRequest.h"
-#import "MPHTTPNetworkSession.h"
-#import "MPMemoryCache.h"
+    #import "MPLogging.h"
+    #import "MPNativeAdAdapter.h"
+    #import "MPNativeAdConstants.h"
+    #import "MPNativeAdError.h"
+    #import "MPNativeAdRendererConfiguration.h"
+    #import "MPNativeAdRendererImageHandler.h"
+    #import "MPNativeAdRendering.h"
+    #import "MPNativeAdRenderingImageLoader.h"
+    #import "MPNativeView.h"
+    #import "MPStaticNativeAdRendererSettings.h"
+    #import "MPURLRequest.h"
+    #import "MPHTTPNetworkSession.h"
+    #import "MPMemoryCache.h"
 #endif
 #import "MintegralNativeAdAdapter.h"
 #import <MTGSDK/MTGAdChoicesView.h>
+
 @interface MintegralNativeAdRenderer () <MPNativeAdRendererImageHandlerDelegate>
 
 @property (nonatomic, strong) UIView<MPNativeAdRendering> *adView;

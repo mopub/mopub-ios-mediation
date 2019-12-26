@@ -4,14 +4,14 @@
 #import <MTGSDKBanner/MTGBannerAdView.h>
 #import <MTGSDKBanner/MTGBannerAdViewDelegate.h>
 #if __has_include(<MoPubSDKFramework/MoPub.h>)
-#import <MoPubSDKFramework/MoPub.h>
+    #import <MoPubSDKFramework/MoPub.h>
 #else
-#import "MoPub.h"
+    #import "MoPub.h"
 #endif
 #if __has_include(<MoPubSDKFramework/MPLogging.h>)
-#import <MoPubSDKFramework/MPLogging.h>
+    #import <MoPubSDKFramework/MPLogging.h>
 #else
-#import "MPLogging.h"
+    #import "MPLogging.h"
 #endif
 
 typedef enum {

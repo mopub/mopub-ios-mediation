@@ -2,15 +2,10 @@
 #import "MintegralNativeAdAdapter.h"
 #import "MintegralAdapterConfiguration.h"
 #import <MTGSDK/MTGSDK.h>
-#if __has_include(<MoPubSDKFramework/MPNativeAd.h>)
-#import <MoPubSDKFramework/MPNativeAd.h>
-#else
-#import "MPNativeAd.h"
-#endif
-#if __has_include(<MoPubSDKFramework/MPNativeAdError.h>)
-#import <MoPubSDKFramework/MPNativeAdError.h>
-#else
-#import "MPNativeAdError.h"
+#if __has_include("MoPub.h")
+    #import "MPNativeAd.h"
+    #import "MPNativeAdError.h"
+    #import "MPLogging.h"
 #endif
 
 @interface MintegralNativeCustomEvent()<MTGMediaViewDelegate, MTGBidNativeAdManagerDelegate>

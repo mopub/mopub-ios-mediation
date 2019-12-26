@@ -3,7 +3,7 @@
 #import <MTGSDK/MTGSDK.h>
 #import <MTGSDKBidding/MTGBiddingSDK.h>
 #if __has_include("MoPub.h")
-#import "MoPub.h"
+    #import "MoPub.h"
 #endif
 
 @interface MintegralAdapterConfiguration()

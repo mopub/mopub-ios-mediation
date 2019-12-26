@@ -4,9 +4,9 @@
 #import <MTGSDKInterstitialVideo/MTGBidInterstitialVideoAdManager.h>
 #import "MintegralAdapterConfiguration.h"
 #if __has_include(<MoPubSDKFramework/MoPub.h>)
-#import <MoPubSDKFramework/MoPub.h>
+    #import <MoPubSDKFramework/MoPub.h>
 #else
-#import "MoPub.h"
+    #import "MoPub.h"
 #endif
 
 @interface MintegralInterstitialCustomEvent()<MTGInterstitialVideoDelegate, MTGBidInterstitialVideoDelegate>
