@@ -1,5 +1,6 @@
 #import "MintegralNativeAdAdapter.h"
 #import <MTGSDK/MTGNativeAdManager.h>
+#import <MTGSDK/MTGBidNativeAdManager.h>
 #import <MTGSDK/MTGCampaign.h>
 #import <MTGSDK/MTGMediaView.h>
 #import <MTGSDK/MTGAdChoicesView.h>
@@ -11,25 +12,32 @@
 
 NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 
-@interface MintegralNativeAdAdapter () <MTGNativeAdManagerDelegate, MTGMediaViewDelegate, MTGMediaViewDelegate>
+@interface MintegralNativeAdAdapter () <MTGNativeAdManagerDelegate,MTGMediaViewDelegate, MTGBidNativeAdManagerDelegate>
 
 @property (nonatomic, readonly) MTGNativeAdManager *nativeAdManager;
+@property (nonatomic, strong) MTGBidNativeAdManager *nativeBidAdManager;
 @property (nonatomic, readonly) MTGCampaign *campaign;
 @property (nonatomic) MTGMediaView *mediaView;
-
 @property (nonatomic, strong) NSDictionary *mtgAdProperties;
-
 @property (nonatomic, readwrite, copy) NSString *unitId;
+@property (nonatomic, copy) NSString *adm;
 
 @end
 @implementation MintegralNativeAdAdapter
 
-- (instancetype)initWithNativeAds:(NSArray *)nativeAds nativeAdManager:(MTGNativeAdManager *)nativeAdManager withUnitId:(NSString *)unitId{
+- (instancetype)initWithNativeAds:(NSArray *)nativeAds nativeAdManager:(MTGNativeAdManager *)nativeAdManager bidAdManager:(MTGBidNativeAdManager *)bidAdManager withUnitId:(NSString *)unitId{
     MPLogInfo(@"initWithNativeAds for Mintegral");
     
     if (self = [super init]) {
-        _nativeAdManager = nativeAdManager;
-        _nativeAdManager.delegate = self;
+        
+        if (nativeAdManager) {
+            _nativeAdManager = nativeAdManager;
+            _nativeAdManager.delegate = self;
+        }else if (bidAdManager){
+            _nativeBidAdManager = bidAdManager;
+            _nativeBidAdManager.delegate = self;
+        }
+        
         
         NSMutableDictionary *properties = [NSMutableDictionary dictionary];
         
@@ -65,16 +73,44 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 }
 
 -(void)dealloc{
-    _nativeAdManager.delegate = nil;
-    _nativeAdManager = nil;
+    if (_nativeAdManager) {
+        _nativeAdManager.delegate = nil;
+        _nativeAdManager = nil;
+    }
+    if (_nativeBidAdManager) {
+        _nativeBidAdManager.delegate = nil;
+        _nativeBidAdManager = nil;
+    }
     _mediaView.delegate = nil;
     _mediaView = nil;
 }
 
 #pragma mark - MVSDK NativeAdManager Delegate
 
-- (void)nativeAdDidClick:(nonnull MTGCampaign *)nativeAd
+- (void)nativeAdDidClick:(nonnull MTGCampaign *)nativeAd nativeManager:(nonnull MTGNativeAdManager *)nativeManager
 {
+    MPLogInfo(@"Mintegral traditional nativeAdDidClick");
+    if ([self.delegate respondsToSelector:@selector(nativeAdDidClick:)]) {
+        MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.unitId);
+        [self.delegate nativeAdDidClick:self];
+        [self.delegate nativeAdWillPresentModalForAdapter:self];
+        [self.delegate nativeAdWillLeaveApplicationFromAdapter:self];
+    }
+}
+
+- (void)nativeAdDidClick:(MTGCampaign *)nativeAd bidNativeManager:(MTGBidNativeAdManager *)bidNativeManager{
+    
+    MPLogInfo(@"Mintegral bidding nativeAdDidClick");
+    if ([self.delegate respondsToSelector:@selector(nativeAdDidClick:)]) {
+        MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.unitId);
+        [self.delegate nativeAdDidClick:self];
+        [self.delegate nativeAdWillPresentModalForAdapter:self];
+        [self.delegate nativeAdWillLeaveApplicationFromAdapter:self];
+    }
+}
+
+- (void)nativeAdDidClick:(MTGCampaign *)nativeAd mediaView:(MTGMediaView *)mediaView{
+    MPLogInfo(@"Mintegral media nativeAdDidClick");
     if ([self.delegate respondsToSelector:@selector(nativeAdDidClick:)]) {
         MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.unitId);
         [self.delegate nativeAdDidClick:self];
@@ -85,6 +121,7 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 
 - (void)nativeAdImpressionWithType:(MTGAdSourceType)type nativeManager:(nonnull MTGNativeAdManager *)nativeManager{
     if (type == MTGAD_SOURCE_API_OFFER) {
+        MPLogInfo(@"Mintegral traditional nativeAdImpression");
         if ([self.delegate respondsToSelector:@selector(nativeAdWillLogImpression:)]){
             MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.unitId);
             MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.unitId);
@@ -93,8 +130,18 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
     }
 }
 
+- (void)nativeAdImpressionWithType:(MTGAdSourceType)type bidNativeManager:(MTGBidNativeAdManager *)bidNativeManager{
+    MPLogInfo(@"Mintegral bidding nativeAdsImpression");
+    if ([self.delegate respondsToSelector:@selector(nativeAdWillLogImpression:)]){
+        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.unitId);
+        MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.unitId);
+        [self.delegate nativeAdWillLogImpression:self];
+    }
+}
+
 - (void)nativeAdImpressionWithType:(MTGAdSourceType)type mediaView:(MTGMediaView *)mediaView{
     if (type == MTGAD_SOURCE_API_OFFER) {
+        MPLogInfo(@"Mintegral media nativeAdImpression");
         if ([self.delegate respondsToSelector:@selector(nativeAdWillLogImpression:)]){
             MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.unitId);
             MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.unitId);
@@ -119,12 +166,20 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 
 - (void)willAttachToView:(UIView *)view
 {
+    
     if (_mediaView) {
         UIView *sView = _mediaView.superview;
         [sView.superview bringSubviewToFront:sView];
     }
+    if (_nativeAdManager) {
+        
+        [self.nativeAdManager registerViewForInteraction:view withCampaign:_campaign];
+    }else if (_nativeBidAdManager){
+        
+        [self.nativeBidAdManager registerViewForInteraction:view withCampaign:_campaign];
+    }
     
-    [self.nativeAdManager registerViewForInteraction:view withCampaign:_campaign];
+    
 }
 
 - (UIView *)privacyInformationIconView

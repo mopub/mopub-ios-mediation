@@ -8,6 +8,7 @@
 #endif
 
 @class  MTGNativeAdManager;
+@class MTGBidNativeAdManager;
 
 extern NSString *const kMTGVideoAdsEnabledKey;
 
@@ -15,6 +16,6 @@ extern NSString *const kMTGVideoAdsEnabledKey;
 @property (nonatomic, weak) id<MPNativeAdAdapterDelegate> delegate;
 @property (nonatomic, readonly) NSArray *nativeAds;
 
-- (instancetype)initWithNativeAds:(NSArray *)nativeAds nativeAdManager:(MTGNativeAdManager *)nativeAdManager withUnitId:(NSString *)unitId;
+- (instancetype)initWithNativeAds:(NSArray *)nativeAds nativeAdManager:(MTGNativeAdManager *)nativeAdManager bidAdManager:(MTGBidNativeAdManager *)bidAdManager withUnitId:(NSString *)unitId;
 
 @end

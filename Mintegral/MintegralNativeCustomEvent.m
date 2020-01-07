@@ -13,7 +13,7 @@
 #import "MPNativeAdError.h"
 #endif
 
-@interface MintegralNativeCustomEvent()<MTGMediaViewDelegate, MTGBidNativeAdManagerDelegate>
+@interface MintegralNativeCustomEvent()<MTGNativeAdManagerDelegate,MTGMediaViewDelegate, MTGBidNativeAdManagerDelegate>
 
 @property (nonatomic, readwrite, strong) MTGNativeAdManager *mtgNativeAdManager;
 @property (nonatomic, readwrite, copy) NSString *adUnitId;
@@ -76,9 +76,8 @@
 #pragma mark - nativeAdManager init and delegate
 
 - (void)nativeAdsLoaded:(nullable NSArray *)nativeAds {
-    MPLogInfo(@"Mintegral nativeAdsLoaded");
-    
-    MintegralNativeAdAdapter *adAdapter = [[MintegralNativeAdAdapter alloc] initWithNativeAds:nativeAds nativeAdManager:_mtgNativeAdManager withUnitId:self.adUnitId];
+    MPLogInfo(@"Mintegral traditional nativeAdsLoaded");
+    MintegralNativeAdAdapter *adAdapter = [[MintegralNativeAdAdapter alloc] initWithNativeAds:nativeAds nativeAdManager:_mtgNativeAdManager bidAdManager:nil withUnitId:self.adUnitId];
     MPNativeAd *interfaceAd = [[MPNativeAd alloc] initWithAdAdapter:adAdapter];
     
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.adUnitId);
@@ -86,6 +85,22 @@
 }
 
 - (void)nativeAdsFailedToLoadWithError:(nonnull NSError *)error {
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:MPNativeAdNSErrorForInvalidAdServerResponse(error.localizedDescription)], self.adUnitId);
+    [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
+}
+
+- (void)nativeAdsLoaded:(NSArray *)nativeAds bidNativeManager:(MTGBidNativeAdManager *)bidNativeManager{
+    
+    MPLogInfo(@"Mintegral bidding nativeAdsLoaded");
+    MintegralNativeAdAdapter *adAdapter = [[MintegralNativeAdAdapter alloc] initWithNativeAds:nativeAds nativeAdManager:nil bidAdManager:_bidAdManager withUnitId:self.adUnitId];
+    MPNativeAd *interfaceAd = [[MPNativeAd alloc] initWithAdAdapter:adAdapter];
+    
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.adUnitId);
+    [self.delegate nativeCustomEvent:self didLoadAd:interfaceAd];
+}
+
+- (void)nativeAdsFailedToLoadWithError:(NSError *)error bidNativeManager:(MTGBidNativeAdManager *)bidNativeManager{
+    
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:MPNativeAdNSErrorForInvalidAdServerResponse(error.localizedDescription)], self.adUnitId);
     [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
 }
