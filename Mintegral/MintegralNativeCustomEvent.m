@@ -2,15 +2,10 @@
 #import "MintegralNativeAdAdapter.h"
 #import "MintegralAdapterConfiguration.h"
 #import <MTGSDK/MTGSDK.h>
-#if __has_include(<MoPubSDKFramework/MPNativeAd.h>)
-#import <MoPubSDKFramework/MPNativeAd.h>
-#else
-#import "MPNativeAd.h"
-#endif
-#if __has_include(<MoPubSDKFramework/MPNativeAdError.h>)
-#import <MoPubSDKFramework/MPNativeAdError.h>
-#else
-#import "MPNativeAdError.h"
+#if __has_include("MoPub.h")
+    #import "MPNativeAd.h"
+    #import "MPNativeAdError.h"
+    #import "MPLogging.h"
 #endif
 
 @interface MintegralNativeCustomEvent()<MTGNativeAdManagerDelegate,MTGMediaViewDelegate, MTGBidNativeAdManagerDelegate>
@@ -34,9 +29,11 @@
     NSString *unitId = [info objectForKey:@"unitId"];
     
     NSString *errorMsg = nil;
-    if (!appId) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral appId. Failing ad request. Ensure the app ID is valid on the MoPub dashboard."];
-    if (!appKey) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral appKey. Failing ad request. Ensure the app key is valid on the MoPub dashboard."];
-    if (!unitId) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral unitId. Failing ad request. Ensure the unit ID is valid on the MoPub dashboard."];
+    
+    if (!appId) errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appId. Failing ad request. Ensure the app ID is valid on the MoPub dashboard."];
+    if (!appKey) errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appKey. Failing ad request. Ensure the app key is valid on the MoPub dashboard."];
+    if (!unitId) errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral unitId. Failing ad request. Ensure the unit ID is valid on the MoPub dashboard."];
+    
     if (errorMsg) {
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:MPNativeAdNSErrorForInvalidAdServerResponse(errorMsg)], self.adUnitId);
         [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidAdServerResponse(errorMsg)];

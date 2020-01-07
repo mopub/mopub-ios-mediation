@@ -3,7 +3,7 @@
 #import <MTGSDK/MTGSDK.h>
 #import <MTGSDKBidding/MTGBiddingSDK.h>
 #if __has_include("MoPub.h")
-#import "MoPub.h"
+    #import "MoPub.h"
 #endif
 
 @interface MintegralAdapterConfiguration()
@@ -43,8 +43,9 @@ NSString *const kNetworkName = @"mintegral";
     NSString *appKey = [configuration objectForKey:@"appKey"];
     
     NSString *errorMsg = nil;
-    if (!appId) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral appId;"];
-    if (!appKey) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral appKey;"];
+    
+    if (!appId) errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appId;"];
+    if (!appKey) errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appKey;"];
     
     if (errorMsg) {
         NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:MPErrorNetworkConnectionFailed userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
@@ -74,7 +75,7 @@ NSString *const kNetworkName = @"mintegral";
     return mintegralSDKInitialized;
 }
 
-+(void)sdkInitialized{
++(void)sdkInitialized {
     Class class = NSClassFromString(@"MTGSDK");
     SEL selector = NSSelectorFromString(@"setChannelFlag:");
 #pragma clang diagnostic push
@@ -96,13 +97,15 @@ NSString *const kNetworkName = @"mintegral";
     }
 }
 
-+(void)setTargeting:(NSInteger)age gender:(MTGGender)gender latitude:(NSString *)latitude longitude:(NSString *)longitude pay:(MTGUserPayType)pay{
++(void)setTargeting:(NSInteger)age gender:(MTGGender)gender latitude:(NSString *)latitude longitude:(NSString *)longitude pay:(MTGUserPayType)pay {
     MTGUserInfo  *user = [[MTGUserInfo alloc]init];
+    
     user.age = age;
     user.gender = gender;
     user.latitude = latitude;
     user.longitude = longitude;
     user.pay = pay;
+    
     [[MTGSDK sharedInstance] setUserInfo:user];
 }
 

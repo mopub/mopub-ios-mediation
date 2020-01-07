@@ -1,22 +1,23 @@
 #import <Foundation/Foundation.h>
 #import "MintegralNativeAdRenderer.h"
 #if __has_include("MoPub.h")
-#import "MPLogging.h"
-#import "MPNativeAdAdapter.h"
-#import "MPNativeAdConstants.h"
-#import "MPNativeAdError.h"
-#import "MPNativeAdRendererConfiguration.h"
-#import "MPNativeAdRendererImageHandler.h"
-#import "MPNativeAdRendering.h"
-#import "MPNativeAdRenderingImageLoader.h"
-#import "MPNativeView.h"
-#import "MPStaticNativeAdRendererSettings.h"
-#import "MPURLRequest.h"
-#import "MPHTTPNetworkSession.h"
-#import "MPMemoryCache.h"
+    #import "MPLogging.h"
+    #import "MPNativeAdAdapter.h"
+    #import "MPNativeAdConstants.h"
+    #import "MPNativeAdError.h"
+    #import "MPNativeAdRendererConfiguration.h"
+    #import "MPNativeAdRendererImageHandler.h"
+    #import "MPNativeAdRendering.h"
+    #import "MPNativeAdRenderingImageLoader.h"
+    #import "MPNativeView.h"
+    #import "MPStaticNativeAdRendererSettings.h"
+    #import "MPURLRequest.h"
+    #import "MPHTTPNetworkSession.h"
+    #import "MPMemoryCache.h"
 #endif
 #import "MintegralNativeAdAdapter.h"
 #import <MTGSDK/MTGAdChoicesView.h>
+
 @interface MintegralNativeAdRenderer () <MPNativeAdRendererImageHandlerDelegate>
 
 @property (nonatomic, strong) UIView<MPNativeAdRendering> *adView;
@@ -99,9 +100,11 @@
     if ([self shouldLoadMediaView]) {
         UIView *mediaView = [self.adapter mainMediaView];
         UIView *mainImageView = [self.adView nativeMainImageView];
+
         mediaView.frame = mainImageView.bounds;
         mediaView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         mainImageView.userInteractionEnabled = YES;
+
         [mainImageView addSubview:mediaView];
     }
     
@@ -143,11 +146,13 @@
         if (![self hasIconView] && [self.adapter.properties objectForKey:kAdIconImageKey] && [self.adView respondsToSelector:@selector(nativeIconImageView)]) {
             [self.rendererImageHandler loadImageForURL:[NSURL URLWithString:[self.adapter.properties objectForKey:kAdIconImageKey]] intoImageView:self.adView.nativeIconImageView];
         }
+        
         if (!([self.adapter respondsToSelector:@selector(mainMediaView)] && [self.adapter mainMediaView])) {
             if ([self.adapter.properties objectForKey:kAdMainImageKey] && [self.adView respondsToSelector:@selector(nativeMainImageView)]) {
                 [self.rendererImageHandler loadImageForURL:[NSURL URLWithString:[self.adapter.properties objectForKey:kAdMainImageKey]] intoImageView:self.adView.nativeMainImageView];
             }
         }
+        
         if ([self.adView respondsToSelector:@selector(layoutCustomAssetsWithProperties:imageLoader:)]) {
             MPNativeAdRenderingImageLoader *imageLoader = [[MPNativeAdRenderingImageLoader alloc] initWithImageHandler:self.rendererImageHandler];
             [self.adView layoutCustomAssetsWithProperties:self.adapter.properties imageLoader:imageLoader];

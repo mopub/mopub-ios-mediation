@@ -4,14 +4,14 @@
 #import <MTGSDKBanner/MTGBannerAdView.h>
 #import <MTGSDKBanner/MTGBannerAdViewDelegate.h>
 #if __has_include(<MoPubSDKFramework/MoPub.h>)
-#import <MoPubSDKFramework/MoPub.h>
+    #import <MoPubSDKFramework/MoPub.h>
 #else
-#import "MoPub.h"
+    #import "MoPub.h"
 #endif
 #if __has_include(<MoPubSDKFramework/MPLogging.h>)
-#import <MoPubSDKFramework/MPLogging.h>
+    #import <MoPubSDKFramework/MPLogging.h>
 #else
-#import "MPLogging.h"
+    #import "MPLogging.h"
 #endif
 
 typedef enum {
@@ -28,7 +28,7 @@ typedef enum {
 
 @implementation MintegralBannerCustomEvent
 
-- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup{
+- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     MPLogInfo(@"requestAdWithSize for Mintegral");
     
     NSString *appId = [info objectForKey:@"appId"];
@@ -36,9 +36,10 @@ typedef enum {
     NSString *unitId = [info objectForKey:@"unitId"];
     
     NSString *errorMsg = nil;
-    if (!appId) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral appId. Failing ad request. Ensure the app ID is valid on the MoPub dashboard."];
-    if (!appKey) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral appKey. Failing ad request. Ensure the app key is valid on the MoPub dashboard."];
-    if (!unitId) errorMsg = [errorMsg stringByAppendingString: @"Invalid Mintegral unitId. Failing ad request. Ensure the unit ID is valid on the MoPub dashboard."];
+    
+    if (!appId) errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appId. Failing ad request. Ensure the app ID is valid on the MoPub dashboard."];
+    if (!appKey) errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appKey. Failing ad request. Ensure the app key is valid on the MoPub dashboard."];
+    if (!unitId) errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral unitId. Failing ad request. Ensure the unit ID is valid on the MoPub dashboard."];
     
     if (errorMsg) {
         NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:MintegralErrorBannerParaUnresolveable userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
@@ -87,7 +88,7 @@ typedef enum {
     }
 }
 
-- (void)adViewWillLogImpression:(MTGBannerAdView *)adView{
+- (void)adViewWillLogImpression:(MTGBannerAdView *)adView {
     if ([self.delegate respondsToSelector:@selector(trackImpression)]) {
         [self.delegate trackImpression];
     }
