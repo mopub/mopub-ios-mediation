@@ -90,7 +90,7 @@ static NSString * const kVASEditionVersionKey   = @"editionVersion";
     NSString *editionName = [[[VASAds sharedInstance] configuration] stringForDomain:kDomainVASAds
                                                                                  key:kVASEditionNameKey
                                                                          withDefault:nil];
-
+    
     NSString *editionVersion = [[[VASAds sharedInstance] configuration] stringForDomain:kDomainVASAds
                                                                                     key:kVASEditionVersionKey
                                                                             withDefault:nil];

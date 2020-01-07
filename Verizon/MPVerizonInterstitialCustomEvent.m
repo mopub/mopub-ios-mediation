@@ -44,7 +44,7 @@
     
     NSString *siteId = info[kMoPubVASAdapterSiteId];
     NSString *placementId = info[kMoPubVASAdapterPlacementId];
-
+    
     if (siteId.length == 0 || placementId.length == 0)
     {
         NSError *error = [VASErrorInfo errorWithDomain:kMoPubVASAdapterErrorDomain
@@ -75,7 +75,7 @@
     
     [VASAds sharedInstance].locationEnabled = [MoPub sharedInstance].locationUpdatesEnabled;
     [VerizonAdapterConfiguration setCachedInitializationParameters:info];
-
+    
     self.interstitialAdFactory = [[VASInterstitialAdFactory alloc] initWithPlacementId:placementId vasAds:[VASAds sharedInstance] delegate:self];
     
     VASBid *bid = [MPVerizonBidCache.sharedInstance bidForPlacementId:placementId];
@@ -89,10 +89,11 @@
             NSMutableDictionary<NSString *, id> *placementData =
             [NSMutableDictionary dictionaryWithDictionary:
              @{
-               kMoPubRequestMetadataAdContent : adMarkup,
-               @"overrideWaterfallProvider"  : @"waterfallprovider/sideloading"
-               }
+                 kMoPubRequestMetadataAdContent : adMarkup,
+                 @"overrideWaterfallProvider"  : @"waterfallprovider/sideloading"
+             }
              ];
+            
             [metadataBuilder setPlacementData:placementData];
         }
         
