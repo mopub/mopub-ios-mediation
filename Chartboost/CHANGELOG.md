@@ -1,4 +1,7 @@
 ## Changelog
+  * 8.1.0.0
+     * This version of the adapters has been certified with Chartboost 8.1.0 and is compatible with multiple Chartboost instances.
+      
   * 8.0.4.0
       * This version of the adapters has been certified with Chartboost 8.0.4.
 
