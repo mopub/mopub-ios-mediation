@@ -12,6 +12,7 @@
 #import <MoPubSDKFramework/MoPub.h>
 #else
 #import "MPBaseAdapterConfiguration.h"
+#import "MoPub.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN

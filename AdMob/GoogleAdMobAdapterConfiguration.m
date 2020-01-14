@@ -12,16 +12,11 @@
     #import "MPLogging.h"
 #endif
 
-@interface GoogleAdMobAdapterConfiguration()
-@property (class, nonatomic, copy, readwrite) NSString * npaString;
-@end
-
 // Initialization configuration keys
 static NSString * const kAdMobApplicationIdKey = @"appid";
 
 // Errors
 static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-admob-adapters";
-static NSString * gNpaString = nil;
 
 typedef NS_ENUM(NSInteger, AdMobAdapterErrorCode) {
     AdMobAdapterErrorCodeMissingAppId,
@@ -62,10 +57,6 @@ typedef NS_ENUM(NSInteger, AdMobAdapterErrorCode) {
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration
                                   complete:(void(^)(NSError *))complete {
-    
-    NSString *npaValue = configuration[@"npa"];
-
-    GoogleAdMobAdapterConfiguration.npaString = npaValue;
 
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -82,12 +73,11 @@ typedef NS_ENUM(NSInteger, AdMobAdapterErrorCode) {
 
 + (NSString *)npaString
 {
-    return gNpaString;
-}
-
-+ (void)setNpaString:(NSString *)string
-{
-    gNpaString = string;
+    if (MoPub.sharedInstance.canCollectPersonalInfo)
+    {
+      return @"0";
+    }
+    return @"1";
 }
 
 @end
