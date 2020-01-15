@@ -1,4 +1,8 @@
 ## Changelog
+  * 6.5.1.1
+    * This version of the adapters has been certified with Vungle 6.5.1.
+    * Add support for the newly-introduced Vungle's Banner format demand.
+
   * 6.4.6.1
     * Remove duplicate `rewardedVideoDidAppearForCustomEvent` callback.
     * Adapter logging cleanup.

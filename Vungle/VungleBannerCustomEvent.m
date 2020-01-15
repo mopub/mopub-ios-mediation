@@ -17,11 +17,10 @@
 
 @property (nonatomic, copy) NSString *placementId;
 @property (nonatomic, copy) NSDictionary *options;
-@property (nonatomic, assign) CGSize bannerSize;
 @property (nonatomic, assign) NSDictionary *bannerInfo;
 @property (nonatomic, assign) NSTimer *timeOutTimer;
 @property (nonatomic, assign) BOOL isAdCached;
-@property (nonatomic) CGSize bannerSize;
+@property (nonatomic, assign) CGSize bannerSize;
 
 @end
 
@@ -36,16 +35,16 @@
 {
     self.placementId = [info objectForKey:kVunglePlacementIdKey];
     self.options = nil;
-
+    
     NSString *format = [info objectForKey:@"adunit_format"];
     BOOL isMediumRectangleFormat = (format != nil ? [[format lowercaseString] containsString:@"medium_rectangle"] : NO);
     BOOL isBannerFormat = (format != nil ? [[format lowercaseString] containsString:@"banner"] : NO);
 
     //Vungle only supports Medium Rectangle or Banner
     if (!isMediumRectangleFormat && !isBannerFormat) {
-        MPLogInfo(@"Please ensure your MoPub adunit's format is Medium Rectangle or Banner. Vungle only supports 300*250, 320*50 and 728*90 sized ads.");
+        MPLogInfo(@"Vungle only supports 300*250, 320*50 and 728*90 sized ads. Please ensure your MoPub adunit's format is Medium Rectangle or Banner.");
         NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid sizes received. Vungle only supports 300 x 250, 320 x 50 and 728 x 90 ads."];
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementId);
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
         
         return;
@@ -64,9 +63,9 @@
     [[VungleRouter sharedRouter] requestBannerAdWithCustomEventInfo:info size:self.bannerSize delegate:self];
 }
 
-// Secret MoPub API to allow us to detach the custom event from (shared instance) routers synchronously
-- (void) invalidate{
-     [[VungleRouter sharedRouter] invalidateBannerAdViewForPlacementID:self.placementId delegate:self];
+- (void) invalidate
+{
+    [[VungleRouter sharedRouter] invalidateBannerAdViewForPlacementID:self.placementId delegate:self];
 }
 
 #pragma mark - VungleRouterDelegate Methods
@@ -78,12 +77,8 @@
         self.options = nil;
     }
     
-    /** If you need to play ads with Vungle options, you may modify
-     playVungleAdFromRootViewController and create an options dictionary and call
-     the playAd:withOptions: method on the Vungle SDK. */
     NSMutableDictionary *options = [NSMutableDictionary dictionary];
     
-    // VunglePlayAdOptionKeyUser
     if (self.localExtras != nil && [self.localExtras count] > 0) {
         NSString *userId = [self.localExtras objectForKey:kVungleUserId];
         if (userId != nil) {
@@ -92,8 +87,7 @@
                 options[VunglePlayAdOptionKeyUser] = userID;
             }
         }
-
-        // Ordinal
+        
         NSString *ordinal = [self.localExtras objectForKey:kVungleUserId];
         if (ordinal != nil) {
             NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[ordinal longLongValue]];
@@ -103,44 +97,24 @@
                 options[VunglePlayAdOptionKeyOrdinal] = @(ordinal);
             }
         }
-
-        // Start Muted
+        
         NSString *muted = [self.localExtras objectForKey:kVungleStartMuted];
         if (muted != nil) {
             BOOL startMutedPlaceholder = [muted boolValue];
             options[VunglePlayAdOptionKeyStartMuted] = @(startMutedPlaceholder);
         } else {
-            // Set mrec ad start-muted as default unless a user set.
             options[VunglePlayAdOptionKeyStartMuted] = @(YES);
-        }
-
-        self.options = options.count ? options : nil;
-
-        // generate view with size
-        UIView *bannerAdView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bannerSize.width, self.bannerSize.height)];
-
-        // router call to add ad view to view - should return the updated view.
-        bannerAdView = [[VungleRouter sharedRouter] renderBannerAdInView:bannerAdView options:self.options forPlacementID:self.placementId];
-        // if a view is returned, then we hit the methods below.
-        if (bannerAdView) {
-            // call router event to transmit close to SDK for report ad finalization / clean up
-            [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId];
-            [self.delegate bannerCustomEvent:self didLoadAd:bannerAdView];
-            [self.delegate trackImpression];
-            self.isAdCached = YES;
-        } else {
-            [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nil];
         }
     }
     self.options = options.count ? options : nil;
     
-    UIView *mrecAdView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bannerSize.width, self.bannerSize.height)];
+    UIView *bannerAdView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bannerSize.width, self.bannerSize.height)];
     
-    mrecAdView = [[VungleRouter sharedRouter] renderBannerAdInView:mrecAdView options:self.options forPlacementID:self.placementId];
+    bannerAdView = [[VungleRouter sharedRouter] renderBannerAdInView:bannerAdView options:self.options forPlacementID:self.placementId];
     
-    if (mrecAdView) {
+    if (bannerAdView) {
         [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId];
-        [self.delegate bannerCustomEvent:self didLoadAd:mrecAdView];
+        [self.delegate bannerCustomEvent:self didLoadAd:bannerAdView];
         [self.delegate trackImpression];
         self.isAdCached = YES;
     } else {
@@ -176,7 +150,8 @@
     return self.placementId;
 }
 
-- (CGSize)getBannerSize {
+- (CGSize)getBannerSize
+{
     return self.bannerSize;
 }
 
