@@ -52,7 +52,7 @@
         }
         
         NSMutableDictionary *options = [NSMutableDictionary dictionary];
-
+        
         if (self.localExtras != nil && [self.localExtras count] > 0) {
             NSString *ordinal = [self.localExtras objectForKey:kVungleOrdinal];
             if (ordinal != nil) {
@@ -63,9 +63,9 @@
                 }
             }
             
-            NSString *flexVieAutoDismissSeconds = [self.localExtras objectForKey:kVungleFlexViewAutoDismissSeconds];
-            if (flexVieAutoDismissSeconds != nil) {
-                NSTimeInterval flexDismissTime = [flexVieAutoDismissSeconds floatValue];
+            NSString *flexViewAutoDismissSeconds = [self.localExtras objectForKey:kVungleFlexViewAutoDismissSeconds];
+            if (flexViewAutoDismissSeconds != nil) {
+                NSTimeInterval flexDismissTime = [flexViewAutoDismissSeconds floatValue];
                 if (flexDismissTime > 0) {
                     options[VunglePlayAdOptionKeyFlexViewAutoDismissSeconds] = @(flexDismissTime);
                 }
