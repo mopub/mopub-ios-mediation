@@ -114,19 +114,22 @@
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
 }
 
-- (void)vungleAdWasTapped
+- (void)vungleAdTrackClick
 {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate fullscreenAdAdapterDidReceiveTap:self];
     [self.delegate fullscreenAdAdapterDidTrackClick:self];
-    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
-    [self.delegate fullscreenAdAdapterWillLeaveApplication:self];
 }
 
-- (void)vungleAdShouldRewardUser
+- (void)vungleAdRewardUser
 {
-    MPReward *reward = [[MPReward alloc] initWithCurrencyAmount:@(kMPRewardCurrencyAmountUnspecified)];
-    [self.delegate fullscreenAdAdapter:self willRewardUser:reward];
+    [self performSelectorOnMainThread:@selector(rewardUser) withObject:nil waitUntilDone:NO];
+}
+
+- (void)vungleAdWillLeaveApplication
+{
+    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
+    [self.delegate fullscreenAdAdapterWillLeaveApplication:self];
 }
 
 - (void)vungleAdDidFailToLoad:(NSError *)error
@@ -143,6 +146,13 @@
 
 - (NSString *)getPlacementID {
     return self.placementId;
+}
+
+- (void)rewardUser
+{
+    MPReward *reward = [[MPReward alloc] initWithCurrencyAmount:@(kMPRewardCurrencyAmountUnspecified)];
+    MPLogAdEvent([MPLogEvent adShouldRewardUserWithReward:reward], [self getPlacementID]);
+    [self.delegate fullscreenAdAdapter:self willRewardUser:reward];
 }
 
 @end

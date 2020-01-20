@@ -617,7 +617,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
     }
 }
 
-- (void)vungleWillCloseAdWithViewInfo:(VungleViewInfo *)info placementID:(NSString *)placementID {
+- (void)vungleWillCloseAdForPlacementID:(nonnull NSString *)placementID {
     id<VungleRouterDelegate> targetDelegate;
     
     if ([placementID isEqualToString:self.bannerPlacementID]) {
@@ -631,14 +631,6 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
     }
     
     if (targetDelegate) {
-        if ([info.didDownload isEqual:@YES]) {
-            [targetDelegate vungleAdWasTapped];
-        }
-        
-        if ([info.completedView boolValue] && [targetDelegate respondsToSelector:@selector(vungleAdShouldRewardUser)]) {
-            [targetDelegate vungleAdShouldRewardUser];
-        }
-        
         if ([targetDelegate respondsToSelector:@selector(vungleAdWillDisappear)]) {
             [targetDelegate vungleAdWillDisappear];
         }
@@ -646,7 +638,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
     }
 }
 
-- (void)vungleDidCloseAdWithViewInfo:(VungleViewInfo *)info placementID:(NSString *)placementID {
+- (void)vungleDidCloseAdForPlacementID:(nonnull NSString *)placementID {
     id<VungleRouterDelegate> targetDelegate;
     
     if ([placementID isEqualToString:self.bannerPlacementID]) {
@@ -673,6 +665,51 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
     
     if (targetDelegate && [targetDelegate respondsToSelector:@selector(vungleAdDidDisappear)]) {
         [targetDelegate vungleAdDidDisappear];
+    }
+}
+
+- (void)vungleTrackClickForPlacementID:(nullable NSString *)placementID {
+    if (!placementID) {
+        return;
+    }
+
+    id<VungleRouterDelegate> targetDelegate = nil;
+    if ([placementID isEqualToString:self.bannerPlacementID]) {
+        for (int i = 0; i < self.bannerDelegates.count; i++) {
+            if ((BannerRouterDelegateState)[[self.bannerDelegates[i] valueForKey:kVungleBannerDelegateStateKey] intValue] == BannerRouterDelegateStatePlaying) {
+                targetDelegate = [self.bannerDelegates[i] objectForKey:kVungleBannerDelegateKey];
+            }
+        }
+    } else {
+        targetDelegate = [self.delegatesDict objectForKey:placementID];
+    }
+
+    if (targetDelegate) {
+        [targetDelegate vungleAdTrackClick];
+    }
+}
+
+- (void)vungleRewardUserForPlacementID:(nullable NSString *)placementID {
+    id<VungleRouterDelegate> targetDelegate = [self.delegatesDict objectForKey:placementID];
+    if (targetDelegate && [targetDelegate respondsToSelector:@selector(vungleAdRewardUser)]) {
+        [targetDelegate vungleAdRewardUser];
+    }
+}
+
+- (void)vungleWillLeaveApplicationForPlacementID:(nullable NSString *)placementID {
+    id<VungleRouterDelegate> targetDelegate;
+
+    if ([placementID isEqualToString:self.bannerPlacementID]) {
+        for (int i = 0; i < self.bannerDelegates.count; i++) {
+            if ((BannerRouterDelegateState)[[self.bannerDelegates[i] valueForKey:kVungleBannerDelegateStateKey] intValue] == BannerRouterDelegateStatePlaying) {
+                targetDelegate = [self.bannerDelegates[i] objectForKey:kVungleBannerDelegateKey];
+            }
+        }
+    } else {
+        targetDelegate = [self.delegatesDict objectForKey:placementID];
+    }
+    if (targetDelegate) {
+        [targetDelegate vungleAdWillLeaveApplication];
     }
 }
 

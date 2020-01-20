@@ -60,17 +60,15 @@ extern const CGSize kVNGLeaderboardBannerSize;
 - (void)vungleAdDidAppear;
 - (void)vungleAdWillDisappear;
 - (void)vungleAdDidDisappear;
-- (void)vungleAdWasTapped;
+- (void)vungleAdTrackClick;
+- (void)vungleAdWillLeaveApplication;
 - (void)vungleAdDidFailToPlay:(NSError *)error;
 - (void)vungleAdDidFailToLoad:(NSError *)error;
 - (NSString *)getPlacementID;
 
 @optional
 
-- (void)vungleAdShouldRewardUser;
-
-// @note This should only be used with banner ads
-- (void)vungleAdWillLeaveApplication;
+- (void)vungleAdRewardUser;
 
 - (void)vungleBannerAdDidLoadInView:(UIView *)view;
 

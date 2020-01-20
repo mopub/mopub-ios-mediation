@@ -143,7 +143,7 @@
     }
 }
 
-- (void)vungleAdWasTapped
+- (void)vungleAdTrackClick
 {
     MPLogInfo(@"Vungle video banner was tapped");
     [self.delegate inlineAdAdapterWillBeginUserAction:self];
@@ -165,6 +165,8 @@
 - (void)vungleAdWillLeaveApplication
 {
     MPLogInfo(@"Vungle video banner will leave the application");
+    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)],
+                 self.getPlacementID);
     [self.delegate inlineAdAdapterWillLeaveApplication:self];
 }
 
