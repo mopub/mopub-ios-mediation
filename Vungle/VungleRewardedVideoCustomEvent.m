@@ -105,15 +105,21 @@
     [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
 }
 
-- (void)vungleAdWasTapped
+- (void)vungleAdTrackClick
 {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate rewardedVideoDidReceiveTapEventForCustomEvent:self];
 }
 
-- (void)vungleAdShouldRewardUser
+- (void)vungleAdRewardUser
 {
-    [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:[[MPRewardedVideoReward alloc] initWithCurrencyAmount:@(kMPRewardedVideoRewardCurrencyAmountUnspecified)]];
+    [self performSelectorOnMainThread:@selector(rewardUser) withObject:nil waitUntilDone:NO];
+}
+
+- (void)vungleAdWillLeaveApplication
+{
+    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
+    [self.delegate rewardedVideoWillLeaveApplicationForCustomEvent:self];
 }
 
 - (void)vungleAdDidFailToLoad:(NSError *)error
@@ -130,6 +136,13 @@
 
 - (NSString *)getPlacementID {
     return self.placementId;
+}
+
+- (void)rewardUser
+{
+    MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyAmount:@(kMPRewardedVideoRewardCurrencyAmountUnspecified)];
+    MPLogAdEvent([MPLogEvent adShouldRewardUserWithReward:reward], [self getPlacementID]);
+    [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:reward];
 }
 
 @end

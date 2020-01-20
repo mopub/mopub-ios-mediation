@@ -143,10 +143,16 @@
     [self.delegate interstitialCustomEventDidDisappear:self];
 }
 
-- (void)vungleAdWasTapped
+- (void)vungleAdTrackClick
 {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate interstitialCustomEventDidReceiveTapEvent:self];
+}
+
+- (void)vungleAdWillLeaveApplication
+{
+    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
+    [self.delegate interstitialCustomEventWillLeaveApplication:self];
 }
 
 - (void)vungleAdDidFailToLoad:(NSError *)error
