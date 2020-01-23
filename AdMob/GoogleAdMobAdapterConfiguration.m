@@ -75,7 +75,7 @@ typedef NS_ENUM(NSInteger, AdMobAdapterErrorCode) {
 {
     if (MoPub.sharedInstance.canCollectPersonalInfo)
     {
-      return @"0";
+      return @"";
     }
     return @"1";
 }
