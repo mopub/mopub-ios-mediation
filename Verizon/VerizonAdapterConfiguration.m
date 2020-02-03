@@ -5,7 +5,7 @@
 #import <CoreTelephony/CTCarrier.h>
 #import "VerizonAdapterConfiguration.h"
 
-NSString * const kMoPubVASAdapterVersion = @"1.3.0.0";
+NSString * const kMoPubVASAdapterVersion = @"1.3.1.0";
 
 NSString * const kMoPubVASAdapterErrorWho = @"MoPubVASAdapter";
 NSString * const kMoPubVASAdapterPlacementId = @"placementId";
