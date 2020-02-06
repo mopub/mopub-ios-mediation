@@ -225,7 +225,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
         }
     }
     
-    if ([self validateInfoData:info] && (CGSizeEqualToSize(size, kVNGMRECSize) || CGSizeEqualToSize(size, kVNGBannerSize) || CGSizeEqualToSize(size, kVNGLeaderboardBannerSize))) {
+    if ([self validateInfoData:info] && (CGSizeEqualToSize(size, kVNGMRECSize) || CGSizeEqualToSize(size, kVNGBannerSize) || CGSizeEqualToSize(size, kVNGLeaderboardBannerSize) || CGSizeEqualToSize(size, kVNGShortBannerSize))) {
         self.bannerPlacementID = [info objectForKey:kVunglePlacementIdKey];
         self.isInvalidatedBannerForPlacementID = NO;
         

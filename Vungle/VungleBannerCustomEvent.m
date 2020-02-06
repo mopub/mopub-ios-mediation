@@ -50,7 +50,7 @@
         return;
     }
 
-    self.bannerSize = isMediumRectangleFormat ? kVNGMRECSize : size;
+    self.bannerSize = isMediumRectangleFormat ? kVNGMRECSize : [self sizeForCustomEventInfo:size];
     self.bannerInfo = info;
     self.isAdCached = NO;
     
@@ -66,6 +66,22 @@
 - (void) invalidate
 {
     [[VungleRouter sharedRouter] invalidateBannerAdViewForPlacementID:self.placementId delegate:self];
+}
+
+- (CGSize)sizeForCustomEventInfo:(CGSize)size
+{
+    CGFloat width = size.width;
+    CGFloat height = size.height;
+
+    if (height >= kVNGLeaderboardBannerSize.height && width >= kVNGLeaderboardBannerSize.width) {
+        return kVNGLeaderboardBannerSize;
+    } else if (height >= kVNGBannerSize.height && width >= kVNGBannerSize.width) {
+        return kVNGBannerSize;
+    } else if (height >= kVNGShortBannerSize.height && width >= kVNGShortBannerSize.width) {
+        return kVNGShortBannerSize;
+    } else {
+        return kVNGShortBannerSize;
+    }
 }
 
 #pragma mark - VungleRouterDelegate Methods
