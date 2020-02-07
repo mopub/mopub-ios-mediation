@@ -82,7 +82,7 @@
     CGFloat width = size.width;
     CGFloat height = size.height;
     
-    if (width, height) {
+    if (width > 0 && height > 0 ) {
         if (height >= kAdColonyAdSizeSkyscraper.height && width >= kAdColonyAdSizeSkyscraper.width) {
             return kAdColonyAdSizeSkyscraper;
         } else if (height >= kAdColonyAdSizeMediumRectangle.height && width >= kAdColonyAdSizeMediumRectangle.width) {
