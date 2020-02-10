@@ -5,7 +5,7 @@
 #import <CoreTelephony/CTCarrier.h>
 #import "VerizonAdapterConfiguration.h"
 
-NSString * const kMoPubVASAdapterVersion = @"1.3.1.0";
+NSString * const kMoPubVASAdapterVersion = @"1.4.0.0";
 
 NSString * const kMoPubVASAdapterErrorWho = @"MoPubVASAdapter";
 NSString * const kMoPubVASAdapterPlacementId = @"placementId";
@@ -77,7 +77,8 @@ static NSString * const kVASEditionVersionKey   = @"editionVersion";
 
 - (NSString *)biddingToken
 {
-    return @"test_token";
+    VASRequestMetadata *metadata = [[VASAds sharedInstance] requestMetadata];
+    return [[VASAds sharedInstance] biddingTokenUsingMetadata:metadata];
 }
 
 - (NSString *)moPubNetworkName
