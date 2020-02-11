@@ -306,10 +306,10 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 - (void)presentInterstitialAdFromViewController:(UIViewController *)viewController options:(NSDictionary *)options forPlacementId:(NSString *)placementId {
     if (!self.isAdPlaying && [self isAdAvailableForPlacementId:placementId]) {
         self.isAdPlaying = YES;
-        NSError *error;
+        NSError *error = nil;
         BOOL success = [[VungleSDK sharedSDK] playAd:viewController options:options placementID:placementId error:&error];
         if (!success) {
-            [[self.delegatesDict objectForKey:placementId] vungleAdDidFailToPlay:nil];
+            [[self.delegatesDict objectForKey:placementId] vungleAdDidFailToPlay:error ?: [NSError errorWithCode:MOPUBErrorVideoPlayerFailedToPlay localizedDescription:@"Failed to play Vungle Interstitial Ad."]];
             self.isAdPlaying = NO;
         }
     } else {
@@ -345,10 +345,11 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
         
         options[VunglePlayAdOptionKeyOrientations] = orientations;
         
-        BOOL success = [[VungleSDK sharedSDK] playAd:viewController options:options placementID:placementId error:nil];
+        NSError *error = nil;
+        BOOL success = [[VungleSDK sharedSDK] playAd:viewController options:options placementID:placementId error:&error];
         
         if (!success) {
-            [[self.delegatesDict objectForKey:placementId] vungleAdDidFailToPlay:nil];
+            [[self.delegatesDict objectForKey:placementId] vungleAdDidFailToPlay:error ?: [NSError errorWithCode:MOPUBErrorVideoPlayerFailedToPlay localizedDescription:@"Failed to play Vungle Rewarded Video Ad."]];
             self.isAdPlaying = NO;
         }
     } else {
