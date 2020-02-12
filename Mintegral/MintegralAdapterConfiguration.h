@@ -9,8 +9,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define MintegralAdapterVersion MTGSDKVersion@".2"
-
 extern NSString *const kMintegralErrorDomain;
 
 @interface MintegralAdapterConfiguration : MPBaseAdapterConfiguration

@@ -21,7 +21,7 @@ NSString *const kNetworkName = @"mintegral";
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return MintegralAdapterVersion;
+    return @"5.8.8.0.0";
 }
 
 - (NSString *)biddingToken {
@@ -33,7 +33,7 @@ NSString *const kNetworkName = @"mintegral";
 }
 
 - (NSString *)networkSdkVersion {
-    return MTGSDKVersion;
+    return @"5.8.8.0";
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *,id> *)configuration complete:(void (^)(NSError * _Nullable))complete {
@@ -43,29 +43,33 @@ NSString *const kNetworkName = @"mintegral";
     NSString *appId = nil;
     NSString *appKey = nil;
     
-    if(configuration == nil){
-        errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appId and appKey;"];
-    }else{
+    if (configuration == nil) {
+        errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appId and appKey"];
+     } else {
         appId = [configuration objectForKey:@"appId"];
         appKey = [configuration objectForKey:@"appKey"];
-        if(appId == nil){
-            errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appId;"];
-        }
-        if(appKey == nil){
-            errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appKey;"];
-        } 
-    }
-    if (errorMsg.length>0) {
-        NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:MPErrorNetworkConnectionFailed userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
 
+        if (appId == nil) {
+            errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appId"];
+        }
+         
+        if (appKey == nil) {
+            errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appKey"];
+        }
+    }
+    
+    if (errorMsg.length > 0) {
+        NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:MPErrorNetworkConnectionFailed userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
+        
         if (complete != nil) {
             complete(error);
         }
+
         return;
     }
     
     [MintegralAdapterConfiguration initializeMintegral:configuration setAppID:appId appKey:appKey];
-
+    
     if (complete != nil) {
         complete(nil);
     }
