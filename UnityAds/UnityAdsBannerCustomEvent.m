@@ -56,7 +56,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
                                      andReason:@"UnityAds only supports banner ads"
                                  andSuggestion:@"Ensure the format type of your MoPub adunit is banner and not Medium Rectangle."];
         
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nil];
         
         return;

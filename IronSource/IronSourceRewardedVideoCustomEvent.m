@@ -19,6 +19,10 @@
 
 #pragma mark Mopub IronSourceRewardedVideoCustomEvent Methods
 
+- (NSString *) getAdNetworkId {
+    return _instanceID;
+}
+
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     MPLogInfo(@"IronSource requestRewardedVideoWithCustomEventInfo with: %@", info);
     
@@ -34,8 +38,8 @@
         if (info == nil) {
             MPLogInfo(@"serverParams is null. Make sure you have entered IronSource's application and instance keys on the MoPub dashboard");
             NSError *error = [IronSourceUtils createErrorWith:@"Can't initialize IronSource Rewarded Video"
-                                         andReason:@"serverParams is null"
-                                     andSuggestion:@"make sure that server parameters is added"];
+                                                    andReason:@"serverParams is null"
+                                                andSuggestion:@"make sure that server parameters is added"];
             MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error: error], self.instanceID);
             [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
             return;
@@ -76,13 +80,15 @@
 
 - (BOOL)hasAdAvailable {
     BOOL isRVAvailable = [IronSource hasISDemandOnlyRewardedVideo:self.instanceID];
-    MPLogInfo(@"IronSource hasAdAvailable returned %d (current instance: %@)", isRVAvailable, self.instanceID);
+    MPLogInfo(@"IronSource hasAdAvailable returned %d (current instance: %@)",
+              isRVAvailable, [self getAdNetworkId]);
     return isRVAvailable;
 }
 
 - (void)presentRewardedVideoFromViewController:(UIViewController *)viewController {
-    MPLogInfo(@"IronSource showRewardedVideo for instance %@", self.instanceID);
-    MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.instanceID);
+    MPLogInfo(@"IronSource showRewardedVideo for instance %@",
+              [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [[IronSourceManager sharedManager] presentRewardedAdFromViewController:viewController
                                                                  instanceID:_instanceID];}
 
@@ -96,7 +102,8 @@
 
 #pragma mark IronSource RV Methods
 -(void) loadRewardedVideo:(NSString *)instanceId{
-    MPLogInfo(@"IronSource loadRewardedVideo for instance %@ (current instance %@)", instanceId, self.instanceID);
+    MPLogInfo(@"IronSource loadRewardedVideo for instance %@ (current instance %@)",
+              instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil],instanceId);
     [[IronSourceManager sharedManager] loadRewardedAdWithDelegate:self instanceID: instanceId];
 }
@@ -110,7 +117,8 @@
  *          The error contains error.code and error.message.
  */
 - (void)rewardedVideoDidFailToShowWithError:(NSError *)error instanceId:(NSString *)instanceId {
-    MPLogInfo(@"IronSource RewardedVideo failed to show for instance %@ (current isntance %@)", instanceId, self.instanceID);
+    MPLogInfo(@"IronSource RewardedVideo failed to show for instance %@ (current isntance %@)",
+              instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], instanceId);
     [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
 }
@@ -120,7 +128,8 @@
  *
  */
 - (void)rewardedVideoDidOpen:(NSString *)instanceId {
-    MPLogInfo(@"IronSource RewardedVideo did open for instance %@ (current instance %@)", instanceId, self.instanceID);
+    MPLogInfo(@"IronSource RewardedVideo did open for instance %@ (current instance %@)",
+              instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], instanceId);
     [self.delegate rewardedVideoWillAppearForCustomEvent:self];
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], instanceId);
@@ -133,7 +142,8 @@
  *
  */
 - (void)rewardedVideoDidClose:(NSString *)instanceId {
-    MPLogInfo(@"IronSource RewardedVideo did close for instance %@ (current instance %@)", instanceId, self.instanceID);
+    MPLogInfo(@"IronSource RewardedVideo did close for instance %@ (current instance %@)",
+              instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], instanceId);
     [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], instanceId);
@@ -141,7 +151,8 @@
 }
 
 - (void)rewardedVideoAdRewarded:(NSString *)instanceId {
-    MPLogInfo(@"IronSource received reward for instance %@ (current instance %@)", instanceId, self.instanceID);
+    MPLogInfo(@"IronSource received reward for instance %@ (current instance %@)",
+              instanceId, [self getAdNetworkId]);
     MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyType:kMPRewardedVideoRewardCurrencyTypeUnspecified amount: @(kMPRewardedVideoRewardCurrencyAmountUnspecified)];
     MPLogEvent([MPLogEvent adShouldRewardUserWithReward:reward]);
     [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:reward];
@@ -151,7 +162,8 @@
  * @discussion Invoked when a video has been clicked.
  */
 - (void)rewardedVideoDidClick:(NSString *)instanceId {
-    MPLogInfo(@"IronSource RewardedVideo did click for instance %@ (current instance %@)", instanceId, self.instanceID);
+    MPLogInfo(@"IronSource RewardedVideo did click for instance %@ (current instance %@)",
+              instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], instanceId);
     [self.delegate rewardedVideoDidReceiveTapEventForCustomEvent:self];
     [self.delegate rewardedVideoWillLeaveApplicationForCustomEvent:self];
@@ -159,14 +171,16 @@
 
 
 - (void)rewardedVideoDidFailToLoadWithError:(NSError *)error instanceId:(NSString *)instanceId {
-    MPLogDebug(@"IronSource RewardedVideo load fail for instance:%@ (current instance: %@)", instanceId, self.instanceID);
+    MPLogDebug(@"IronSource RewardedVideo load fail for instance %@ (current instance: %@)",
+               instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error: error], instanceId);
     [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error: error];
 }
 
 
 - (void)rewardedVideoDidLoad:(NSString *)instanceId {
-    MPLogInfo(@"IronSource RewardedVideo did load for instance:%@ (current instance: %@)", instanceId, self.instanceID);
+    MPLogInfo(@"IronSource RewardedVideo did load for instance %@ (current instance: %@)",
+              instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], instanceId);
     [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
 }

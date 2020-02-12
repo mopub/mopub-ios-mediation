@@ -1,4 +1,11 @@
 ## Changelog
+  * 6.4.6.1
+    * Remove duplicate `rewardedVideoDidAppearForCustomEvent` callback.
+    * Adapter logging cleanup.
+
+  * 6.4.6.0
+    * This version of the adapters has been certified with Vungle 6.4.6.
+    
   * 6.4.5.1
     * Pass mute and ad orientations settings for interstitial ad.
     * Remove passing user ID setting for interstitial ad.

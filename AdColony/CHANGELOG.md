@@ -1,4 +1,8 @@
 ## Changelog
+  * 4.1.2.1
+    * Add support for banners (introduced in AdColony 4.1.0).
+    * Move AdColony parameters handling logic to `AdColonyAdapterConfiguration`.
+
   * 4.1.2.0
     * This version of the adapters has been certified with AdColony 4.1.2 and is compatible with iOS 13.
   

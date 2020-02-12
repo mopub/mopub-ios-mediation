@@ -53,8 +53,7 @@ NSString *const kNetworkName = @"mintegral";
         }
         if(appKey == nil){
             errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appKey;"];
-        }
-        
+        } 
     }
     if (errorMsg.length>0) {
         NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:MPErrorNetworkConnectionFailed userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
@@ -74,7 +73,6 @@ NSString *const kNetworkName = @"mintegral";
 
 +(void)initializeMintegral:(NSDictionary *)info setAppID:(nonnull NSString *)appId appKey:(nonnull NSString *)appKey {
     if (![MintegralAdapterConfiguration isSDKInitialized]) {
-        [MintegralAdapterConfiguration setGDPRInfo:info];
         [[MTGSDK sharedInstance] setAppID:appId ApiKey:appKey];
         [MintegralAdapterConfiguration sdkInitialized];
     }
@@ -95,15 +93,6 @@ NSString *const kNetworkName = @"mintegral";
 #pragma clang diagnostic pop
     mintegralSDKInitialized = YES;
     MPLogInfo(@"Mintegral sdkInitialized");
-}
-
-+(void)setGDPRInfo:(NSDictionary *)info {
-    if ([[MoPub sharedInstance] canCollectPersonalInfo])
-    {
-        [[MTGSDK sharedInstance] setConsentStatus:YES];
-    } else {
-        [[MTGSDK sharedInstance] setConsentStatus:NO];
-    }
 }
 
 +(void)setTargeting:(NSInteger)age gender:(MTGGender)gender latitude:(NSString *)latitude longitude:(NSString *)longitude pay:(MTGUserPayType)pay {

@@ -95,14 +95,24 @@
 }
 
 - (CGRect)frameForCustomEventInfo:(CGSize)size {
-  CGFloat width = size.width;
-  CGFloat height = size.height;
-
-  if (width < GAD_SIZE_320x50.width && height < GAD_SIZE_320x50.height) {
-    width = GAD_SIZE_320x50.width;
-    height = GAD_SIZE_320x50.height;
-  }
-  return CGRectMake(0, 0, width, height);
+    CGFloat width = size.width;
+    CGFloat height = size.height;
+    
+    if (height >= GAD_SIZE_120x600.height && width >= GAD_SIZE_120x600.width) {
+        return CGRectMake(0, 0, GAD_SIZE_120x600.width, GAD_SIZE_120x600.height);
+    } else if (height >= GAD_SIZE_300x250.height && width >= GAD_SIZE_300x250.width) {
+        return CGRectMake(0, 0, GAD_SIZE_300x250.width, GAD_SIZE_300x250.height);
+    } else if (height >= GAD_SIZE_320x100.height && width >= GAD_SIZE_320x100.width) {
+        return CGRectMake(0, 0, GAD_SIZE_320x100.width, GAD_SIZE_320x100.height);
+    } else if (height >= GAD_SIZE_728x90.height && width >= GAD_SIZE_728x90.width) {
+        return CGRectMake(0, 0, GAD_SIZE_728x90.width, GAD_SIZE_728x90.height);
+    } else if (height >= GAD_SIZE_468x60.height && width >= GAD_SIZE_468x60.width) {
+        return CGRectMake(0, 0, GAD_SIZE_468x60.width, GAD_SIZE_468x60.height);
+    } else if (height >= GAD_SIZE_320x50.height && width >= GAD_SIZE_320x50.width) {
+        return CGRectMake(0, 0, GAD_SIZE_320x50.width, GAD_SIZE_320x50.height);
+    } else {
+        return CGRectMake(0, 0, GAD_SIZE_320x50.width, GAD_SIZE_320x50.height);
+    }
 }
 
 #pragma mark GADBannerViewDelegate methods

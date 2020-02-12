@@ -20,6 +20,7 @@ static const NSInteger FacebookNoFillErrorCode = 1001;
 @interface FacebookNativeCustomEvent () <FBNativeAdDelegate, FBNativeBannerAdDelegate>
 
 @property (nonatomic, readwrite, strong) FBNativeAdBase *fbNativeAdBase;
+
 @property (nonatomic, copy) NSString *fbPlacementId;
 @property (nonatomic) Boolean isNativeBanner;
 
