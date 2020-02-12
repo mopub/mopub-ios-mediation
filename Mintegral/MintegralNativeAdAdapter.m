@@ -11,7 +11,7 @@
 
 NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 
-@interface MintegralNativeAdAdapter () <MTGNativeAdManagerDelegate,MTGMediaViewDelegate, MTGBidNativeAdManagerDelegate>
+@interface MintegralNativeAdAdapter () <MTGNativeAdManagerDelegate, MTGMediaViewDelegate, MTGBidNativeAdManagerDelegate>
 
 @property (nonatomic, readonly) MTGNativeAdManager *nativeAdManager;
 @property (nonatomic, strong) MTGBidNativeAdManager *nativeBidAdManager;
@@ -32,11 +32,10 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
         if (nativeAdManager) {
             _nativeAdManager = nativeAdManager;
             _nativeAdManager.delegate = self;
-        }else if (bidAdManager){
+        } else if (bidAdManager) {
             _nativeBidAdManager = bidAdManager;
             _nativeBidAdManager.delegate = self;
         }
-        
         
         NSMutableDictionary *properties = [NSMutableDictionary dictionary];
         
@@ -71,15 +70,17 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
     return self;
 }
 
--(void)dealloc{
+-(void)dealloc {
     if (_nativeAdManager) {
         _nativeAdManager.delegate = nil;
         _nativeAdManager = nil;
     }
+
     if (_nativeBidAdManager) {
         _nativeBidAdManager.delegate = nil;
         _nativeBidAdManager = nil;
     }
+
     _mediaView.delegate = nil;
     _mediaView = nil;
 }
@@ -165,20 +166,16 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 
 - (void)willAttachToView:(UIView *)view
 {
-    
     if (_mediaView) {
         UIView *sView = _mediaView.superview;
         [sView.superview bringSubviewToFront:sView];
     }
+
     if (_nativeAdManager) {
-        
         [self.nativeAdManager registerViewForInteraction:view withCampaign:_campaign];
-    }else if (_nativeBidAdManager){
-        
+    } else if (_nativeBidAdManager){
         [self.nativeBidAdManager registerViewForInteraction:view withCampaign:_campaign];
     }
-    
-    
 }
 
 - (UIView *)privacyInformationIconView

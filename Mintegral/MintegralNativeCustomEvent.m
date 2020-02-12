@@ -8,7 +8,7 @@
     #import "MPLogging.h"
 #endif
 
-@interface MintegralNativeCustomEvent()<MTGNativeAdManagerDelegate,MTGMediaViewDelegate, MTGBidNativeAdManagerDelegate>
+@interface MintegralNativeCustomEvent()<MTGNativeAdManagerDelegate, MTGMediaViewDelegate, MTGBidNativeAdManagerDelegate>
 
 @property (nonatomic, readwrite, strong) MTGNativeAdManager *mtgNativeAdManager;
 @property (nonatomic, readwrite, copy) NSString *adUnitId;
