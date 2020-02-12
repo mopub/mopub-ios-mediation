@@ -42,7 +42,7 @@ extern const CGSize kVNGLeaderboardBannerSize;
 - (BOOL)isAdAvailableForPlacementId:(NSString *)placementId;
 - (void)presentInterstitialAdFromViewController:(UIViewController *)viewController options:(NSDictionary *)options forPlacementId:(NSString *)placementId;
 - (void)presentRewardedVideoAdFromViewController:(UIViewController *)viewController customerId:(NSString *)customerId settings:(VungleInstanceMediationSettings *)settings forPlacementId:(NSString *)placementId;
-- (UIView *)renderBannerAdInView:(UIView *)bannerView options:(NSDictionary *)options forPlacementID:(NSString *)placementID;
+- (UIView *)renderBannerAdInView:(UIView *)bannerView options:(NSDictionary *)options forPlacementID:(NSString *)placementID size:(CGSize)size;
 - (void)completeBannerAdViewForPlacementID:(NSString *)placementID;
 - (void)invalidateBannerAdViewForPlacementID:(NSString *)placementID delegate:(id<VungleRouterDelegate>)delegate;
 - (void)updateConsentStatus:(VungleConsentStatus)status;

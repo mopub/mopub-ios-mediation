@@ -126,7 +126,7 @@
     
     UIView *bannerAdView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bannerSize.width, self.bannerSize.height)];
     
-    bannerAdView = [[VungleRouter sharedRouter] renderBannerAdInView:bannerAdView options:self.options forPlacementID:self.placementId];
+    bannerAdView = [[VungleRouter sharedRouter] renderBannerAdInView:bannerAdView options:self.options forPlacementID:self.placementId size:self.bannerSize];
     
     if (bannerAdView) {
         [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId];

@@ -267,7 +267,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 
 - (void)requestBannerAdWithPlacementID:(NSString *)placementID size:(CGSize)size delegate:(id<VungleRouterDelegate>)delegate {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
-    if ([[VungleSDK sharedSDK]  isAdCachedForPlacementID:placementID]) {
+    if ([self isBannerAdAvailableForPlacementId:placementID size:size]) {
         [delegate vungleAdDidLoad];
         
         [dictionary setObject:delegate forKey:kVungleBannerDelegateKey];
@@ -301,6 +301,14 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 
 - (BOOL)isAdAvailableForPlacementId:(NSString *) placementId {
     return [[VungleSDK sharedSDK] isAdCachedForPlacementID:placementId];
+}
+
+- (BOOL)isBannerAdAvailableForPlacementId:(NSString *)placementId size:(CGSize)size{
+    if (CGSizeEqualToSize(size, kVNGMRECSize)) {
+        return [[VungleSDK sharedSDK] isAdCachedForPlacementID:placementId];
+    }
+
+    return [[VungleSDK sharedSDK] isAdCachedForPlacementID:placementId withSize:[self getVungleBannerAdSizeType:size]];
 }
 
 - (void)presentInterstitialAdFromViewController:(UIViewController *)viewController options:(NSDictionary *)options forPlacementId:(NSString *)placementId {
@@ -358,10 +366,10 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
     }
 }
 
-- (UIView *)renderBannerAdInView:(UIView *)bannerView options:(NSDictionary *)options forPlacementID:(NSString *)placementID {
+- (UIView *)renderBannerAdInView:(UIView *)bannerView options:(NSDictionary *)options forPlacementID:(NSString *)placementID size:(CGSize)size {
     NSError *bannerError = nil;
     
-    if ([[VungleSDK sharedSDK] isAdCachedForPlacementID:placementID]) {
+    if ([self isBannerAdAvailableForPlacementId:placementID size:size]) {
         BOOL success = [[VungleSDK sharedSDK] addAdViewToView:bannerView withOptions:options placementID:placementID error:&bannerError];
         
         if (success) {
