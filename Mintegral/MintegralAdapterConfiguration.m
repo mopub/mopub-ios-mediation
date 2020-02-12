@@ -39,15 +39,24 @@ NSString *const kNetworkName = @"mintegral";
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *,id> *)configuration complete:(void (^)(NSError * _Nullable))complete {
     MPLogInfo(@"initializeNetworkWithConfiguration for Mintegral");
     
-    NSString *appId = [configuration objectForKey:@"appId"];
-    NSString *appKey = [configuration objectForKey:@"appKey"];
+    NSString *errorMsg = @"";
+    NSString *appId = nil;
+    NSString *appKey = nil;
     
-    NSString *errorMsg = nil;
-    
-    if (!appId) errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appId;"];
-    if (!appKey) errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appKey;"];
-    
-    if (errorMsg) {
+    if(configuration == nil){
+        errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appId and appKey;"];
+    }else{
+        appId = [configuration objectForKey:@"appId"];
+        appKey = [configuration objectForKey:@"appKey"];
+        if(appId == nil){
+            errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appId;"];
+        }
+        if(appKey == nil){
+            errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appKey;"];
+        }
+        
+    }
+    if (errorMsg.length>0) {
         NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:MPErrorNetworkConnectionFailed userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
 
         if (complete != nil) {
