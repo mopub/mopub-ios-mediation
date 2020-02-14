@@ -291,9 +291,11 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
             if ([[VungleSDK sharedSDK] loadPlacementWithID:placementID withSize:[self getVungleBannerAdSizeType:size] error:&error]) {
                 MPLogInfo(@"Vungle: Start to load an ad for Placement ID :%@", placementID);
             } else {
-                [self requestBannerAdFailedWithError:error
-                                         placementID:placementID
-                                            delegate:delegate];
+                if ((error) && (error.code != VungleSDKResetPlacementForDifferentAdSize)) {
+                    [self requestBannerAdFailedWithError:error
+                                             placementID:placementID
+                                                delegate:delegate];
+                }
             }
         }
     }
