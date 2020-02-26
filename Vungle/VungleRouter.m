@@ -215,7 +215,6 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 - (void)requestBannerAdWithCustomEventInfo:(NSDictionary *)info size:(CGSize)size delegate:(id<VungleRouterDelegate>)delegate {
     [self collectConsentStatusFromMoPub];
     
-    // If bannerDelegates is empty, it means no refresh is ongoing. So, we can request new banner with different PlacementID.
     if (self.bannerDelegates.count > 0) {
         if (self.bannerPlacementID != nil && ![[info objectForKey:kVunglePlacementIdKey] isEqualToString:self.bannerPlacementID]) {
             
@@ -225,7 +224,10 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
         }
     }
     
-    if ([self validateInfoData:info] && (CGSizeEqualToSize(size, kVNGMRECSize) || CGSizeEqualToSize(size, kVNGBannerSize) || CGSizeEqualToSize(size, kVNGLeaderboardBannerSize) || CGSizeEqualToSize(size, kVNGShortBannerSize))) {
+    if ([self validateInfoData:info] && (CGSizeEqualToSize(size, kVNGMRECSize) ||
+                                         CGSizeEqualToSize(size, kVNGBannerSize) ||
+                                         CGSizeEqualToSize(size, kVNGLeaderboardBannerSize) ||
+                                         CGSizeEqualToSize(size, kVNGShortBannerSize))) {
         self.bannerPlacementID = [info objectForKey:kVunglePlacementIdKey];
         self.isInvalidatedBannerForPlacementID = NO;
         

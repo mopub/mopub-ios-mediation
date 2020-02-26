@@ -89,7 +89,6 @@
 - (void)vungleAdDidLoad
 {
     if (self.options) {
-        // In the event that options have been updated
         self.options = nil;
     }
     
