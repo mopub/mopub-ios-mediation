@@ -62,16 +62,10 @@
     }
 }
 
-- (void)willShowAd:(CHBShowEvent *)event error:(CHBShowError *)error
+- (void)willShowAd:(CHBShowEvent *)event
 {
-    if (error) {
-        NSError *nserror = [NSError errorWithShowEvent:event error:error];
-        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:nserror], event.ad.location);
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:nserror];
-    } else {
-        MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], event.ad.location);
-        [self.delegate interstitialCustomEventWillAppear:self];
-    }
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], event.ad.location);
+    [self.delegate interstitialCustomEventWillAppear:self];
 }
 
 - (void)didShowAd:(CHBShowEvent *)event error:(CHBShowError *)error
