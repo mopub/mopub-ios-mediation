@@ -1,4 +1,8 @@
 ## Changelog
+  * 4.1.3.0
+    * This version of the adapters has been certified with AdColony 4.1.3.
+    * Log the AdColony zone id in ad lifecycle events.
+
   * 4.1.2.1
     * Add support for banners (introduced in AdColony 4.1.0).
     * Move AdColony parameters handling logic to `AdColonyAdapterConfiguration`.

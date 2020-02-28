@@ -22,6 +22,9 @@ extern NSString *const kVungleSDKMinSpaceForAdRequest;
 extern NSString *const kVungleSDKMinSpaceForAssetLoad;
 
 extern const CGSize kVNGMRECSize;
+extern const CGSize kVNGBannerSize;
+extern const CGSize kVNGShortBannerSize;
+extern const CGSize kVNGLeaderboardBannerSize;
 
 @protocol VungleRouterDelegate;
 @class VungleInstanceMediationSettings;
@@ -39,7 +42,7 @@ extern const CGSize kVNGMRECSize;
 - (BOOL)isAdAvailableForPlacementId:(NSString *)placementId;
 - (void)presentInterstitialAdFromViewController:(UIViewController *)viewController options:(NSDictionary *)options forPlacementId:(NSString *)placementId;
 - (void)presentRewardedVideoAdFromViewController:(UIViewController *)viewController customerId:(NSString *)customerId settings:(VungleInstanceMediationSettings *)settings forPlacementId:(NSString *)placementId;
-- (UIView *)renderBannerAdInView:(UIView *)bannerView options:(NSDictionary *)options forPlacementID:(NSString *)placementID;
+- (UIView *)renderBannerAdInView:(UIView *)bannerView options:(NSDictionary *)options forPlacementID:(NSString *)placementID size:(CGSize)size;
 - (void)completeBannerAdViewForPlacementID:(NSString *)placementID;
 - (void)invalidateBannerAdViewForPlacementID:(NSString *)placementID delegate:(id<VungleRouterDelegate>)delegate;
 - (void)updateConsentStatus:(VungleConsentStatus)status;
@@ -69,5 +72,7 @@ extern const CGSize kVNGMRECSize;
 - (void)vungleAdWillLeaveApplication;
 
 - (void)vungleBannerAdDidLoadInView:(UIView *)view;
+
+- (CGSize)getBannerSize;
 
 @end

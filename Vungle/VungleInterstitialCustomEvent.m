@@ -38,7 +38,7 @@
     // Cache the initialization parameters
     [VungleAdapterConfiguration updateInitializationParameters:info];
     
-    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.placementId);
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getPlacementID]);
     [[VungleRouter sharedRouter] requestInterstitialAdWithCustomEventInfo:info delegate:self];
 }
 
@@ -63,9 +63,9 @@
                 }
             }
             
-            NSString *flexVieAutoDismissSeconds = [self.localExtras objectForKey:kVungleFlexViewAutoDismissSeconds];
-            if (flexVieAutoDismissSeconds != nil) {
-                NSTimeInterval flexDismissTime = [flexVieAutoDismissSeconds floatValue];
+            NSString *flexViewAutoDismissSeconds = [self.localExtras objectForKey:kVungleFlexViewAutoDismissSeconds];
+            if (flexViewAutoDismissSeconds != nil) {
+                NSTimeInterval flexDismissTime = [flexViewAutoDismissSeconds floatValue];
                 if (flexDismissTime > 0) {
                     options[VunglePlayAdOptionKeyFlexViewAutoDismissSeconds] = @(flexDismissTime);
                 }
@@ -98,7 +98,7 @@
         [[VungleRouter sharedRouter] presentInterstitialAdFromViewController:rootViewController options:self.options forPlacementId:self.placementId];
     } else {
         NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Failed to show Vungle video interstitial: Vungle now claims that there is no available video ad."];
-        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementId);
+        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getPlacementID]);
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
     }
 }
@@ -114,50 +114,50 @@
 {
     if (!self.handledAdAvailable) {
         self.handledAdAvailable = YES;
-        MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.placementId);
+        MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
         [self.delegate interstitialCustomEvent:self didLoadAd:nil];
     }
 }
 
 - (void)vungleAdWillAppear
 {
-    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.placementId);
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate interstitialCustomEventWillAppear:self];
 }
 
 - (void)vungleAdDidAppear {
-    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.placementId);
-    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.placementId);
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate interstitialCustomEventDidAppear:self];
 }
 
 - (void)vungleAdWillDisappear
 {
-    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.placementId);
+    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate interstitialCustomEventWillDisappear:self];
 }
 
 - (void)vungleAdDidDisappear
 {
-    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.placementId);
+    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate interstitialCustomEventDidDisappear:self];
 }
 
 - (void)vungleAdWasTapped
 {
-    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.placementId);
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate interstitialCustomEventDidReceiveTapEvent:self];
 }
 
 - (void)vungleAdDidFailToLoad:(NSError *)error
 {
-    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementId);
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getPlacementID]);
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
 }
 
 - (void)vungleAdDidFailToPlay:(NSError *)error
 {
-    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementId);
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getPlacementID]);
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
 }
 

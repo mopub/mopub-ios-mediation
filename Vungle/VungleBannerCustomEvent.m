@@ -20,7 +20,7 @@
 @property (nonatomic, assign) NSDictionary *bannerInfo;
 @property (nonatomic, assign) NSTimer *timeOutTimer;
 @property (nonatomic, assign) BOOL isAdCached;
-@property (nonatomic) CGSize bannerSize;
+@property (nonatomic, assign) CGSize bannerSize;
 
 @end
 
@@ -38,18 +38,19 @@
     
     NSString *format = [info objectForKey:@"adunit_format"];
     BOOL isMediumRectangleFormat = (format != nil ? [[format lowercaseString] containsString:@"medium_rectangle"] : NO);
-    
-    //Vungle only supports Medium Rectangle
-    if (!isMediumRectangleFormat) {
-        MPLogInfo(@"Vungle only supports 300*250 ads. Please ensure your MoPub ad unit format is Medium Rectangle.");
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid sizes received. Vungle only supports 300 x 250 ads."];
+    BOOL isBannerFormat = (format != nil ? [[format lowercaseString] containsString:@"banner"] : NO);
+
+    //Vungle only supports Medium Rectangle or Banner
+    if (!isMediumRectangleFormat && !isBannerFormat) {
+        MPLogInfo(@"Vungle only supports 300*250, 320*50 and 728*90 sized ads. Please ensure your MoPub adunit's format is Medium Rectangle or Banner.");
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid sizes received. Vungle only supports 300 x 250, 320 x 50 and 728 x 90 ads."];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementId);
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nil];
+        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
         
         return;
     }
 
-    self.bannerSize = kVNGMRECSize;
+    self.bannerSize = isMediumRectangleFormat ? kVNGMRECSize : [self sizeForCustomEventInfo:size];
     self.bannerInfo = info;
     self.isAdCached = NO;
     
@@ -67,18 +68,30 @@
     [[VungleRouter sharedRouter] invalidateBannerAdViewForPlacementID:self.placementId delegate:self];
 }
 
+- (CGSize)sizeForCustomEventInfo:(CGSize)size
+{
+    CGFloat width = size.width;
+    CGFloat height = size.height;
+
+    if (height >= kVNGLeaderboardBannerSize.height && width >= kVNGLeaderboardBannerSize.width) {
+        return kVNGLeaderboardBannerSize;
+    } else if (height >= kVNGBannerSize.height && width >= kVNGBannerSize.width) {
+        return kVNGBannerSize;
+    } else if (height >= kVNGShortBannerSize.height && width >= kVNGShortBannerSize.width) {
+        return kVNGShortBannerSize;
+    } else {
+        return kVNGShortBannerSize;
+    }
+}
+
 #pragma mark - VungleRouterDelegate Methods
 
 - (void)vungleAdDidLoad
 {
     if (self.options) {
-        // In the event that options have been updated
         self.options = nil;
     }
     
-    /** If you need to play ads with Vungle options, you may modify
-     playVungleAdFromRootViewController and create an options dictionary and call
-     the playAd:withOptions: method on the Vungle SDK. */
     NSMutableDictionary *options = [NSMutableDictionary dictionary];
     
     if (self.localExtras != nil && [self.localExtras count] > 0) {
@@ -110,13 +123,13 @@
     }
     self.options = options.count ? options : nil;
     
-    UIView *mrecAdView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bannerSize.width, self.bannerSize.height)];
+    UIView *bannerAdView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bannerSize.width, self.bannerSize.height)];
     
-    mrecAdView = [[VungleRouter sharedRouter] renderBannerAdInView:mrecAdView options:self.options forPlacementID:self.placementId];
+    bannerAdView = [[VungleRouter sharedRouter] renderBannerAdInView:bannerAdView options:self.options forPlacementID:self.placementId size:self.bannerSize];
     
-    if (mrecAdView) {
+    if (bannerAdView) {
         [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId];
-        [self.delegate bannerCustomEvent:self didLoadAd:mrecAdView];
+        [self.delegate bannerCustomEvent:self didLoadAd:bannerAdView];
         [self.delegate trackImpression];
         self.isAdCached = YES;
     } else {
@@ -150,6 +163,11 @@
 - (NSString *)getPlacementID
 {
     return self.placementId;
+}
+
+- (CGSize)getBannerSize
+{
+    return self.bannerSize;
 }
 
 @end

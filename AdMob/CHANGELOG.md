@@ -1,4 +1,22 @@
 ## Changelog
+  * 7.55.1.0
+    * This version of the adapters has been certified with AdMob 7.55.1
+
+  * 7.55.0.0
+    * This version of the adapters has been certified with AdMob 7.55.0
+
+  * 7.53.1.2
+    * MoPub now collects GDPR consent on behalf of Google.
+
+  * 7.53.1.1
+    * Maintain compatibility with v5.11.0 of the MoPub iOS SDK. This is the minimum adapter version for v5.11.0 integrations with MoPub. 
+
+  * 7.53.1.0
+    * This version of the adapters has been certified with AdMob 7.53.1.
+
+  * 7.52.0.3
+    * Fix an issue with native ads not responding to playback controls.
+
   * 7.52.0.2
     * Map banner ad sizes starting from largest height x width.
 

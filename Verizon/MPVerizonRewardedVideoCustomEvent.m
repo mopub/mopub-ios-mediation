@@ -83,7 +83,21 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
     [VASAds sharedInstance].locationEnabled = [MoPub sharedInstance].locationUpdatesEnabled;
     
     VASRequestMetadataBuilder *metaDataBuilder = [[VASRequestMetadataBuilder alloc] init];
-    [metaDataBuilder setAppMediator:VerizonAdapterConfiguration.appMediator];
+    metaDataBuilder.mediator = VerizonAdapterConfiguration.mediator;
+    
+    if (adMarkup.length > 0) {
+        NSError *error = [VASErrorInfo errorWithDomain:kMoPubVASAdapterErrorDomain
+                                                  code:MoPubVASAdapterErrorNotInitialized
+                                                   who:kMoPubVASAdapterErrorWho
+                                           description:[NSString stringWithFormat:@"Advanced Bidding for rewarded vide placements is not supported at this time. serverExtras key \" %@ \" should have no value.", kMoPubServerExtrasAdContent]
+                                            underlying:nil];
+        
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.siteId);
+        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+        
+        return;
+    }
+    
     self.interstitialAdFactory = [[VASInterstitialAdFactory alloc] initWithPlacementId:placementId vasAds:[VASAds sharedInstance] delegate:self];
     [self.interstitialAdFactory setRequestMetadata:metaDataBuilder.build];
     
@@ -144,7 +158,7 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
 
 - (NSString *)version
 {
-    return VerizonAdapterConfiguration.appMediator;
+    return VerizonAdapterConfiguration.mediator;
 }
 
 - (void)interstitialAdClicked:(nonnull VASInterstitialAd *)interstitialAd

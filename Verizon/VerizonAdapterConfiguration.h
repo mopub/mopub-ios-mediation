@@ -29,5 +29,5 @@ extern NSString * const kMoPubRequestMetadataAdContent;
 extern NSTimeInterval kMoPubVASAdapterSATimeoutInterval;
 
 @interface VerizonAdapterConfiguration : MPBaseAdapterConfiguration
-+ (NSString *)appMediator;
++ (NSString *)mediator;
 @end

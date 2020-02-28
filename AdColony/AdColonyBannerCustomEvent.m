@@ -19,6 +19,10 @@
 
 #pragma mark - MPBannerCustomEvent Overridden Methods
 
+- (NSString *) getAdNetworkId {
+    return _zoneId;
+}
+
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info {
     [self requestAdWithSize: size customEventInfo: info adMarkup: nil];
 }
@@ -58,14 +62,15 @@
     
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class)
                                        dspCreativeId:nil
-                                             dspName:nil], self.zoneId);
+                                             dspName:nil], [self getAdNetworkId]);
     [AdColonyAdapterConfiguration updateInitializationParameters:info];
     [AdColonyController initializeAdColonyCustomEventWithAppId:appId
                                                     allZoneIds:allZoneIds
                                                         userId:nil
                                                       callback:^(NSError *error) {
         if (error) {
-            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.zoneId);
+            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error],
+                         [self getAdNetworkId]);
             [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
         } else {
             MPLogInfo(@"Requesting AdColony banner ad with width: %.0f and height: %.0f", adSize.width, adSize.height);
@@ -82,7 +87,7 @@
     CGFloat width = size.width;
     CGFloat height = size.height;
     
-    if (width, height) {
+    if (width > 0, height > 0) {
         if (height >= kAdColonyAdSizeSkyscraper.height && width >= kAdColonyAdSizeSkyscraper.width) {
             return kAdColonyAdSizeSkyscraper;
         } else if (height >= kAdColonyAdSizeMediumRectangle.height && width >= kAdColonyAdSizeMediumRectangle.width) {
@@ -99,31 +104,37 @@
 
 #pragma mark - Banner Delegate
 - (void)adColonyAdViewDidLoad:(AdColonyAdView *)adView {
-    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.zoneId);
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)],
+                 [self getAdNetworkId]);
     [self.delegate bannerCustomEvent:self didLoadAd:adView];
 }
 
 - (void)adColonyAdViewDidFailToLoad:(AdColonyAdRequestError *)error {
-    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.zoneId);
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error],
+                 [self getAdNetworkId]);
     [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
 }
 
 - (void)adColonyAdViewWillLeaveApplication:(AdColonyAdView *)adView {
-    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], self.zoneId);
+    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)],
+                 [self getAdNetworkId]);
     [self.delegate bannerCustomEventWillLeaveApplication:self];
 }
 
 - (void)adColonyAdViewWillOpen:(AdColonyAdView *)adView {
-    MPLogAdEvent([MPLogEvent adWillPresentModalForAdapter:NSStringFromClass(self.class)], self.zoneId);
+    MPLogAdEvent([MPLogEvent adWillPresentModalForAdapter:NSStringFromClass(self.class)],
+                 [self getAdNetworkId]);
     [self.delegate bannerCustomEventWillBeginAction:self];
 }
 
 - (void)adColonyAdViewDidClose:(AdColonyAdView *)adView {
-    MPLogAdEvent([MPLogEvent adDidDismissModalForAdapter:NSStringFromClass(self.class)], self.zoneId);
+    MPLogAdEvent([MPLogEvent adDidDismissModalForAdapter:NSStringFromClass(self.class)],
+                 [self getAdNetworkId]);
     [self.delegate bannerCustomEventDidFinishAction:self];
 }
 
 - (void)adColonyAdViewDidReceiveClick:(AdColonyAdView *)adView {
-    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.zoneId);
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)],
+                 [self getAdNetworkId]);
 }
 @end

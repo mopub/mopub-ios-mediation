@@ -38,7 +38,7 @@
     
     NSString *siteId = info[kMoPubVASAdapterSiteId];
     NSString *placementId = info[kMoPubVASAdapterPlacementId];
-
+    
     if (siteId.length == 0 || placementId.length == 0)
     {
         NSError *error = [VASErrorInfo errorWithDomain:kMoPubVASAdapterErrorDomain
@@ -79,20 +79,24 @@
         [self.inlineFactory loadBid:bid inlineAdDelegate:self];
     } else {
         VASRequestMetadataBuilder *metadataBuilder = [[VASRequestMetadataBuilder alloc] initWithRequestMetadata:[VASAds sharedInstance].requestMetadata];
-        [metadataBuilder setAppMediator:VerizonAdapterConfiguration.appMediator];
-
+        metadataBuilder.mediator = VerizonAdapterConfiguration.mediator;
+        
         if (adMarkup.length > 0) {
-            NSMutableDictionary<NSString *, id> *placementData = [NSMutableDictionary dictionaryWithDictionary:@{
-                kMoPubRequestMetadataAdContent : adMarkup,
-                @"overrideWaterfallProvider"   : @"waterfallprovider/sideloading"}];
-
+            NSMutableDictionary<NSString *, id> *placementData =
+            [NSMutableDictionary dictionaryWithDictionary:
+             @{
+                 kMoPubRequestMetadataAdContent : adMarkup,
+                 @"overrideWaterfallProvider"  : @"waterfallprovider/sideloading"
+             }
+             ];
+            
             [metadataBuilder setPlacementData:placementData];
         }
-
+        
         [self.inlineFactory setRequestMetadata:metadataBuilder.build];
         [self.inlineFactory load:self];
     }
-
+    
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
 }
 
@@ -226,22 +230,22 @@
                        completion:(nonnull VASBidRequestCompletionHandler)completion
 {
     VASRequestMetadataBuilder *metaDataBuilder = [[VASRequestMetadataBuilder alloc] init];
-    [metaDataBuilder setAppMediator:VerizonAdapterConfiguration.appMediator];
+    metaDataBuilder.mediator = VerizonAdapterConfiguration.mediator;
+    
     [VASInlineAdFactory requestBidForPlacementId:placementId
                                          adSizes:adSizes
                                  requestMetadata:metaDataBuilder.build
                                           vasAds:[VASAds sharedInstance]
                                       completion:^(VASBid * _Nullable bid, VASErrorInfo * _Nullable errorInfo) {
-                                          dispatch_async(dispatch_get_main_queue(), ^{
-                                              if (bid) {
-                                                  [MPVerizonBidCache.sharedInstance storeBid:bid
-                                                                              forPlacementId:placementId
-                                                                                   untilDate:[NSDate dateWithTimeIntervalSinceNow:kMoPubVASAdapterSATimeoutInterval]];
-                                              }
-                                              completion(bid,errorInfo);
-                                          });
-                                      }];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (bid) {
+                [MPVerizonBidCache.sharedInstance storeBid:bid
+                                            forPlacementId:placementId
+                                                 untilDate:[NSDate dateWithTimeIntervalSinceNow:kMoPubVASAdapterSATimeoutInterval]];
+            }
+            completion(bid,errorInfo);
+        });
+    }];
 }
-
 
 @end

@@ -44,7 +44,7 @@
     
     NSString *siteId = info[kMoPubVASAdapterSiteId];
     NSString *placementId = info[kMoPubVASAdapterPlacementId];
-
+    
     if (siteId.length == 0 || placementId.length == 0)
     {
         NSError *error = [VASErrorInfo errorWithDomain:kMoPubVASAdapterErrorDomain
@@ -75,7 +75,7 @@
     
     [VASAds sharedInstance].locationEnabled = [MoPub sharedInstance].locationUpdatesEnabled;
     [VerizonAdapterConfiguration setCachedInitializationParameters:info];
-
+    
     self.interstitialAdFactory = [[VASInterstitialAdFactory alloc] initWithPlacementId:placementId vasAds:[VASAds sharedInstance] delegate:self];
     
     VASBid *bid = [MPVerizonBidCache.sharedInstance bidForPlacementId:placementId];
@@ -83,13 +83,17 @@
         [self.interstitialAdFactory loadBid:bid interstitialAdDelegate:self];
     } else {
         VASRequestMetadataBuilder *metadataBuilder = [[VASRequestMetadataBuilder alloc] initWithRequestMetadata:[VASAds sharedInstance].requestMetadata];
-        [metadataBuilder setAppMediator:VerizonAdapterConfiguration.appMediator];
+        metadataBuilder.mediator = VerizonAdapterConfiguration.mediator;
         
         if (adMarkup.length > 0) {
-            NSMutableDictionary<NSString *, id> *placementData = [NSMutableDictionary dictionaryWithDictionary:@{
-                kMoPubRequestMetadataAdContent : adMarkup,
-                @"overrideWaterfallProvider"   : @"waterfallprovider/sideloading"}];
-
+            NSMutableDictionary<NSString *, id> *placementData =
+            [NSMutableDictionary dictionaryWithDictionary:
+             @{
+                 kMoPubRequestMetadataAdContent : adMarkup,
+                 @"overrideWaterfallProvider"  : @"waterfallprovider/sideloading"
+             }
+             ];
+            
             [metadataBuilder setPlacementData:placementData];
         }
         
@@ -254,7 +258,7 @@
                        completion:(nonnull VASBidRequestCompletionHandler)completion
 {
     VASRequestMetadataBuilder *metaDataBuilder = [[VASRequestMetadataBuilder alloc] init];
-    [metaDataBuilder setAppMediator:VerizonAdapterConfiguration.appMediator];
+    metaDataBuilder.mediator = VerizonAdapterConfiguration.mediator;
     [VASInterstitialAdFactory requestBidForPlacementId:placementId requestMetadata:metaDataBuilder.build vasAds:[VASAds sharedInstance] completionHandler:^(VASBid * _Nullable bid, VASErrorInfo * _Nullable errorInfo) {
         dispatch_async(dispatch_get_main_queue(), ^{
             if (bid) {

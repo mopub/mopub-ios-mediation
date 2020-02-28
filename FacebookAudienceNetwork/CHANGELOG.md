@@ -1,4 +1,13 @@
 ## Changelog
+* 5.7.1.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.7.1.
+
+* 5.7.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.7.0.
+
+* 5.6.1.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.6.1.
+
 * 5.6.0.0
     * This version of the adapters has been certified with Facebook Audience Network 5.6.0.
     * Add support for [native banner](https://developers.facebook.com/docs/audience-network/ios-native-banner/). Refer to the [Mediate Facebook page](https://developers.mopub.com/publishers/mediation/networks/facebook/) for integration instructions.
