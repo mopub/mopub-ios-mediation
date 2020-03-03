@@ -1,4 +1,8 @@
 ## Changelog
+
+ * 5.9.0.0.0
+    * This version of the adapters has been certified with Mintegral 5.9.0.0 
+
  * 5.8.8.0.0
     * This version of the adapters has been certified with Mintegral 5.8.8.0. 
 
