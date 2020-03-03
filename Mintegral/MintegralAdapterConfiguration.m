@@ -11,6 +11,7 @@
 @end
 
 static BOOL mintegralSDKInitialized = NO;
+static BOOL mute = NO;
 
 NSString *const kMintegralErrorDomain = @"com.mintegral.iossdk.mopub";
 NSString *const kPluginNumber = @"Y+H6DFttYrPQYcIA+F2F+F5/Hv==";
@@ -109,6 +110,14 @@ NSString *const kNetworkName = @"mintegral";
     user.pay = pay;
     
     [[MTGSDK sharedInstance] setUserInfo:user];
+}
+
++(BOOL)isMute {
+    return mute;
+}
+
++(void)setMute:(BOOL)muteStatus {
+    mute = muteStatus;
 }
 
 @end
