@@ -55,6 +55,7 @@
             _ivBidAdManager  = [[MTGBidInterstitialVideoAdManager alloc] initWithUnitID:self.adUnitId delegate:self];
             _ivBidAdManager.delegate = self;
         }
+        
         _ivBidAdManager.playVideoMute = [MintegralAdapterConfiguration isMute];
         [_ivBidAdManager loadAdWithBidToken:self.adm];
     } else {
@@ -63,6 +64,7 @@
         if (!_mtgInterstitialVideoAdManager) {
             _mtgInterstitialVideoAdManager = [[MTGInterstitialVideoAdManager alloc] initWithUnitID:self.adUnitId delegate:self];
         }
+        
         _mtgInterstitialVideoAdManager.playVideoMute = [MintegralAdapterConfiguration isMute];
         [_mtgInterstitialVideoAdManager loadAd];
     }

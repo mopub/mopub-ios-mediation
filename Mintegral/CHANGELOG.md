@@ -1,4 +1,7 @@
 ## Changelog
+ * 6.0.0.0.0
+    * This version of the adapters has been certified with Mintegral 6.0.0.0 .
+    * Add a mute API for interstitial and rewarded video. Unless muted via `[MintegralAdapterConfiguration setMute:YES]`, creatives play unmuted by default. 
 
  * 5.9.0.0.0
     * This version of the adapters has been certified with Mintegral 5.9.0.0 
