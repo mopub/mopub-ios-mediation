@@ -8,9 +8,12 @@
 
 #import "PangleRewardedVideoCustomEvent.h"
 #import <BUAdSDK/BUAdSDK.h>
-#import <mopub-ios-sdk/MoPub.h>
+#if __has_include("MoPub.h")
+#import "MPLogging.h"
+#import "MPRewardedVideoError.h"
+#import "MPRewardedVideoReward.h"
+#endif
 
-#import "BUDSlotID.h"
 
 @interface PangleRewardedVideoCustomEvent ()<BURewardedVideoAdDelegate>
 @property (nonatomic, strong) BURewardedVideoAd *rewardVideoAd;
@@ -22,7 +25,7 @@
     BURewardedVideoModel *model = [[BURewardedVideoModel alloc] init];
     model.userId = @"123";
     
-    BURewardedVideoAd *RewardedVideoAd = [[BURewardedVideoAd alloc] initWithSlotID:normal_reward_ID rewardedVideoModel:model];
+    BURewardedVideoAd *RewardedVideoAd = [[BURewardedVideoAd alloc] initWithSlotID: @"900546826" rewardedVideoModel:model];
     RewardedVideoAd.delegate = self;
     self.rewardVideoAd = RewardedVideoAd;
     [RewardedVideoAd loadAdData];
@@ -74,8 +77,8 @@
 }
 
 - (void)rewardedVideoAdDidPlayFinish:(BURewardedVideoAd *)rewardedVideoAd didFailWithError:(NSError *)error {
-    [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
-
+    if(error != nil)
+        [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
 }
 
 - (void)rewardedVideoAdServerRewardDidSucceed:(BURewardedVideoAd *)rewardedVideoAd verify:(BOOL)verify {

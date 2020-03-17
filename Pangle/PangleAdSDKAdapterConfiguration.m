@@ -8,7 +8,6 @@
 
 #import "PangleAdSDKAdapterConfiguration.h"
 #import <BUAdSDK/BUAdSDKManager.h>
-#import "BUDAdManager.h"
 
 @implementation PangleAdSDKAdapterConfiguration
 - (NSString *)adapterVersion {
@@ -39,7 +38,7 @@
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
             dispatch_async(dispatch_get_main_queue(), ^{
-                [BUAdSDKManager setAppID:[BUDAdManager appKey]];
+                [BUAdSDKManager setAppID:@"5000546"];
                 [BUAdSDKManager setIsPaidApp:NO];
                 [BUAdSDKManager setLoglevel:BUAdSDKLogLevelDebug];
                 if (complete != nil) {

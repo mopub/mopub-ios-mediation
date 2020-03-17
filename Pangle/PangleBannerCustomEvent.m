@@ -8,7 +8,6 @@
 
 #import "PangleBannerCustomEvent.h"
 #import <BUAdSDK/BUAdSDK.h>
-#import "BUDSlotID.h"
 
 @interface PangleBannerCustomEvent ()<BUBannerAdViewDelegate>
 @property (strong, nonatomic) BUBannerAdView *bannerView;
@@ -19,7 +18,7 @@
     BUSize *adSize = [[BUSize alloc] init];
     adSize.width = size.width;
     adSize.height = size.height;
-    self.bannerView = [[BUBannerAdView alloc] initWithSlotID:normal_banner_ID size:adSize rootViewController:self.delegate.viewControllerForPresentingModalView];
+    self.bannerView = [[BUBannerAdView alloc] initWithSlotID:@"900546859" size:adSize rootViewController:self.delegate.viewControllerForPresentingModalView];
     self.bannerView.frame = CGRectMake(0, 0, size.width, size.height);
     self.bannerView.delegate = self;
     [self.bannerView loadAdData];

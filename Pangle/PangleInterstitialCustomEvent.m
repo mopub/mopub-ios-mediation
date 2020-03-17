@@ -8,7 +8,6 @@
 
 #import "PangleInterstitialCustomEvent.h"
 #import <BUAdSDK/BUAdSDK.h>
-#import "BUDSlotID.h"
 
 @interface PangleInterstitialCustomEvent () <BUInterstitialAdDelegate>
 @property (nonatomic, strong) BUInterstitialAd *interstitialAd;
@@ -16,7 +15,7 @@
 
 @implementation PangleInterstitialCustomEvent
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    self.interstitialAd = [[BUInterstitialAd alloc] initWithSlotID:normal_interstitial_ID size:[BUSize sizeBy:BUProposalSize_Interstitial600_600]];
+    self.interstitialAd = [[BUInterstitialAd alloc] initWithSlotID:@"900546957" size:[BUSize sizeBy:BUProposalSize_Interstitial600_600]];
     self.interstitialAd.delegate = self;
     [self.interstitialAd loadAdData];
 }

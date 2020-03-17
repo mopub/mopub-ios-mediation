@@ -6,7 +6,14 @@
 //  Copyright © 2020 bytedance. All rights reserved.
 //
 
-#import <mopub-ios-sdk/MPNativeAdAdapter.h>
+#if __has_include(<MoPub/MoPub.h>)
+#import <MoPub/MoPub.h>
+#elif __has_include(<MoPubSDKFramework/MoPub.h>)
+#import <MoPubSDKFramework/MoPub.h>
+#else
+#import "MPNativeAdAdapter.h"
+#endif
+
 #import <BUAdSDK/BUNativeAd.h>
 
 NS_ASSUME_NONNULL_BEGIN

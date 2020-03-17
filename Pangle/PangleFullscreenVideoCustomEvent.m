@@ -16,7 +16,7 @@
 
 @implementation PangleFullscreenVideoCustomEvent
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    self.fullScreenVideo = [[BUFullscreenVideoAd alloc] initWithSlotID:@""];
+    self.fullScreenVideo = [[BUFullscreenVideoAd alloc] initWithSlotID:@"900546299"];
     self.fullScreenVideo.delegate = self;
     [self.fullScreenVideo loadAdData];
 }

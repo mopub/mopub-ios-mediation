@@ -7,10 +7,10 @@
 //
 
 #import "PangleNativeAdAdapter.h"
-#import "BUDSlotID.h"
-
-#import <mopub-ios-sdk/MPNativeAd.h>
-#import <mopub-ios-sdk/MPNativeAdConstants.h>
+#if __has_include("MoPub.h")
+#import "MPNativeAd.h"
+#import "MPNativeAdConstants.h"
+#endif
 
 @interface PangleNativeAdAdapter ()
 @end
