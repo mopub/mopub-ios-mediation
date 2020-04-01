@@ -12,6 +12,7 @@
     #import "MPRewardedVideo.h"
     #import "MoPub.h"
 #endif
+#import <VungleSDK/VungleSDKHeaderBidding.h>
 #import "VungleInstanceMediationSettings.h"
 #import "VungleAdapterConfiguration.h"
 
@@ -313,6 +314,13 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
     }
 
     return [[VungleSDK sharedSDK] isAdCachedForPlacementID:placementId withSize:[self getVungleBannerAdSizeType:size]];
+}
+
+- (NSString *)currentSuperToken {
+    if (self.sdkInitializeState == SDKInitializeStateInitialized) {
+        return [[VungleSDK sharedSDK] currentSuperToken];
+    }
+    return nil;
 }
 
 - (void)presentInterstitialAdFromViewController:(UIViewController *)viewController options:(NSDictionary *)options forPlacementId:(NSString *)placementId {
