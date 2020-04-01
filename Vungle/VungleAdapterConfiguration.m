@@ -45,7 +45,7 @@ typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
 }
 
 - (NSString *)biddingToken {
-    return nil;
+    return [[VungleRouter sharedRouter] currentSuperToken];
 }
 
 - (NSString *)moPubNetworkName {
