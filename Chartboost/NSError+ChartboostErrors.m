@@ -15,7 +15,6 @@
 #import "MPError.h"
 #endif
 
-
 @implementation NSError (ChartboostErrors)
 
 + (NSError *)errorWithCacheEvent:(CHBCacheEvent *)event error:(CHBCacheError *)error

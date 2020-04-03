@@ -46,7 +46,7 @@
 
 - (BOOL)enableAutomaticImpressionAndClickTracking
 {
-    return NO;  // Disabled so we have control over the click tracking behavior
+    return NO; // Disabled so adapters have control over the impression and click tracking behavior
 }
 
 // MARK: - CHBBannerDelegate

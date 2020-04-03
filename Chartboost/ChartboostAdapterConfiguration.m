@@ -55,11 +55,14 @@ typedef NS_ENUM(NSInteger, ChartboostAdapterErrorCode) {
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration
                                   complete:(void(^)(NSError *))complete
 {
-    // configuration may not have credentials info on the first app launch. See https://developers.mopub.com/publishers/ios/initialize/
-    if (configuration[kChartboostAppIdKey] == nil) {
+    // `configuration` might not have data on the first app launch. See https://developers.mopub.com/publishers/ios/initialize/
+    NSString * appId = configuration[kChartboostAppIdKey];
+    if (appId == nil || appId.length == 0) {
         NSError *error = [NSError errorWithDomain:kAdapterErrorDomain
                                              code:ChartboostAdapterErrorCodeMissingAppId
-                                         userInfo:@{ NSLocalizedDescriptionKey: @"Chartboost's initialization skipped. The appId is empty. Ensure it is properly configured on the MoPub dashboard. Note that initialization on the first app launch is a no-op." }];
+                                         userInfo:@{ NSLocalizedDescriptionKey: @"Chartboost's initialization skipped. The appId is empty. "
+                                                     "Ensure it is properly configured on the MoPub dashboard. "
+                                                     "Note that initialization on the first app launch is a no-op." }];
         MPLogEvent([MPLogEvent error:error message:nil]);
         
         if (complete != nil) {
@@ -67,10 +70,15 @@ typedef NS_ENUM(NSInteger, ChartboostAdapterErrorCode) {
         }
         return;
     }
-    if (configuration[kChartboostAppSignatureKey] == nil) {
+    
+    NSString * appSignature = configuration[kChartboostAppSignatureKey];
+    appSignature = @"";
+    if (appSignature == nil || appSignature.length == 0) {
         NSError *error = [NSError errorWithDomain:kAdapterErrorDomain
                                              code:ChartboostAdapterErrorCodeMissingAppSignature
-                                         userInfo:@{ NSLocalizedDescriptionKey: @"Chartboost's initialization skipped. The appSignature is empty. Ensure it is properly configured on the MoPub dashboard. Note that initialization on the first app launch is a no-op." }];
+                                         userInfo:@{ NSLocalizedDescriptionKey: @"Chartboost's initialization skipped. The appSignature is empty. "
+                                                     "Ensure it is properly configured on the MoPub dashboard. "
+                                                     "Note that initialization on the first app launch is a no-op." }];
         MPLogEvent([MPLogEvent error:error message:nil]);
         
         if (complete != nil) {

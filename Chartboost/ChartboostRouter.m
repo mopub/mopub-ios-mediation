@@ -68,14 +68,22 @@ static NSString * const kChartboostAppSignatureKey = @"appSignature";
     NSString *appId = parameters[kChartboostAppIdKey];
     NSString *appSignature = parameters[kChartboostAppSignatureKey];
     
-    if (appId.length == 0 || appSignature.length == 0) {
+    if (appId.length == 0) {
         NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid
-                           localizedDescription:@"Failed to initialize Chartboost SDK: missing appId or appSignature. Make sure you have a valid appId and appSignature entered on the MoPub dashboard."];
+                           localizedDescription:@"Failed to initialize Chartboost SDK: missing appId. Make sure you have a valid appId entered on the MoPub dashboard."];
         MPLogEvent([MPLogEvent error:error message:nil]);
         completion(NO);
         return;
     }
     
+    if (appSignature.length == 0) {
+           NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid
+                              localizedDescription:@"Failed to initialize Chartboost SDK: missing appSignature. Make sure you have a valid appSignature entered on the MoPub dashboard."];
+           MPLogEvent([MPLogEvent error:error message:nil]);
+           completion(NO);
+           return;
+    }
+       
     [ChartboostAdapterConfiguration updateInitializationParameters:parameters];
     [Chartboost startWithAppId:appId appSignature:appSignature completion:completion];
 }

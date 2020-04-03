@@ -58,8 +58,7 @@
     if (error) {
         NSError *nserror = [NSError errorWithCacheEvent:event error:error];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:nserror], event.ad.location);
-        NSError *mopubError = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:mopubError];
+        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:nserror];
     } else {
         MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], event.ad.location);
         [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
@@ -77,8 +76,7 @@
     if (error) {
         NSError *nserror = [NSError errorWithShowEvent:event error:error];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:nserror], self.ad.location);
-        NSError *mopubError = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
-        [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:mopubError];
+        [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:nserror];
     } else {
         MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], event.ad.location);
         MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], event.ad.location);
