@@ -69,7 +69,6 @@ typedef NS_ENUM(NSInteger, ChartboostAdapterErrorCode) {
     }
     
     NSString * appSignature = configuration[kChartboostAppSignatureKey];
-    appSignature = @"";
     if (appSignature == nil || appSignature.length == 0) {
         NSError *error = [NSError errorWithDomain:kAdapterErrorDomain
                                              code:ChartboostAdapterErrorCodeMissingAppSignature
