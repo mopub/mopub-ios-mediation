@@ -1,4 +1,8 @@
 ## Changelog
+
+  * 8.1.0.1
+      * Fixes a bug that caused Chartboost initialization to fail and prevented data use consent to be set.
+
   * 8.1.0.0
       * This version of the adapters has been certified with Chartboost 8.1.0 and MoPub 5.11.0.
       * Add support for multiple Chartboost ad instances.
