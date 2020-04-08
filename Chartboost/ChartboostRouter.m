@@ -6,10 +6,6 @@
 //
 
 #import "ChartboostRouter.h"
-#if __has_include("MoPub.h")
-    #import "MPLogging.h"
-    #import "MoPub.h"
-#endif
 #import "ChartboostAdapterConfiguration.h"
 
 static NSString * const kChartboostAppIdKey        = @"appId";

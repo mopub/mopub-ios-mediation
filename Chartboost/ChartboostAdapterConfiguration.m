@@ -1,8 +1,5 @@
 #import "ChartboostAdapterConfiguration.h"
 #import "ChartboostRouter.h"
-#if __has_include("MoPub.h")
-#import "MPLogging.h"
-#endif
 
 #define CHARTBOOST_ADAPTER_VERSION             @"8.1.0.0"
 #define MOPUB_NETWORK_NAME                     @"chartboost"

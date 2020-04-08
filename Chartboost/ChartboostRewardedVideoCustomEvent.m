@@ -9,22 +9,6 @@
 #import "ChartboostRouter.h"
 #import "NSError+ChartboostErrors.h"
 
-#if __has_include(<MoPubSDKFramework/MoPub.h>)
-    #import <MoPubSDKFramework/MoPub.h>
-#else
-    #import "MoPub.h"
-#endif
-#if __has_include(<MoPubSDKFramework/MPLogging.h>)
-    #import <MoPubSDKFramework/MPLogging.h>
-#else
-    #import "MPLogging.h"
-#endif
-#if __has_include(<MoPubSDKFramework/MPRewardedVideoReward.h>)
-    #import <MoPubSDKFramework/MPRewardedVideoReward.h>
-#else
-    #import "MPRewardedVideoReward.h"
-#endif
-
 @interface ChartboostRewardedVideoCustomEvent () <CHBRewardedDelegate>
 @property (nonatomic) CHBRewarded *ad;
 @end
