@@ -1,4 +1,7 @@
 ## Changelog
+* 6.5.3.0
+   * This version of the adapters has been certified with Vungle 6.5.3 and MoPub SDK 5.11.0.
+
 * 6.5.2.0
    * This version of the adapters has been certified with Vungle 6.5.2.
    * Add support for Vungle's newly-introduced banner format.

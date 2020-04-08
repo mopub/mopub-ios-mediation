@@ -1,4 +1,7 @@
 ## Changelog
+  * 4.1.4.0
+    * This version of the adapters has been certified with AdColony 4.1.4.
+
   * 4.1.3.0
     * This version of the adapters has been certified with AdColony 4.1.3.
     * Log the AdColony zone id in ad lifecycle events.

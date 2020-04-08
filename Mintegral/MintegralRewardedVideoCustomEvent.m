@@ -57,9 +57,11 @@
     
     if (self.adm) {
         MPLogInfo(@"Loading Mintegral rewarded ad markup for Advanced Bidding");
+        [MTGBidRewardAdManager sharedInstance].playVideoMute = [MintegralAdapterConfiguration isMute];
         [[MTGBidRewardAdManager sharedInstance] loadVideoWithBidToken:self.adm unitId:self.adUnitId delegate:self];
     } else {
         MPLogInfo(@"Loading Mintegral rewarded ad");
+        [MTGRewardAdManager sharedInstance].playVideoMute = [MintegralAdapterConfiguration isMute];
         [[MTGRewardAdManager sharedInstance] loadVideo:self.adUnitId delegate:self];
     }
     
@@ -87,8 +89,10 @@
             MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.adUnitId);
             
             if (self.adm) {
+                [MTGBidRewardAdManager sharedInstance].playVideoMute = [MintegralAdapterConfiguration isMute];
                 [[MTGBidRewardAdManager sharedInstance] showVideo:self.adUnitId withRewardId:@"1" userId:customerId delegate:self viewController:viewController];
             } else {
+                [MTGRewardAdManager sharedInstance].playVideoMute = [MintegralAdapterConfiguration isMute];
                 [[MTGRewardAdManager sharedInstance] showVideo:self.adUnitId withRewardId:@"1" userId:customerId delegate:self viewController:viewController];
             }
         }

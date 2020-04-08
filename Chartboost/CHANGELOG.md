@@ -1,4 +1,10 @@
 ## Changelog
+  * 8.1.0.0
+      * This version of the adapters has been certified with Chartboost 8.1.0 and MoPub 5.11.0.
+      * Add support for multiple Chartboost ad instances.
+      * Refactor ad logic related code from `Chartboost Router` into related ad custom event objects.
+      * Add Chartboost Rewarded Video adapter import statements
+      
   * 8.0.4.0
       * This version of the adapters has been certified with Chartboost 8.0.4.
 

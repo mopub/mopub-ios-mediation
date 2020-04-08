@@ -89,7 +89,7 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
         NSError *error = [VASErrorInfo errorWithDomain:kMoPubVASAdapterErrorDomain
                                                   code:MoPubVASAdapterErrorNotInitialized
                                                    who:kMoPubVASAdapterErrorWho
-                                           description:[NSString stringWithFormat:@"Advanced Bidding for rewarded vide placements is not supported at this time. serverExtras key \" %@ \" should have no value.", kMoPubServerExtrasAdContent]
+                                           description:[NSString stringWithFormat:@"Advanced Bidding for rewarded video placements is not supported at this time. serverExtras key \" %@ \" should have no value.", kMoPubServerExtrasAdContent]
                                             underlying:nil];
         
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.siteId);

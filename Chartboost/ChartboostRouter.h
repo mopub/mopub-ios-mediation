@@ -5,42 +5,23 @@
 //  Copyright (c) 2015 MoPub. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
-#import <Chartboost/Chartboost.h>
+#if __has_include("MoPub.h")
+#import "MPLogging.h"
+#endif
+#if __has_include(<Chartboost/Chartboost+Mediation.h>)
+#import <Chartboost/Chartboost+Mediation.h>
+#else
+#import "Chartboost+Mediation.h"
+#endif
 
-@class ChartboostInterstitialCustomEvent;
-@class ChartboostRewardedVideoCustomEvent;
+NS_ASSUME_NONNULL_BEGIN
 
-/*
- * Maps all Chartboost locations for both interstitial and rewarded video ads to their
- * corresponding custom event objects. Also acts as primary Chartboost delegate and distributes
- * callbacks to their appropriate custom events.
- */
-@interface ChartboostRouter : NSObject <ChartboostDelegate>
-
-@property (nonatomic, strong) NSMutableDictionary *interstitialEvents;
-@property (nonatomic, strong) NSMutableSet *activeInterstitialLocations;
-@property (nonatomic, strong) NSMutableDictionary *rewardedVideoEvents;
-
-+ (ChartboostRouter *)sharedRouter;
-- (void)startWithAppId:(NSString *)appId appSignature:(NSString *)appSignature completion:(void(^)(BOOL))completion;
-
-/*
- * Interstitial Ads
- */
-- (void)cacheInterstitialWithAppId:(NSString *)appId appSignature:(NSString *)appSignature location:(NSString *)location forChartboostInterstitialCustomEvent:(ChartboostInterstitialCustomEvent *)event;
-- (BOOL)hasCachedInterstitialForLocation:(NSString *)location;
-- (void)showInterstitialForLocation:(NSString *)location;
-- (void)unregisterInterstitialEvent:(ChartboostInterstitialCustomEvent *)event;
-
-/*
- * Rewarded Video Ads
- */
-
-- (void)cacheRewardedAdWithAppId:(NSString *)appId appSignature:(NSString *)appSignature location:(NSString *)location forChartboostRewardedVideoCustomEvent:(ChartboostRewardedVideoCustomEvent *)event;
-- (BOOL)hasCachedRewardedVideoForLocation:(NSString *)location;
-- (void)showRewardedVideoForLocation:(NSString *)location;
-
-
+@interface ChartboostRouter : NSObject
++ (CHBMediation *)mediation;
++ (void)setLoggingLevel:(MPBLogLevel)loggingLevel;
++ (void)setDataUseConsentWithMopubConfiguration;
++ (void)startWithParameters:(NSDictionary *)parameters completion:(void(^)(BOOL))completion;
 @end
+
+NS_ASSUME_NONNULL_END

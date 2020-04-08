@@ -56,6 +56,7 @@
             _ivBidAdManager.delegate = self;
         }
         
+        _ivBidAdManager.playVideoMute = [MintegralAdapterConfiguration isMute];
         [_ivBidAdManager loadAdWithBidToken:self.adm];
     } else {
         MPLogInfo(@"Loading Mintegral interstitial ad");
@@ -64,6 +65,7 @@
             _mtgInterstitialVideoAdManager = [[MTGInterstitialVideoAdManager alloc] initWithUnitID:self.adUnitId delegate:self];
         }
         
+        _mtgInterstitialVideoAdManager.playVideoMute = [MintegralAdapterConfiguration isMute];
         [_mtgInterstitialVideoAdManager loadAd];
     }
     
@@ -79,9 +81,11 @@
 {
     if (self.adm) {
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.adUnitId);
+        _ivBidAdManager.playVideoMute = [MintegralAdapterConfiguration isMute];
         [_ivBidAdManager showFromViewController:rootViewController];
     } else {
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.adUnitId);
+        _mtgInterstitialVideoAdManager.playVideoMute = [MintegralAdapterConfiguration isMute];
         [_mtgInterstitialVideoAdManager showFromViewController:rootViewController];
     }
 }

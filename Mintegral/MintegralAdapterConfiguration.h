@@ -36,7 +36,9 @@ extern NSString *const kMintegralErrorDomain;
 
 +(void)sdkInitialized;
 
-+(void)setGDPRInfo:(NSDictionary *)info;
++(BOOL)isMute;
+
++(void)setMute:(BOOL)muteStatus;
 
 +(void)initializeMintegral:(NSDictionary *)info setAppID:(nonnull NSString *)appId appKey:(nonnull NSString *)appKey;
 
