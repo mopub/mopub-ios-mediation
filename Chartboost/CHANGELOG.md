@@ -1,4 +1,9 @@
 ## Changelog
+  * 8.1.0.1
+      * This version of the adapters has been certified MoPub SDK 5.12.0.
+      * Fix Chartboost initialization and consent setting failure.
+      * Revise majority of import statements
+
   * 8.1.0.0
       * This version of the adapters has been certified with Chartboost 8.1.0 and MoPub 5.11.0.
       * Add support for multiple Chartboost ad instances.

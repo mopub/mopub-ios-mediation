@@ -1,11 +1,8 @@
 #import "ChartboostAdapterConfiguration.h"
 #import "ChartboostRouter.h"
-#if __has_include("MoPub.h")
-#import "MPLogging.h"
-#endif
 
-#define CHARTBOOST_ADAPTER_VERSION             @"8.1.0.0"
-#define MOPUB_NETWORK_NAME                     @"chartboost"
+#define CHARTBOOST_ADAPTER_VERSION  @"8.1.0.1"
+#define MOPUB_NETWORK_NAME          @"chartboost"
 
 // Constants
 static NSString * const kChartboostAppIdKey        = @"appId";
@@ -72,7 +69,6 @@ typedef NS_ENUM(NSInteger, ChartboostAdapterErrorCode) {
     }
     
     NSString * appSignature = configuration[kChartboostAppSignatureKey];
-    appSignature = @"";
     if (appSignature == nil || appSignature.length == 0) {
         NSError *error = [NSError errorWithDomain:kAdapterErrorDomain
                                              code:ChartboostAdapterErrorCodeMissingAppSignature
