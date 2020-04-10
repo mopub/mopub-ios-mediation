@@ -1,4 +1,8 @@
 ## Changelog
+* 6.6.1.0
+   * This version of the adapters has been certified with Vungle 6.6.1 and MoPub SDK 5.11.0.
+   * Add support for Header Bidding Participation.
+
 * 6.5.3.1
    * Fix `scheduledTimerWithTimeInterval` called for iOS 9.
 
