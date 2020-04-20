@@ -96,7 +96,8 @@ static Boolean *sIsNativeBanner = nil;
      }];
 
     if (configuration != nil && [configuration count] > 0) {
-        FacebookAdapterConfiguration.isNativeBanner = [[configuration objectForKey:@"native_banner"] boolValue];
+        id const nativeBannerValue = [configuration objectForKey:@"native_banner"];
+        FacebookAdapterConfiguration.isNativeBanner = nativeBannerValue ? (Boolean *)[nativeBannerValue boolValue] : nil;
     }
 
 }

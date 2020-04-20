@@ -22,7 +22,7 @@ static const NSInteger FacebookNoFillErrorCode = 1001;
 @property (nonatomic, readwrite, strong) FBNativeAdBase *fbNativeAdBase;
 
 @property (nonatomic, copy) NSString *fbPlacementId;
-@property (nonatomic) Boolean isNativeBanner;
+@property (nonatomic) Boolean *isNativeBanner;
 
 @end
 
@@ -39,7 +39,8 @@ static const NSInteger FacebookNoFillErrorCode = 1001;
 
     if (self.fbPlacementId) {
         if (self.localExtras != nil && [self.localExtras count] > 0) {
-            self.isNativeBanner = [[self.localExtras objectForKey:@"native_banner"] boolValue];
+            id const nativeBannerValue = [self.localExtras objectForKey:@"native_banner"];
+            self.isNativeBanner = nativeBannerValue ? (Boolean *)[nativeBannerValue boolValue] : nil;
         }
         
         self.isNativeBanner = self.isNativeBanner == nil ? FacebookAdapterConfiguration.isNativeBanner : self.isNativeBanner;
