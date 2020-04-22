@@ -22,7 +22,7 @@ NSString *const kNetworkName = @"mintegral";
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"6.0.0.0.0";
+    return @"6.1.2.0.1";
 }
 
 - (NSString *)biddingToken {
@@ -34,7 +34,7 @@ NSString *const kNetworkName = @"mintegral";
 }
 
 - (NSString *)networkSdkVersion {
-    return @"6.0.0.0";
+    return @"6.1.2.0";
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *,id> *)configuration complete:(void (^)(NSError * _Nullable))complete {
@@ -78,6 +78,7 @@ NSString *const kNetworkName = @"mintegral";
 
 +(void)initializeMintegral:(NSDictionary *)info setAppID:(nonnull NSString *)appId appKey:(nonnull NSString *)appKey {
     if (![MintegralAdapterConfiguration isSDKInitialized]) {
+        [[MTGSDK sharedInstance] setConsentStatus:[[MoPub sharedInstance] canCollectPersonalInfo]];
         [[MTGSDK sharedInstance] setAppID:appId ApiKey:appKey];
         [MintegralAdapterConfiguration sdkInitialized];
     }
