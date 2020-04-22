@@ -80,6 +80,8 @@
     } else {
         VASRequestMetadataBuilder *metadataBuilder = [[VASRequestMetadataBuilder alloc] initWithRequestMetadata:[VASAds sharedInstance].requestMetadata];
         metadataBuilder.mediator = VerizonAdapterConfiguration.mediator;
+            
+        MPLogInfo(@"%@: %@", kMoPubRequestMetadataAdContent, adMarkup);
         
         if (adMarkup.length > 0) {
             NSMutableDictionary<NSString *, id> *placementData =
@@ -214,12 +216,12 @@
 
 - (void)inlineAdDidResize:(VASInlineAdView *)inlineAd {}
 
-- (nullable UIViewController *)adPresentingViewController
+- (nullable UIViewController *)inlineAdPresentingViewController
 {
     return [self.delegate viewControllerForPresentingModalView];
 }
 
-- (void)inlineAdEvent:(VASInlineAdView *)inlineAd source:(NSString *)source eventId:(NSString *)eventId arguments:(NSDictionary<NSString *, id> *)arguments {}
+- (void)inlineAd:(nonnull VASInlineAdView *)inlineAd event:(nonnull NSString *)eventId source:(nonnull NSString *)source arguments:(nonnull NSDictionary<NSString *,id> *)arguments {}
 
 - (void)inlineAdDidRefresh:(nonnull VASInlineAdView *)inlineAd {}
 

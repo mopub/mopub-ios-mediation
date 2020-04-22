@@ -14,10 +14,4 @@
 #endif
 
 @interface ChartboostRewardedVideoCustomEvent : MPRewardedVideoCustomEvent
-
-/**
- * A string that corresponds to a Chartboost CBLocation used for differentiating ad requests.
- */
-@property (nonatomic, copy) NSString *location;
-
 @end

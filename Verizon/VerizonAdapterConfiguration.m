@@ -1,11 +1,9 @@
 #import <VerizonAdsStandardEdition/VerizonAdsStandardEdition.h>
 #import <VerizonAdsCore/VerizonAdsCore.h>
-#import <VerizonAdsSupport/VASCommon.h>
-#import <VerizonAdsSupport/NSDictionary+VASAds.h>
 #import <CoreTelephony/CTCarrier.h>
 #import "VerizonAdapterConfiguration.h"
 
-NSString * const kMoPubVASAdapterVersion = @"1.4.0.0";
+NSString * const kMoPubVASAdapterVersion = @"1.5.0.0";
 
 NSString * const kMoPubVASAdapterErrorWho = @"MoPubVASAdapter";
 NSString * const kMoPubVASAdapterPlacementId = @"placementId";
@@ -18,9 +16,8 @@ NSString * const kMoPubVASNetworkName   = @"verizon";
 NSString * const kMoPubServerExtrasAdContent     = @"adMarkup";
 NSString * const kMoPubRequestMetadataAdContent  = @"adContent";
 
-static NSString * const kDomainVASAds           = @"com.verizon.ads";
-static NSString * const kVASEditionNameKey      = @"editionName";
-static NSString * const kVASEditionVersionKey   = @"editionVersion";
+static NSString * const kVASBiddingTokenKey     = @"biddingToken";
+static NSString * const kVASDefaultBiddingToken = @"eJyrVkrNK1OyqlYqTsn2zEvLBzFTUzJLMvPzPFOUrJSKSxLzUhKLUnShgrqGeqZ6Bko6SmWpRcVAPlCJIZBfW1sLAK6jGGM=";
 
 @interface VerizonAdapterConfiguration ()
 
@@ -77,8 +74,9 @@ static NSString * const kVASEditionVersionKey   = @"editionVersion";
 
 - (NSString *)biddingToken
 {
-    VASRequestMetadata *metadata = [[VASAds sharedInstance] requestMetadata];
-    return [[VASAds sharedInstance] biddingTokenUsingMetadata:metadata];
+    return [VASAds.sharedInstance.configuration stringForDomain:kDomainVASAds
+                                                            key:kVASBiddingTokenKey
+                                                    withDefault:kVASDefaultBiddingToken];
 }
 
 - (NSString *)moPubNetworkName

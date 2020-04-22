@@ -11,7 +11,6 @@
     #import <MoPubSDKFramework/MoPub.h>
 #else
     #import "MPBannerCustomEvent.h"
-#import "MoPub.h"
 #endif
 
 @interface ChartboostBannerCustomEvent : MPBannerCustomEvent

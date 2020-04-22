@@ -14,7 +14,7 @@
 #import "MPConstants.h"
 #endif
 
-#define FACEBOOK_ADAPTER_VERSION             @"5.7.1.0"
+#define FACEBOOK_ADAPTER_VERSION             @"5.8.0.0"
 #define MOPUB_NETWORK_NAME                   @"facebook"
 
 static NSString * const kFacebookPlacementIDs = @"placement_ids";
@@ -94,7 +94,7 @@ static Boolean *sIsNativeBanner = nil;
              complete(error);
          }
      }];
-    
+
     if (configuration != nil && [configuration count] > 0) {
         FacebookAdapterConfiguration.isNativeBanner = [[configuration objectForKey:@"native_banner"] boolValue];
     }

@@ -85,6 +85,8 @@
         VASRequestMetadataBuilder *metadataBuilder = [[VASRequestMetadataBuilder alloc] initWithRequestMetadata:[VASAds sharedInstance].requestMetadata];
         metadataBuilder.mediator = VerizonAdapterConfiguration.mediator;
         
+        MPLogInfo(@"%@: %@", kMoPubRequestMetadataAdContent, adMarkup);
+        
         if (adMarkup.length > 0) {
             NSMutableDictionary<NSString *, id> *placementData =
             [NSMutableDictionary dictionaryWithDictionary:

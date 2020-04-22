@@ -1,4 +1,7 @@
 ## Changelog
+* 5.8.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.8.0 and MoPub 5.11.0. 
+
 * 5.7.1.0
     * This version of the adapters has been certified with Facebook Audience Network 5.7.1.
 
