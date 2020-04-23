@@ -19,8 +19,8 @@
 @property (nonatomic, copy) NSDictionary *options;
 @property (nonatomic, assign) NSDictionary *bannerInfo;
 @property (nonatomic, assign) NSTimer *timeOutTimer;
-@property (nonatomic, assign) BOOL isAdCached;
-@property (nonatomic, assign) CGSize bannerSize;
+@property (nonatomic) BOOL isAdCached;
+@property (nonatomic) CGSize bannerSize;
 
 @end
 

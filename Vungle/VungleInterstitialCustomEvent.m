@@ -6,19 +6,19 @@
 //
 
 #import <VungleSDK/VungleSDK.h>
-#import "VungleInterstitialCustomEvent.h"
-#import "VungleAdapterConfiguration.h"
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
     #import "MoPub.h"
 #endif
+#import "VungleAdapterConfiguration.h"
+#import "VungleInterstitialCustomEvent.h"
 #import "VungleRouter.h"
 
 // If you need to play ads with vungle options, you may modify playVungleAdFromRootViewController and create an options dictionary and call the playAd:withOptions: method on the vungle SDK.
 
 @interface VungleInterstitialCustomEvent () <VungleRouterDelegate>
 
-@property (nonatomic, assign) BOOL handledAdAvailable;
+@property (nonatomic) BOOL handledAdAvailable;
 @property (nonatomic, copy) NSString *placementId;
 @property (nonatomic, copy) NSDictionary *options;
 
@@ -125,7 +125,8 @@
     [self.delegate interstitialCustomEventWillAppear:self];
 }
 
-- (void)vungleAdDidAppear {
+- (void)vungleAdDidAppear
+{
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate interstitialCustomEventDidAppear:self];
@@ -167,7 +168,8 @@
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
 }
 
-- (NSString *)getPlacementID {
+- (NSString *)getPlacementID
+{
     return self.placementId;
 }
 @end

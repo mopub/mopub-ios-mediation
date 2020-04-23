@@ -9,17 +9,17 @@
 #import <VungleSDK/VungleSDK.h>
 #import <VungleSDK/VungleSDKNativeAds.h>
 
-extern NSString *const kVungleAppIdKey;
-extern NSString *const kVunglePlacementIdKey;
-extern NSString *const kVungleFlexViewAutoDismissSeconds;
-extern NSString *const kVungleUserId;
-extern NSString *const kVungleOrdinal;
-extern NSString *const kVungleStartMuted;
-extern NSString *const kVungleSupportedOrientations;
-extern NSString *const kVungleSDKCollectDevice;
-extern NSString *const kVungleSDKMinSpaceForInit;
-extern NSString *const kVungleSDKMinSpaceForAdRequest;
-extern NSString *const kVungleSDKMinSpaceForAssetLoad;
+extern NSString * const kVungleAppIdKey;
+extern NSString * const kVunglePlacementIdKey;
+extern NSString * const kVungleFlexViewAutoDismissSeconds;
+extern NSString * const kVungleUserId;
+extern NSString * const kVungleOrdinal;
+extern NSString * const kVungleStartMuted;
+extern NSString * const kVungleSupportedOrientations;
+extern NSString * const kVungleSDKCollectDevice;
+extern NSString * const kVungleSDKMinSpaceForInit;
+extern NSString * const kVungleSDKMinSpaceForAdRequest;
+extern NSString * const kVungleSDKMinSpaceForAssetLoad;
 
 extern const CGSize kVNGMRECSize;
 extern const CGSize kVNGBannerSize;
