@@ -13,7 +13,7 @@
 
 @property (nonatomic, copy) NSString *adUnitId;
 @property (nonatomic, copy) NSString *adPlacementId;
-@property (nonatomic,strong) NSTimer *queryTimer;
+@property (nonatomic, strong) NSTimer *queryTimer;
 @property (nonatomic, copy) NSString *adm;
 
 @property (nonatomic, readwrite, strong) MTGInterstitialVideoAdManager *mtgInterstitialVideoAdManager;
@@ -58,6 +58,7 @@
             _ivBidAdManager = [[MTGBidInterstitialVideoAdManager alloc] initWithPlacementId:placementId unitId:unitId delegate:self];
             _ivBidAdManager.delegate = self;
         }
+        
         _ivBidAdManager.playVideoMute = [MintegralAdapterConfiguration isMute];
         [_ivBidAdManager loadAdWithBidToken:self.adm];
     } else {
@@ -66,6 +67,7 @@
         if (!_mtgInterstitialVideoAdManager) {
             _mtgInterstitialVideoAdManager = [[MTGInterstitialVideoAdManager alloc] initWithPlacementId:placementId unitId:unitId delegate:self];
         }
+        
         _mtgInterstitialVideoAdManager.playVideoMute = [MintegralAdapterConfiguration isMute];
         [_mtgInterstitialVideoAdManager loadAd];
     }
