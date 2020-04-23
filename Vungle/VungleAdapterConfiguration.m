@@ -30,7 +30,7 @@ typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
 + (void)updateInitializationParameters:(NSDictionary *)parameters {
     // These should correspond to the required parameters checked in
     // `initializeNetworkWithConfiguration:complete:`
-    NSString * appId = parameters[kVungleAppIdKey];
+    NSString *appId = parameters[kVungleAppIdKey];
     
     if (appId != nil) {
         NSDictionary * configuration = @{ kVungleAppIdKey: appId };
@@ -61,7 +61,7 @@ typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration
                                   complete:(void(^)(NSError *))complete {
-    NSString * appId = configuration[kVungleAppIdKey];
+    NSString *appId = configuration[kVungleAppIdKey];
     
     if (configuration[kVungleSDKCollectDevice]) {
         // Check if publisher has set this value and update Vungle here.
@@ -90,7 +90,7 @@ typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
     }
     
     if (appId == nil) {
-        NSError * error = [NSError errorWithDomain:kAdapterErrorDomain code:VungleAdapterErrorCodeMissingAppId userInfo:@{ NSLocalizedDescriptionKey: @"Missing the appId parameter when configuring your network in the MoPub website." }];
+        NSError *error = [NSError errorWithDomain:kAdapterErrorDomain code:VungleAdapterErrorCodeMissingAppId userInfo:@{ NSLocalizedDescriptionKey: @"Missing the appId parameter when configuring your network in the MoPub website." }];
         MPLogEvent([MPLogEvent error:error message:nil]);
         
         if (complete != nil) {

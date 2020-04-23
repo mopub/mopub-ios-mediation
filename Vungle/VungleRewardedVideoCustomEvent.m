@@ -5,18 +5,18 @@
 //  Copyright (c) 2015 MoPub. All rights reserved.
 //
 
-#import "VungleRewardedVideoCustomEvent.h"
-#import "VungleAdapterConfiguration.h"
+#import <VungleSDK/VungleSDK.h>
 #if __has_include("MoPub.h")
-    #import "MPLogging.h"
     #import "MPError.h"
+    #import "MPLogging.h"
+    #import "MoPub.h"
     #import "MPReward.h"
     #import "MPRewardedVideoError.h"
-    #import "MoPub.h"
 #endif
-#import <VungleSDK/VungleSDK.h>
-#import "VungleRouter.h"
+#import "VungleAdapterConfiguration.h"
 #import "VungleInstanceMediationSettings.h"
+#import "VungleRewardedVideoCustomEvent.h"
+#import "VungleRouter.h"
 
 @interface VungleRewardedVideoCustomEvent ()  <VungleRouterDelegate>
 
@@ -95,7 +95,8 @@
     [self.delegate fullscreenAdAdapterAdWillAppear:self];
 }
 
-- (void)vungleAdDidAppear {
+- (void)vungleAdDidAppear
+{
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate fullscreenAdAdapterAdDidAppear:self];
@@ -144,7 +145,8 @@
     [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
 }
 
-- (NSString *)getPlacementID {
+- (NSString *)getPlacementID
+{
     return self.placementId;
 }
 
