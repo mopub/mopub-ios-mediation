@@ -54,6 +54,7 @@
             
             _bidAdManager = [[MTGBidNativeAdManager alloc] initWithPlacementId:placementId unitID:unitId autoCacheImage:NO presentingViewController:nil];;
             _bidAdManager.delegate = self;
+            
             [self.bidAdManager loadWithBidToken:self.adm];
             MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.adUnitId);
         }

@@ -58,6 +58,7 @@
             _ivBidAdManager = [[MTGBidInterstitialVideoAdManager alloc] initWithPlacementId:placementId unitId:unitId delegate:self];
             _ivBidAdManager.delegate = self;
         }
+        
         _ivBidAdManager.playVideoMute = [MintegralAdapterConfiguration isMute];
         [_ivBidAdManager loadAdWithBidToken:self.adm];
     } else {
@@ -66,6 +67,7 @@
         if (!_mtgInterstitialVideoAdManager) {
             _mtgInterstitialVideoAdManager = [[MTGInterstitialVideoAdManager alloc] initWithPlacementId:placementId unitId:unitId delegate:self];
         }
+        
         _mtgInterstitialVideoAdManager.playVideoMute = [MintegralAdapterConfiguration isMute];
         [_mtgInterstitialVideoAdManager loadAd];
     }
