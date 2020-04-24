@@ -13,7 +13,7 @@
 
 @property (nonatomic, copy) NSString *adUnitId;
 @property (nonatomic, copy) NSString *adPlacementId;
-@property (nonatomic,strong) NSTimer *queryTimer;
+@property (nonatomic, strong) NSTimer *queryTimer;
 @property (nonatomic, copy) NSString *adm;
 
 @property (nonatomic, readwrite, strong) MTGInterstitialVideoAdManager *mtgInterstitialVideoAdManager;

@@ -122,7 +122,7 @@ typedef enum {
 }
 
 - (void)adViewClosed:(MTGBannerAdView *)adView {
-    
+    MPLogInfo(@"adViewClosed for MTGBannerAdView");
 }
 
 #pragma mark - Turn off auto impression and click
