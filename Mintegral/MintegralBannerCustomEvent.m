@@ -102,7 +102,6 @@ typedef enum {
     if ([self.delegate respondsToSelector:@selector(trackClick)]) {
         MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.adUnitId);
         [self.delegate trackClick];
-        [self.delegate bannerCustomEventWillBeginAction:self];
     }
 }
 
