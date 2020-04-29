@@ -415,15 +415,35 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 }
 
 - (void)completeBannerAdViewForPlacementID:(NSString *)placementID
-                                  delegate:(id<VungleRouterDelegate>)delegate
 {
     @synchronized (self) {
         if (placementID.length > 0) {
             MPLogInfo(@"Vungle: Triggering an ad completion call for %@", placementID);
             for (int i = 0; i < self.bannerDelegates.count; i++) {
-                if (([self.bannerDelegates[i] valueForKey:kVungleBannerDelegateKey] == delegate) && ((BannerRouterDelegateState)[[self.bannerDelegates[i] valueForKey:kVungleBannerDelegateStateKey] intValue] == BannerRouterDelegateStatePlaying)) {
+                if (([[(id<VungleRouterDelegate>)[self.bannerDelegates[i] valueForKey:kVungleBannerDelegateKey] getPlacementID] isEqualToString:placementID]) && ((BannerRouterDelegateState)[[self.bannerDelegates[i] valueForKey:kVungleBannerDelegateStateKey] intValue] == BannerRouterDelegateStatePlaying)) {
                     [[VungleSDK sharedSDK] finishDisplayingAd:placementID];
                     [self.bannerDelegates[i] setObject:[NSNumber numberWithInt:BannerRouterDelegateStateClosing] forKey:kVungleBannerDelegateStateKey];
+                    break;
+                }
+            }
+        }
+    }
+}
+
+- (void)invalidateBannerAdViewForPlacementID:(NSString *)placementID
+                                    delegate:(id<VungleRouterDelegate>)delegate
+{
+    @synchronized (self) {
+        if (placementID.length > 0) {
+            MPLogInfo(@"Vungle: Triggering a Banner ad invalidation for %@", placementID);
+            for (int i = 0; i < self.bannerDelegates.count; i++) {
+                if ([self.bannerDelegates[i] valueForKey:kVungleBannerDelegateKey] == delegate) {
+                    if ((BannerRouterDelegateState)[[self.bannerDelegates[i] valueForKey:kVungleBannerDelegateStateKey] intValue] == BannerRouterDelegateStatePlaying) {
+                        [[VungleSDK sharedSDK] finishDisplayingAd:placementID];
+                        [self.bannerDelegates[i] setObject:[NSNumber numberWithInt:BannerRouterDelegateStateClosing] forKey:kVungleBannerDelegateStateKey];
+                    } else {
+                        [self.bannerDelegates removeObjectAtIndex:i];
+                    }
                     break;
                 }
             }
@@ -641,7 +661,22 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 
 - (void)vungleWillShowAdForPlacementID:(nullable NSString *)placementID
 {
+    if (!placementID.length) {
+        return;
+    }
+
     id<VungleRouterDelegate> targetDelegate = [self.delegatesDict objectForKey:placementID];
+    if (!targetDelegate) {
+        @synchronized (self) {
+            for (int i = 0; i < self.bannerDelegates.count; i++) {
+                if (([[(id<VungleRouterDelegate>)[self.bannerDelegates[i] valueForKey:kVungleBannerDelegateKey] getPlacementID] isEqualToString:placementID]) && ((BannerRouterDelegateState)[[self.bannerDelegates[i] valueForKey:kVungleBannerDelegateStateKey] intValue] == BannerRouterDelegateStateCached)) {
+                    [self.bannerDelegates[i] setObject:[NSNumber numberWithInt:BannerRouterDelegateStatePlaying] forKey:kVungleBannerDelegateStateKey];
+                    break;
+                }
+            }
+        }
+    }
+
     if ([targetDelegate respondsToSelector:@selector(vungleAdWillAppear)]) {
         [targetDelegate vungleAdWillAppear];
     }
@@ -660,6 +695,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
     id<VungleRouterDelegate> targetDelegate = [self.delegatesDict objectForKey:placementID];
     if ([targetDelegate respondsToSelector:@selector(vungleAdWillDisappear)]) {
         [targetDelegate vungleAdWillDisappear];
+        self.isAdPlaying = NO;
     }
 }
 

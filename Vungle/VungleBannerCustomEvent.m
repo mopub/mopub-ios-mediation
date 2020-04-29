@@ -67,8 +67,8 @@
 
 - (void) invalidate
 {
-    [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId
-                                                           delegate:self];
+    [[VungleRouter sharedRouter] invalidateBannerAdViewForPlacementID:self.placementId
+                                                             delegate:self];
 }
 
 - (CGSize)sizeForCustomEventInfo:(CGSize)size
@@ -131,8 +131,7 @@
     bannerAdView = [[VungleRouter sharedRouter] renderBannerAdInView:bannerAdView options:self.options forPlacementID:self.placementId size:self.bannerSize];
     
     if (bannerAdView) {
-        [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId
-                                                               delegate:self];
+        [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId];
         [self.delegate bannerCustomEvent:self didLoadAd:bannerAdView];
         [self.delegate trackImpression];
         self.isAdCached = YES;
