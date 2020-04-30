@@ -8,7 +8,11 @@
 
 #import "PangleRewardedVideoCustomEvent.h"
 #import <BUAdSDK/BUAdSDK.h>
-#import <mopub-ios-sdk/MoPub.h>
+#if __has_include("MoPub.h")
+#import "MPLogging.h"
+#import "MPRewardedVideoError.h"
+#import "MPRewardedVideoReward.h"
+#endif
 
 @interface PangleRewardedVideoCustomEvent ()<BURewardedVideoAdDelegate>
 @property (nonatomic, strong) BURewardedVideoAd *rewardVideoAd;
@@ -80,7 +84,8 @@
 }
 
 - (void)rewardedVideoAdDidPlayFinish:(BURewardedVideoAd *)rewardedVideoAd didFailWithError:(NSError *)error {
-    [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
+    if(error != nil)
+        [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
 }
 
 - (void)rewardedVideoAdServerRewardDidSucceed:(BURewardedVideoAd *)rewardedVideoAd verify:(BOOL)verify {

@@ -10,7 +10,7 @@
 #import <BUAdSDK/BUAdSDK.h>
 #import "BUDMopubNativeInterstitialVC.h"
 
-@interface PangleInterstitialCustomEvent () <BUNativeAdDelegate,BUNativeExpresInterstitialAdDelegate,BUFullscreenVideoAdDelegate,BUDMopubNativeInterstitialVCDelegate>
+@interface PangleInterstitialCustomEvent () <BUNativeAdDelegate,BUNativeExpresInterstitialAdDelegate,BUFullscreenVideoAdDelegate>
 @property (nonatomic, strong) BUNativeAd *nativeInterstitialAd;
 @property (nonatomic, strong) BUDMopubNativeInterstitialVC *nativeInterstitialVC;
 @property (nonatomic, strong) BUNativeExpressInterstitialAd *expressInterstitialAd;
@@ -80,10 +80,8 @@
     NSInteger slotType = [[self.localExtras objectForKey:@"slotType"] integerValue];
     if (slotType == 1) {
         [self.expressInterstitialAd showAdFromRootViewController:rootViewController];
-    }else if (slotType == 2){
+    }else {
         [self.fullScreenVideo showAdFromRootViewController:rootViewController ritSceneDescribe:nil];
-    }else{
-        [self.nativeInterstitialVC showAdFromRootViewController:rootViewController delegate:self];
     }
 }
 

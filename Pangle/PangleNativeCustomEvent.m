@@ -8,10 +8,15 @@
 
 #import "PangleNativeCustomEvent.h"
 #import "PangleNativeAdAdapter.h"
+#import <BUAdSDK/BUAdSDKManager.h>
 #import <BUAdSDK/BUNativeAd.h>
-#import <mopub-ios-sdk/MPNativeAdRendererSettings.h>
-#import <mopub-ios-sdk/MPNativeAd.h>
-#import <BUAdSDK/BUAdSDK.h>
+
+#if __has_include("MoPub.h")
+    #import "MoPub.h"
+    #import "MPNativeAd.h"
+    #import "MPLogging.h"
+    #import "MPNativeAdError.h"
+#endif
 
 @interface PangleNativeCustomEvent () <BUNativeAdDelegate>
 @property (nonatomic, strong) BUNativeAd *nativeAd;

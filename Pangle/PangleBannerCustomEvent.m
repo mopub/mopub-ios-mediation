@@ -8,12 +8,12 @@
 
 #import "PangleBannerCustomEvent.h"
 #import <BUAdSDK/BUAdSDK.h>
-#import "BUDMopubNativeBannerView.h"
+//#import "BUDMopubNativeBannerView.h"
 
 @interface PangleBannerCustomEvent ()<BUNativeExpressBannerViewDelegate,BUNativeAdDelegate>
 @property (nonatomic, strong) BUNativeExpressBannerView *expressBannerView;
 @property (nonatomic, strong) BUNativeAd *nativeAd;
-@property (nonatomic, strong) BUDMopubNativeBannerView *nativeBannerView;
+//@property (nonatomic, strong) BUDMopubNativeBannerView *nativeBannerView;
 @end
 
 @implementation PangleBannerCustomEvent
@@ -62,7 +62,7 @@
             nad.delegate = self;
             self.nativeAd = nad;
         }
-        self.nativeBannerView = [[BUDMopubNativeBannerView alloc] initWithSize:size];
+//        self.nativeBannerView = [[BUDMopubNativeBannerView alloc] initWithSize:size];
         if (hasAdMarkup) {
             [self.nativeAd setMopubAdMarkUp:adMarkup];
         }else{
@@ -104,8 +104,8 @@
     if (!nativeAd.data) { return; }
     if (!(nativeAd == self.nativeAd)) { return; }
     self.nativeAd = nil;
-    [self.nativeBannerView refreshUIWithAd:nativeAd];
-    [self.delegate bannerCustomEvent:self didLoadAd:self.nativeBannerView];
+//    [self.nativeBannerView refreshUIWithAd:nativeAd];
+//    [self.delegate bannerCustomEvent:self didLoadAd:self.nativeBannerView];
 }
 
 - (void)nativeAd:(BUNativeAd *)nativeAd didFailWithError:(NSError *_Nullable)error {
@@ -121,7 +121,7 @@
 }
 
 - (void)nativeAd:(BUNativeAd *)nativeAd  dislikeWithReason:(NSArray<BUDislikeWords *> *)filterWords {
-    [self.nativeBannerView removeFromSuperview];
+//    [self.nativeBannerView removeFromSuperview];
 }
 
 @end

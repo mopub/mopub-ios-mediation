@@ -8,7 +8,7 @@
 
 #import "PangleAdapterConfiguration.h"
 #import <BUAdSDK/BUAdSDKManager.h>
-#import "BUDAdManager.h"
+//#import "BUDAdManager.h"
 #import "MoPub.h"
 
 @implementation PangleAdapterConfiguration
@@ -42,7 +42,7 @@
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
             dispatch_async(dispatch_get_main_queue(), ^{
-                [BUAdSDKManager setAppID:[BUDAdManager appKey]];
+                [BUAdSDKManager setAppID:appkeyString];
                 [BUAdSDKManager setIsPaidApp:NO];
                 [BUAdSDKManager setLoglevel:BUAdSDKLogLevelDebug];
                 if ((Coppa && [Coppa isKindOfClass:[NSNumber class]])) {
