@@ -80,8 +80,10 @@
     NSInteger slotType = [[self.localExtras objectForKey:@"slotType"] integerValue];
     if (slotType == 1) {
         [self.expressInterstitialAd showAdFromRootViewController:rootViewController];
-    }else {
+    }else if (slotType == 2){
         [self.fullScreenVideo showAdFromRootViewController:rootViewController ritSceneDescribe:nil];
+    }else{
+        [self.nativeInterstitialVC showAdFromRootViewController:rootViewController delegate:self];
     }
 }
 

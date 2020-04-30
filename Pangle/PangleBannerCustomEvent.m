@@ -121,7 +121,7 @@
 }
 
 - (void)nativeAd:(BUNativeAd *)nativeAd  dislikeWithReason:(NSArray<BUDislikeWords *> *)filterWords {
-//    [self.nativeBannerView removeFromSuperview];
+    [self.nativeBannerView removeFromSuperview];
 }
 
 @end
