@@ -17,7 +17,7 @@
 }
 
 - (NSString *)biddingToken {
-    return [BUAdSDKManager mopubBiddingToken];
+    return nil;
 }
 
 - (NSString *)moPubNetworkName {
