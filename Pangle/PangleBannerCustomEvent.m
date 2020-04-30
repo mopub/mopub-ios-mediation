@@ -8,12 +8,12 @@
 
 #import "PangleBannerCustomEvent.h"
 #import <BUAdSDK/BUAdSDK.h>
-#import "BUDMopubNativeBannerView.h"
+#import "PangleNativeBannerView.h"
 
 @interface PangleBannerCustomEvent ()<BUNativeExpressBannerViewDelegate,BUNativeAdDelegate>
 @property (nonatomic, strong) BUNativeExpressBannerView *expressBannerView;
 @property (nonatomic, strong) BUNativeAd *nativeAd;
-@property (nonatomic, strong) BUDMopubNativeBannerView *nativeBannerView;
+@property (nonatomic, strong) PangleNativeBannerView *nativeBannerView;
 @end
 
 @implementation PangleBannerCustomEvent
@@ -62,7 +62,7 @@
             nad.delegate = self;
             self.nativeAd = nad;
         }
-        self.nativeBannerView = [[BUDMopubNativeBannerView alloc] initWithSize:size];
+        self.nativeBannerView = [[PangleNativeBannerView alloc] initWithSize:size];
         if (hasAdMarkup) {
             [self.nativeAd setMopubAdMarkUp:adMarkup];
         }else{

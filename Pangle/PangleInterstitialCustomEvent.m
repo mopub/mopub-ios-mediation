@@ -8,11 +8,11 @@
 
 #import "PangleInterstitialCustomEvent.h"
 #import <BUAdSDK/BUAdSDK.h>
-#import "BUDMopubNativeInterstitialVC.h"
+#import "PangleNativeInterstitialView.h"
 
-@interface PangleInterstitialCustomEvent () <BUNativeAdDelegate,BUNativeExpresInterstitialAdDelegate,BUFullscreenVideoAdDelegate,BUDMopubNativeInterstitialVCDelegate>
+@interface PangleInterstitialCustomEvent () <BUNativeAdDelegate,BUNativeExpresInterstitialAdDelegate,BUFullscreenVideoAdDelegate,PangleNativeInterstitialViewDelegate>
 @property (nonatomic, strong) BUNativeAd *nativeInterstitialAd;
-@property (nonatomic, strong) BUDMopubNativeInterstitialVC *nativeInterstitialVC;
+@property (nonatomic, strong) PangleNativeInterstitialView *nativeInterstitialVC;
 @property (nonatomic, strong) BUNativeExpressInterstitialAd *expressInterstitialAd;
 @property (strong, nonatomic) BUFullscreenVideoAd *fullScreenVideo;
 @end
@@ -62,7 +62,7 @@
             }else{
                 [nad loadAdData];
             }
-            self.nativeInterstitialVC = [[BUDMopubNativeInterstitialVC alloc] init];
+            self.nativeInterstitialVC = [[PangleNativeInterstitialView alloc] init];
         }
     }else if (adType == BUAdSlotAdTypeFullscreenVideo){
         self.fullScreenVideo = [[BUFullscreenVideoAd alloc] initWithSlotID:ritStr];
@@ -114,7 +114,7 @@
     [self.delegate interstitialCustomEventDidAppear:self];
 }
 
-#pragma mark BUDMopubNativeInterstitialVCDelegate
+#pragma mark PangleNativeInterstitialViewDelegate
 - (void)nativeInterstitialAdWillClose:(BUNativeAd *)nativeAd{
     [self.delegate interstitialCustomEventWillDisappear:self];
 }
