@@ -120,13 +120,29 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 #pragma clang diagnostic ignored "-Wundeclared-selector"
         [[VungleSDK sharedSDK] performSelector:@selector(setPluginName:version:) withObject:@"mopub" withObject:[[[VungleAdapterConfiguration alloc] init] adapterVersion]];
 #pragma clang diagnostic pop
+       
+        // Get delegate instance and set init options
+        NSString *placementID = [info objectForKey:kVunglePlacementIdKey];
+        id<VungleRouterDelegate> delegateInstance = [self.waitingListDict objectForKey:placementID];
+        NSMutableDictionary *initOptions = [NSMutableDictionary dictionary];
         
+        if (placementID.length && delegateInstance) {
+            [initOptions setObject:placementID forKey:VungleSDKInitOptionKeyPriorityPlacementID];
+
+            NSInteger priorityPlacementAdSize = 1;
+            if ([delegateInstance respondsToSelector:@selector(getBannerSize)]) {
+                CGSize size = [delegateInstance getBannerSize];
+                priorityPlacementAdSize = [self getVungleBannerAdSizeType:size];
+                [initOptions setObject:[NSNumber numberWithInteger:priorityPlacementAdSize] forKey:VungleSDKInitOptionKeyPriorityPlacementAdSize];
+            }
+        }
+              
         self.sdkInitializeState = SDKInitializeStateInitializing;
         dispatch_async(dispatch_get_main_queue(), ^{
             NSError * error = nil;
             // Disable refresh functionality for all banners
             [[VungleSDK sharedSDK] disableBannerRefresh];
-            [[VungleSDK sharedSDK] startWithAppId:appId error:&error];
+            [[VungleSDK sharedSDK] startWithAppId:appId options:initOptions error:&error];
             [[VungleSDK sharedSDK] setDelegate:self];
             [[VungleSDK sharedSDK] setNativeAdsDelegate:self];
         });
