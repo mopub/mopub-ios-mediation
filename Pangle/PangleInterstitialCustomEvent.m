@@ -22,7 +22,7 @@
     BOOL hasAdMarkup = adMarkup.length > 0;
     NSDictionary *ritDict;
     NSString *ritStr;
-    ritStr = [info objectForKey:@"ad_placement_id”"];
+    ritStr = [info objectForKey:@"ad_placement_id"];
     if (ritStr == nil) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID"}];
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];

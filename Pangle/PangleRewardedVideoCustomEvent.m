@@ -23,7 +23,7 @@
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
     NSString *ritStr;
-    ritStr = [info objectForKey:@"ad_placement_id”"];
+    ritStr = [info objectForKey:@"ad_placement_id"];
     if (ritStr == nil) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID"}];
         [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
