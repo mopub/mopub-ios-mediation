@@ -14,7 +14,9 @@
 @property (nonatomic, strong) BUNativeAd *nativeInterstitialAd;
 @property (nonatomic, strong) PangleNativeInterstitialView *nativeInterstitialVC;
 @property (nonatomic, strong) BUNativeExpressInterstitialAd *expressInterstitialAd;
-@property (strong, nonatomic) BUFullscreenVideoAd *fullScreenVideo;
+@property (nonatomic, strong) BUFullscreenVideoAd *fullScreenVideo;
+@property (nonatomic, assign) BUAdSlotAdType adType;
+@property (nonatomic, assign) NSInteger showType;
 @end
 
 @implementation PangleInterstitialCustomEvent
@@ -30,11 +32,11 @@
     }
     ritDict = [BUAdSDKManager AdTypeWithRit:ritStr];
     
-    BUAdSlotAdType adType = [[ritDict objectForKey:@"adSlotType"] integerValue];
+    self.adType = [[ritDict objectForKey:@"adSlotType"] integerValue];
     //renderType: @"1" express AD   @"2" native AD
-    NSInteger showType = [[ritDict objectForKey:@"renderType"] integerValue];
-    if (adType == BUAdSlotAdTypeInterstitial) {
-        if (showType == 1) {
+    self.showType = [[ritDict objectForKey:@"renderType"] integerValue];
+    if (self.adType == BUAdSlotAdTypeInterstitial) {
+        if (self.showType == 1) {
             self.expressInterstitialAd = [[BUNativeExpressInterstitialAd alloc] initWithSlotID:ritStr adSize:CGSizeMake(300, 400)];
             self.expressInterstitialAd.delegate = self;
             if (hasAdMarkup) {
@@ -65,7 +67,7 @@
             }
             self.nativeInterstitialVC = [[PangleNativeInterstitialView alloc] init];
         }
-    }else if (adType == BUAdSlotAdTypeFullscreenVideo){
+    }else if (self.adType == BUAdSlotAdTypeFullscreenVideo){
         self.fullScreenVideo = [[BUFullscreenVideoAd alloc] initWithSlotID:ritStr];
         self.fullScreenVideo.delegate = self;
         if (hasAdMarkup) {
@@ -77,14 +79,15 @@
 }
 
 - (void)showInterstitialFromRootViewController:(UIViewController *)rootViewController {
-    // 0:Normal Interstitial 1:Express Interstitial 2:Normal Fullscreen
-    NSInteger slotType = [[self.localExtras objectForKey:@"slotType"] integerValue];
-    if (slotType == 1) {
-        [self.expressInterstitialAd showAdFromRootViewController:rootViewController];
-    }else if (slotType == 2){
+    //renderType: @"1" express AD   @"2" native AD
+    if (self.adType == BUAdSlotAdTypeInterstitial) {
+        if (self.showType == 1) {
+            [self.expressInterstitialAd showAdFromRootViewController:rootViewController];
+        }else{
+            [self.nativeInterstitialVC showAdFromRootViewController:rootViewController delegate:self];
+        }
+    }else if (self.adType == BUAdSlotAdTypeFullscreenVideo){
         [self.fullScreenVideo showAdFromRootViewController:rootViewController ritSceneDescribe:nil];
-    }else{
-        [self.nativeInterstitialVC showAdFromRootViewController:rootViewController delegate:self];
     }
 }
 
