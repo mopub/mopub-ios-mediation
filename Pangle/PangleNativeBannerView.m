@@ -8,9 +8,9 @@
 
 #import "PangleNativeBannerView.h"
 #import <BUAdSDK/BUNativeAdRelatedView.h>
-#import "UIImageView+AFNetworking.h"
-#import "BUDMacros.h"
-#import "UIView+Draw.h"
+#import <BUFoundation/UIImageView+BUWebCache.h>
+
+#define PangleNative_RGB(r,g,b) [UIColor colorWithRed:(r/255.0) green:(g/255.0) blue:(b/255.0) alpha:1]
 
 static CGSize const logoSize = {58, 18.5};
 
@@ -70,7 +70,7 @@ static CGSize const logoSize = {58, 18.5};
         adImageView.contentMode =  UIViewContentModeScaleAspectFill;
         adImageView.clipsToBounds = YES;
         if (adImage.imageURL.length) {
-            [adImageView setImageWithURL:[NSURL URLWithString:adImage.imageURL] placeholderImage:nil];
+            [adImageView sdBu_setImageWithURL:[NSURL URLWithString:adImage.imageURL] placeholderImage:nil];
         }
         [self.horizontalScrollView addSubview:adImageView];
         
@@ -85,7 +85,7 @@ static CGSize const logoSize = {58, 18.5};
 
         UILabel *titleLable = [UILabel new];
         titleLable.frame = CGRectMake(10, contentHeight-10-20, contentWidth-100, 20);
-        titleLable.textColor = BUD_RGB(0xff, 0xff, 0xff);
+        titleLable.textColor = PangleNative_RGB(0xff, 0xff, 0xff);
         titleLable.font = [UIFont boldSystemFontOfSize:18];
         titleLable.text = titleString;
         [adImageView addSubview:titleLable];
@@ -96,8 +96,8 @@ static CGSize const logoSize = {58, 18.5};
         adImageView.accessibilityIdentifier = @"banner_view";
     }
     self.horizontalScrollView.contentSize = CGSizeMake(x, contentHeight);
-    self.closeButton.frame = CGRectMake(self.width-self.closeButton.width-5, self.horizontalScrollView.height +(bottomHeight-self.closeButton.width)/2, self.closeButton.width, self.closeButton.height);
-    self.adLogo.frame = CGRectMake(self.closeButton.left-logoSize.width - 10, self.horizontalScrollView.height +(bottomHeight-logoSize.height)/2, logoSize.width, logoSize.height);
+    self.closeButton.frame = CGRectMake(self.bounds.size.width-self.closeButton.bounds.size.width-5, self.horizontalScrollView.bounds.size.height +(bottomHeight-self.closeButton.bounds.size.width)/2, self.closeButton.bounds.size.width, self.closeButton.bounds.size.height);
+    self.adLogo.frame = CGRectMake(self.closeButton.frame.origin.x-logoSize.width - 10, self.horizontalScrollView.bounds.size.height +(bottomHeight-logoSize.height)/2, logoSize.width, logoSize.height);
 }
 
 #pragma mark addAccessibilityIdentifier

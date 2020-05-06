@@ -22,15 +22,14 @@
 
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
-    NSDictionary *ritDict;
     NSString *ritStr;
-    if (adMarkup != nil) {
-        ritDict = [BUAdSDKManager AdTypeWithAdMarkUp:adMarkup];
-        ritStr = [ritDict objectForKey:@"adSlotID"];
-    }else{
-        ritStr = [info objectForKey:@"rit"];
-        ritDict = [BUAdSDKManager AdTypeWithRit:ritStr];
+    ritStr = [info objectForKey:@"ad_placement_id”"];
+    if (ritStr == nil) {
+        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID"}];
+        [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
+        return;
     }
+    
     BURewardedVideoModel *model = [[BURewardedVideoModel alloc] init];
     model.userId = @"123";
     

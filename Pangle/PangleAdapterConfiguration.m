@@ -8,8 +8,7 @@
 
 #import "PangleAdapterConfiguration.h"
 #import <BUAdSDK/BUAdSDKManager.h>
-//#import "BUDAdManager.h"
-#import "MoPub.h"
+
 
 @implementation PangleAdapterConfiguration
 - (NSString *)adapterVersion {

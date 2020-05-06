@@ -6,6 +6,7 @@
 //  Copyright © 2020 Pangle. All rights reserved.
 //
 
+#import <BUAdSDK/BUNativeAd.h>
 #if __has_include(<MoPub/MoPub.h>)
 #import <MoPub/MoPub.h>
 #elif __has_include(<MoPubSDKFramework/MoPub.h>)
@@ -13,7 +14,6 @@
 #else
 #import "MPNativeAdAdapter.h"
 #endif
-#import <BUAdSDK/BUNativeAd.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
