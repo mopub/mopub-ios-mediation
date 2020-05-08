@@ -16,7 +16,7 @@
 @property (nonatomic, strong) BUNativeExpressInterstitialAd *expressInterstitialAd;
 @property (nonatomic, strong) BUFullscreenVideoAd *fullScreenVideo;
 @property (nonatomic, assign) BUAdSlotAdType adType;
-@property (nonatomic, assign) NSInteger showType;
+@property (nonatomic, assign) NSInteger renderType;
 @end
 
 @implementation PangleInterstitialCustomEvent
@@ -34,9 +34,9 @@
     
     self.adType = [[ritDict objectForKey:@"adSlotType"] integerValue];
     //renderType: @"1" express AD   @"2" native AD
-    self.showType = [[ritDict objectForKey:@"renderType"] integerValue];
+    self.renderType = [[ritDict objectForKey:@"renderType"] integerValue];
     if (self.adType == BUAdSlotAdTypeInterstitial) {
-        if (self.showType == 1) {
+        if (self.renderType == 1) {
             self.expressInterstitialAd = [[BUNativeExpressInterstitialAd alloc] initWithSlotID:ritStr adSize:CGSizeMake(300, 400)];
             self.expressInterstitialAd.delegate = self;
             if (hasAdMarkup) {
@@ -81,7 +81,7 @@
 - (void)showInterstitialFromRootViewController:(UIViewController *)rootViewController {
     //renderType: @"1" express AD   @"2" native AD
     if (self.adType == BUAdSlotAdTypeInterstitial) {
-        if (self.showType == 1) {
+        if (self.renderType == 1) {
             [self.expressInterstitialAd showAdFromRootViewController:rootViewController];
         }else{
             [self.nativeInterstitialVC showAdFromRootViewController:rootViewController delegate:self];

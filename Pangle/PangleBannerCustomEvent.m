@@ -30,12 +30,12 @@
     ritDict = [BUAdSDKManager AdTypeWithRit:ritStr];
     
     //renderType: @"1" express AD   @"2" native AD
-    NSInteger showType = [[ritDict objectForKey:@"renderType"] integerValue];
+    NSInteger renderType = [[ritDict objectForKey:@"renderType"] integerValue];
 
     BUSize *adSize = [[BUSize alloc] init];
     adSize.width = size.width;
     adSize.height = size.height;
-    if (showType == 1) {
+    if (renderType == 1) {
         self.expressBannerView = [[BUNativeExpressBannerView alloc] initWithSlotID:ritStr rootViewController:self.delegate.viewControllerForPresentingModalView adSize:size IsSupportDeepLink:YES];
         self.expressBannerView.frame = CGRectMake(0, 0, size.width, size.height);
         self.expressBannerView.delegate = self;
