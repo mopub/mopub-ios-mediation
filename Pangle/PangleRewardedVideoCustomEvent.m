@@ -13,6 +13,7 @@
 #import "MPRewardedVideoError.h"
 #import "MPRewardedVideoReward.h"
 #endif
+#import "PangleAdapterConfiguration.h"
 
 @interface PangleRewardedVideoCustomEvent ()<BURewardedVideoAdDelegate>
 @property (nonatomic, strong) BURewardedVideoAd *rewardVideoAd;
@@ -22,6 +23,10 @@
 
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
+    NSString * appId = [info objectForKey:@"app_id"];
+    if (appId != nil){
+        [PangleAdapterConfiguration updateInitializationParameters:info];
+    }
     NSString *ritStr;
     ritStr = [info objectForKey:@"ad_placement_id"];
     if (ritStr == nil) {
