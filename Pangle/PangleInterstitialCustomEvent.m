@@ -9,6 +9,7 @@
 #import "PangleInterstitialCustomEvent.h"
 #import <BUAdSDK/BUAdSDK.h>
 #import "PangleNativeInterstitialView.h"
+#import "PangleAdapterConfiguration.h"
 
 @interface PangleInterstitialCustomEvent () <BUNativeAdDelegate,BUNativeExpresInterstitialAdDelegate,BUFullscreenVideoAdDelegate,PangleNativeInterstitialViewDelegate>
 @property (nonatomic, strong) BUNativeAd *nativeInterstitialAd;
@@ -23,6 +24,10 @@
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
     NSDictionary *ritDict;
+    NSString * appId = [info objectForKey:@"app_id"];
+    if (appId != nil){
+        [PangleAdapterConfiguration updateInitializationParameters:info];
+    }
     NSString *ritStr;
     ritStr = [info objectForKey:@"ad_placement_id"];
     if (ritStr == nil) {

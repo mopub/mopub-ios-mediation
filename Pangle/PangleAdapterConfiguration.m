@@ -11,8 +11,13 @@
 
 
 @implementation PangleAdapterConfiguration
+
+// Constants
+static NSString * const kPangleAppIdKey = @"app_id";
+static NSString * const kPanglePlacementIdKey = @"ad_placmenet_id";
+
 - (NSString *)adapterVersion {
-    return [BUAdSDKManager SDKVersion]?:@"";
+    return @"3.0.0.1.0";
 }
 
 - (NSString *)biddingToken {
@@ -20,7 +25,7 @@
 }
 
 - (NSString *)moPubNetworkName {
-    return @"BUAdSDK";
+    return @"pangle";
 }
 
 - (NSString *)networkSdkVersion {
@@ -28,7 +33,7 @@
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration complete:(void(^)(NSError *))complete {
-    NSString *appkeyString = configuration[@"appKey"];
+    NSString *appkeyString = configuration[kPangleAppIdKey];
     NSNumber *Coppa = configuration[@"Coppa"];
     NSNumber *isPaidApp = configuration[@"isPaidApp"];
     NSNumber *GDPR = configuration[@"GDPR"];
@@ -69,8 +74,10 @@
 #pragma mark - Class method
 + (void)updateInitializationParameters:(NSDictionary *)parameters
 {
-    if (parameters != nil) {
-        [PangleAdapterConfiguration setCachedInitializationParameters:parameters];
+    NSString * appId = parameters[kPangleAppIdKey];
+    if (appId != nil) {
+        NSDictionary * configuration = @{kPangleAppIdKey: appId};
+        [PangleAdapterConfiguration setCachedInitializationParameters:configuration];
     }
 }
 @end

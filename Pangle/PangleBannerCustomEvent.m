@@ -9,6 +9,13 @@
 #import "PangleBannerCustomEvent.h"
 #import <BUAdSDK/BUAdSDK.h>
 #import "PangleNativeBannerView.h"
+#import "PangleAdapterConfiguration.h"
+
+#if __has_include("MoPub.h")
+    #import "MPError.h"
+    #import "MPLogging.h"
+    #import "MoPub.h"
+#endif
 
 @interface PangleBannerCustomEvent ()<BUNativeExpressBannerViewDelegate,BUNativeAdDelegate>
 @property (nonatomic, strong) BUNativeExpressBannerView *expressBannerView;
@@ -20,6 +27,10 @@
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
     NSDictionary *ritDict;
+    NSString * appId = [info objectForKey:@"app_id"];
+    if (appId != nil){
+        [PangleAdapterConfiguration updateInitializationParameters:info];
+    }
     NSString *ritStr;
     ritStr = [info objectForKey:@"ad_placement_id"];
     if (ritStr == nil) {

@@ -10,6 +10,7 @@
 #import "PangleNativeAdAdapter.h"
 #import <BUAdSDK/BUAdSDKManager.h>
 #import <BUAdSDK/BUNativeAd.h>
+#import "PangleAdapterConfiguration.h"
 
 #if __has_include("MoPub.h")
     #import "MoPub.h"
@@ -40,6 +41,10 @@
 
 - (void)requestAdWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
+    NSString * appId = [info objectForKey:@"app_id"];
+    if (appId != nil){
+        [PangleAdapterConfiguration updateInitializationParameters:info];
+    }
     NSString *ritStr;
     ritStr = [info objectForKey:@"ad_placement_id"];
     if (ritStr == nil) {
