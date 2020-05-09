@@ -40,7 +40,9 @@ static CGSize const logoSize = {20, 20};
 - (BOOL)showAdFromRootViewController:(UIViewController *)rootViewController delegate:(id <PangleNativeInterstitialViewDelegate>)delegate{
     if (!rootViewController.presentedViewController) {
         self.delegate = delegate;
-        [rootViewController presentViewController:self animated:YES completion:^{
+        self.nativeAd.rootViewController = self;
+        self.modalPresentationStyle = UIModalPresentationCustom;
+        [rootViewController presentViewController:self animated:NO completion:^{
             
         }];
         return YES;
@@ -54,7 +56,6 @@ static CGSize const logoSize = {20, 20};
     CGSize size = [UIScreen mainScreen].bounds.size;
     self.backgroundView = [[UIView alloc]initWithFrame:CGRectMake(0, 0, size.width, size.height)];
     self.backgroundView.backgroundColor = [UIColor colorWithRed:0 green:0 blue:0 alpha:0.3];
-    self.backgroundView.hidden = YES;
     [self.view addSubview:self.backgroundView];
     
     self.whiteBackgroundView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -125,7 +126,7 @@ static CGSize const logoSize = {20, 20};
     if (!nativeAd.data) { return; }
     if (nativeAd.data.imageAry.count) {
         self.titleLable.text = nativeAd.data.AdTitle;
-        
+        self.nativeAd = nativeAd;
         BUImage *adImage = nativeAd.data.imageAry.firstObject;
         CGFloat contentWidth = CGRectGetWidth(self.view.bounds) - 2*leftEdge - 2*5;
         CGFloat imageViewHeight = contentWidth * adImage.height/ adImage.width;

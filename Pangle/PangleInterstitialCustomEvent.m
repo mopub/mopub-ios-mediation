@@ -12,7 +12,7 @@
 
 @interface PangleInterstitialCustomEvent () <BUNativeAdDelegate,BUNativeExpresInterstitialAdDelegate,BUFullscreenVideoAdDelegate,PangleNativeInterstitialViewDelegate>
 @property (nonatomic, strong) BUNativeAd *nativeInterstitialAd;
-@property (nonatomic, strong) PangleNativeInterstitialView *nativeInterstitialVC;
+@property (nonatomic, strong) PangleNativeInterstitialView *nativeInterstitialView;
 @property (nonatomic, strong) BUNativeExpressInterstitialAd *expressInterstitialAd;
 @property (nonatomic, strong) BUFullscreenVideoAd *fullScreenVideo;
 @property (nonatomic, assign) BUAdSlotAdType adType;
@@ -65,7 +65,8 @@
             }else{
                 [nad loadAdData];
             }
-            self.nativeInterstitialVC = [[PangleNativeInterstitialView alloc] init];
+            self.nativeInterstitialView = [[PangleNativeInterstitialView alloc] init];
+        
         }
     }else if (self.adType == BUAdSlotAdTypeFullscreenVideo){
         self.fullScreenVideo = [[BUFullscreenVideoAd alloc] initWithSlotID:ritStr];
@@ -84,7 +85,7 @@
         if (self.renderType == 1) {
             [self.expressInterstitialAd showAdFromRootViewController:rootViewController];
         }else{
-            [self.nativeInterstitialVC showAdFromRootViewController:rootViewController delegate:self];
+            [self.nativeInterstitialView showAdFromRootViewController:rootViewController delegate:self];
         }
     }else if (self.adType == BUAdSlotAdTypeFullscreenVideo){
         [self.fullScreenVideo showAdFromRootViewController:rootViewController ritSceneDescribe:nil];
@@ -97,7 +98,7 @@
 
 #pragma mark - BUNativeAdDelegate
 - (void)nativeAdDidLoad:(BUNativeAd *)nativeAd {
-    [self.nativeInterstitialVC refreshUIWithAd:nativeAd];
+    [self.nativeInterstitialView refreshUIWithAd:nativeAd];
     [self.delegate interstitialCustomEvent:self didLoadAd:self.nativeInterstitialAd];
 }
 
