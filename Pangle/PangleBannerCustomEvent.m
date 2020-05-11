@@ -21,24 +21,27 @@
 @property (nonatomic, strong) BUNativeExpressBannerView *expressBannerView;
 @property (nonatomic, strong) BUNativeAd *nativeAd;
 @property (nonatomic, strong) PangleNativeBannerView *nativeBannerView;
+@property (nonatomic, copy) NSString *adPlacementId;
 @end
 
 @implementation PangleBannerCustomEvent
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
     NSDictionary *ritDict;
+    
     NSString * appId = [info objectForKey:@"app_id"];
-    if (appId != nil){
+    if (appId != nil) {
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
-    NSString *ritStr;
-    ritStr = [info objectForKey:@"ad_placement_id"];
-    if (ritStr == nil) {
-        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID"}];
+    self.adPlacementId = [info objectForKey:@"ad_placement_id"];
+    if (self.adPlacementId == nil) {
+        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID. Failing ad request. Ensure the ad placement id is valid on the MoPub dashboard."}];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+        
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
-    ritDict = [BUAdSDKManager AdTypeWithRit:ritStr];
+    ritDict = [BUAdSDKManager AdTypeWithRit:self.adPlacementId];
     
     //renderType: @"1" express AD   @"2" native AD
     NSInteger renderType = [[ritDict objectForKey:@"renderType"] integerValue];
@@ -47,22 +50,22 @@
     adSize.width = size.width;
     adSize.height = size.height;
     if (renderType == 1) {
-        self.expressBannerView = [[BUNativeExpressBannerView alloc] initWithSlotID:ritStr rootViewController:self.delegate.viewControllerForPresentingModalView adSize:size IsSupportDeepLink:YES];
+        self.expressBannerView = [[BUNativeExpressBannerView alloc] initWithSlotID:self.adPlacementId rootViewController:self.delegate.viewControllerForPresentingModalView adSize:size IsSupportDeepLink:YES];
         self.expressBannerView.frame = CGRectMake(0, 0, size.width, size.height);
         self.expressBannerView.delegate = self;
         if (hasAdMarkup) {
             [self.expressBannerView setMopubAdMarkUp:adMarkup];
-        }else{
+        } else {
             [self.expressBannerView loadAdData];
         }
     } else {
         if (!self.nativeAd) {
             BUSize *imgSize1 = [[BUSize alloc] init];
-            imgSize1.width = 1080;
-            imgSize1.height = 1920;
+            imgSize1.width = size.width;
+            imgSize1.height = size.height;
             
             BUAdSlot *slot1 = [[BUAdSlot alloc] init];
-            slot1.ID = ritStr;
+            slot1.ID = self.adPlacementId;
             slot1.AdType = BUAdSlotAdTypeBanner;
             slot1.position = BUAdSlotPositionTop;
             slot1.imgSize = imgSize1;
@@ -83,19 +86,28 @@
     }
 }
 
+- (NSString *) getAdNetworkId {
+    return (self.adPlacementId != nil) ? self.adPlacementId : @"";
+}
+
 #pragma mark - BUNativeExpressBannerViewDelegate
 - (void)nativeExpressBannerAdViewDidLoad:(BUNativeExpressBannerView *)bannerAdView {
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void)nativeExpressBannerAdView:(BUNativeExpressBannerView *)bannerAdView didLoadFailWithError:(NSError *_Nullable)error {
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
 }
 
 - (void)nativeExpressBannerAdViewRenderSuccess:(BUNativeExpressBannerView *)bannerAdView {
+    MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate bannerCustomEvent:self didLoadAd:bannerAdView];
 }
 
 - (void)nativeExpressBannerAdViewRenderFail:(BUNativeExpressBannerView *)bannerAdView error:(NSError * __nullable)error {
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
 }
 
@@ -117,10 +129,14 @@
     if (!(nativeAd == self.nativeAd)) { return; }
     self.nativeAd = nil;
     [self.nativeBannerView refreshUIWithAd:nativeAd];
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate bannerCustomEvent:self didLoadAd:self.nativeBannerView];
 }
 
 - (void)nativeAd:(BUNativeAd *)nativeAd didFailWithError:(NSError *_Nullable)error {
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
 }
 

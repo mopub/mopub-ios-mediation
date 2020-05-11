@@ -10,6 +10,11 @@
 #import <BUAdSDK/BUAdSDK.h>
 #import "PangleNativeInterstitialView.h"
 #import "PangleAdapterConfiguration.h"
+#if __has_include("MoPub.h")
+    #import "MPError.h"
+    #import "MPLogging.h"
+    #import "MoPub.h"
+#endif
 
 @interface PangleInterstitialCustomEvent () <BUNativeAdDelegate,BUNativeExpresInterstitialAdDelegate,BUFullscreenVideoAdDelegate,PangleNativeInterstitialViewDelegate>
 @property (nonatomic, strong) BUNativeAd *nativeInterstitialAd;
@@ -32,6 +37,7 @@
     ritStr = [info objectForKey:@"ad_placement_id"];
     if (ritStr == nil) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID"}];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
