@@ -86,10 +86,6 @@
     }
 }
 
-- (NSString *) getAdNetworkId {
-    return (self.adPlacementId != nil) ? self.adPlacementId : @"";
-}
-
 #pragma mark - BUNativeExpressBannerViewDelegate
 - (void)nativeExpressBannerAdViewDidLoad:(BUNativeExpressBannerView *)bannerAdView {
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
@@ -150,6 +146,10 @@
 
 - (void)nativeAd:(BUNativeAd *)nativeAd  dislikeWithReason:(NSArray<BUDislikeWords *> *)filterWords {
     [self.nativeBannerView removeFromSuperview];
+}
+
+- (NSString *) getAdNetworkId {
+    return (self.adPlacementId != nil) ? self.adPlacementId : @"";
 }
 
 @end
