@@ -7,6 +7,8 @@
 //
 
 #import "PangleNativeAdAdapter.h"
+#import <BUAdSDK/BUNativeAdRelatedView.h>
+#import <BUFoundation/UIImageView+BUWebCache.h>
 #if __has_include("MoPub.h")
 #import "MPNativeAd.h"
 #import "MPNativeAdConstants.h"
@@ -34,7 +36,21 @@
     if (nativeAd.data.imageAry.count > 0) {
         [dic setValue:nativeAd.data.imageAry.firstObject.imageURL forKey:kAdMainImageKey];
     }
-    self.mediaView = [[UIView alloc] init];
+    self.mediaView = nil;
+    if (nativeAd.data.imageMode == BUFeedVideoAdModeImage) {
+        BUNativeAdRelatedView *related = [[BUNativeAdRelatedView alloc] init];
+        [related refreshData:nativeAd];
+        self.mediaView = related.videoAdView;
+    }else{
+        UIImageView *imageView = [[UIImageView alloc] init];
+        self.mediaView = imageView;
+        if (nativeAd.data.imageAry.count > 0) {
+            BUImage *img = nativeAd.data.imageAry.firstObject;
+            if (img.imageURL.length > 0) {
+                [imageView sdBu_setImageWithURL:[NSURL URLWithString:img.imageURL] placeholderImage:nil];
+            }
+        }
+    }
     [dic setValue:self.mediaView forKey:kAdMainMediaViewKey];
     // This is translate the Pangle nativeAd
     [dic setValue:nativeAd forKey:@"bu_nativeAd"];

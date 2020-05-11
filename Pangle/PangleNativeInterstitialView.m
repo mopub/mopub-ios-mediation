@@ -10,8 +10,10 @@
 #import <BUFoundation/UIImageView+BUWebCache.h>
 #import <BUAdSDK/BUNativeAdRelatedView.h>
 #import <BUFoundation/UIView+BUAdditions.h>
+#import <BUFoundation/UIImage+BUIcon.h>
 
-static CGSize const dislikeSize = {15, 15};
+
+static CGSize const dislikeSize = {24, 24};
 static CGSize const logoSize = {20, 20};
 #define leftEdge 20
 #define titleHeight 40
@@ -89,7 +91,9 @@ static CGSize const logoSize = {20, 20};
     [self.whiteBackgroundView addSubview:self.logoImgeView];
     
     self.dislikeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.dislikeButton setImage:[UIImage imageNamed:@"nativeDislike.png"] forState:UIControlStateNormal];
+    [UIImage bu_compatImageNamed:kBU_fullClose block:^(UIImage *image) {
+        [self->_dislikeButton setImage:image forState:UIControlStateNormal];
+    }];
     [self.dislikeButton addTarget:self action:@selector(tapCloseButton) forControlEvents:UIControlEventTouchUpInside];
     [self.backgroundView addSubview:_dislikeButton];
 }

@@ -21,6 +21,7 @@
 
 @interface PangleNativeCustomEvent () <BUNativeAdDelegate>
 @property (nonatomic, strong) BUNativeAd *nativeAd;
+@property (nonatomic, copy) NSString *adPlacementId;
 @end
  
 @implementation PangleNativeCustomEvent
@@ -45,15 +46,15 @@
     if (appId != nil){
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
-    NSString *ritStr;
-    ritStr = [info objectForKey:@"ad_placement_id"];
-    if (ritStr == nil) {
+    self.adPlacementId = [info objectForKey:@"ad_placement_id"];
+    if (self.adPlacementId == nil) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID"}];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
     
-    self.nativeAd.adslot.ID = ritStr;
+    self.nativeAd.adslot.ID = self.adPlacementId;
     if (hasAdMarkup) {
         [self.nativeAd setMopubAdMarkUp:adMarkup];
     }else{
@@ -68,13 +69,20 @@
 #pragma mark - BUNativeAdDelegate
 
 - (void)nativeAd:(BUNativeAd *)nativeAd didFailWithError:(NSError *)error {
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
 }
 
 - (void)nativeAdDidLoad:(BUNativeAd *)nativeAd {
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     PangleNativeAdAdapter *adapter = [[PangleNativeAdAdapter alloc] initWithBUNativeAd:nativeAd];
     MPNativeAd *mp_nativeAd = [[MPNativeAd alloc] initWithAdAdapter:adapter];
     [self.delegate nativeCustomEvent:self didLoadAd:mp_nativeAd];
 }
+
+- (NSString *) getAdNetworkId {
+    return (self.adPlacementId != nil) ? self.adPlacementId : @"";
+}
+
 
 @end

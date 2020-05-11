@@ -207,6 +207,14 @@
     [self.delegate trackImpression];
 }
 
+- (void)fullscreenVideoAdDidVisible:(BUFullscreenVideoAd *)fullscreenVideoAd{
+    [self.delegate interstitialCustomEventDidAppear:self];
+}
+
+- (void)fullscreenVideoAdWillClose:(BUFullscreenVideoAd *)fullscreenVideoAd{
+    [self.delegate interstitialCustomEventWillDisappear:self];
+}
+
 - (void)fullscreenVideoAdDidClose:(BUFullscreenVideoAd *)fullscreenVideoAd {
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate interstitialCustomEventDidDisappear:self];
