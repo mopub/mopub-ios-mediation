@@ -51,7 +51,8 @@
     adSize.width = size.width;
     adSize.height = size.height;
     if (renderType == 1) {
-        self.expressBannerView = [[BUNativeExpressBannerView alloc] initWithSlotID:self.adPlacementId rootViewController:self.delegate.viewControllerForPresentingModalView adSize:size IsSupportDeepLink:YES];
+        CGSize expressRequestSize = [self sizeForCustomEventInfo:size];
+        self.expressBannerView = [[BUNativeExpressBannerView alloc] initWithSlotID:self.adPlacementId rootViewController:self.delegate.viewControllerForPresentingModalView adSize:expressRequestSize IsSupportDeepLink:YES];
         self.expressBannerView.frame = CGRectMake(0, 0, size.width, size.height);
         self.expressBannerView.delegate = self;
         if (hasAdMarkup) {

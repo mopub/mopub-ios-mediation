@@ -55,6 +55,12 @@
     }
     
     self.nativeAd.adslot.ID = self.adPlacementId;
+    UIWindow *window = [UIApplication sharedApplication].keyWindow;
+    UIViewController *rootViewController = window.rootViewController;
+    while (rootViewController.presentedViewController) {
+      rootViewController = rootViewController.presentedViewController;
+    }
+    self.nativeAd.rootViewController = rootViewController;
     if (hasAdMarkup) {
         [self.nativeAd setMopubAdMarkUp:adMarkup];
     }else{

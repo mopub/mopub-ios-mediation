@@ -86,14 +86,9 @@
         self.adView.nativeTitleTextLabel.text = [adapter.properties objectForKey:kAdTitleKey];
     }
     
-    if ([self.adView respondsToSelector:@selector(nativeCallToActionTextLabel)] && self.adView.nativeCallToActionTextLabel) {
-        self.adView.nativeCallToActionTextLabel.text = [adapter.properties objectForKey:kAdCTATextKey];
-    }
-
     if ([self hasIconView]) {
         UIView *iconView = [self.adapter iconMediaView];
         UIView *iconImageView = [self.adView nativeIconImageView];
-        
         iconView.frame = iconImageView.bounds;
         iconView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         iconImageView.userInteractionEnabled = YES;
@@ -101,35 +96,59 @@
         [iconImageView addSubview:iconView];
     }
     
-    if ([self shouldLoadMediaView]) {
+    if ([self shouldLoadMainImageView]) {
         UIView *mediaView = [self.adapter mainMediaView];
         UIView *mainImageView = [self.adView nativeMainImageView];
-        
         mediaView.frame = mainImageView.bounds;
         mediaView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
         mainImageView.userInteractionEnabled = YES;
-        
         [mainImageView addSubview:mediaView];
     }
     
+    if ([self shouldLoadMainVideoView]) {
+        UIView *mediaView = [self.adapter mainMediaView];
+        UIView *mainVideoView = [self.adView nativeVideoView];
+        mediaView.frame = mainVideoView.bounds;
+        mediaView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+        mainVideoView.userInteractionEnabled = YES;
+        [mainVideoView addSubview:mediaView];
+    }
+
+    if ([self.adView respondsToSelector:@selector(nativeCallToActionTextLabel)] && self.adView.nativeCallToActionTextLabel) {
+        self.adView.nativeCallToActionTextLabel.text = [adapter.properties objectForKey:kAdCTATextKey];
+    }
+    
+    if ([self.adView respondsToSelector:@selector(nativePrivacyInformationIconImageView)]) {
+        [self.adView.nativePrivacyInformationIconImageView
+         addSubview:self.adapter.privacyInformationIconView];
+        self.adapter.privacyInformationIconView.frame = self.adView.nativePrivacyInformationIconImageView.bounds;
+        self.adapter.privacyInformationIconView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+    }
+
     // See if the ad contains a star rating and notify the view if it does.
     if ([self.adView respondsToSelector:@selector(layoutStarRating:)]) {
         NSNumber *starRatingNum = [adapter.properties objectForKey:kAdStarRatingKey];
-        
         if ([starRatingNum isKindOfClass:[NSNumber class]] && starRatingNum.floatValue >= kStarRatingMinValue && starRatingNum.floatValue <= kStarRatingMaxValue) {
             [self.adView layoutStarRating:starRatingNum];
         }
     }
-    
     return self.adView;
 }
 
-- (BOOL)shouldLoadMediaView
+- (BOOL)shouldLoadMainImageView
 {
     return [self.adapter respondsToSelector:@selector(mainMediaView)]
     && [self.adapter mainMediaView]
     && [self.adView respondsToSelector:@selector(nativeMainImageView)];
 }
+
+- (BOOL)shouldLoadMainVideoView
+{
+    return [self.adapter respondsToSelector:@selector(mainMediaView)]
+    && [self.adapter mainMediaView]
+    && [self.adView respondsToSelector:@selector(nativeVideoView)];
+}
+
 
 - (BOOL)hasIconView
 {

@@ -30,6 +30,9 @@ static CGSize const logoSize = {20, 20};
 @property (nonatomic, strong) UILabel *describeLable;
 @property (nonatomic, strong) UIImageView *interstitialAdView;
 @property (nonatomic, strong) UIButton *dowloadButton;
+@property (nonatomic, strong) UIImageView *mediaIcon;
+//@property (nonatomic, strong) UIButton *dowloadButton;
+
 @end
 
 @implementation PangleNativeInterstitialView
@@ -67,6 +70,7 @@ static CGSize const logoSize = {20, 20};
     self.titleLable = [[UILabel alloc] initWithFrame:CGRectZero];
     self.titleLable.textAlignment = NSTextAlignmentLeft;
     self.titleLable.font = [UIFont systemFontOfSize:17];
+    self.titleLable.textColor = [UIColor lightGrayColor];
     [self.whiteBackgroundView addSubview:self.titleLable];
     
     self.describeLable = [[UILabel alloc] initWithFrame:CGRectZero];
@@ -85,6 +89,12 @@ static CGSize const logoSize = {20, 20};
     _interstitialAdView.contentMode =  UIViewContentModeScaleAspectFill;
     _interstitialAdView.clipsToBounds = YES;
     [self.whiteBackgroundView addSubview:_interstitialAdView];
+    
+    self.mediaIcon = [[UIImageView alloc] init];
+    self.mediaIcon.contentMode =  UIViewContentModeScaleAspectFill;
+    self.mediaIcon.clipsToBounds = YES;
+    [self.whiteBackgroundView addSubview:self.mediaIcon];
+
     
     self.relatedView = [[BUNativeAdRelatedView alloc] init];
     self.logoImgeView = self.relatedView.logoImageView;
@@ -113,11 +123,10 @@ static CGSize const logoSize = {20, 20};
 - (void)layoutViewsWithimageViewHeight:(CGFloat)imageViewHeight {
     CGFloat whiteViewHeight = titleHeight + imageViewHeight + 10 + titleHeight + 10 + 30;
     self.whiteBackgroundView.frame = CGRectMake(leftEdge, (self.view.bu_height - whiteViewHeight)/2, self.view.bu_width-2*leftEdge, whiteViewHeight);
-    
     self.titleLable.frame = CGRectMake(13, 0, self.whiteBackgroundView.bu_width - 2*13 , titleHeight);
     self.describeLable.frame = CGRectMake(0, 0, self.whiteBackgroundView.bu_width - 2*13 , titleHeight);
     self.dowloadButton.frame = CGRectMake(0, 0, 200, 30);
-    
+    self.mediaIcon.frame = CGRectMake(0, 0, 100, 100);
     CGFloat margin = 5;
     CGFloat logoIconX = CGRectGetWidth(self.whiteBackgroundView.bounds) - logoSize.width - margin;
     CGFloat logoIconY = self.whiteBackgroundView.bu_height - logoSize.height - margin;
@@ -129,7 +138,6 @@ static CGSize const logoSize = {20, 20};
 - (void)refreshUIWithAd:(BUNativeAd *_Nonnull)nativeAd{
     if (!nativeAd.data) { return; }
     if (nativeAd.data.imageAry.count) {
-        self.titleLable.text = nativeAd.data.AdTitle;
         self.nativeAd = nativeAd;
         BUImage *adImage = nativeAd.data.imageAry.firstObject;
         CGFloat contentWidth = CGRectGetWidth(self.view.bounds) - 2*leftEdge - 2*5;
@@ -140,10 +148,12 @@ static CGSize const logoSize = {20, 20};
         if (adImage.imageURL.length) {
             [self.interstitialAdView sdBu_setImageWithURL:[NSURL URLWithString:adImage.imageURL] placeholderImage:nil];
         }
-        
+//        if (nativeAd.data.icon.imageURL.length) {
+//            [self.mediaIcon sdBu_setImageWithURL:[NSURL URLWithString:nativeAd.data.icon.imageURL] placeholderImage:nil];
+//        }
+        self.titleLable.text = nativeAd.data.AdTitle;
         self.describeLable.frame = CGRectMake(13, self.interstitialAdView.bu_bottom + 5, self.describeLable.bu_width, self.describeLable.bu_height);
         self.describeLable.text = nativeAd.data.AdDescription;
-        
         self.dowloadButton.frame = CGRectMake((self.whiteBackgroundView.bu_width - self.dowloadButton.bu_width)/2, self.describeLable.bu_bottom + 5, self.dowloadButton.bu_width, self.dowloadButton.bu_height);
         [self.dowloadButton setTitle:nativeAd.data.buttonText forState:UIControlStateNormal];
         
@@ -151,6 +161,7 @@ static CGSize const logoSize = {20, 20};
         [self.relatedView refreshData:nativeAd];
         
         [self addAccessibilityIdentifier];
+
     }
 }
 

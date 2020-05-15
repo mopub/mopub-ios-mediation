@@ -68,6 +68,8 @@
             slot1.isSupportDeepLink = YES;
             slot1.isOriginAd = YES;
             
+            self.nativeInterstitialView = [[PangleNativeInterstitialView alloc] init];
+
             BUNativeAd *nad = [[BUNativeAd alloc] initWithSlot:slot1];
             nad.delegate = self;
             self.nativeInterstitialAd = nad;
@@ -76,7 +78,6 @@
             }else{
                 [nad loadAdData];
             }
-            self.nativeInterstitialView = [[PangleNativeInterstitialView alloc] init];
         
         }
     }else if (self.adType == BUAdSlotAdTypeFullscreenVideo){

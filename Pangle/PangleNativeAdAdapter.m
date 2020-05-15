@@ -16,6 +16,8 @@
 
 @interface PangleNativeAdAdapter ()
 @property (nonatomic, strong) UIView *mediaView;
+@property (nonatomic, strong) BUNativeAdRelatedView *relatedView;
+@property (nonatomic, strong) BUNativeAd *nativeAd;
 @end
 
 @implementation PangleNativeAdAdapter
@@ -28,19 +30,21 @@
 }
 
 - (NSDictionary *)buNativeAdToDic:(BUNativeAd *)nativeAd {
+    self.nativeAd = nativeAd;
     NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
     [dic setValue:nativeAd.data.AdTitle forKey:kAdTitleKey];
     [dic setValue:nativeAd.data.AdDescription forKey:kAdTextKey];
     [dic setValue:nativeAd.data.buttonText forKey:kAdCTATextKey];
     [dic setValue:nativeAd.data.icon.imageURL forKey:kAdIconImageKey];
+    [dic setValue:@(nativeAd.data.score) forKey:kAdStarRatingKey];
     if (nativeAd.data.imageAry.count > 0) {
         [dic setValue:nativeAd.data.imageAry.firstObject.imageURL forKey:kAdMainImageKey];
     }
     self.mediaView = nil;
+    self.relatedView = [[BUNativeAdRelatedView alloc] init];
+    [self.relatedView refreshData:nativeAd];
     if (nativeAd.data.imageMode == BUFeedVideoAdModeImage) {
-        BUNativeAdRelatedView *related = [[BUNativeAdRelatedView alloc] init];
-        [related refreshData:nativeAd];
-        self.mediaView = related.videoAdView;
+        self.mediaView = self.relatedView.videoAdView;
     }else{
         UIImageView *imageView = [[UIImageView alloc] init];
         self.mediaView = imageView;
@@ -52,9 +56,32 @@
         }
     }
     [dic setValue:self.mediaView forKey:kAdMainMediaViewKey];
-    // This is translate the Pangle nativeAd
     [dic setValue:nativeAd forKey:@"bu_nativeAd"];
     return [dic copy];
+}
+
+
+#pragma mark - <MPNativeAdAdapter>
+- (void)willAttachToView:(UIView *)view
+{
+    if (self.nativeAd.data.imageMode == BUFeedVideoAdModeImage) {
+        [self.nativeAd registerContainer:view withClickableViews:@[]];
+    } else {
+        [self.nativeAd registerContainer:view withClickableViews:@[]];
+    }
+}
+
+- (void)willAttachToView:(UIView *)view withAdContentViews:(NSArray *)adContentViews
+{
+    if ( adContentViews.count > 0 ) {
+        if (self.nativeAd.data.imageMode == BUFeedVideoAdModeImage) {
+            [self.nativeAd registerContainer:view withClickableViews:adContentViews];
+        } else {
+            [self.nativeAd registerContainer:view withClickableViews:adContentViews];
+        }
+    } else {
+        [self willAttachToView:view];
+    }
 }
 
 - (BOOL)enableThirdPartyClickTracking {
@@ -65,5 +92,16 @@
 {
     return self.mediaView;
 }
+
+- (UIView *)iconMediaView
+{
+    return self.relatedView.logoImageView;
+}
+
+- (UIView *)privacyInformationIconView {
+  return self.relatedView.logoADImageView;
+}
+
+
 
 @end
