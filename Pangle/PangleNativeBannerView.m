@@ -9,101 +9,171 @@
 #import "PangleNativeBannerView.h"
 #import <BUAdSDK/BUNativeAdRelatedView.h>
 #import <BUFoundation/UIImageView+BUWebCache.h>
+#import <BUFoundation/UIImage+BUIcon.h>
+#import <BUFoundation/UIView+BUAdditions.h>
 
 #define PangleNative_RGB(r,g,b) [UIColor colorWithRed:(r/255.0) green:(g/255.0) blue:(b/255.0) alpha:1]
 
-static CGSize const logoSize = {58, 18.5};
-
 @interface PangleNativeBannerView ()
-@property (nonatomic, strong) BUNativeAdRelatedView *relatedView;
-@property (nonatomic, strong, nullable) UIScrollView *horizontalScrollView;
-@property (nonatomic, strong) UIButton *closeButton;
-@property (nonatomic,strong) UIImageView *adLogo;
+
+@property (nonatomic, strong) UIImageView *logoImgeView;
+@property (nonatomic, strong) UIButton *dislikeButton;
+@property (nonatomic, strong) UILabel *titleLable;
+@property (nonatomic, strong) UILabel *describeLable;
+@property (nonatomic, strong) UIImageView *bannerImg;
+@property (nonatomic, strong) UIButton *dowloadButton;
+@property (nonatomic, strong) UIImageView *mediaIcon;
+
 @end
 
 @implementation PangleNativeBannerView
 
 - (instancetype)initWithSize:(CGSize)size {
-    self = [super init];
-    if (self) {
-        self.frame = CGRectMake(0, 0, size.width, size.height);
+    if (self = [super init]) {
+        self.bu_size = size;
         [self buildupView];
     }
     return self;
 }
 
 - (void)buildupView {
-    self.relatedView = [[BUNativeAdRelatedView alloc] init];
+    self.backgroundColor = [UIColor whiteColor];
+        
+    self.titleLable = [[UILabel alloc] initWithFrame:CGRectZero];
+    self.titleLable.textAlignment = NSTextAlignmentCenter;
+    self.titleLable.font = [UIFont systemFontOfSize:11];
+    self.titleLable.textColor = PangleNative_RGB(62,62,62);
+    [self addSubview:self.titleLable];
     
-    self.horizontalScrollView = [[UIScrollView alloc] initWithFrame:CGRectZero];
-    self.horizontalScrollView.pagingEnabled = YES;
-    [self addSubview:self.horizontalScrollView];
+    self.describeLable = [[UILabel alloc] initWithFrame:CGRectZero];
+    self.describeLable.textAlignment = NSTextAlignmentLeft;
+    self.describeLable.font = [UIFont systemFontOfSize:12];
+    self.describeLable.textColor = PangleNative_RGB(62,62,62);
+    [self addSubview:self.describeLable];
     
-    self.relatedView = [[BUNativeAdRelatedView alloc] init];
-    self.closeButton = self.relatedView.dislikeButton;
-    [self addSubview:self.closeButton];
+
+    self.dowloadButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [UIImage bu_compatImageNamed:@"bu_mpNativebanner_download" block:^(UIImage *image) {
+        [self->_dowloadButton setImage:image forState:UIControlStateNormal];
+    }];
+    [self addSubview:self.dowloadButton];
     
-    self.adLogo = self.relatedView.logoADImageView;
-    [self addSubview:self.adLogo];
+    self.bannerImg = [[UIImageView alloc] init];
+    self.bannerImg.contentMode =  UIViewContentModeScaleAspectFill;
+    self.bannerImg.clipsToBounds = YES;
+    [self addSubview:self.bannerImg];
     
-    [self addAccessibilityIdentifier];
+    self.mediaIcon = [[UIImageView alloc] init];
+    self.mediaIcon.contentMode =  UIViewContentModeScaleAspectFill;
+    self.mediaIcon.clipsToBounds = YES;
+    self.mediaIcon.layer.cornerRadius = 13.2;
+    [self addSubview:self.mediaIcon];
+
+    self.logoImgeView = [[UIImageView alloc] init];
+    [UIImage bu_compatImageNamed:kBU_logoAd_oversea block:^(UIImage *image) {
+        self->_logoImgeView.image = image;
+    }];
+
+    [self addSubview:self.logoImgeView];
+    
+    self.dislikeButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [UIImage bu_compatImageNamed:@"bu_mpNativebanner_close" block:^(UIImage *image) {
+        [self->_dislikeButton setImage:image forState:UIControlStateNormal];
+    }];
+    [self.dislikeButton addTarget:self action:@selector(tapCloseButton) forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:self.dislikeButton];
 }
 
-- (void)refreshUIWithAd:(BUNativeAd *_Nonnull)nativeAd {
-    self.nativeAd = nativeAd;
-    [self.relatedView refreshData:nativeAd];
-    
-    for (UIView *view in self.horizontalScrollView.subviews) {
-        [view removeFromSuperview];
-    }
-    
-    CGFloat contentWidth = CGRectGetWidth(self.bounds);
-    CGFloat contentHeight = CGRectGetHeight(self.bounds);
-    self.horizontalScrollView.frame = CGRectMake(0, 0, contentWidth, contentHeight);
-    
-    BUMaterialMeta *materialMeta = nativeAd.data;
-    CGFloat x = 0.0;
-    for (int i = 0; i < materialMeta.imageAry.count; i++) {
-        BUImage *adImage = [materialMeta.imageAry objectAtIndex:i];
 
-        UIImageView *adImageView = [[UIImageView alloc] initWithFrame:CGRectMake(x, 0, contentWidth, contentHeight)];
-        adImageView.contentMode =  UIViewContentModeScaleAspectFill;
-        adImageView.clipsToBounds = YES;
-        if (adImage.imageURL.length) {
-            [adImageView sdBu_setImageWithURL:[NSURL URLWithString:adImage.imageURL] placeholderImage:nil];
+- (void)refreshUIWithAd:(BUNativeAd *_Nonnull)nativeAd{
+    if (!nativeAd.data) { return; }
+    if (nativeAd.data.imageAry.count) {
+        self.nativeAd = nativeAd;
+        CGFloat leftMargin = 10;
+        BOOL isHeight;
+        CGFloat temp = self.bu_size.width / self.bu_size.height < 4 ;
+        if (temp && self.bu_height >= 130) {
+            isHeight = YES;
+        }else{
+            isHeight = NO;
         }
-        [self.horizontalScrollView addSubview:adImageView];
+        isHeight = YES;
+        BUImage *adImage = nativeAd.data.imageAry.firstObject;
+        CGFloat contentWidth = CGRectGetWidth(self.bounds);
+        if (isHeight) {
+            CGFloat widthRatio = self.bu_width / 300.0 ;
+            CGFloat heightRatio = self.bu_height / 150.0;
+            self.dislikeButton.frame = CGRectMake(contentWidth - 19, 10, 9, 9);
+            self.describeLable.frame = CGRectMake(leftMargin, 9 * heightRatio, contentWidth - 10 - 30 , 16.5 * heightRatio);
+            CGFloat bannerImgW = 187.0 / 300 * contentWidth;
+            self.bannerImg.frame = CGRectMake(leftMargin, CGRectGetMaxY(self.describeLable.frame) + 9.5, bannerImgW * widthRatio, bannerImgW * 105.0/187 * heightRatio);
+            self.logoImgeView.frame = CGRectMake(self.bannerImg.bu_x, CGRectGetMaxY(self.bannerImg.frame) -  16, 33, 12);
+            CGFloat tempRatio = MIN(widthRatio, heightRatio);
+            self.mediaIcon.frame = CGRectMake((self.bu_width - CGRectGetMaxX(self.bannerImg.frame) - 40) * 0.5 + CGRectGetMaxX(self.bannerImg.frame), self.bannerImg.bu_y + 4.5, 40 * tempRatio, 40 * tempRatio);
+            
+            self.titleLable.frame = CGRectMake(0, CGRectGetMaxY(self.mediaIcon.frame) + 5.5, 90 * widthRatio,15 * heightRatio);
+            self.titleLable.bu_centerX = self.mediaIcon.bu_centerX;
+            
+            self.dowloadButton.frame = CGRectMake(0, CGRectGetMaxY(self.titleLable.frame) + 9, 71 * widthRatio, 25 * heightRatio);
+            self.dowloadButton.bu_centerX = self.mediaIcon.bu_centerX;
+        }else{
+            self.dislikeButton.frame = CGRectMake(contentWidth - 19, 10, 9, 9);
+            self.bannerImg.frame = CGRectMake(0, 0, 114.5 / 300 * self.bu_width, self.bu_height);
+            self.logoImgeView.frame = CGRectMake(4, CGRectGetMaxY(self.bannerImg.frame) -  15, 33, 12);
+            self.mediaIcon.hidden = YES;
+            CGFloat titleH = 16.5;
+            CGFloat descW =  contentWidth -  (CGRectGetMaxX(self.bannerImg.frame) + 12);
+            CGFloat descH = [self getStringHeightWithText:nativeAd.data.AdDescription font:[UIFont systemFontOfSize:11] viewWidth:descW];
+            if (descH > 15) {
+              descH = 30;
+            }
+            if (titleH + descH > self.bu_height - 12) {
+                descH = 15;
+            }
+            CGFloat titleY = (self.bu_height - titleH - descH) * 0.5;
+            self.titleLable.frame = CGRectMake(CGRectGetMaxX(self.bannerImg.frame) + 12, titleY, contentWidth -  (CGRectGetMaxX(self.bannerImg.frame) + 12) - 40, titleH);
+            self.titleLable.textAlignment = NSTextAlignmentLeft;
+            self.titleLable.font = [UIFont systemFontOfSize:12];
+            self.describeLable.frame = CGRectMake(CGRectGetMaxX(self.bannerImg.frame) + 12, CGRectGetMaxY(self.titleLable.frame), descW , descH);
+            self.describeLable.numberOfLines = 2;
+            self.describeLable.textAlignment = NSTextAlignmentLeft;
+            self.describeLable.textColor = PangleNative_RGB(174,174,174);
+            self.describeLable.font = [UIFont systemFontOfSize:11];
+            
+            self.dowloadButton.hidden = YES;
+        }
         
-        CAGradientLayer* gradientLayer = [CAGradientLayer layer];
-        gradientLayer.colors = @[
-                                 (id)[[UIColor blackColor] colorWithAlphaComponent:0].CGColor,
-                                 (id)[[UIColor blackColor] colorWithAlphaComponent:0.7].CGColor];
-        gradientLayer.frame = CGRectMake(0, contentHeight -60, contentWidth, 60);
-        [adImageView.layer addSublayer:gradientLayer];
-        
-        NSString * titleString = [NSString stringWithFormat:@"Total Page:%lu, Current page:%d",(unsigned long)materialMeta.imageAry.count,i+1];
-
-        UILabel *titleLable = [UILabel new];
-        titleLable.frame = CGRectMake(10, contentHeight-10-20, contentWidth-100, 20);
-        titleLable.textColor = PangleNative_RGB(0xff, 0xff, 0xff);
-        titleLable.font = [UIFont boldSystemFontOfSize:18];
-        titleLable.text = titleString;
-        [adImageView addSubview:titleLable];
-        
-        [self.nativeAd registerContainer:adImageView withClickableViews:nil];
-        
-        x += contentWidth;
-        adImageView.accessibilityIdentifier = @"banner_view";
+        self.titleLable.text = nativeAd.data.AdTitle;
+        self.describeLable.text = nativeAd.data.AdDescription;
+        [self.dowloadButton setTitle:nativeAd.data.buttonText forState:UIControlStateNormal];
+        if (adImage.imageURL.length) {
+            [self.bannerImg sdBu_setImageWithURL:[NSURL URLWithString:adImage.imageURL] placeholderImage:nil];
+        }
+        if (nativeAd.data.icon.imageURL.length) {
+            [self.mediaIcon sdBu_setImageWithURL:[NSURL URLWithString:nativeAd.data.icon.imageURL] placeholderImage:nil];
+        }
+        [self.nativeAd registerContainer:self    withClickableViews:@[self.titleLable,self.bannerImg,self.describeLable,self.dowloadButton]];
+        [self addAccessibilityIdentifier];
     }
-    self.horizontalScrollView.contentSize = CGSizeMake(x, contentHeight);
-    self.closeButton.frame = CGRectMake(self.bounds.size.width-self.closeButton.bounds.size.width-5, self.horizontalScrollView.bounds.size.height +(bottomHeight-self.closeButton.bounds.size.width)/2, self.closeButton.bounds.size.width, self.closeButton.bounds.size.height);
-    self.adLogo.frame = CGRectMake(self.closeButton.frame.origin.x-logoSize.width - 10, self.horizontalScrollView.bounds.size.height +(bottomHeight-logoSize.height)/2, logoSize.width, logoSize.height);
+}
+
+#pragma mark - private
+- (void)tapCloseButton{
+    [self removeFromSuperview];
+}
+
+- (CGFloat)getStringHeightWithText:(NSString *)text font:(UIFont *)font viewWidth:(CGFloat)width {
+    NSDictionary *attrs = @{NSFontAttributeName :font};
+    CGSize maxSize = CGSizeMake(width, MAXFLOAT);
+    NSStringDrawingOptions options = NSStringDrawingUsesLineFragmentOrigin | NSStringDrawingUsesFontLeading;
+    CGSize size = [text boundingRectWithSize:maxSize options:options attributes:attrs context:nil].size;
+    return  ceilf(size.height);
 }
 
 #pragma mark addAccessibilityIdentifier
 - (void)addAccessibilityIdentifier {
-    self.closeButton.accessibilityIdentifier = @"banner_close";
-    self.adLogo.accessibilityIdentifier = @"banner_logo";
+    self.dislikeButton.accessibilityIdentifier = @"banner_close";
+    self.logoImgeView.accessibilityIdentifier = @"banner_logo";
 }
 
 @end

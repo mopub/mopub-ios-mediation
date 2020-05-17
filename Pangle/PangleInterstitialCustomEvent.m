@@ -48,7 +48,8 @@
     self.renderType = [[ritDict objectForKey:@"renderType"] integerValue];
     if (self.adType == BUAdSlotAdTypeInterstitial) {
         if (self.renderType == 1) {
-            self.expressInterstitialAd = [[BUNativeExpressInterstitialAd alloc] initWithSlotID:self.adPlacementId adSize:CGSizeMake(300, 400)];
+            NSInteger width = MIN([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
+            self.expressInterstitialAd = [[BUNativeExpressInterstitialAd alloc] initWithSlotID:self.adPlacementId adSize:CGSizeMake(width, 0)];
             self.expressInterstitialAd.delegate = self;
             if (hasAdMarkup) {
                 [self.expressInterstitialAd setMopubAdMarkUp:adMarkup];
@@ -56,10 +57,16 @@
                 [self.expressInterstitialAd loadAdData];
             }
         }else{
+            CGSize screenSize = [UIScreen mainScreen].bounds.size;
+            CGFloat ratio;
+            if (screenSize.height > screenSize.width) {
+                ratio = 3 / 2;
+            }else{
+                ratio = 2 / 3;
+            }
             BUSize *imgSize1 = [[BUSize alloc] init];
-            imgSize1.width = 1080;
-            imgSize1.height = 1920;
-            
+            imgSize1.width = [UIScreen mainScreen].bounds.size.width;
+            imgSize1.height = imgSize1.width * ratio;
             BUAdSlot *slot1 = [[BUAdSlot alloc] init];
             slot1.ID = self.adPlacementId;
             slot1.AdType = BUAdSlotAdTypeInterstitial;

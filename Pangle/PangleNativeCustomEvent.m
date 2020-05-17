@@ -26,20 +26,6 @@
  
 @implementation PangleNativeCustomEvent
 
-- (BUNativeAd *)nativeAd {
-    if (_nativeAd == nil) {
-        BUAdSlot *slot = [[BUAdSlot alloc] init];
-        slot.AdType = BUAdSlotAdTypeFeed;
-        slot.position = BUAdSlotPositionTop;
-        slot.imgSize = [BUSize sizeBy:BUProposalSize_Feed690_388];
-        slot.isSupportDeepLink = YES;
-        
-        _nativeAd = [[BUNativeAd alloc] initWithSlot:slot];
-        _nativeAd.delegate = self;
-    }
-    return _nativeAd;
-}
-
 - (void)requestAdWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
     NSString * appId = [info objectForKey:@"app_id"];
@@ -54,6 +40,14 @@
         return;
     }
     
+    BUAdSlot *slot = [[BUAdSlot alloc] init];
+    slot.AdType = BUAdSlotAdTypeFeed;
+    slot.position = BUAdSlotPositionTop;
+    slot.imgSize = [BUSize sizeBy:BUProposalSize_Feed690_388];
+    slot.isSupportDeepLink = YES;
+    self.nativeAd = [[BUNativeAd alloc] initWithSlot:slot];
+    self.nativeAd.delegate = self;
+
     self.nativeAd.adslot.ID = self.adPlacementId;
     UIWindow *window = [UIApplication sharedApplication].keyWindow;
     UIViewController *rootViewController = window.rootViewController;

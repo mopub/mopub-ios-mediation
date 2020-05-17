@@ -26,7 +26,6 @@
 
 @implementation PangleBannerCustomEvent
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    size = [self sizeForCustomEventInfo:size];
     BOOL hasAdMarkup = adMarkup.length > 0;
     NSDictionary *ritDict;
     
@@ -62,8 +61,9 @@
         }
     } else {
         BUSize *imgSize1 = [[BUSize alloc] init];
-        imgSize1.width = size.width * [[UIScreen mainScreen] scale];
-        imgSize1.height = size.height * [[UIScreen mainScreen] scale];
+        CGSize nativeRequestSize = [self sizeForCustomEventInfo:size];
+        imgSize1.width = nativeRequestSize.width;
+        imgSize1.height = nativeRequestSize.height;
         
         BUAdSlot *slot1 = [[BUAdSlot alloc] init];
         slot1.ID = self.adPlacementId;
