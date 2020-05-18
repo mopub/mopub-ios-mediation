@@ -11,9 +11,9 @@
 #import "PangleNativeInterstitialView.h"
 #import "PangleAdapterConfiguration.h"
 #if __has_include("MoPub.h")
-    #import "MPError.h"
-    #import "MPLogging.h"
-    #import "MoPub.h"
+#import "MPError.h"
+#import "MPLogging.h"
+#import "MoPub.h"
 #endif
 
 @interface PangleInterstitialCustomEvent () <BUNativeAdDelegate,BUNativeExpresInterstitialAdDelegate,BUFullscreenVideoAdDelegate,PangleNativeInterstitialViewDelegate>
@@ -36,7 +36,7 @@
     }
     self.adPlacementId = [info objectForKey:@"ad_placement_id"];
     if (self.adPlacementId == nil) {
-        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID. Failing ad request. Ensure the ad placement id is valid on the MoPub dashboard."}];
+        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class]) code:BUErrorCodeAdSlotEmpty userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID. Failing ad request. Ensure the ad placement id is valid on the MoPub dashboard."}];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
         return;
@@ -76,7 +76,7 @@
             slot1.isOriginAd = YES;
             
             self.nativeInterstitialView = [[PangleNativeInterstitialView alloc] init];
-
+            
             BUNativeAd *nad = [[BUNativeAd alloc] initWithSlot:slot1];
             nad.delegate = self;
             self.nativeInterstitialAd = nad;
@@ -107,7 +107,7 @@
             MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
             [self.nativeInterstitialView showAdFromRootViewController:rootViewController delegate:self];
         }
-    } else if (self.adType == BUAdSlotAdTypeFullscreenVideo){
+    } else if (self.adType == BUAdSlotAdTypeFullscreenVideo) {
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
         [self.fullScreenVideo showAdFromRootViewController:rootViewController ritSceneDescribe:nil];
     }
@@ -242,7 +242,6 @@
 }
 
 - (void)fullscreenVideoAdDidClickSkip:(BUFullscreenVideoAd *)fullscreenVideoAd {
-
 }
 
 - (NSString *) getAdNetworkId {

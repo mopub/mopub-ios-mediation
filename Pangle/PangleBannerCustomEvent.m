@@ -12,9 +12,9 @@
 #import "PangleAdapterConfiguration.h"
 
 #if __has_include("MoPub.h")
-    #import "MPError.h"
-    #import "MPLogging.h"
-    #import "MoPub.h"
+#import "MPError.h"
+#import "MPLogging.h"
+#import "MoPub.h"
 #endif
 
 @interface PangleBannerCustomEvent ()<BUNativeExpressBannerViewDelegate,BUNativeAdDelegate>
@@ -35,7 +35,7 @@
     }
     self.adPlacementId = [info objectForKey:@"ad_placement_id"];
     if (self.adPlacementId == nil) {
-        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID. Failing ad request. Ensure the ad placement id is valid on the MoPub dashboard."}];
+        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class]) code:BUErrorCodeAdSlotEmpty userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID. Failing ad request. Ensure the ad placement id is valid on the MoPub dashboard."}];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
@@ -45,7 +45,7 @@
     
     //renderType: @"1" express AD   @"2" native AD
     NSInteger renderType = [[ritDict objectForKey:@"renderType"] integerValue];
-
+    
     BUSize *adSize = [[BUSize alloc] init];
     adSize.width = size.width;
     adSize.height = size.height;
@@ -117,15 +117,15 @@
                width >= [BUSize sizeBy:BUProposalSize_Banner600_260].width) {
         return CGSizeMake([BUSize sizeBy:BUProposalSize_Banner600_260].width,
                           [BUSize sizeBy:BUProposalSize_Banner600_260].height);
-    }else if (height >= [BUSize sizeBy:BUProposalSize_Banner600_150].height &&
+    } else if (height >= [BUSize sizeBy:BUProposalSize_Banner600_150].height &&
                width >= [BUSize sizeBy:BUProposalSize_Banner600_150].width) {
         return CGSizeMake([BUSize sizeBy:BUProposalSize_Banner600_150].width,
                           [BUSize sizeBy:BUProposalSize_Banner600_150].height);
-    }else if (height >= [BUSize sizeBy:BUProposalSize_Banner600_100].height &&
+    } else if (height >= [BUSize sizeBy:BUProposalSize_Banner600_100].height &&
                width >= [BUSize sizeBy:BUProposalSize_Banner600_100].width) {
         return CGSizeMake([BUSize sizeBy:BUProposalSize_Banner600_100].width,
                           [BUSize sizeBy:BUProposalSize_Banner600_100].height);
-    }else if (height >= [BUSize sizeBy:BUProposalSize_Banner600_90].height &&
+    } else if (height >= [BUSize sizeBy:BUProposalSize_Banner600_90].height &&
                width >= [BUSize sizeBy:BUProposalSize_Banner600_90].width) {
         return CGSizeMake([BUSize sizeBy:BUProposalSize_Banner600_90].width,
                           [BUSize sizeBy:BUProposalSize_Banner600_90].height);
@@ -162,6 +162,7 @@
 }
 
 - (void)nativeExpressBannerAdViewDidClick:(BUNativeExpressBannerView *)bannerAdView {
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate trackClick];
 }
 
@@ -172,7 +173,7 @@
 #pragma mark - BUNativeAdDelegate
 - (void)nativeAdDidLoad:(BUNativeAd *)nativeAd {
     if (!nativeAd.data || !(nativeAd == self.nativeAd)){
-        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle Data. Failing ad request."}];
+        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class]) code:BUErrorCodeNOAdError userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle Data. Failing ad request."}];
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
@@ -190,6 +191,7 @@
 }
 
 - (void)nativeAdDidClick:(BUNativeAd *)nativeAd withView:(UIView *)view {
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate trackClick];
 }
 

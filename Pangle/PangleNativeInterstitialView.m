@@ -227,7 +227,7 @@
             x = (starWidth + 4) * i;
             UIImageView *imgView = [[UIImageView alloc] initWithFrame:CGRectMake(x, 0, starWidth, starWidth)];
             imgView.backgroundColor = [UIColor clearColor];
-            NSInteger starCount = self.nativeAd.data.score ?: 4;// 产品定义默认星级
+            NSInteger starCount = self.nativeAd.data.score ?: 4; // The default value of the star count
             if (i < starCount) {
                 imgView.image = [UIImage bu_compatImageNamed:@"bu_adStar"];
             } else {

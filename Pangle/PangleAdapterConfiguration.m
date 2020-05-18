@@ -16,7 +16,14 @@
 static NSString * const kPangleAppIdKey = @"app_id";
 static NSString * const kPanglePlacementIdKey = @"ad_placmenet_id";
 static NSString *const kAdapterVersion = @"3.0.0.2.0";
+
+// Errors
 static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-pangle-adapters";
+typedef NS_ENUM(NSInteger, FlurryAdapterErrorCode) {
+    PangleAdapterErrorCodeMissingIdKey,
+};
+
+#pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
     return kAdapterVersion;
@@ -40,7 +47,7 @@ static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-pa
     NSNumber *isPaidApp = configuration[@"isPaidApp"];
     NSNumber *GDPR = configuration[@"GDPR"];
     if (appkeyString == nil || [appkeyString isKindOfClass:[NSString class]] == NO) {
-        NSError *error = [NSError errorWithDomain:kAdapterErrorDomain code:1 userInfo:@{NSLocalizedDescriptionKey:@"appKey may be not right, please set networkConfig refer to method '-configCustomEvent' in 'AppDelegate' class"}];
+        NSError *error = [NSError errorWithDomain:kAdapterErrorDomain code:PangleAdapterErrorCodeMissingIdKey userInfo:@{NSLocalizedDescriptionKey:@"appKey may be not right, please set networkConfig refer to method '-configCustomEvent' in 'AppDelegate' class"}];
         if (complete != nil) {
             complete(error);
         }
@@ -73,7 +80,7 @@ static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-pa
     }
 }
 
-#pragma mark - Class method
+#pragma mark - Caching
 + (void)updateInitializationParameters:(NSDictionary *)parameters
 {
     NSString * appId = parameters[kPangleAppIdKey];
