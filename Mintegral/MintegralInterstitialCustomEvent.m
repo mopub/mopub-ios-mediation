@@ -12,7 +12,8 @@
 @interface MintegralInterstitialCustomEvent()<MTGInterstitialVideoDelegate, MTGBidInterstitialVideoDelegate>
 
 @property (nonatomic, copy) NSString *adUnitId;
-@property (nonatomic,strong) NSTimer *queryTimer;
+@property (nonatomic, copy) NSString *adPlacementId;
+@property (nonatomic, strong) NSTimer *queryTimer;
 @property (nonatomic, copy) NSString *adm;
 
 @property (nonatomic, readwrite, strong) MTGInterstitialVideoAdManager *mtgInterstitialVideoAdManager;
@@ -27,6 +28,7 @@
     NSString *appId = [info objectForKey:@"appId"];
     NSString *appKey = [info objectForKey:@"appKey"];
     NSString *unitId = [info objectForKey:@"unitId"];
+    NSString *placementId = [info objectForKey:@"placementId"];
     
     NSString *errorMsg = nil;
     
@@ -44,6 +46,7 @@
     }
     
     self.adUnitId = unitId;
+    self.adPlacementId = placementId;
     self.adm = adMarkup;
     
     [MintegralAdapterConfiguration initializeMintegral:info setAppID:appId appKey:appKey];
@@ -52,7 +55,7 @@
         MPLogInfo(@"Loading Mintegral interstitial ad markup for Advanced Bidding");
         
         if (!_ivBidAdManager ) {
-            _ivBidAdManager  = [[MTGBidInterstitialVideoAdManager alloc] initWithUnitID:self.adUnitId delegate:self];
+            _ivBidAdManager = [[MTGBidInterstitialVideoAdManager alloc] initWithPlacementId:placementId unitId:unitId delegate:self];
             _ivBidAdManager.delegate = self;
         }
         
@@ -62,7 +65,7 @@
         MPLogInfo(@"Loading Mintegral interstitial ad");
         
         if (!_mtgInterstitialVideoAdManager) {
-            _mtgInterstitialVideoAdManager = [[MTGInterstitialVideoAdManager alloc] initWithUnitID:self.adUnitId delegate:self];
+            _mtgInterstitialVideoAdManager = [[MTGInterstitialVideoAdManager alloc] initWithPlacementId:placementId unitId:unitId delegate:self];
         }
         
         _mtgInterstitialVideoAdManager.playVideoMute = [MintegralAdapterConfiguration isMute];

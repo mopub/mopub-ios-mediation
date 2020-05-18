@@ -1,9 +1,9 @@
 #if __has_include(<MoPub/MoPub.h>)
-#import <MoPub/MoPub.h>
+    #import <MoPub/MoPub.h>
 #elif __has_include(<MoPubSDKFramework/MoPub.h>)
-#import <MoPubSDKFramework/MoPub.h>
+    #import <MoPubSDKFramework/MoPub.h>
 #else
-#import "MPBaseAdapterConfiguration.h"
+    #import "MPBaseAdapterConfiguration.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration
                                   complete:(void(^ _Nullable)(NSError * _Nullable))complete;
 
-+ (NSString*)mediationString;
++ (NSString *)adapterVersion;
 
 @end
 

@@ -6,58 +6,38 @@
 //
 
 #import "ChartboostBannerCustomEvent.h"
-#import "ChartboostAdapterConfiguration.h"
 #import "ChartboostRouter.h"
-#if __has_include("MoPub.h")
-    #import "MPLogging.h"
-#endif
-#import <Chartboost/Chartboost.h>
-#import <Chartboost/CHBBanner.h>
+#import "NSError+ChartboostErrors.h"
 
 @interface ChartboostBannerCustomEvent () <CHBBannerDelegate>
-
 @property (nonatomic) CHBBanner *banner;
-@property (nonatomic, copy) NSString *appID;
-
 @end
 
 @implementation ChartboostBannerCustomEvent
 
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
-    self.appID = [info objectForKey:@"appId"];
-    NSString *appSignature = [info objectForKey:@"appSignature"];
-    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.appID);
-    
-    if ([self.appID length] == 0 || [appSignature length] == 0) {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Failed to load Chartboost banner: missing either appId or appSignature. Make sure you have a valid appId or appSignature entered on the MoPub dashboard."];
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.appID);
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
-        
-        return;
-    }
-    
-    if (self.banner) {
-        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Chartboost adapter failed to load ad: requestAdWithSize called twice on the same event."];
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.appID);
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
-        
-        return;
-    }
-    
-    [ChartboostAdapterConfiguration updateInitializationParameters:info];
-    
     NSString *location = [info objectForKey:@"location"];
-    location = [location length] != 0 ? location: CBLocationDefault;
+    location = location.length > 0 ? location : CBLocationDefault;
     CGSize integerSize = CGSizeMake(floor(size.width), floor(size.height));
+
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], location);
+    if (self.banner) {
+        MPLogAdEvent([MPLogEvent error:[NSError adRequestCalledTwiceOnSameEvent] message:nil], location);
+    }
     
     __weak typeof(self) weakSelf = self;
-    [[ChartboostRouter sharedRouter] startWithAppId:self.appID appSignature:appSignature completion:^(BOOL initialized) {
+    [ChartboostRouter startWithParameters:info completion:^(BOOL initialized) {
+        if (!initialized) {
+            NSError *error = [NSError adRequestFailedDueToSDKStartWithAdOfType:@"banner"];
+            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], location);
+            [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+            return;
+        }
         dispatch_async(dispatch_get_main_queue(), ^{
-            if (!weakSelf.banner) {
-                weakSelf.banner = [[CHBBanner alloc] initWithSize:integerSize location:location delegate:weakSelf];
-                weakSelf.banner.automaticallyRefreshesContent = NO;
-            }
+            weakSelf.banner.delegate = nil;
+            weakSelf.banner = [[CHBBanner alloc] initWithSize:integerSize location:location mediation:[ChartboostRouter mediation] delegate:weakSelf];
+            weakSelf.banner.automaticallyRefreshesContent = NO;
             
             [weakSelf.banner showFromViewController:[weakSelf.delegate viewControllerForPresentingModalView]];
         });
@@ -66,7 +46,7 @@
 
 - (BOOL)enableAutomaticImpressionAndClickTracking
 {
-    return NO;
+    return NO; // Disabled so adapters have control over the impression and click tracking behavior
 }
 
 // MARK: - CHBBannerDelegate
@@ -74,34 +54,28 @@
 - (void)didCacheAd:(CHBCacheEvent *)event error:(nullable CHBCacheError *)error
 {
     if (error) {
-        NSError *nserror = [self errorWithCacheError:error];
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:nserror], self.appID);
+        NSError *nserror = [NSError errorWithCacheEvent:event error:error];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:nserror], event.ad.location);
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nserror];
     } else {
-        MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.appID);
+        MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], event.ad.location);
         [self.delegate bannerCustomEvent:self didLoadAd:self.banner];
     }
 }
 
-- (void)willShowAd:(CHBShowEvent *)event error:(nullable CHBShowError *)error
+- (void)willShowAd:(CHBShowEvent *)event
 {
-    if (error) {
-        NSError *nserror = [self errorWithShowError:error];
-        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:nserror], self.appID);
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nserror];
-    } else {
-        MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.appID);
-    }
+    MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], event.ad.location);
 }
 
 - (void)didShowAd:(CHBShowEvent *)event error:(nullable CHBShowError *)error
 {
     if (error) {
-        NSError *nserror = [self errorWithShowError:error];
-        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:nserror], self.appID);
+        NSError *nserror = [NSError errorWithShowEvent:event error:error];
+        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:nserror], event.ad.location);
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nserror];
     } else {
-        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.appID);
+        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], event.ad.location);
         [self.delegate trackImpression];
     }
 }
@@ -109,56 +83,22 @@
 - (void)didClickAd:(CHBClickEvent *)event error:(nullable CHBClickError *)error
 {
     if (error) {
-        NSError *nserror = [self errorWithClickError:error];
-        MPLogAdEvent([MPLogEvent error:nserror message:nil], self.appID);
+        NSError *nserror = [NSError errorWithClickEvent:event error:error];
+        MPLogAdEvent([MPLogEvent error:nserror message:nil], event.ad.location);
     } else {
-        MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.appID);
         [self.delegate bannerCustomEventWillBeginAction:self];
-        [self.delegate trackClick];
     }
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], event.ad.location);
+    [self.delegate trackClick]; // We track the click even if there was an error, since we want to track events like when an ad passes an invalid url
 }
 
 - (void)didFinishHandlingClick:(CHBClickEvent *)event error:(nullable CHBClickError *)error
 {
     if (error) {
-        NSError *nserror = [self errorWithClickHandlingError:error];
-        MPLogAdEvent([MPLogEvent error:nserror message:nil], self.appID);
+        NSError *nserror = [NSError errorWithDidFinishHandlingClickEvent:event error:error];
+        MPLogAdEvent([MPLogEvent error:nserror message:nil], event.ad.location);
     }
     [self.delegate bannerCustomEventDidFinishAction:self];
-}
-
-// MARK: - Helpers
-
-- (NSError *)errorWithCacheError:(CHBCacheError *)error
-{
-    NSString *description = [NSString stringWithFormat:@"Chartboost adapter failed to load ad with error %lu", (unsigned long)error.code];
-    NSError *nserror = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:description];
-    
-    return nserror;
-}
-
-- (NSError *)errorWithShowError:(CHBShowError *)error
-{
-    NSString *description = [NSString stringWithFormat:@"Chartboost adapter failed to show ad with error %lu", (unsigned long)error.code];
-    NSError *nserror = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:description];
-    
-    return nserror;
-}
-
-- (NSError *)errorWithClickError:(CHBClickError *)error
-{
-    NSString *description = [NSString stringWithFormat:@"Chartboost adapter failed to click ad with error %lu", (unsigned long)error.code];
-    NSError *nserror = [NSError errorWithCode:MOPUBErrorUnknown localizedDescription:description];
-    
-    return nserror;
-}
-
-- (NSError *)errorWithClickHandlingError:(CHBClickError *)error
-{
-    NSString *description = [NSString stringWithFormat:@"Chartboost adapter did finish handling click with error %lu", (unsigned long)error.code];
-    NSError *nserror = [NSError errorWithCode:MOPUBErrorUnknown localizedDescription:description];
-    
-    return nserror;
 }
 
 @end

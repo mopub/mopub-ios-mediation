@@ -27,6 +27,7 @@
     NSString *appId = [info objectForKey:@"appId"];
     NSString *appKey = [info objectForKey:@"appKey"];
     NSString *unitId = [info objectForKey:@"unitId"];
+    NSString *placementId = [info objectForKey:@"placementId"];
     
     NSString *errorMsg = nil;
     
@@ -41,7 +42,6 @@
         return;
     }
     
-    MTGAdTemplateType reqNum = [info objectForKey:@"reqNum"] ?[[info objectForKey:@"reqNum"] integerValue]:1;
     
     self.adm = adMarkup;
     self.adUnitId = unitId;
@@ -52,7 +52,7 @@
         if (_bidAdManager == nil) {
             MPLogInfo(@"Loading Mintegral native ad markup for Advanced Bidding");
             
-            _bidAdManager = [[MTGBidNativeAdManager alloc] initWithUnitID:unitId autoCacheImage:NO presentingViewController:nil];
+            _bidAdManager = [[MTGBidNativeAdManager alloc] initWithPlacementId:placementId unitID:unitId autoCacheImage:NO presentingViewController:nil];;
             _bidAdManager.delegate = self;
             
             [self.bidAdManager loadWithBidToken:self.adm];
@@ -61,8 +61,7 @@
     } else {
         MPLogInfo(@"Loading Mintegral native ad");
         
-        _mtgNativeAdManager = [[MTGNativeAdManager alloc] initWithUnitID:unitId fbPlacementId:@"" supportedTemplates:@[[MTGTemplate templateWithType:MTGAD_TEMPLATE_BIG_IMAGE adsNum:1]] autoCacheImage:NO adCategory:0 presentingViewController:nil];
-        
+        _mtgNativeAdManager = [[MTGNativeAdManager alloc] initWithPlacementId:placementId unitID:unitId fbPlacementId:@"" supportedTemplates:@[[MTGTemplate templateWithType:MTGAD_TEMPLATE_BIG_IMAGE adsNum:1]] autoCacheImage:NO adCategory:0 presentingViewController:nil];
         _mtgNativeAdManager.delegate = self;
         [_mtgNativeAdManager loadAds];
         

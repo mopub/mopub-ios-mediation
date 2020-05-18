@@ -22,7 +22,8 @@ typedef enum {
 @interface MintegralBannerCustomEvent() <MTGBannerAdViewDelegate>
 
 @property(nonatomic,strong) MTGBannerAdView *bannerAdView;
-@property (nonatomic, strong) NSString *adUnitId;
+@property (nonatomic, copy) NSString *adUnitId;
+@property (nonatomic, copy) NSString *adPlacementId;
 @property (nonatomic, copy) NSString *adm;
 @end
 
@@ -34,6 +35,7 @@ typedef enum {
     NSString *appId = [info objectForKey:@"appId"];
     NSString *appKey = [info objectForKey:@"appKey"];
     NSString *unitId = [info objectForKey:@"unitId"];
+    NSString *placementId = [info objectForKey:@"placementId"];
     
     NSString *errorMsg = nil;
     
@@ -53,11 +55,13 @@ typedef enum {
     
     self.adm = adMarkup;
     _adUnitId = unitId;
+    _adPlacementId = placementId;
+    
     
     [MintegralAdapterConfiguration initializeMintegral:info setAppID:appId appKey:appKey];
     
     UIViewController *vc =  [UIApplication sharedApplication].keyWindow.rootViewController;
-    _bannerAdView = [[MTGBannerAdView alloc] initBannerAdViewWithAdSize:size unitId:unitId rootViewController:vc];
+    _bannerAdView = [[MTGBannerAdView alloc] initBannerAdViewWithAdSize:size placementId:placementId unitId:unitId rootViewController:vc];
     _bannerAdView.delegate = self;
     
     if (self.adm) {
@@ -98,7 +102,6 @@ typedef enum {
     if ([self.delegate respondsToSelector:@selector(trackClick)]) {
         MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.adUnitId);
         [self.delegate trackClick];
-        [self.delegate bannerCustomEventWillBeginAction:self];
     }
 }
 
@@ -115,6 +118,10 @@ typedef enum {
 
 - (void)adViewCloseFullScreen:(MTGBannerAdView *)adView {
     MPLogAdEvent([MPLogEvent adDidDismissModalForAdapter:NSStringFromClass(self.class)], self.adUnitId);
+}
+
+- (void)adViewClosed:(MTGBannerAdView *)adView {
+    MPLogInfo(@"adViewClosed for MTGBannerAdView");
 }
 
 #pragma mark - Turn off auto impression and click

@@ -6,131 +6,107 @@
 //
 
 #import "ChartboostRewardedVideoCustomEvent.h"
-#import "ChartboostAdapterConfiguration.h"
 #import "ChartboostRouter.h"
-#if __has_include("MoPub.h")
-    #import "MPLogging.h"
-    #import "MPRewardedVideoReward.h"
-    #import "MPRewardedVideoError.h"
-#endif
-#import <Chartboost/Chartboost.h>
+#import "NSError+ChartboostErrors.h"
 
-@interface ChartboostRewardedVideoCustomEvent () <ChartboostDelegate>
-@property (nonatomic, copy) NSString *appId;
+@interface ChartboostRewardedVideoCustomEvent () <CHBRewardedDelegate>
+@property (nonatomic) CHBRewarded *ad;
 @end
 
 @implementation ChartboostRewardedVideoCustomEvent
 
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
-    self.appId = [info objectForKey:@"appId"];
-
-    NSString *appSignature = [info objectForKey:@"appSignature"];
-
     NSString *location = [info objectForKey:@"location"];
-    self.location = [location length] != 0 ? location : CBLocationDefault;
+    location = location.length > 0 ? location : CBLocationDefault;
 
-    // Cache the network SDK initialization parameters
-    [ChartboostAdapterConfiguration updateInitializationParameters:info];
-
-    [[ChartboostRouter sharedRouter] cacheRewardedAdWithAppId:self.appId appSignature:appSignature location:self.location forChartboostRewardedVideoCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], location);
+    if (self.ad) {
+        MPLogAdEvent([MPLogEvent error:[NSError adRequestCalledTwiceOnSameEvent] message:nil], location);
+    }
+    
+    __weak typeof(self) weakSelf = self;
+    [ChartboostRouter startWithParameters:info completion:^(BOOL initialized) {
+        if (!initialized) {
+            NSError *error = [NSError adRequestFailedDueToSDKStartWithAdOfType:@"rewarded"];
+            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], location);
+            [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+            return;
+        }
+        
+        weakSelf.ad.delegate = nil;
+        weakSelf.ad = [[CHBRewarded alloc] initWithLocation:location mediation:[ChartboostRouter mediation] delegate:weakSelf];
+        [weakSelf.ad cache];
+    }];
 }
 
 - (void)presentRewardedVideoFromViewController:(UIViewController *)viewController
 {
-    MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-
-    if ([[ChartboostRouter sharedRouter] hasCachedRewardedVideoForLocation:self.location]) {
-        [[ChartboostRouter sharedRouter] showRewardedVideoForLocation:self.location];
-    } else {
-        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
-        [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
-        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-    }
-}
-
-- (void)handleCustomEventInvalidated
-{
-    [[[ChartboostRouter sharedRouter] rewardedVideoEvents] removeObjectForKey:self.location];
+    MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.ad.location);
+    [self.ad showFromViewController:viewController];
 }
 
 - (BOOL)hasAdAvailable
 {
-    return [[ChartboostRouter sharedRouter] hasCachedRewardedVideoForLocation:self.location];
+    return self.ad.isCached;
 }
 
-- (void)handleAdPlayedForCustomEventNetwork
+#pragma mark - CHBRewardedDelegate
+
+- (void)didCacheAd:(CHBCacheEvent *)event error:(CHBCacheError *)error
 {
-    // If we no longer have an ad available, report back up to the application that this ad expired.
-    // We receive this message only when this ad has reported an ad has loaded and another ad unit
-    // has played a video for the same ad network.
-    if (![self hasAdAvailable]) {
-        [self.delegate rewardedVideoDidExpireForCustomEvent:self];
+    if (error) {
+        NSError *nserror = [NSError errorWithCacheEvent:event error:error];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:nserror], event.ad.location);
+        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:nserror];
+    } else {
+        MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], event.ad.location);
+        [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
     }
 }
 
-#pragma mark - ChartboostDelegate methods
-
-- (void)didDisplayRewardedVideo:(CBLocation)location
+- (void)willShowAd:(CHBShowEvent *)event
 {
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], event.ad.location);
     [self.delegate rewardedVideoWillAppearForCustomEvent:self];
-    [self.delegate rewardedVideoDidAppearForCustomEvent:self];
-    
-    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
-- (void)didCacheRewardedVideo:(CBLocation)location
+- (void)didShowAd:(CHBShowEvent *)event error:(CHBShowError *)error
 {
-    [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
-    
-    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    if (error) {
+        NSError *nserror = [NSError errorWithShowEvent:event error:error];
+        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:nserror], self.ad.location);
+        [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:nserror];
+    } else {
+        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], event.ad.location);
+        MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], event.ad.location);
+        [self.delegate rewardedVideoDidAppearForCustomEvent:self];
+    }
 }
 
-- (void)didFailToLoadRewardedVideo:(CBLocation)location
-                         withError:(CBLoadError)error
+- (void)didClickAd:(CHBClickEvent *)event error:(CHBClickError *)error
 {
-    
-    NSError *mopubError = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
-
-    [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:mopubError];
-    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:mopubError], [self getAdNetworkId]);
-}
-
-- (void)didDismissRewardedVideo:(CBLocation)location
-{
-    [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
-    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-
-    [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
-    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-}
-
-- (void)didCloseRewardedVideo:(CBLocation)location
-{
-    [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
-    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-
-    [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
-    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-}
-
-- (void)didClickRewardedVideo:(CBLocation)location
-{
+    if (error) {
+        NSError *nserror = [NSError errorWithClickEvent:event error:error];
+        MPLogAdEvent([MPLogEvent error:nserror message:nil], event.ad.location);
+    }
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], event.ad.location);
     [self.delegate rewardedVideoDidReceiveTapEventForCustomEvent:self];
-    
-    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
-- (void)didCompleteRewardedVideo:(CBLocation)location
-                      withReward:(int)reward
+- (void)didDismissAd:(CHBDismissEvent *)event
 {
-    [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:[[MPRewardedVideoReward alloc] initWithCurrencyAmount:@(reward)]];
+    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], event.ad.location);
+    [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
+    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], event.ad.location);
+    [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
 }
 
-- (NSString *) getAdNetworkId {
-    return self.appId;
+- (void)didEarnReward:(CHBRewardEvent *)event
+{
+    MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyAmount:@(event.reward)];
+    MPLogAdEvent([MPLogEvent adShouldRewardUserWithReward:reward], event.ad.location);
+    [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:reward];
 }
 
 @end

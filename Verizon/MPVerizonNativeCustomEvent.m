@@ -80,7 +80,7 @@
 
     [VASAds sharedInstance].locationEnabled = [MoPub sharedInstance].locationUpdatesEnabled;
     
-    self.nativeAdFactory = [[VASNativeAdFactory alloc] initWithPlacementId:placementId adTypes:@[@"inline"] vasAds:[VASAds sharedInstance] delegate:self];
+    self.nativeAdFactory = [[VASNativeAdFactory alloc] initWithPlacementId:placementId adTypes:@[@"100", @"simpleImage", @"simpleVideo"] vasAds:[VASAds sharedInstance] delegate:self];
     self.nativeAdapter = [[MPVerizonNativeAdAdapter alloc] initWithSiteId:self.siteId];
 
     VASBid *bid = [MPVerizonBidCache.sharedInstance bidForPlacementId:placementId];

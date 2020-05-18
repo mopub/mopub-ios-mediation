@@ -1,14 +1,8 @@
-#import <Chartboost/Chartboost.h>
 #import "ChartboostAdapterConfiguration.h"
 #import "ChartboostRouter.h"
 
-#if __has_include("MoPub.h")
-#import "MoPub.h"
-#import "MPLogging.h"
-#endif
-
-#define CHARTBOOST_ADAPTER_VERSION             @"8.0.4.0"
-#define MOPUB_NETWORK_NAME                     @"chartboost"
+#define CHARTBOOST_ADAPTER_VERSION  @"8.1.0.1"
+#define MOPUB_NETWORK_NAME          @"chartboost"
 
 // Constants
 static NSString * const kChartboostAppIdKey        = @"appId";
@@ -27,14 +21,13 @@ typedef NS_ENUM(NSInteger, ChartboostAdapterErrorCode) {
 #pragma mark - Caching
 
 + (void)updateInitializationParameters:(NSDictionary *)parameters {
-    // These should correspond to the required parameters checked in
-    // `initializeNetworkWithConfiguration:complete:`
-    NSString * appId = parameters[kChartboostAppIdKey];
-    NSString * appSignature = parameters[kChartboostAppSignatureKey];
+    // These should correspond to the required parameters checked in `initializeNetworkWithConfiguration:complete:`
+    NSString *appId = parameters[kChartboostAppIdKey];
+    NSString *appSignature = parameters[kChartboostAppSignatureKey];
     
     if (appId != nil && appSignature != nil) {
-        NSDictionary * configuration = @{ kChartboostAppIdKey: appId, kChartboostAppSignatureKey:appSignature };
-        [ChartboostAdapterConfiguration setCachedInitializationParameters:configuration];
+        [ChartboostAdapterConfiguration setCachedInitializationParameters: @{kChartboostAppIdKey: appId,
+                                                                             kChartboostAppSignatureKey: appSignature}];
     }
 }
 
@@ -57,11 +50,16 @@ typedef NS_ENUM(NSInteger, ChartboostAdapterErrorCode) {
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration
-                                  complete:(void(^)(NSError *))complete {
-    
+                                  complete:(void(^)(NSError *))complete
+{
+    // `configuration` might not have data on the first app launch. See https://developers.mopub.com/publishers/ios/initialize/
     NSString * appId = configuration[kChartboostAppIdKey];
-    if (appId == nil) {
-        NSError * error = [NSError errorWithDomain:kAdapterErrorDomain code:ChartboostAdapterErrorCodeMissingAppId userInfo:@{ NSLocalizedDescriptionKey: @"Chartboost's initialization skipped. The appId is empty. Ensure it is properly configured on the MoPub dashboard. Note that initialization on the first app launch is a no-op." }];
+    if (appId == nil || appId.length == 0) {
+        NSError *error = [NSError errorWithDomain:kAdapterErrorDomain
+                                             code:ChartboostAdapterErrorCodeMissingAppId
+                                         userInfo:@{ NSLocalizedDescriptionKey: @"Chartboost's initialization skipped. The appId is empty. "
+                                                     "Ensure it is properly configured on the MoPub dashboard. "
+                                                     "Note that initialization on the first app launch is a no-op." }];
         MPLogEvent([MPLogEvent error:error message:nil]);
         
         if (complete != nil) {
@@ -71,8 +69,12 @@ typedef NS_ENUM(NSInteger, ChartboostAdapterErrorCode) {
     }
     
     NSString * appSignature = configuration[kChartboostAppSignatureKey];
-    if (appSignature == nil) {
-        NSError * error = [NSError errorWithDomain:kAdapterErrorDomain code:ChartboostAdapterErrorCodeMissingAppSignature userInfo:@{ NSLocalizedDescriptionKey: @"Chartboost's initialization skipped. The appSignature is empty. Ensure it is properly configured on the MoPub dashboard. Note that initialization on the first app launch is a no-op." }];
+    if (appSignature == nil || appSignature.length == 0) {
+        NSError *error = [NSError errorWithDomain:kAdapterErrorDomain
+                                             code:ChartboostAdapterErrorCodeMissingAppSignature
+                                         userInfo:@{ NSLocalizedDescriptionKey: @"Chartboost's initialization skipped. The appSignature is empty. "
+                                                     "Ensure it is properly configured on the MoPub dashboard. "
+                                                     "Note that initialization on the first app launch is a no-op." }];
         MPLogEvent([MPLogEvent error:error message:nil]);
         
         if (complete != nil) {
@@ -81,31 +83,17 @@ typedef NS_ENUM(NSInteger, ChartboostAdapterErrorCode) {
         return;
     }
     
-    // Initialize the router
-    [[ChartboostRouter sharedRouter] startWithAppId:appId appSignature:appSignature completion:^(BOOL initialized) {
+    [ChartboostRouter setDataUseConsentWithMopubConfiguration];
+    [ChartboostRouter setLoggingLevel:[MPLogging consoleLogLevel]];
+    
+    [ChartboostRouter startWithParameters:configuration completion:^(BOOL initialized) {
         if (complete != nil) {
             complete(nil);
         }
     }];
-    
-    MPBLogLevel mopubLogLevel = [MPLogging consoleLogLevel];
-    CBLoggingLevel chartboostLogLevel = [ChartboostAdapterConfiguration getChartboostLogLevel:mopubLogLevel];
-    [Chartboost setLoggingLevel:chartboostLogLevel];
 }
 
-+ (CBLoggingLevel)getChartboostLogLevel:(MPBLogLevel)logLevel
-{
-    switch (logLevel) {
-        case MPBLogLevelDebug:
-            return CBLoggingLevelVerbose;
-        case MPBLogLevelInfo:
-            return CBLoggingLevelInfo;
-        default:
-            return CBLoggingLevelOff;
-    }
-}
-
-+ (NSString*)mediationString
++ (NSString *)adapterVersion
 {
     return CHARTBOOST_ADAPTER_VERSION;
 }
