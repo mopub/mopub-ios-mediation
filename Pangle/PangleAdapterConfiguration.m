@@ -15,9 +15,11 @@
 // Constants
 static NSString * const kPangleAppIdKey = @"app_id";
 static NSString * const kPanglePlacementIdKey = @"ad_placmenet_id";
+static NSString *const kAdapterVersion = @"3.0.0.2.0";
+static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-pangle-adapters";
 
 - (NSString *)adapterVersion {
-    return @"3.0.0.1.0";
+    return kAdapterVersion;
 }
 
 - (NSString *)biddingToken {
@@ -38,9 +40,9 @@ static NSString * const kPanglePlacementIdKey = @"ad_placmenet_id";
     NSNumber *isPaidApp = configuration[@"isPaidApp"];
     NSNumber *GDPR = configuration[@"GDPR"];
     if (appkeyString == nil || [appkeyString isKindOfClass:[NSString class]] == NO) {
-        NSError *theError = [NSError errorWithDomain:@"com.Pangle.AdapterConfiguration" code:1 userInfo:@{NSLocalizedDescriptionKey:@"appKey may be not right, please set networkConfig refer to method '-configCustomEvent' in 'AppDelegate' class"}];
+        NSError *error = [NSError errorWithDomain:kAdapterErrorDomain code:1 userInfo:@{NSLocalizedDescriptionKey:@"appKey may be not right, please set networkConfig refer to method '-configCustomEvent' in 'AppDelegate' class"}];
         if (complete != nil) {
-            complete(theError);
+            complete(error);
         }
     } else {
         static dispatch_once_t onceToken;

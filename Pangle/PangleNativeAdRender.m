@@ -197,5 +197,4 @@
     return self.adViewInViewHierarchy;
 }
 
-
 @end

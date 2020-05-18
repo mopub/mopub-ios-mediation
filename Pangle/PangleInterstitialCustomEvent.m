@@ -85,7 +85,6 @@
             }else{
                 [nad loadAdData];
             }
-        
         }
     }else if (self.adType == BUAdSlotAdTypeFullscreenVideo){
         self.fullScreenVideo = [[BUFullscreenVideoAd alloc] initWithSlotID:self.adPlacementId];

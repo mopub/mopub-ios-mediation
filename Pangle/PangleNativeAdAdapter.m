@@ -102,6 +102,4 @@
   return self.relatedView.logoADImageView;
 }
 
-
-
 @end
