@@ -12,25 +12,30 @@
 #if __has_include("MoPub.h")
 #import "MPNativeAd.h"
 #import "MPNativeAdConstants.h"
+#import "MPLogging.h"
+
 #endif
 
-@interface PangleNativeAdAdapter ()
+@interface PangleNativeAdAdapter ()<BUNativeAdDelegate>
 @property (nonatomic, strong) UIView *mediaView;
 @property (nonatomic, strong) BUNativeAdRelatedView *relatedView;
 @property (nonatomic, strong) BUNativeAd *nativeAd;
+@property (nonatomic, copy) NSString *placementId;
 @end
 
 @implementation PangleNativeAdAdapter
 
-- (instancetype)initWithBUNativeAd:(BUNativeAd *)nativeAd {
+- (instancetype)initWithBUNativeAd:(BUNativeAd *)nativeAd placementId:(NSString *)placementId {
     if (self = [super init]) {
         self.properties = [self buNativeAdToDic:nativeAd];
+        self.placementId = placementId;
     }
     return self;
 }
 
 - (NSDictionary *)buNativeAdToDic:(BUNativeAd *)nativeAd {
     self.nativeAd = nativeAd;
+    self.nativeAd.delegate = self;
     NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
     [dic setValue:nativeAd.data.AdTitle forKey:kAdTitleKey];
     [dic setValue:nativeAd.data.AdDescription forKey:kAdTextKey];
@@ -60,6 +65,39 @@
     return [dic copy];
 }
 
+#pragma mark - <FBNativeAdDelegate>
+/**
+ This method is called when native ad slot has been shown.
+ */
+- (void)nativeAdDidBecomeVisible:(BUNativeAd *)nativeAd{
+    MPLogInfo(@"Pangle nativeAdDidBecomeVisible");
+    if ([self.delegate respondsToSelector:@selector(nativeAdWillLogImpression:)]){
+        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.placementId);
+        MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.placementId);
+        [self.delegate nativeAdWillLogImpression:self];
+    }
+}
+
+/**
+ This method is called when another controller has been closed.
+ @param interactionType : open appstore in app or open the webpage or view video ad details page.
+ */
+- (void)nativeAdDidCloseOtherController:(BUNativeAd *)nativeAd interactionType:(BUInteractionType)interactionType{
+    
+}
+
+/**
+ This method is called when native ad is clicked.
+ */
+- (void)nativeAdDidClick:(BUNativeAd *)nativeAd withView:(UIView *_Nullable)view{
+    MPLogInfo(@"Pangle media nativeAdDidClick");
+    if ([self.delegate respondsToSelector:@selector(nativeAdDidClick:)]) {
+        MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.placementId);
+        [self.delegate nativeAdDidClick:self];
+        [self.delegate nativeAdWillPresentModalForAdapter:self];
+        [self.delegate nativeAdWillLeaveApplicationFromAdapter:self];
+    }
+}
 
 #pragma mark - <MPNativeAdAdapter>
 - (void)willAttachToView:(UIView *)view
@@ -99,7 +137,7 @@
 }
 
 - (UIView *)privacyInformationIconView {
-  return self.relatedView.logoADImageView;
+    return self.relatedView.logoADImageView;
 }
 
 

@@ -76,7 +76,7 @@
 
 - (void)nativeAdDidLoad:(BUNativeAd *)nativeAd {
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    PangleNativeAdAdapter *adapter = [[PangleNativeAdAdapter alloc] initWithBUNativeAd:nativeAd];
+    PangleNativeAdAdapter *adapter = [[PangleNativeAdAdapter alloc] initWithBUNativeAd:nativeAd placementId:self.adPlacementId];
     MPNativeAd *mp_nativeAd = [[MPNativeAd alloc] initWithAdAdapter:adapter];
     [self.delegate nativeCustomEvent:self didLoadAd:mp_nativeAd];
 }

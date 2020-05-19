@@ -19,9 +19,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PangleNativeAdAdapter : NSObject  <MPNativeAdAdapter>
 
-- (instancetype)initWithBUNativeAd:(BUNativeAd *)nativeAd;
+/// MoPub native ad adapter delegate instance.
+@property(nonatomic, weak) id<MPNativeAdAdapterDelegate> delegate;
 @property (nonatomic, strong) NSDictionary *properties;
 @property (nonatomic, strong) NSURL *defaultActionURL;
+- (instancetype)initWithBUNativeAd:(BUNativeAd *)nativeAd placementId:(NSString *)placementId;
 
 @end
 
