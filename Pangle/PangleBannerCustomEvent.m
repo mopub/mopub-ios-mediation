@@ -89,47 +89,47 @@
     CGFloat width = size.width;
     CGFloat height = size.height;
     CGFloat renderRatio = height / width;
-    if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_500].height /
+    if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_500].height * 1.0 /
         [BUSize sizeBy:BUProposalSize_Banner600_500].width) {
         return CGSizeMake(width,width *
                           [BUSize sizeBy:BUProposalSize_Banner600_500].height /
                           [BUSize sizeBy:BUProposalSize_Banner600_500].width);
-    } else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_400].height /
+    } else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_400].height * 1.0  /
                [BUSize sizeBy:BUProposalSize_Banner600_400].width) {
         return CGSizeMake(width,width *
                           [BUSize sizeBy:BUProposalSize_Banner600_400].height /
                           [BUSize sizeBy:BUProposalSize_Banner600_400].width);
-    } else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_388].height /
+    } else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_388].height * 1.0  /
                [BUSize sizeBy:BUProposalSize_Banner600_388].width) {
         return CGSizeMake(width,width *
                           [BUSize sizeBy:BUProposalSize_Banner600_388].height /
                           [BUSize sizeBy:BUProposalSize_Banner600_388].width);
-    } else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_300].height /
+    } else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_300].height * 1.0  /
                [BUSize sizeBy:BUProposalSize_Banner600_300].width) {
         return CGSizeMake(width,width *
                           [BUSize sizeBy:BUProposalSize_Banner600_300].height /
                           [BUSize sizeBy:BUProposalSize_Banner600_300].width);
-    } else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_286].height /
+    } else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_286].height * 1.0  /
                [BUSize sizeBy:BUProposalSize_Banner600_286].width) {
         return CGSizeMake(width,width *
                           [BUSize sizeBy:BUProposalSize_Banner600_286].height /
                           [BUSize sizeBy:BUProposalSize_Banner600_286].width);
-    } else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_260].height /
+    } else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_260].height * 1.0  /
                [BUSize sizeBy:BUProposalSize_Banner600_260].width) {
         return CGSizeMake(width,width *
                           [BUSize sizeBy:BUProposalSize_Banner600_260].height /
                           [BUSize sizeBy:BUProposalSize_Banner600_260].width);
-    }else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_150].height /
+    }else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_150].height * 1.0  /
               [BUSize sizeBy:BUProposalSize_Banner600_150].width) {
         return CGSizeMake(width,width *
                           [BUSize sizeBy:BUProposalSize_Banner600_150].height /
                           [BUSize sizeBy:BUProposalSize_Banner600_150].width);
-    }else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_100].height /
+    }else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_100].height * 1.0  /
               [BUSize sizeBy:BUProposalSize_Banner600_100].width) {
         return CGSizeMake(width,width *
                           [BUSize sizeBy:BUProposalSize_Banner600_100].height /
                           [BUSize sizeBy:BUProposalSize_Banner600_100].width);
-    }else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_90].height /
+    }else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_90].height * 1.0  /
               [BUSize sizeBy:BUProposalSize_Banner600_90].width) {
         return CGSizeMake(width,width *
                           [BUSize sizeBy:BUProposalSize_Banner600_90].height /
