@@ -45,7 +45,7 @@
     [self.relatedView refreshData:nativeAd];
     if (nativeAd.data.imageMode == BUFeedVideoAdModeImage) {
         self.mediaView = self.relatedView.videoAdView;
-    } else {
+    }else{
         UIImageView *imageView = [[UIImageView alloc] init];
         self.mediaView = imageView;
         if (nativeAd.data.imageAry.count > 0) {
@@ -71,7 +71,8 @@
     }
 }
 
-- (void)willAttachToView:(UIView *)view withAdContentViews:(NSArray *)adContentViews {
+- (void)willAttachToView:(UIView *)view withAdContentViews:(NSArray *)adContentViews
+{
     if ( adContentViews.count > 0 ) {
         if (self.nativeAd.data.imageMode == BUFeedVideoAdModeImage) {
             [self.nativeAd registerContainer:view withClickableViews:adContentViews];
@@ -87,16 +88,20 @@
     return NO;
 }
 
-- (UIView *)mainMediaView {
+- (UIView *)mainMediaView
+{
     return self.mediaView;
 }
 
-- (UIView *)iconMediaView {
+- (UIView *)iconMediaView
+{
     return self.relatedView.logoImageView;
 }
 
 - (UIView *)privacyInformationIconView {
-    return self.relatedView.logoADImageView;
+  return self.relatedView.logoADImageView;
 }
+
+
 
 @end

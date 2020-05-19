@@ -22,7 +22,7 @@
 @property (nonatomic, strong) BUNativeExpressInterstitialAd *expressInterstitialAd;
 @property (nonatomic, strong) BUFullscreenVideoAd *fullScreenVideo;
 @property (nonatomic, assign) BUAdSlotAdType adType;
-@property (nonatomic, assign) NSInteger renderType;
+@property (nonatomic, assign) PangleRenderMethod renderType;
 @property (nonatomic, copy) NSString *adPlacementId;
 @end
 
@@ -44,10 +44,9 @@
     ritDict = [BUAdSDKManager AdTypeWithRit:self.adPlacementId];
     
     self.adType = [[ritDict objectForKey:@"adSlotType"] integerValue];
-    //renderType: @"1" express AD   @"2" native AD
     self.renderType = [[ritDict objectForKey:@"renderType"] integerValue];
     if (self.adType == BUAdSlotAdTypeInterstitial) {
-        if (self.renderType == 1) {
+        if (self.renderType == PangleRenderMethodDynamic) {
             NSInteger width = MIN([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
             self.expressInterstitialAd = [[BUNativeExpressInterstitialAd alloc] initWithSlotID:self.adPlacementId adSize:CGSizeMake(width, 0)];
             self.expressInterstitialAd.delegate = self;
@@ -76,7 +75,7 @@
             slot1.isOriginAd = YES;
             
             self.nativeInterstitialView = [[PangleNativeInterstitialView alloc] init];
-            
+
             BUNativeAd *nad = [[BUNativeAd alloc] initWithSlot:slot1];
             nad.delegate = self;
             self.nativeInterstitialAd = nad;
@@ -85,6 +84,7 @@
             }else{
                 [nad loadAdData];
             }
+        
         }
     }else if (self.adType == BUAdSlotAdTypeFullscreenVideo){
         self.fullScreenVideo = [[BUFullscreenVideoAd alloc] initWithSlotID:self.adPlacementId];
@@ -98,16 +98,15 @@
 }
 
 - (void)showInterstitialFromRootViewController:(UIViewController *)rootViewController {
-    //renderType: @"1" express AD   @"2" native AD
     if (self.adType == BUAdSlotAdTypeInterstitial) {
-        if (self.renderType == 1) {
+        if (self.renderType == PangleRenderMethodDynamic) {
             MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
             [self.expressInterstitialAd showAdFromRootViewController:rootViewController];
         } else {
             MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
             [self.nativeInterstitialView showAdFromRootViewController:rootViewController delegate:self];
         }
-    } else if (self.adType == BUAdSlotAdTypeFullscreenVideo) {
+    } else if (self.adType == BUAdSlotAdTypeFullscreenVideo){
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
         [self.fullScreenVideo showAdFromRootViewController:rootViewController ritSceneDescribe:nil];
     }
@@ -242,6 +241,7 @@
 }
 
 - (void)fullscreenVideoAdDidClickSkip:(BUFullscreenVideoAd *)fullscreenVideoAd {
+
 }
 
 - (NSString *) getAdNetworkId {

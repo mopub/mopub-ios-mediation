@@ -18,8 +18,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, PangleRenderMethod) {
-    PangleRenderMethodOrigin    = 1,    // native express
-    PangleRenderMethodDynamic   = 2,    // general
+    PangleRenderMethodDynamic   = 1,    // dynamic ad
+    PangleRenderMethodNative    = 2    // native ad
 };
 
 @interface PangleAdapterConfiguration :MPBaseAdapterConfiguration
@@ -36,8 +36,6 @@ typedef NS_ENUM(NSInteger, PangleRenderMethod) {
 @property (nonatomic, copy, readonly) NSString * biddingToken;
 @property (nonatomic, copy, readonly) NSString * moPubNetworkName;
 @property (nonatomic, copy, readonly) NSString * networkSdkVersion;
-/// @required   render Method
-@property (nonatomic, assign) PangleRenderMethod renderMethod;
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration complete:(void(^ _Nullable)(NSError * _Nullable))complete;
 @end

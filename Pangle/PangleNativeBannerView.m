@@ -103,10 +103,18 @@
         if (isHeight) {
             CGFloat widthRatio = self.bu_width / 300.0 ;
             CGFloat heightRatio = self.bu_height / 150.0;
+            if (widthRatio > 1) {
+                widthRatio = 1;
+            }
+            if (heightRatio > 1) {
+                heightRatio = 1;
+            }
             self.dislikeButton.frame = CGRectMake(contentWidth - 19, 10, 9, 9);
             self.describeLable.frame = CGRectMake(leftMargin, 9 * heightRatio, contentWidth - 10 - 30 , 16.5 * heightRatio);
-            CGFloat bannerImgW = 187.0 / 300 * contentWidth;
-            self.bannerImg.frame = CGRectMake(leftMargin, CGRectGetMaxY(self.describeLable.frame) + 9.5, bannerImgW * widthRatio, bannerImgW * 105.0/187 * heightRatio);
+//            CGFloat bannerImgW = 187.0 / 300 * contentWidth;
+            CGFloat widthDiff = self.bu_width - 300;
+            CGFloat heightDiff = self.bu_height - 150;
+            self.bannerImg.frame = CGRectMake(leftMargin, CGRectGetMaxY(self.describeLable.frame) + 9.5, 187 + widthDiff, 105 + heightDiff + (1 - heightRatio) * 10);
             self.logoImgeView.frame = CGRectMake(self.bannerImg.bu_x, CGRectGetMaxY(self.bannerImg.frame) -  16, 33, 12);
             CGFloat tempRatio = MIN(widthRatio, heightRatio);
             self.mediaIcon.frame = CGRectMake((self.bu_width - CGRectGetMaxX(self.bannerImg.frame) - 40) * 0.5 + CGRectGetMaxX(self.bannerImg.frame), self.bannerImg.bu_y + 4.5, 40 * tempRatio, 40 * tempRatio);

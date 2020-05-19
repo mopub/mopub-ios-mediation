@@ -43,13 +43,8 @@
     }
     ritDict = [BUAdSDKManager AdTypeWithRit:self.adPlacementId];
     
-    //renderType: @"1" express AD   @"2" native AD
-    NSInteger renderType = [[ritDict objectForKey:@"renderType"] integerValue];
-    
-    BUSize *adSize = [[BUSize alloc] init];
-    adSize.width = size.width;
-    adSize.height = size.height;
-    if (renderType == 1) {
+    PangleRenderMethod renderType = [[ritDict objectForKey:@"renderType"] integerValue];
+    if (renderType == PangleRenderMethodDynamic) {
         CGSize expressRequestSize = [self sizeForCustomEventInfo:size];
         self.expressBannerView = [[BUNativeExpressBannerView alloc] initWithSlotID:self.adPlacementId rootViewController:self.delegate.viewControllerForPresentingModalView adSize:expressRequestSize IsSupportDeepLink:YES];
         self.expressBannerView.frame = CGRectMake(0, 0, size.width, size.height);
@@ -93,45 +88,56 @@
 - (CGSize)sizeForCustomEventInfo:(CGSize)size {
     CGFloat width = size.width;
     CGFloat height = size.height;
-    if (height >= [BUSize sizeBy:BUProposalSize_Banner600_500].height &&
-        width >= [BUSize sizeBy:BUProposalSize_Banner600_500].width) {
-        return CGSizeMake([BUSize sizeBy:BUProposalSize_Banner600_500].width,
-                          [BUSize sizeBy:BUProposalSize_Banner600_500].height);
-    } else if (height >= [BUSize sizeBy:BUProposalSize_Banner600_400].height
-               && width >= [BUSize sizeBy:BUProposalSize_Banner600_400].width) {
-        return CGSizeMake([BUSize sizeBy:BUProposalSize_Banner600_400].width,
-                          [BUSize sizeBy:BUProposalSize_Banner600_400].height);
-    } else if (height >= [BUSize sizeBy:BUProposalSize_Banner600_388].height &&
-               width >= [BUSize sizeBy:BUProposalSize_Banner600_388].width) {
-        return CGSizeMake([BUSize sizeBy:BUProposalSize_Banner600_388].width,
-                          [BUSize sizeBy:BUProposalSize_Banner600_388].height);
-    } else if (height >= [BUSize sizeBy:BUProposalSize_Banner600_300].height &&
-               width >= [BUSize sizeBy:BUProposalSize_Banner600_300].width) {
-        return CGSizeMake([BUSize sizeBy:BUProposalSize_Banner600_300].width,
-                          [BUSize sizeBy:BUProposalSize_Banner600_300].height);
-    } else if (height >= [BUSize sizeBy:BUProposalSize_Banner600_286].height &&
-               width >= [BUSize sizeBy:BUProposalSize_Banner600_286].width) {
-        return CGSizeMake([BUSize sizeBy:BUProposalSize_Banner600_286].width,
-                          [BUSize sizeBy:BUProposalSize_Banner600_286].height);
-    } else if (height >= [BUSize sizeBy:BUProposalSize_Banner600_260].height &&
-               width >= [BUSize sizeBy:BUProposalSize_Banner600_260].width) {
-        return CGSizeMake([BUSize sizeBy:BUProposalSize_Banner600_260].width,
-                          [BUSize sizeBy:BUProposalSize_Banner600_260].height);
-    } else if (height >= [BUSize sizeBy:BUProposalSize_Banner600_150].height &&
-               width >= [BUSize sizeBy:BUProposalSize_Banner600_150].width) {
-        return CGSizeMake([BUSize sizeBy:BUProposalSize_Banner600_150].width,
-                          [BUSize sizeBy:BUProposalSize_Banner600_150].height);
-    } else if (height >= [BUSize sizeBy:BUProposalSize_Banner600_100].height &&
-               width >= [BUSize sizeBy:BUProposalSize_Banner600_100].width) {
-        return CGSizeMake([BUSize sizeBy:BUProposalSize_Banner600_100].width,
-                          [BUSize sizeBy:BUProposalSize_Banner600_100].height);
-    } else if (height >= [BUSize sizeBy:BUProposalSize_Banner600_90].height &&
-               width >= [BUSize sizeBy:BUProposalSize_Banner600_90].width) {
-        return CGSizeMake([BUSize sizeBy:BUProposalSize_Banner600_90].width,
-                          [BUSize sizeBy:BUProposalSize_Banner600_90].height);
+    CGFloat renderRatio = height / width;
+    if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_500].height /
+        [BUSize sizeBy:BUProposalSize_Banner600_500].width) {
+        return CGSizeMake(width,width *
+                          [BUSize sizeBy:BUProposalSize_Banner600_500].height /
+                          [BUSize sizeBy:BUProposalSize_Banner600_500].width);
+    } else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_400].height /
+               [BUSize sizeBy:BUProposalSize_Banner600_400].width) {
+        return CGSizeMake(width,width *
+                          [BUSize sizeBy:BUProposalSize_Banner600_400].height /
+                          [BUSize sizeBy:BUProposalSize_Banner600_400].width);
+    } else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_388].height /
+               [BUSize sizeBy:BUProposalSize_Banner600_388].width) {
+        return CGSizeMake(width,width *
+                          [BUSize sizeBy:BUProposalSize_Banner600_388].height /
+                          [BUSize sizeBy:BUProposalSize_Banner600_388].width);
+    } else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_300].height /
+               [BUSize sizeBy:BUProposalSize_Banner600_300].width) {
+        return CGSizeMake(width,width *
+                          [BUSize sizeBy:BUProposalSize_Banner600_300].height /
+                          [BUSize sizeBy:BUProposalSize_Banner600_300].width);
+    } else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_286].height /
+               [BUSize sizeBy:BUProposalSize_Banner600_286].width) {
+        return CGSizeMake(width,width *
+                          [BUSize sizeBy:BUProposalSize_Banner600_286].height /
+                          [BUSize sizeBy:BUProposalSize_Banner600_286].width);
+    } else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_260].height /
+               [BUSize sizeBy:BUProposalSize_Banner600_260].width) {
+        return CGSizeMake(width,width *
+                          [BUSize sizeBy:BUProposalSize_Banner600_260].height /
+                          [BUSize sizeBy:BUProposalSize_Banner600_260].width);
+    }else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_150].height /
+              [BUSize sizeBy:BUProposalSize_Banner600_150].width) {
+        return CGSizeMake(width,width *
+                          [BUSize sizeBy:BUProposalSize_Banner600_150].height /
+                          [BUSize sizeBy:BUProposalSize_Banner600_150].width);
+    }else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_100].height /
+              [BUSize sizeBy:BUProposalSize_Banner600_100].width) {
+        return CGSizeMake(width,width *
+                          [BUSize sizeBy:BUProposalSize_Banner600_100].height /
+                          [BUSize sizeBy:BUProposalSize_Banner600_100].width);
+    }else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_90].height /
+              [BUSize sizeBy:BUProposalSize_Banner600_90].width) {
+        return CGSizeMake(width,width *
+                          [BUSize sizeBy:BUProposalSize_Banner600_90].height /
+                          [BUSize sizeBy:BUProposalSize_Banner600_90].width);
     } else {
-        return CGSizeMake([BUSize sizeBy:BUProposalSize_Banner600_90].width,
-                          [BUSize sizeBy:BUProposalSize_Banner600_90].height);
+        return CGSizeMake(width,width *
+                          [BUSize sizeBy:BUProposalSize_Banner600_90].height /
+                          [BUSize sizeBy:BUProposalSize_Banner600_90].width);
     }
 }
 
