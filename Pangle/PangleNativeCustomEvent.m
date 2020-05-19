@@ -85,5 +85,4 @@
     return (self.adPlacementId != nil) ? self.adPlacementId : @"";
 }
 
-
 @end

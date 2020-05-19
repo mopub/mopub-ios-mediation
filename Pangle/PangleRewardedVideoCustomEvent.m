@@ -111,6 +111,7 @@
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate rewardedVideoDidReceiveTapEventForCustomEvent:self];
     [self.delegate trackClick];
+    [self.delegate rewardedVideoWillLeaveApplicationForCustomEvent:self];
 }
 
 - (void)rewardedVideoAdDidPlayFinish:(BURewardedVideoAd *)rewardedVideoAd didFailWithError:(NSError *)error {
@@ -123,7 +124,7 @@
 - (void)rewardedVideoAdServerRewardDidSucceed:(BURewardedVideoAd *)rewardedVideoAd verify:(BOOL)verify {
     if (verify) {
         MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyType:self.rewardVideoAd.rewardedVideoModel.rewardName amount:[NSNumber numberWithInteger:self.rewardVideoAd.rewardedVideoModel.rewardAmount]];
-        MPLogAdEvent([MPLogEvent adShouldRewardUserWithReward:reward],[self getAdNetworkId]);
+        MPLogAdEvent([MPLogEvent adShouldRewardUserWithReward:reward], [self getAdNetworkId]);
         [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:reward];
     }
 }

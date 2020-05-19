@@ -170,6 +170,12 @@
 - (void)nativeExpressBannerAdViewDidClick:(BUNativeExpressBannerView *)bannerAdView {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate trackClick];
+    [self.delegate bannerCustomEventWillLeaveApplication:self];
+    [self.delegate bannerCustomEventWillBeginAction:self];
+}
+
+- (void)nativeExpressBannerAdViewDidCloseOtherController:(BUNativeExpressBannerView *)bannerAdView interactionType:(BUInteractionType)interactionType {
+    [self.delegate bannerCustomEventDidFinishAction:self];
 }
 
 - (void)nativeExpressBannerAdView:(BUNativeExpressBannerView *)bannerAdView dislikeWithReason:(NSArray<BUDislikeWords *> *_Nullable)filterwords {
@@ -199,10 +205,16 @@
 - (void)nativeAdDidClick:(BUNativeAd *)nativeAd withView:(UIView *)view {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate trackClick];
+    [self.delegate bannerCustomEventWillLeaveApplication:self];
+    [self.delegate bannerCustomEventWillBeginAction:self];
 }
 
 - (void)nativeAdDidBecomeVisible:(BUNativeAd *)nativeAd {
     [self.delegate trackImpression];
+}
+
+- (void)nativeAdDidCloseOtherController:(BUNativeAd *)nativeAd interactionType:(BUInteractionType)interactionType {
+    [self.delegate bannerCustomEventDidFinishAction:self];
 }
 
 - (void)nativeAd:(BUNativeAd *)nativeAd  dislikeWithReason:(NSArray<BUDislikeWords *> *)filterWords {
