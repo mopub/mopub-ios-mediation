@@ -65,7 +65,7 @@
     return [dic copy];
 }
 
-#pragma mark - <FBNativeAdDelegate>
+#pragma mark - BUNativeAdDelegate
 /**
  This method is called when native ad slot has been shown.
  */
@@ -83,7 +83,7 @@
  @param interactionType : open appstore in app or open the webpage or view video ad details page.
  */
 - (void)nativeAdDidCloseOtherController:(BUNativeAd *)nativeAd interactionType:(BUInteractionType)interactionType{
-    
+    [self.delegate nativeAdDidDismissModalForAdapter:self];
 }
 
 /**

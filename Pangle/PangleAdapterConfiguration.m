@@ -57,7 +57,9 @@ typedef NS_ENUM(NSInteger, FlurryAdapterErrorCode) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [BUAdSDKManager setAppID:appkeyString];
                 [BUAdSDKManager setIsPaidApp:NO];
-                [BUAdSDKManager setLoglevel:BUAdSDKLogLevelDebug];
+                MPBLogLevel logLevel = [MPLogging consoleLogLevel];
+                BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
+                [BUAdSDKManager setLoglevel:verboseLoggingEnabled == true ? BUAdSDKLogLevelDebug : BUAdSDKLogLevelNone];
                 if ((Coppa && [Coppa isKindOfClass:[NSNumber class]])) {
                     [BUAdSDKManager setCoppa:Coppa.integerValue];
                 }
