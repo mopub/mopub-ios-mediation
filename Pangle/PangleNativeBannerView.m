@@ -97,7 +97,6 @@
         }else{
             isHeight = NO;
         }
-        isHeight = YES;
         BUImage *adImage = nativeAd.data.imageAry.firstObject;
         CGFloat contentWidth = CGRectGetWidth(self.bounds);
         if (isHeight) {
