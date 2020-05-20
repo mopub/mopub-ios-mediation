@@ -31,7 +31,7 @@
     BOOL hasAdMarkup = adMarkup.length > 0;
     NSDictionary *ritDict;
     NSString * appId = [info objectForKey:@"app_id"];
-    if (appId != nil){
+    if (appId != nil) {
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
     self.adPlacementId = [info objectForKey:@"ad_placement_id"];
@@ -145,12 +145,12 @@
 }
 
 #pragma mark PangleNativeInterstitialViewDelegate
-- (void)nativeInterstitialAdWillClose:(BUNativeAd *)nativeAd{
+- (void)nativeInterstitialAdWillClose:(BUNativeAd *)nativeAd {
     [self.delegate interstitialCustomEventWillDisappear:self];
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
-- (void)nativeInterstitialAdDidClose:(BUNativeAd *)nativeAd{
+- (void)nativeInterstitialAdDidClose:(BUNativeAd *)nativeAd {
     [self.delegate interstitialCustomEventDidDisappear:self];
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }

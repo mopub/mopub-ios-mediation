@@ -37,8 +37,7 @@
 
 @implementation PangleNativeAdRender
 
-- (instancetype)initWithRendererSettings:(id<MPNativeAdRendererSettings>)rendererSettings
-{
+- (instancetype)initWithRendererSettings:(id<MPNativeAdRendererSettings>)rendererSettings {
     if (self = [super init]) {
         MPStaticNativeAdRendererSettings *settings = (MPStaticNativeAdRendererSettings *)rendererSettings;
         _renderingViewClass = settings.renderingViewClass;
@@ -50,8 +49,7 @@
     return self;
 }
 
-+ (MPNativeAdRendererConfiguration *)rendererConfigurationWithRendererSettings:(id<MPNativeAdRendererSettings>)rendererSettings
-{
++ (MPNativeAdRendererConfiguration *)rendererConfigurationWithRendererSettings:(id<MPNativeAdRendererSettings>)rendererSettings {
     MPNativeAdRendererConfiguration *config = [[MPNativeAdRendererConfiguration alloc] init];
     config.rendererClass = [self class];
     config.rendererSettings = rendererSettings;
@@ -60,8 +58,7 @@
     return config;
 }
 
-- (UIView *)retrieveViewWithAdapter:(id<MPNativeAdAdapter>)adapter error:(NSError **)error
-{
+- (UIView *)retrieveViewWithAdapter:(id<MPNativeAdAdapter>)adapter error:(NSError **)error {
     if (!adapter || ![adapter isKindOfClass:[PangleNativeAdAdapter class]]) {
         if (error) {
           *error = MPNativeAdNSErrorForRenderValueTypeError();
@@ -135,37 +132,32 @@
     return self.adView;
 }
 
-- (BOOL)shouldLoadMainImageView
-{
+- (BOOL)shouldLoadMainImageView {
     return [self.adapter respondsToSelector:@selector(mainMediaView)]
     && [self.adapter mainMediaView]
     && [self.adView respondsToSelector:@selector(nativeMainImageView)];
 }
 
-- (BOOL)shouldLoadMainVideoView
-{
+- (BOOL)shouldLoadMainVideoView {
     return [self.adapter respondsToSelector:@selector(mainMediaView)]
     && [self.adapter mainMediaView]
     && [self.adView respondsToSelector:@selector(nativeVideoView)];
 }
 
 
-- (BOOL)hasIconView
-{
+- (BOOL)hasIconView {
     return [self.adapter respondsToSelector:@selector(iconMediaView)]
     && [self.adapter iconMediaView]
     && [self.adView respondsToSelector:@selector(nativeIconImageView)];
 }
 
-- (void)onPrivacyIconTapped
-{
+- (void)onPrivacyIconTapped {
     if ([self.adapter respondsToSelector:@selector(displayContentForDAAIconTap)]) {
         [self.adapter displayContentForDAAIconTap];
     }
 }
 
-- (void)adViewWillMoveToSuperview:(UIView *)superview
-{
+- (void)adViewWillMoveToSuperview:(UIView *)superview {
     self.adViewInViewHierarchy = (superview != nil);
     
     if (superview) {
@@ -192,8 +184,7 @@
 
 #pragma mark - MPNativeAdRendererImageHandlerDelegate
 
-- (BOOL)nativeAdViewInViewHierarchy
-{
+- (BOOL)nativeAdViewInViewHierarchy {
     return self.adViewInViewHierarchy;
 }
 

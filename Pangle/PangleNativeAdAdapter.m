@@ -69,7 +69,7 @@
 /**
  This method is called when native ad slot has been shown.
  */
-- (void)nativeAdDidBecomeVisible:(BUNativeAd *)nativeAd{
+- (void)nativeAdDidBecomeVisible:(BUNativeAd *)nativeAd {
     MPLogInfo(@"Pangle nativeAdDidBecomeVisible");
     if ([self.delegate respondsToSelector:@selector(nativeAdWillLogImpression:)]){
         MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.placementId);
@@ -82,14 +82,14 @@
  This method is called when another controller has been closed.
  @param interactionType : open appstore in app or open the webpage or view video ad details page.
  */
-- (void)nativeAdDidCloseOtherController:(BUNativeAd *)nativeAd interactionType:(BUInteractionType)interactionType{
+- (void)nativeAdDidCloseOtherController:(BUNativeAd *)nativeAd interactionType:(BUInteractionType)interactionType {
     [self.delegate nativeAdDidDismissModalForAdapter:self];
 }
 
 /**
  This method is called when native ad is clicked.
  */
-- (void)nativeAdDidClick:(BUNativeAd *)nativeAd withView:(UIView *_Nullable)view{
+- (void)nativeAdDidClick:(BUNativeAd *)nativeAd withView:(UIView *_Nullable)view {
     MPLogInfo(@"Pangle media nativeAdDidClick");
     if ([self.delegate respondsToSelector:@selector(nativeAdDidClick:)]) {
         MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.placementId);
@@ -100,8 +100,7 @@
 }
 
 #pragma mark - <MPNativeAdAdapter>
-- (void)willAttachToView:(UIView *)view
-{
+- (void)willAttachToView:(UIView *)view {
     if (self.nativeAd.data.imageMode == BUFeedVideoAdModeImage) {
         [self.nativeAd registerContainer:view withClickableViews:@[]];
     } else {
@@ -109,8 +108,7 @@
     }
 }
 
-- (void)willAttachToView:(UIView *)view withAdContentViews:(NSArray *)adContentViews
-{
+- (void)willAttachToView:(UIView *)view withAdContentViews:(NSArray *)adContentViews {
     if ( adContentViews.count > 0 ) {
         if (self.nativeAd.data.imageMode == BUFeedVideoAdModeImage) {
             [self.nativeAd registerContainer:view withClickableViews:adContentViews];
@@ -126,13 +124,11 @@
     return NO;
 }
 
-- (UIView *)mainMediaView
-{
+- (UIView *)mainMediaView {
     return self.mediaView;
 }
 
-- (UIView *)iconMediaView
-{
+- (UIView *)iconMediaView {
     return self.relatedView.logoImageView;
 }
 

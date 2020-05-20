@@ -165,7 +165,7 @@
 }
 
 #pragma mark - private
-- (void)tapCloseButton{
+- (void)tapCloseButton {
     [self removeFromSuperview];
 }
 

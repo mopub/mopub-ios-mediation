@@ -189,7 +189,7 @@
 }
 
 #pragma mark - private
-- (void)tapCloseButton{
+- (void)tapCloseButton {
     if (self.delegate && [self.delegate respondsToSelector:@selector(nativeInterstitialAdWillClose:)]) {
         [self.delegate nativeInterstitialAdWillClose:self.nativeAd];
     }
@@ -215,8 +215,7 @@
 }
 
 
-- (UIView *)starView
-{
+- (UIView *)starView {
     if (!_starView) {
         _starView = [[UIView alloc] init];
         _starView.backgroundColor = [UIColor clearColor];

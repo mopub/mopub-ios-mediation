@@ -83,8 +83,7 @@ typedef NS_ENUM(NSInteger, FlurryAdapterErrorCode) {
 }
 
 #pragma mark - Caching
-+ (void)updateInitializationParameters:(NSDictionary *)parameters
-{
++ (void)updateInitializationParameters:(NSDictionary *)parameters {
     NSString * appId = parameters[kPangleAppIdKey];
     if (appId != nil) {
         NSDictionary * configuration = @{kPangleAppIdKey: appId};
