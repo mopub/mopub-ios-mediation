@@ -17,7 +17,6 @@
 @interface PangleNativeBannerView ()
 
 @property (nonatomic, strong) UIImageView *logoImgeView;
-@property (nonatomic, strong) UIButton *dislikeButton;
 @property (nonatomic, strong) UILabel *titleLable;
 @property (nonatomic, strong) UILabel *describeLable;
 @property (nonatomic, strong) UIImageView *bannerImg;
@@ -76,12 +75,6 @@
 
     [self addSubview:self.logoImgeView];
     
-    self.dislikeButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [UIImage bu_compatImageNamed:@"bu_mpNativebanner_close" block:^(UIImage *image) {
-        [self->_dislikeButton setImage:image forState:UIControlStateNormal];
-    }];
-    [self.dislikeButton addTarget:self action:@selector(tapCloseButton) forControlEvents:UIControlEventTouchUpInside];
-    [self addSubview:self.dislikeButton];
 }
 
 
@@ -108,7 +101,6 @@
             if (heightRatio > 1) {
                 heightRatio = 1;
             }
-            self.dislikeButton.frame = CGRectMake(contentWidth - 19, 10, 9, 9);
             self.describeLable.frame = CGRectMake(leftMargin, 9 * heightRatio, contentWidth - 10 - 30 , 16.5 * heightRatio);
 //            CGFloat bannerImgW = 187.0 / 300 * contentWidth;
             CGFloat widthDiff = self.bu_width - 300;
@@ -124,7 +116,6 @@
             self.dowloadButton.frame = CGRectMake(0, CGRectGetMaxY(self.titleLable.frame) + 9, 71 * widthRatio, 25 * heightRatio);
             self.dowloadButton.bu_centerX = self.mediaIcon.bu_centerX;
         }else{
-            self.dislikeButton.frame = CGRectMake(contentWidth - 19, 10, 9, 9);
             self.bannerImg.frame = CGRectMake(0, 0, 114.5 / 300 * self.bu_width, self.bu_height);
             self.logoImgeView.frame = CGRectMake(4, CGRectGetMaxY(self.bannerImg.frame) -  15, 33, 12);
             self.mediaIcon.hidden = YES;
@@ -179,7 +170,6 @@
 
 #pragma mark addAccessibilityIdentifier
 - (void)addAccessibilityIdentifier {
-    self.dislikeButton.accessibilityIdentifier = @"banner_close";
     self.logoImgeView.accessibilityIdentifier = @"banner_logo";
 }
 
