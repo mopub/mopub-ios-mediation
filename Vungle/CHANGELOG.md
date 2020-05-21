@@ -1,4 +1,10 @@
 ## Changelog
+* 6.7.0.0
+   * This version of the adapters has been certified with Vungle 6.7.0 and MoPub SDK 5.12.1.
+   * Add support for playing multi ads at the time.
+   * Add support for new Vungle SDK event handlers.
+   * Add support for new Vungle SDK init API.
+
 * 6.6.1.0
    * This version of the adapters has been certified with Vungle 6.6.1 and MoPub SDK 5.12.1.
    * Add support for Header Bidding Participation.
