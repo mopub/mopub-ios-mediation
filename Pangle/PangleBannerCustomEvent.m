@@ -54,20 +54,20 @@
             [self.expressBannerView loadAdData];
         }
     } else {
-        BUSize *imgSize1 = [[BUSize alloc] init];
+        BUSize *imageSize = [[BUSize alloc] init];
         CGSize nativeRequestSize = [self sizeForCustomEventInfo:size];
-        imgSize1.width = nativeRequestSize.width;
-        imgSize1.height = nativeRequestSize.height;
+        imageSize.width = nativeRequestSize.width;
+        imageSize.height = nativeRequestSize.height;
         
-        BUAdSlot *slot1 = [[BUAdSlot alloc] init];
-        slot1.ID = self.adPlacementId;
-        slot1.AdType = BUAdSlotAdTypeBanner;
-        slot1.position = BUAdSlotPositionTop;
-        slot1.imgSize = imgSize1;
-        slot1.isSupportDeepLink = YES;
-        slot1.isOriginAd = YES;
+        BUAdSlot *slot = [[BUAdSlot alloc] init];
+        slot.ID = self.adPlacementId;
+        slot.AdType = BUAdSlotAdTypeBanner;
+        slot.position = BUAdSlotPositionTop;
+        slot.imgSize = imageSize;
+        slot.isSupportDeepLink = YES;
+        slot.isOriginAd = YES;
         
-        BUNativeAd *nad = [[BUNativeAd alloc] initWithSlot:slot1];
+        BUNativeAd *nad = [[BUNativeAd alloc] initWithSlot:slot];
         nad.rootViewController = self.delegate.viewControllerForPresentingModalView;
         nad.delegate = self;
         self.nativeAd = nad;
@@ -113,17 +113,17 @@
         return CGSizeMake(width, width *
                           [BUSize sizeBy:BUProposalSize_Banner600_260].height /
                           [BUSize sizeBy:BUProposalSize_Banner600_260].width);//0.43
-    }else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_150].height * 1.0  /
+    } else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_150].height * 1.0  /
               [BUSize sizeBy:BUProposalSize_Banner600_150].width) {
         return CGSizeMake(width, width *
                           [BUSize sizeBy:BUProposalSize_Banner600_150].height /
                           [BUSize sizeBy:BUProposalSize_Banner600_150].width);//0.25
-    }else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner640_100].height * 1.0  /
+    } else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner640_100].height * 1.0  /
               [BUSize sizeBy:BUProposalSize_Banner640_100].width) {
         return CGSizeMake(width, width *
                           [BUSize sizeBy:BUProposalSize_Banner640_100].height /
                           [BUSize sizeBy:BUProposalSize_Banner640_100].width);//0.16
-    }else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_90].height * 1.0  /
+    } else if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_90].height * 1.0  /
               [BUSize sizeBy:BUProposalSize_Banner600_90].width) {
         return CGSizeMake(width, width *
                           [BUSize sizeBy:BUProposalSize_Banner600_90].height /
