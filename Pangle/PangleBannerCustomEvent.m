@@ -47,7 +47,7 @@
     if (renderType == PangleRenderMethodDynamic) {
         CGSize expressRequestSize = [self sizeForCustomEventInfo:size];
         self.expressBannerView = [[BUNativeExpressBannerView alloc] initWithSlotID:self.adPlacementId rootViewController:self.delegate.viewControllerForPresentingModalView adSize:expressRequestSize IsSupportDeepLink:YES];
-        self.expressBannerView.frame = CGRectMake(0, 0, size.width, size.height);
+        self.expressBannerView.frame = CGRectMake(0, 0, expressRequestSize.width, expressRequestSize.height);
         self.expressBannerView.delegate = self;
         if (hasAdMarkup) {
             [self.expressBannerView setMopubAdMarkUp:adMarkup];
