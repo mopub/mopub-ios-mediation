@@ -43,9 +43,6 @@ typedef NS_ENUM(NSInteger, FlurryAdapterErrorCode) {
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration complete:(void(^)(NSError *))complete {
     NSString *appkeyString = configuration[kPangleAppIdKey];
-    NSNumber *Coppa = configuration[@"Coppa"];
-    NSNumber *isPaidApp = configuration[@"isPaidApp"];
-    NSNumber *GDPR = configuration[@"GDPR"];
     if (appkeyString == nil || [appkeyString isKindOfClass:[NSString class]] == NO) {
         NSError *error = [NSError errorWithDomain:kAdapterErrorDomain code:PangleAdapterErrorCodeMissingIdKey userInfo:@{NSLocalizedDescriptionKey:@"appKey may be not right, please set networkConfig refer to method '-configCustomEvent' in 'AppDelegate' class"}];
         if (complete != nil) {
@@ -60,19 +57,11 @@ typedef NS_ENUM(NSInteger, FlurryAdapterErrorCode) {
                 MPBLogLevel logLevel = [MPLogging consoleLogLevel];
                 BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
                 [BUAdSDKManager setLoglevel:verboseLoggingEnabled == true ? BUAdSDKLogLevelDebug : BUAdSDKLogLevelNone];
-                if ((Coppa && [Coppa isKindOfClass:[NSNumber class]])) {
-                    [BUAdSDKManager setCoppa:Coppa.integerValue];
-                }
-                if ((isPaidApp && [isPaidApp isKindOfClass:[NSNumber class]])) {
-                    [BUAdSDKManager setIsPaidApp:isPaidApp.integerValue == 0 ? NO : YES];
-                }
-                if ((GDPR && [GDPR isKindOfClass:[NSNumber class]])) {
-                    [BUAdSDKManager setGDPR:GDPR.integerValue];
-                }
-                // This is a example to set GDPR. You can change GDPR at right scence
                 if ([[MoPub sharedInstance] isGDPRApplicable] != MPBoolUnknown) {
                     BOOL canCollect =  [[MoPub sharedInstance] canCollectPersonalInfo];
-                    [BUAdSDKManager setGDPR:canCollect];
+                    /// Custom set the GDPR of the user,GDPR is the short of General Data Protection Regulation,the interface only works in The European.
+                    /// @params GDPR 0 close privacy protection, 1 open privacy protection
+                    [BUAdSDKManager setGDPR:canCollect ? 0 : 1];
                 }
                 if (complete != nil) {
                     complete(nil);

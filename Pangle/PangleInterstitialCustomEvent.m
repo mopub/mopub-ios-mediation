@@ -8,7 +8,6 @@
 
 #import "PangleInterstitialCustomEvent.h"
 #import <BUAdSDK/BUAdSDK.h>
-#import "PangleNativeInterstitialView.h"
 #import "PangleAdapterConfiguration.h"
 #if __has_include("MoPub.h")
 #import "MPError.h"

@@ -8,7 +8,6 @@
 
 #import "PangleBannerCustomEvent.h"
 #import <BUAdSDK/BUAdSDK.h>
-#import "PangleNativeBannerView.h"
 #import "PangleAdapterConfiguration.h"
 
 #if __has_include("MoPub.h")
