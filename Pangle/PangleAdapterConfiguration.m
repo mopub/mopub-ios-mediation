@@ -15,7 +15,7 @@
 // Constants
 static NSString * const kPangleAppIdKey = @"app_id";
 static NSString * const kPanglePlacementIdKey = @"ad_placmenet_id";
-static NSString *const kAdapterVersion = @"3.0.0.2.0";
+static NSString *const kAdapterVersion = @"3.0.0.4.0";
 
 // Errors
 static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-pangle-adapters";
