@@ -27,15 +27,15 @@
 - (NSDictionary *)buNativeAdToDic:(BUNativeAd *)nativeAd {
     self.nativeAd = nativeAd;
     self.nativeAd.delegate = self;
-    NSMutableDictionary *dic = [[NSMutableDictionary alloc] init];
-    [dic setValue:nativeAd.data.AdTitle forKey:kAdTitleKey];
-    [dic setValue:nativeAd.data.AdDescription forKey:kAdTextKey];
-    [dic setValue:nativeAd.data.buttonText forKey:kAdCTATextKey];
-    [dic setValue:nativeAd.data.icon.imageURL forKey:kAdIconImageKey];
-    [dic setValue:@(nativeAd.data.score) forKey:kAdStarRatingKey];
+    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
+    [dict setValue:nativeAd.data.AdTitle forKey:kAdTitleKey];
+    [dict setValue:nativeAd.data.AdDescription forKey:kAdTextKey];
+    [dict setValue:nativeAd.data.buttonText forKey:kAdCTATextKey];
+    [dict setValue:nativeAd.data.icon.imageURL forKey:kAdIconImageKey];
+    [dict setValue:@(nativeAd.data.score) forKey:kAdStarRatingKey];
     
     if (nativeAd.data.imageAry.count > 0) {
-        [dic setValue:nativeAd.data.imageAry.firstObject.imageURL forKey:kAdMainImageKey];
+        [dict setValue:nativeAd.data.imageAry.firstObject.imageURL forKey:kAdMainImageKey];
     }
     
     self.mediaView = nil;
@@ -56,9 +56,9 @@
         }
     }
     
-    [dic setValue:self.mediaView forKey:kAdMainMediaViewKey];
-    [dic setValue:nativeAd forKey:@"bu_nativeAd"];
-    return [dic copy];
+    [dict setValue:self.mediaView forKey:kAdMainMediaViewKey];
+    [dict setValue:nativeAd forKey:@"bu_nativeAd"];
+    return [dict copy];
 }
 
 #pragma mark - BUNativeAdDelegate

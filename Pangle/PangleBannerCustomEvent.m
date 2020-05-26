@@ -18,7 +18,7 @@
 @implementation PangleBannerCustomEvent
 - (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
-    NSDictionary *ritDict;
+    NSDictionary *renderInfo;
     
     NSString * appId = [info objectForKey:@"app_id"];
     if (appId != nil) {
@@ -35,9 +35,9 @@
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
-    ritDict = [BUAdSDKManager AdTypeWithRit:self.adPlacementId];
+    renderInfo = [BUAdSDKManager AdTypeWithRit:self.adPlacementId];
     
-    PangleRenderMethod renderType = [[ritDict objectForKey:@"renderType"] integerValue];
+    PangleRenderMethod renderType = [[renderInfo objectForKey:@"renderType"] integerValue];
     if (renderType == PangleRenderMethodDynamic) {
         CGSize expressRequestSize = [self sizeForCustomEventInfo:size];
         self.expressBannerView = [[BUNativeExpressBannerView alloc] initWithSlotID:self.adPlacementId rootViewController:self.delegate.viewControllerForPresentingModalView adSize:expressRequestSize IsSupportDeepLink:YES];
@@ -62,10 +62,10 @@
         slot.isSupportDeepLink = YES;
         slot.isOriginAd = YES;
         
-        BUNativeAd *nad = [[BUNativeAd alloc] initWithSlot:slot];
-        nad.rootViewController = self.delegate.viewControllerForPresentingModalView;
-        nad.delegate = self;
-        self.nativeAd = nad;
+        BUNativeAd *ad = [[BUNativeAd alloc] initWithSlot:slot];
+        ad.rootViewController = self.delegate.viewControllerForPresentingModalView;
+        ad.delegate = self;
+        self.nativeAd = ad;
         self.nativeBannerView = [[PangleNativeBannerView alloc] initWithSize:size];
         if (hasAdMarkup) {
             [self.nativeAd setMopubAdMarkUp:adMarkup];

@@ -20,7 +20,7 @@
 @implementation PangleInterstitialCustomEvent
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
-    NSDictionary *ritDict;
+    NSDictionary *renderInfo;
     NSString * appId = [info objectForKey:@"app_id"];
     if (appId != nil) {
         [PangleAdapterConfiguration updateInitializationParameters:info];
@@ -32,10 +32,10 @@
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
-    ritDict = [BUAdSDKManager AdTypeWithRit:self.adPlacementId];
+    renderInfo = [BUAdSDKManager AdTypeWithRit:self.adPlacementId];
     
-    self.adType = [[ritDict objectForKey:@"adSlotType"] integerValue];
-    self.renderType = [[ritDict objectForKey:@"renderType"] integerValue];
+    self.adType = [[renderInfo objectForKey:@"adSlotType"] integerValue];
+    self.renderType = [[renderInfo objectForKey:@"renderType"] integerValue];
     if (self.adType == BUAdSlotAdTypeInterstitial) {
         if (self.renderType == PangleRenderMethodDynamic) {
             NSInteger width = MIN([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
@@ -57,6 +57,7 @@
             BUSize *imgSize = [[BUSize alloc] init];
             imgSize.width = [UIScreen mainScreen].bounds.size.width;
             imgSize.height = imgSize.width * ratio;
+            
             BUAdSlot *slot = [[BUAdSlot alloc] init];
             slot.ID = self.adPlacementId;
             slot.AdType = BUAdSlotAdTypeInterstitial;
@@ -168,8 +169,8 @@
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate interstitialCustomEventWillAppear:self];
-    [self.delegate trackImpression];
     [self.delegate interstitialCustomEventDidAppear:self];
+    [self.delegate trackImpression];
 }
 
 - (void)nativeExpresInterstitialAdDidClick:(BUNativeExpressInterstitialAd *)interstitialAd {
@@ -202,11 +203,11 @@
 - (void)fullscreenVideoAdWillVisible:(BUFullscreenVideoAd *)fullscreenVideoAd {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate interstitialCustomEventWillAppear:self];
-    [self.delegate trackImpression];
 }
 
 - (void)fullscreenVideoAdDidVisible:(BUFullscreenVideoAd *)fullscreenVideoAd{
     [self.delegate interstitialCustomEventDidAppear:self];
+    [self.delegate trackImpression];
 }
 
 - (void)fullscreenVideoAdWillClose:(BUFullscreenVideoAd *)fullscreenVideoAd{
