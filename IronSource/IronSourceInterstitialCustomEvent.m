@@ -57,7 +57,7 @@
             MPLogInfo(@"IronSource Interstitial initialization with appkey %@", appKey);
             // Cache the initialization parameters
             [IronSourceAdapterConfiguration updateInitializationParameters:info];
-            [[IronSourceManager sharedManager] initIronSourceSDKWithAppKey:appKey forAdUnits:[NSSet setWithObject:@[IS_INTERSTITIAL]]];
+            [[IronSourceManager sharedManager] initIronSourceSDKWithAppKey:appKey forAdUnits:[NSSet setWithObject:IS_INTERSTITIAL]];
             [self loadInterstitial:self.instanceId];
         } else {
             MPLogInfo(@"IronSource Interstitial initialization with empty or nil appKey for instance @s",
