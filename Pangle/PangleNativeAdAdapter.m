@@ -1,19 +1,10 @@
-//
-//  BUDMopub_MPNativeCustomEvent.m
-//  BUDemo
-//
-//  Created by Pangle on 2020/1/8.
-//  Copyright © 2020 Pangle. All rights reserved.
-//
-
 #import "PangleNativeAdAdapter.h"
 #import <BUAdSDK/BUNativeAdRelatedView.h>
 #import <BUFoundation/UIImageView+BUWebCache.h>
 #if __has_include("MoPub.h")
-#import "MPNativeAd.h"
-#import "MPNativeAdConstants.h"
-#import "MPLogging.h"
-
+    #import "MPNativeAd.h"
+    #import "MPNativeAdConstants.h"
+    #import "MPLogging.h"
 #endif
 
 @interface PangleNativeAdAdapter ()<BUNativeAdDelegate>
@@ -42,17 +33,21 @@
     [dic setValue:nativeAd.data.buttonText forKey:kAdCTATextKey];
     [dic setValue:nativeAd.data.icon.imageURL forKey:kAdIconImageKey];
     [dic setValue:@(nativeAd.data.score) forKey:kAdStarRatingKey];
+    
     if (nativeAd.data.imageAry.count > 0) {
         [dic setValue:nativeAd.data.imageAry.firstObject.imageURL forKey:kAdMainImageKey];
     }
+    
     self.mediaView = nil;
     self.relatedView = [[BUNativeAdRelatedView alloc] init];
     [self.relatedView refreshData:nativeAd];
+    
     if (nativeAd.data.imageMode == BUFeedVideoAdModeImage) {
         self.mediaView = self.relatedView.videoAdView;
-    }else{
+    } else {
         UIImageView *imageView = [[UIImageView alloc] init];
         self.mediaView = imageView;
+        
         if (nativeAd.data.imageAry.count > 0) {
             BUImage *img = nativeAd.data.imageAry.firstObject;
             if (img.imageURL.length > 0) {
@@ -60,6 +55,7 @@
             }
         }
     }
+    
     [dic setValue:self.mediaView forKey:kAdMainMediaViewKey];
     [dic setValue:nativeAd forKey:@"bu_nativeAd"];
     return [dic copy];

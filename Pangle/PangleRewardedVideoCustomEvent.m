@@ -1,44 +1,40 @@
-//
-//  PangleRewardedVideoCustomEvent.m
-//  mopub_adaptor
-//
-//  Created by Pangle on 2018/9/18.
-//  Copyright © 2018年 Pangle. All rights reserved.
-//
-
 #import "PangleRewardedVideoCustomEvent.h"
-#import <BUAdSDK/BUAdSDK.h>
+    #import <BUAdSDK/BUAdSDK.h>
 #if __has_include("MoPub.h")
-#import "MPLogging.h"
-#import "MPRewardedVideoError.h"
-#import "MPRewardedVideoReward.h"
+    #import "MPLogging.h"
+    #import "MPRewardedVideoError.h"
+    #import "MPRewardedVideoReward.h"
 #endif
 #import "PangleAdapterConfiguration.h"
 
 @interface PangleRewardedVideoCustomEvent ()<BURewardedVideoAdDelegate>
 @property (nonatomic, strong) BURewardedVideoAd *rewardVideoAd;
 @property (nonatomic, copy) NSString *adPlacementId;
-
 @end
+
+NSString *const kPangleNetworkName = @"pangle";
 
 @implementation PangleRewardedVideoCustomEvent
 
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
     NSString * appId = [info objectForKey:@"app_id"];
-    if (appId != nil){
+    if (appId != nil) {
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
+    
     self.adPlacementId = [info objectForKey:@"ad_placement_id"];
     if (self.adPlacementId == nil) {
-        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class]) code:BUErrorCodeAdSlotEmpty userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID"}];
+        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
+                                             code:BUErrorCodeAdSlotEmpty
+                                         userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID"}];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
         return;
     }
     
     BURewardedVideoModel *model = [[BURewardedVideoModel alloc] init];
-    model.userId = @"pangle";
+    model.userId = kPangleNetworkName;
     
     BURewardedVideoAd *RewardedVideoAd = [[BURewardedVideoAd alloc] initWithSlotID:self.adPlacementId rewardedVideoModel:model];
     RewardedVideoAd.delegate = self;
@@ -46,7 +42,7 @@
     self.rewardVideoAd = RewardedVideoAd;
     if (hasAdMarkup) {
         [RewardedVideoAd setMopubAdMarkUp:adMarkup];
-    }else{
+    } else {
         [RewardedVideoAd loadAdData];
     }
 }
@@ -123,7 +119,8 @@
 
 - (void)rewardedVideoAdServerRewardDidSucceed:(BURewardedVideoAd *)rewardedVideoAd verify:(BOOL)verify {
     if (verify) {
-        MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyType:self.rewardVideoAd.rewardedVideoModel.rewardName amount:[NSNumber numberWithInteger:self.rewardVideoAd.rewardedVideoModel.rewardAmount]];
+        MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc]initWithCurrencyType:self.rewardVideoAd.rewardedVideoModel.rewardName
+                                         amount:[NSNumber numberWithInteger:self.rewardVideoAd.rewardedVideoModel.rewardAmount]];
         MPLogAdEvent([MPLogEvent adShouldRewardUserWithReward:reward], [self getAdNetworkId]);
         [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:reward];
     }

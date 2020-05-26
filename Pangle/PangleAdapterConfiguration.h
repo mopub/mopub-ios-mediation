@@ -1,11 +1,3 @@
-//
-//  PangleAdapterConfiguration.h
-//  BUADDemo
-//
-//  Created by Pangle on 2019/8/9.
-//  Copyright © 2019 Pangle. All rights reserved.
-//
-
 #import <Foundation/Foundation.h>
 #if __has_include(<MoPub/MoPub.h>)
     #import <MoPub/MoPub.h>
@@ -18,8 +10,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSInteger, PangleRenderMethod) {
-    PangleRenderMethodDynamic   = 1,    // dynamic ad
-    PangleRenderMethodNative    = 2    // native ad
+    PangleRenderMethodDynamic   = 1,
+    PangleRenderMethodNative    = 2
 };
 
 @interface PangleAdapterConfiguration :MPBaseAdapterConfiguration
@@ -37,7 +29,8 @@ typedef NS_ENUM(NSInteger, PangleRenderMethod) {
 @property (nonatomic, copy, readonly) NSString * moPubNetworkName;
 @property (nonatomic, copy, readonly) NSString * networkSdkVersion;
 
-- (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration complete:(void(^ _Nullable)(NSError * _Nullable))complete;
+- (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration
+                                  complete:(void(^ _Nullable)(NSError * _Nullable))complete;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -1,11 +1,3 @@
-//
-//  PangleNativeCustomEvent.m
-//  BUDemo
-//
-//  Created by Pangle on 2020/1/8.
-//  Copyright © 2020 Pangle. All rights reserved.
-//
-
 #import "PangleNativeCustomEvent.h"
 #import "PangleNativeAdAdapter.h"
 #import <BUAdSDK/BUAdSDKManager.h>
@@ -14,10 +6,10 @@
 #import "PangleAdapterConfiguration.h"
 
 #if __has_include("MoPub.h")
-#import "MoPub.h"
-#import "MPNativeAd.h"
-#import "MPLogging.h"
-#import "MPNativeAdError.h"
+    #import "MoPub.h"
+    #import "MPNativeAd.h"
+    #import "MPLogging.h"
+    #import "MPNativeAdError.h"
 #endif
 
 @interface PangleNativeCustomEvent () <BUNativeAdDelegate>
@@ -52,6 +44,7 @@
     self.nativeAd.adslot.ID = self.adPlacementId;
     UIWindow *window = [UIApplication sharedApplication].keyWindow;
     UIViewController *rootViewController = window.rootViewController;
+    
     while (rootViewController.presentedViewController) {
         rootViewController = rootViewController.presentedViewController;
     }

@@ -1,18 +1,10 @@
-//
-//  PangleInterstitialCustomEvent.m
-//  BUAdSDKDemo
-//
-//  Created by Pangle on 2018/10/25.
-//  Copyright © 2018年 Pangle. All rights reserved.
-//
-
 #import "PangleInterstitialCustomEvent.h"
 #import <BUAdSDK/BUAdSDK.h>
 #import "PangleAdapterConfiguration.h"
 #if __has_include("MoPub.h")
-#import "MPError.h"
-#import "MPLogging.h"
-#import "MoPub.h"
+    #import "MPError.h"
+    #import "MPLogging.h"
+    #import "MoPub.h"
 #endif
 
 @interface PangleInterstitialCustomEvent () <BUNativeAdDelegate,BUNativeExpresInterstitialAdDelegate,BUFullscreenVideoAdDelegate,PangleNativeInterstitialViewDelegate>
@@ -59,38 +51,37 @@
             CGFloat ratio;
             if (screenSize.height > screenSize.width) {
                 ratio = 3 / 2;
-            }else{
+            } else {
                 ratio = 2 / 3;
             }
-            BUSize *imgSize1 = [[BUSize alloc] init];
-            imgSize1.width = [UIScreen mainScreen].bounds.size.width;
-            imgSize1.height = imgSize1.width * ratio;
-            BUAdSlot *slot1 = [[BUAdSlot alloc] init];
-            slot1.ID = self.adPlacementId;
-            slot1.AdType = BUAdSlotAdTypeInterstitial;
-            slot1.position = BUAdSlotPositionTop;
-            slot1.imgSize = imgSize1;
-            slot1.isSupportDeepLink = YES;
-            slot1.isOriginAd = YES;
+            BUSize *imgSize = [[BUSize alloc] init];
+            imgSize.width = [UIScreen mainScreen].bounds.size.width;
+            imgSize.height = imgSize.width * ratio;
+            BUAdSlot *slot = [[BUAdSlot alloc] init];
+            slot.ID = self.adPlacementId;
+            slot.AdType = BUAdSlotAdTypeInterstitial;
+            slot.position = BUAdSlotPositionTop;
+            slot.imgSize = imgSize;
+            slot.isSupportDeepLink = YES;
+            slot.isOriginAd = YES;
             
             self.nativeInterstitialView = [[PangleNativeInterstitialView alloc] init];
 
-            BUNativeAd *nad = [[BUNativeAd alloc] initWithSlot:slot1];
-            nad.delegate = self;
-            self.nativeInterstitialAd = nad;
+            BUNativeAd *ad = [[BUNativeAd alloc] initWithSlot:slot];
+            ad.delegate = self;
+            self.nativeInterstitialAd = ad;
             if (hasAdMarkup) {
-                [nad setMopubAdMarkUp:adMarkup];
+                [ad setMopubAdMarkUp:adMarkup];
             }else{
-                [nad loadAdData];
+                [ad loadAdData];
             }
-        
         }
-    }else if (self.adType == BUAdSlotAdTypeFullscreenVideo){
+    } else if (self.adType == BUAdSlotAdTypeFullscreenVideo){
         self.fullScreenVideo = [[BUFullscreenVideoAd alloc] initWithSlotID:self.adPlacementId];
         self.fullScreenVideo.delegate = self;
         if (hasAdMarkup) {
             [self.fullScreenVideo setMopubAdMarkUp:adMarkup];
-        }else{
+        } else {
             [self.fullScreenVideo loadAdData];
         }
     }
@@ -139,8 +130,8 @@
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate interstitialCustomEventWillAppear:self];
-    [self.delegate trackImpression];
     [self.delegate interstitialCustomEventDidAppear:self];
+    [self.delegate trackImpression];
 }
 
 #pragma mark PangleNativeInterstitialViewDelegate

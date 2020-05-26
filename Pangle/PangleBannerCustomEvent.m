@@ -1,19 +1,11 @@
-//
-//  PangleBannerCustomEvent.m
-//  BUAdSDKDemo
-//
-//  Created by Pangle on 2018/10/24.
-//  Copyright © 2018年 Pangle. All rights reserved.
-//
-
 #import "PangleBannerCustomEvent.h"
 #import <BUAdSDK/BUAdSDK.h>
 #import "PangleAdapterConfiguration.h"
 
 #if __has_include("MoPub.h")
-#import "MPError.h"
-#import "MPLogging.h"
-#import "MoPub.h"
+    #import "MPError.h"
+    #import "MPLogging.h"
+    #import "MoPub.h"
 #endif
 
 @interface PangleBannerCustomEvent ()<BUNativeExpressBannerViewDelegate,BUNativeAdDelegate>
@@ -34,7 +26,10 @@
     }
     self.adPlacementId = [info objectForKey:@"ad_placement_id"];
     if (self.adPlacementId == nil) {
-        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class]) code:BUErrorCodeAdSlotEmpty userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID. Failing ad request. Ensure the ad placement id is valid on the MoPub dashboard."}];
+        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
+                                             code:BUErrorCodeAdSlotEmpty
+                                         userInfo:@{NSLocalizedDescriptionKey:
+                                                        @"Invalid Pangle placement ID. Failing ad request. Ensure the ad placement id is valid on the MoPub dashboard."}];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         
         [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
@@ -78,6 +73,10 @@
             [self.nativeAd loadAdData];
         }
     }
+}
+
+- (BOOL)enableAutomaticImpressionAndClickTracking {
+    return NO;
 }
 
 - (NSString *) getAdNetworkId {

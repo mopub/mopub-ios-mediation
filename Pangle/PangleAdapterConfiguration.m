@@ -1,23 +1,12 @@
-//
-//  PangleAdapterConfiguration.m
-//  BUADDemo
-//
-//  Created by Pangle on 2019/8/9.
-//  Copyright © 2019 Pangle. All rights reserved.
-//
-
 #import "PangleAdapterConfiguration.h"
 #import <BUAdSDK/BUAdSDKManager.h>
 
-
 @implementation PangleAdapterConfiguration
 
-// Constants
 static NSString * const kPangleAppIdKey = @"app_id";
 static NSString * const kPanglePlacementIdKey = @"ad_placmenet_id";
 static NSString * const kAdapterVersion = @"3.0.0.5.0";
 
-// Errors
 static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-pangle-adapters";
 typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
     PangleAdapterErrorCodeMissingIdKey,
@@ -42,9 +31,12 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration complete:(void(^)(NSError *))complete {
-    NSString *appkeyString = configuration[kPangleAppIdKey];
-    if (appkeyString == nil || [appkeyString isKindOfClass:[NSString class]] == NO) {
-        NSError *error = [NSError errorWithDomain:kAdapterErrorDomain code:PangleAdapterErrorCodeMissingIdKey userInfo:@{NSLocalizedDescriptionKey:@"appKey may be not right, please set networkConfig refer to method '-configCustomEvent' in 'AppDelegate' class"}];
+    NSString *appId = configuration[kPangleAppIdKey];
+    if (appId == nil || [appId isKindOfClass:[NSString class]] == NO) {
+        NSError *error = [NSError errorWithDomain:kAdapterErrorDomain
+                                             code:PangleAdapterErrorCodeMissingIdKey
+                                         userInfo:@{NSLocalizedDescriptionKey:
+                                                        @"appKey may be not right, please set networkConfig refer to method '-configCustomEvent' in 'AppDelegate' class"}];
         if (complete != nil) {
             complete(error);
         }
@@ -52,7 +44,7 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
             dispatch_async(dispatch_get_main_queue(), ^{
-                [BUAdSDKManager setAppID:appkeyString];
+                [BUAdSDKManager setAppID:appId];
                 [BUAdSDKManager setIsPaidApp:NO];
                 MPBLogLevel logLevel = [MPLogging consoleLogLevel];
                 BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);

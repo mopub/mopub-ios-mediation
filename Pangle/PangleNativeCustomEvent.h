@@ -1,11 +1,3 @@
-//
-//  PangleNativeCustomEvent.h
-//  BUDemo
-//
-//  Created by Pangle on 2020/1/8.
-//  Copyright © 2020 Pangle. All rights reserved.
-//
-
 #import <Foundation/Foundation.h>
 #if __has_include(<MoPub/MoPub.h>)
     #import <MoPub/MoPub.h>
