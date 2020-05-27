@@ -54,11 +54,13 @@
     self.bannerInfo = info;
     self.isAdCached = NO;
     
-    self.timeOutTimer = [NSTimer scheduledTimerWithTimeInterval:BANNER_TIMEOUT_INTERVAL repeats:NO block:^(NSTimer * _Nonnull timer) {
+    if (@available(iOS 10.0, *)) {
+        self.timeOutTimer = [NSTimer scheduledTimerWithTimeInterval:BANNER_TIMEOUT_INTERVAL repeats:NO block:^(NSTimer * _Nonnull timer) {
         if (!self.isAdCached) {
             [[VungleRouter sharedRouter] clearDelegateForRequestingBanner];
         }
     }];
+    }
     
     [[VungleRouter sharedRouter] requestBannerAdWithCustomEventInfo:info size:self.bannerSize delegate:self];
 }

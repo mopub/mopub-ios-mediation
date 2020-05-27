@@ -1,6 +1,6 @@
 ## Changelog
  * 6.2.0.0.1
-    * This version of the adapters has been certified with Mintegral 6.2.0.0 and MoPub 5.12.1.
+    * Stop calling `bannerCustomEventWillBeginAction:` to fix a freezing issue in Unity games.
 
  * 6.2.0.0.0
     * This version of the adapters has been certified with Mintegral 6.2.0.0 and MoPub 5.12.1.
