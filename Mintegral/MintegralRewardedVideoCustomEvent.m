@@ -116,7 +116,6 @@
 - (void)handleAdPlayedForCustomEventNetwork
 {
     if (![self hasAdAvailable]) {
-        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:@"mintegral ad unavailable"], self.adUnitId);
         [self.delegate rewardedVideoDidExpireForCustomEvent:self];
     }
 }
