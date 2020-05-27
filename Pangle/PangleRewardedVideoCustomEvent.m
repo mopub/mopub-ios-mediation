@@ -70,6 +70,7 @@ NSString *const kPangleNetworkName = @"pangle";
 }
 
 #pragma mark BURewardedVideoAdDelegate
+
 - (void)rewardedVideoAdDidLoad:(BURewardedVideoAd *)rewardedVideoAd {
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
