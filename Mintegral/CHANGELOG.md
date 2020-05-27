@@ -1,4 +1,7 @@
 ## Changelog
+ * 6.2.0.0.2
+    * Fix a bug that passed invalid argument to the method [MPLogEvent adShowFailedForAdapter:error:].
+
  * 6.2.0.0.1
     * Stop calling `bannerCustomEventWillBeginAction:` to fix a freezing issue in Unity games.
 
