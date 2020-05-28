@@ -17,7 +17,12 @@ static NSString *const kMPUnityInterstitialVideoGameId = @"gameId";
 static NSString *const kUnityAdsOptionPlacementIdKey = @"placementId";
 static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 
-@interface UnityAdsInterstitialCustomEvent () <UnityRouterDelegate>
+@interface UnityAdsInterstitialCustomEvent () <UnityRouterDelegate>{
+    /// UUID for Unity instrument analysis
+    NSString *_uuid;
+    /// MetaData for storing Unity instrument analysis
+    UADSMetaData *_metaData;
+}
 
 @property BOOL loadRequested;
 @property (nonatomic, copy) NSString *placementId;
@@ -29,6 +34,18 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 - (void)dealloc
 {
     [[UnityRouter sharedRouter] clearDelegate:self];
+}
+
+- (id) init {
+    self = [super init];
+    if (self) {
+        _uuid = [[NSUUID UUID] UUIDString];
+        _metaData = [[UADSMetaData alloc] init];
+        [_metaData setCategory:@"mediation_adapter"];
+        [_metaData set:_uuid value:@"create-adapter"];
+        [_metaData commit];
+    }
+    return self;
 }
 
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
@@ -47,7 +64,10 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 
         return;
     }
-    
+    [_metaData setCategory:@"mediation_adapter"];
+    [_metaData set:_uuid value:@"load-interstitial"];
+    [_metaData set:_uuid value:_placementId];
+    [_metaData commit];
     // Only need to cache game ID for SDK initialization
     [UnityAdsAdapterConfiguration updateInitializationParameters:info];
 
@@ -73,9 +93,17 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 - (void)showInterstitialFromRootViewController:(UIViewController *)viewController
 {
     if ([self hasAdAvailable]) {
+        [_metaData setCategory:@"mediation_adapter"];
+        [_metaData set:_uuid value:@"show-interstitial"];
+        [_metaData set:_uuid value:_placementId];
+        [_metaData commit];
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
         [[UnityRouter sharedRouter] presentVideoAdFromViewController:viewController customerId:nil placementId:self.placementId settings:nil delegate:self];
     } else {
+        [_metaData setCategory:@"mediation_adapter"];
+        [_metaData set:_uuid value:@"fail-to-show-interstitial"];
+        [_metaData set:_uuid value:_placementId];
+        [_metaData commit];
         NSError *error = [self createErrorWith:@"Unity Ads failed to load failed to show Unity Interstitial"
                                  andReason:@"There is no available video ad."
                              andSuggestion:@""];

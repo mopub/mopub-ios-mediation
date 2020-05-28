@@ -19,7 +19,12 @@ static NSString *const kMPUnityRewardedVideoGameId = @"gameId";
 static NSString *const kUnityAdsOptionPlacementIdKey = @"placementId";
 static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 
-@interface UnityAdsRewardedVideoCustomEvent () <UnityRouterDelegate>
+@interface UnityAdsRewardedVideoCustomEvent () <UnityRouterDelegate>{
+    /// UUID for Unity instrument analysis
+    NSString *_uuid;
+    /// MetaData for storing Unity instrument analysis
+    UADSMetaData *_metaData;
+}
 
 @property (nonatomic, copy) NSString *placementId;
 
@@ -38,7 +43,11 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
         MPLogInfo(@"Initialization parameters did not contain gameId.");
         return;
     }
-
+    _uuid = [[NSUUID UUID] UUIDString];
+    _metaData = [[UADSMetaData alloc] init];
+    [_metaData setCategory:@"mediation_adapter"];
+    [_metaData set:_uuid value:@"create-adapter"];
+    [_metaData commit];
     [[UnityRouter sharedRouter] initializeWithGameId:gameId];
 }
 
@@ -67,7 +76,10 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         return;
     }
-
+    [_metaData setCategory:@"mediation_adapter"];
+    [_metaData set:_uuid value:@"load-rewarded"];
+    [_metaData set:_uuid value:_placementId];
+    [_metaData commit];
     [[UnityRouter sharedRouter] requestVideoAdWithGameId:gameId placementId:self.placementId delegate:self];
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
 }
@@ -80,6 +92,10 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 - (void)presentRewardedVideoFromViewController:(UIViewController *)viewController
 {
     if ([self hasAdAvailable]) {
+        [_metaData setCategory:@"mediation_adapter"];
+        [_metaData set:_uuid value:@"show-rewarded"];
+        [_metaData set:_uuid value:_placementId];
+        [_metaData commit];
         UnityAdsInstanceMediationSettings *settings = [self.delegate instanceMediationSettingsForClass:[UnityAdsInstanceMediationSettings class]];
 
         NSString *customerId = [self.delegate customerIdForRewardedVideoCustomEvent:self];
@@ -89,6 +105,10 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 
         MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     } else {
+        [_metaData setCategory:@"mediation_adapter"];
+        [_metaData set:_uuid value:@"fail-to-show-rewarded"];
+        [_metaData set:_uuid value:_placementId];
+        [_metaData commit];
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
         [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
          MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
