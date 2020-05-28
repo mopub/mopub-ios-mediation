@@ -45,7 +45,6 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
         dispatch_once(&onceToken, ^{
             dispatch_async(dispatch_get_main_queue(), ^{
                 [BUAdSDKManager setAppID:appId];
-                [BUAdSDKManager setIsPaidApp:NO];
                 MPBLogLevel logLevel = [MPLogging consoleLogLevel];
                 BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
                 [BUAdSDKManager setLoglevel:verboseLoggingEnabled == true ? BUAdSDKLogLevelDebug : BUAdSDKLogLevelNone];

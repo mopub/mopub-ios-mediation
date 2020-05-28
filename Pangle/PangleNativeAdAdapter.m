@@ -53,6 +53,10 @@
             if (img.imageURL.length > 0) {
                 [imageView sdBu_setImageWithURL:[NSURL URLWithString:img.imageURL] placeholderImage:nil];
             }
+        }else{
+            if (nativeAd.data.icon.imageURL.length > 0) {
+                [imageView sdBu_setImageWithURL:[NSURL URLWithString:nativeAd.data.icon.imageURL] placeholderImage:nil];
+            }
         }
     }
     

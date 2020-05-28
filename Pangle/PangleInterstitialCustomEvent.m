@@ -18,7 +18,6 @@
 @end
 
 @implementation PangleInterstitialCustomEvent
-
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
     NSDictionary *renderInfo;
@@ -35,7 +34,12 @@
         [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
-    renderInfo = [BUAdSDKManager AdTypeWithRit:self.adPlacementId];
+    NSError *error = nil;
+    renderInfo = [BUAdSDKManager AdTypeWithRit:self.adPlacementId error:&error];
+    if (error) {
+        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+        return;
+    }
     
     self.adType = [[renderInfo objectForKey:@"adSlotType"] integerValue];
     self.renderType = [[renderInfo objectForKey:@"renderType"] integerValue];
