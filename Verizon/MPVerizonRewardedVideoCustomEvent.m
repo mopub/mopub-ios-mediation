@@ -7,6 +7,7 @@
 #import <VerizonAdsInterstitialPlacement/VASInterstitialAd.h>
 #import <VerizonAdsInterstitialPlacement/VASInterstitialAdFactory.h>
 #import "VerizonAdapterConfiguration.h"
+#import "MPVerizonBidCache.h"
 
 static NSString *const kMoPubVASAdapterAdUnit = @"adUnitID";
 static NSString *const kMoPubVASAdapterDCN = @"dcn";
@@ -79,29 +80,34 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
     }
     
     [VerizonAdapterConfiguration setCachedInitializationParameters:info];
-    
     [VASAds sharedInstance].locationEnabled = [MoPub sharedInstance].locationUpdatesEnabled;
     
-    VASRequestMetadataBuilder *metaDataBuilder = [[VASRequestMetadataBuilder alloc] init];
-    metaDataBuilder.mediator = VerizonAdapterConfiguration.mediator;
-    
-    if (adMarkup.length > 0) {
-        NSError *error = [VASErrorInfo errorWithDomain:kMoPubVASAdapterErrorDomain
-                                                  code:MoPubVASAdapterErrorNotInitialized
-                                                   who:kMoPubVASAdapterErrorWho
-                                           description:[NSString stringWithFormat:@"Advanced Bidding for rewarded video placements is not supported at this time. serverExtras key \" %@ \" should have no value.", kMoPubServerExtrasAdContent]
-                                            underlying:nil];
-        
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.siteId);
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
-        
-        return;
-    }
-    
     self.interstitialAdFactory = [[VASInterstitialAdFactory alloc] initWithPlacementId:placementId vasAds:[VASAds sharedInstance] delegate:self];
-    [self.interstitialAdFactory setRequestMetadata:metaDataBuilder.build];
     
-    [self.interstitialAdFactory load:self];
+    VASBid *bid = [MPVerizonBidCache.sharedInstance bidForPlacementId:placementId];
+    if (bid) {
+        [self.interstitialAdFactory loadBid:bid interstitialAdDelegate:self];
+    } else {
+        VASRequestMetadataBuilder *metadataBuilder = [[VASRequestMetadataBuilder alloc] initWithRequestMetadata:[VASAds sharedInstance].requestMetadata];
+        metadataBuilder.mediator = VerizonAdapterConfiguration.mediator;
+        
+        MPLogInfo(@"%@: %@", kMoPubRequestMetadataAdContent, adMarkup);
+        
+        if (adMarkup.length > 0) {
+            NSMutableDictionary<NSString *, id> *placementData =
+            [NSMutableDictionary dictionaryWithDictionary:
+             @{
+                 kMoPubRequestMetadataAdContent : adMarkup,
+                 @"overrideWaterfallProvider"  : @"waterfallprovider/sideloading"
+             }
+             ];
+            
+            [metadataBuilder setPlacementData:placementData];
+        }
+        
+        [self.interstitialAdFactory setRequestMetadata:metadataBuilder.build];
+        [self.interstitialAdFactory load:self];
+    }
 }
 
 - (BOOL)hasAdAvailable
@@ -297,6 +303,25 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
             [strongSelf.delegate rewardedVideoDidLoadAdForCustomEvent:strongSelf];
         }
     });
+}
+
+#pragma mark - Super Auction
+
++ (void)requestBidWithPlacementId:(nonnull NSString *)placementId
+                       completion:(nonnull VASBidRequestCompletionHandler)completion
+{
+    VASRequestMetadataBuilder *metaDataBuilder = [[VASRequestMetadataBuilder alloc] init];
+    metaDataBuilder.mediator = VerizonAdapterConfiguration.mediator;
+    [VASInterstitialAdFactory requestBidForPlacementId:placementId requestMetadata:metaDataBuilder.build vasAds:[VASAds sharedInstance] completionHandler:^(VASBid * _Nullable bid, VASErrorInfo * _Nullable errorInfo) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (bid) {
+                [MPVerizonBidCache.sharedInstance storeBid:bid
+                                            forPlacementId:placementId
+                                                 untilDate:[NSDate dateWithTimeIntervalSinceNow:kMoPubVASAdapterSATimeoutInterval]];
+            }
+            completion(bid,errorInfo);
+        });
+    }];
 }
 
 @end
