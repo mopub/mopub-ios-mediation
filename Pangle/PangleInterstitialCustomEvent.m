@@ -21,11 +21,11 @@
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
     NSDictionary *renderInfo;
-    NSString * appId = [info objectForKey:@"app_id"];
+    NSString * appId = [info objectForKey:kPangleAppIdKey];
     if (appId != nil) {
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
-    self.adPlacementId = [info objectForKey:@"ad_placement_id"];
+    self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
     if (self.adPlacementId == nil) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty userInfo:
@@ -44,16 +44,18 @@
     self.adType = [[renderInfo objectForKey:@"adSlotType"] integerValue];
     self.renderType = [[renderInfo objectForKey:@"renderType"] integerValue];
     if (self.adType == BUAdSlotAdTypeInterstitial) {
-        if (self.renderType == PangleRenderMethodDynamic) {
+        if (self.renderType == PangleRenderMethodExpress) {
             NSInteger width = MIN([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
             self.expressInterstitialAd = [[BUNativeExpressInterstitialAd alloc] initWithSlotID:self.adPlacementId adSize:CGSizeMake(width, 0)];
             self.expressInterstitialAd.delegate = self;
             if (hasAdMarkup) {
+                MPLogInfo(@"Loading Pangle express interstiital ad markup for Advanced Bidding");
                 [self.expressInterstitialAd setMopubAdMarkUp:adMarkup];
             }else{
+                MPLogInfo(@"Loading Pangle express interstiital ad");
                 [self.expressInterstitialAd loadAdData];
             }
-        }else{
+        } else {
             CGSize screenSize = [UIScreen mainScreen].bounds.size;
             CGFloat ratio;
             if (screenSize.height > screenSize.width) {
@@ -79,8 +81,10 @@
             ad.delegate = self;
             self.nativeInterstitialAd = ad;
             if (hasAdMarkup) {
+                MPLogInfo(@"Loading Pangle traditional interstiital ad markup for Advanced Bidding");
                 [ad setMopubAdMarkUp:adMarkup];
-            }else{
+            } else {
+                MPLogInfo(@"Loading Pangle traditional interstiital ad");
                 [ad loadAdData];
             }
         }
@@ -88,8 +92,10 @@
         self.fullScreenVideo = [[BUFullscreenVideoAd alloc] initWithSlotID:self.adPlacementId];
         self.fullScreenVideo.delegate = self;
         if (hasAdMarkup) {
+            MPLogInfo(@"Loading Pangle full screen video ad markup for Advanced Bidding");
             [self.fullScreenVideo setMopubAdMarkUp:adMarkup];
         } else {
+            MPLogInfo(@"Loading Pangle full screen video ad");
             [self.fullScreenVideo loadAdData];
         }
     }
@@ -97,11 +103,11 @@
 
 - (void)showInterstitialFromRootViewController:(UIViewController *)rootViewController {
     if (self.adType == BUAdSlotAdTypeInterstitial) {
-        if (self.renderType == PangleRenderMethodDynamic) {
+        if (self.renderType == PangleRenderMethodExpress) {
             if (!self.expressInterstitialAd || !self.expressInterstitialAd.adValid) {
                 NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
-                                                     code:MOPUBErrorAdLoadAlreadyInProgress
-                                                 userInfo:@{NSLocalizedDescriptionKey: @"Error in showing Pangle express Interstitial."}];
+                                                     code:BUErrorCodeNERenderResultError
+                                                 userInfo:@{NSLocalizedDescriptionKey: @"Render error in showing Pangle express Interstitial."}];
             
                 MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
                 [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
@@ -112,8 +118,8 @@
         } else {
             if (!self.nativeInterstitialView) {
                 NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
-                                                     code:MOPUBErrorAdLoadAlreadyInProgress
-                                                 userInfo:@{NSLocalizedDescriptionKey: @"Error in showing Pangle traditional Interstitial."}];
+                                                     code:BUErrorCodeNERenderResultError
+                                                 userInfo:@{NSLocalizedDescriptionKey: @"Render error in showing Pangle traditional Interstitial."}];
                 
                 MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
                 [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
@@ -123,11 +129,13 @@
             }
         }
     } else if (self.adType == BUAdSlotAdTypeFullscreenVideo){
-        if(!self.fullScreenVideo || !self.fullScreenVideo.adValid){
+        if (!self.fullScreenVideo || !self.fullScreenVideo.adValid) {
             NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
-                                                 code:MOPUBErrorAdLoadAlreadyInProgress
-                                             userInfo:@{NSLocalizedDescriptionKey: @"Error in showing Pangle Full Screen Video."}];
-            
+                                                 code:BUErrorCodeNERenderResultError
+                                             userInfo:@{NSLocalizedDescriptionKey: @"Render error in showing Pangle Full Screen Video."}];
+            MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+            [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+        } else {
             MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
             [self.fullScreenVideo showAdFromRootViewController:rootViewController ritSceneDescribe:nil];
         }
@@ -151,15 +159,13 @@
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
 }
 
-- (void)nativeAdDidClick:(BUNativeAd *)nativeAd withView:(UIView *)view
-{
+- (void)nativeAdDidClick:(BUNativeAd *)nativeAd withView:(UIView *)view {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate interstitialCustomEventDidReceiveTapEvent:self];
     [self.delegate trackClick];
 }
 
-- (void)nativeAdDidBecomeVisible:(BUNativeAd *)nativeAd
-{
+- (void)nativeAdDidBecomeVisible:(BUNativeAd *)nativeAd {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate interstitialCustomEventWillAppear:self];
@@ -170,13 +176,13 @@
 #pragma mark PangleNativeInterstitialViewDelegate - Traditional Interstitial
 
 - (void)nativeInterstitialAdWillClose:(BUNativeAd *)nativeAd {
-    [self.delegate interstitialCustomEventWillDisappear:self];
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate interstitialCustomEventWillDisappear:self];
 }
 
 - (void)nativeInterstitialAdDidClose:(BUNativeAd *)nativeAd {
-    [self.delegate interstitialCustomEventDidDisappear:self];
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate interstitialCustomEventDidDisappear:self];
 }
 
 #pragma mark BUNativeExpresInterstitialAdDelegate - Express Interstitial
@@ -242,11 +248,13 @@
 }
 
 - (void)fullscreenVideoAdDidVisible:(BUFullscreenVideoAd *)fullscreenVideoAd{
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate interstitialCustomEventDidAppear:self];
     [self.delegate trackImpression];
 }
 
 - (void)fullscreenVideoAdWillClose:(BUFullscreenVideoAd *)fullscreenVideoAd{
+    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate interstitialCustomEventWillDisappear:self];
 }
 

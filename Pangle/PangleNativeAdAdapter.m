@@ -53,7 +53,7 @@
             if (img.imageURL.length > 0) {
                 [imageView sdBu_setImageWithURL:[NSURL URLWithString:img.imageURL] placeholderImage:nil];
             }
-        }else{
+        } else {
             if (nativeAd.data.icon.imageURL.length > 0) {
                 [imageView sdBu_setImageWithURL:[NSURL URLWithString:nativeAd.data.icon.imageURL] placeholderImage:nil];
             }
@@ -109,7 +109,7 @@
 }
 
 - (void)willAttachToView:(UIView *)view withAdContentViews:(NSArray *)adContentViews {
-    if ( adContentViews.count > 0 ) {
+    if (adContentViews.count > 0) {
         if (self.nativeAd.data.imageMode == BUFeedVideoAdModeImage) {
             [self.nativeAd registerContainer:view withClickableViews:adContentViews];
         } else {

@@ -3,11 +3,12 @@
 
 @implementation PangleAdapterConfiguration
 
-static NSString * const kPangleAppIdKey = @"app_id";
-static NSString * const kPanglePlacementIdKey = @"ad_placmenet_id";
-static NSString * const kAdapterVersion = @"3.0.0.5.0";
+NSString * const kPangleAppIdKey = @"app_id";
+NSString * const kPanglePlacementIdKey = @"ad_placement_id";
 
+static NSString * const kAdapterVersion = @"3.0.0.6.0";
 static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-pangle-adapters";
+
 typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
     PangleAdapterErrorCodeMissingIdKey,
 };
@@ -32,11 +33,11 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration complete:(void(^)(NSError *))complete {
     NSString *appId = configuration[kPangleAppIdKey];
-    if (appId == nil || [appId isKindOfClass:[NSString class]] == NO) {
+    if ([appId length] == 0 || [appId isKindOfClass:[NSString class]] == NO) {
         NSError *error = [NSError errorWithDomain:kAdapterErrorDomain
                                              code:PangleAdapterErrorCodeMissingIdKey
                                          userInfo:@{NSLocalizedDescriptionKey:
-                                                        @"appKey may be not right, please set networkConfig refer to method '-configCustomEvent' in 'AppDelegate' class"}];
+                                                        @"appId may be not right, please set networkConfig refer to method '-configCustomEvent' in 'AppDelegate' class"}];
         if (complete != nil) {
             complete(error);
         }

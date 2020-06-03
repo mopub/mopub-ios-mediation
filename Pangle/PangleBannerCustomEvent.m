@@ -21,11 +21,11 @@
     BOOL hasAdMarkup = adMarkup.length > 0;
     NSDictionary *renderInfo;
     
-    NSString * appId = [info objectForKey:@"app_id"];
+    NSString * appId = [info objectForKey:kPangleAppIdKey];
     if (appId != nil) {
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
-    self.adPlacementId = [info objectForKey:@"ad_placement_id"];
+    self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
     if (self.adPlacementId == nil) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty
@@ -44,14 +44,16 @@
     }
 
     PangleRenderMethod renderType = [[renderInfo objectForKey:@"renderType"] integerValue];
-    if (renderType == PangleRenderMethodDynamic) {
+    if (renderType == PangleRenderMethodExpress) {
         CGSize expressRequestSize = [self sizeForCustomEventInfo:size];
         self.expressBannerView = [[BUNativeExpressBannerView alloc] initWithSlotID:self.adPlacementId rootViewController:self.delegate.viewControllerForPresentingModalView adSize:expressRequestSize IsSupportDeepLink:YES];
         self.expressBannerView.frame = CGRectMake(0, 0, expressRequestSize.width, expressRequestSize.height);
         self.expressBannerView.delegate = self;
         if (hasAdMarkup) {
+            MPLogInfo(@"Loading Pangle express banner ad markup for Advanced Bidding");
             [self.expressBannerView setMopubAdMarkUp:adMarkup];
         } else {
+            MPLogInfo(@"Loading Pangle express banner ad");
             [self.expressBannerView loadAdData];
         }
     } else {
@@ -74,8 +76,10 @@
         self.nativeAd = ad;
         self.nativeBannerView = [[PangleNativeBannerView alloc] initWithSize:size];
         if (hasAdMarkup) {
+            MPLogInfo(@"Loading Pangle traditional banner ad markup for Advanced Bidding");
             [self.nativeAd setMopubAdMarkUp:adMarkup];
         }else{
+            MPLogInfo(@"Loading Pangle traditional banner ad");
             [self.nativeAd loadAdData];
         }
     }
@@ -141,9 +145,10 @@
 }
 
 
-#pragma mark - BUNativeExpressBannerViewDelegate
+#pragma mark - BUNativeExpressBannerViewDelegate - Express Banner
+
 - (void)nativeExpressBannerAdViewDidLoad:(BUNativeExpressBannerView *)bannerAdView {
-    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    // The express banner instance need to attach to the view before fire the ad is loaded event.
 }
 
 - (void)nativeExpressBannerAdView:(BUNativeExpressBannerView *)bannerAdView didLoadFailWithError:(NSError *_Nullable)error {
@@ -152,6 +157,7 @@
 }
 
 - (void)nativeExpressBannerAdViewRenderSuccess:(BUNativeExpressBannerView *)bannerAdView {
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate bannerCustomEvent:self didLoadAd:bannerAdView];
@@ -181,7 +187,8 @@
     [bannerAdView removeFromSuperview];
 }
 
-#pragma mark - BUNativeAdDelegate
+#pragma mark - BUNativeAdDelegate - Traditional Banner
+
 - (void)nativeAdDidLoad:(BUNativeAd *)nativeAd {
     if (!nativeAd.data || !(nativeAd == self.nativeAd)){
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class]) code:BUErrorCodeNOAdError userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle Data. Failing ad request."}];

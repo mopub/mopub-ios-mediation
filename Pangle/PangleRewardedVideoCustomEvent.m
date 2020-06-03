@@ -12,18 +12,16 @@
 @property (nonatomic, copy) NSString *adPlacementId;
 @end
 
-NSString *const kPangleNetworkName = @"pangle";
-
 @implementation PangleRewardedVideoCustomEvent
 
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
-    NSString * appId = [info objectForKey:@"app_id"];
+    NSString * appId = [info objectForKey:kPangleAppIdKey];
     if (appId != nil) {
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
     
-    self.adPlacementId = [info objectForKey:@"ad_placement_id"];
+    self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
     if (self.adPlacementId == nil) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty
@@ -34,15 +32,17 @@ NSString *const kPangleNetworkName = @"pangle";
     }
     
     BURewardedVideoModel *model = [[BURewardedVideoModel alloc] init];
-    model.userId = kPangleNetworkName;
+    model.userId = self.adPlacementId;
     
     BURewardedVideoAd *RewardedVideoAd = [[BURewardedVideoAd alloc] initWithSlotID:self.adPlacementId rewardedVideoModel:model];
     RewardedVideoAd.delegate = self;
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
     self.rewardVideoAd = RewardedVideoAd;
     if (hasAdMarkup) {
+        MPLogInfo(@"Loading Pangle rewarded video ad markup for Advanced Bidding");
         [RewardedVideoAd setMopubAdMarkUp:adMarkup];
     } else {
+        MPLogInfo(@"Loading Pangle rewarded video ad");
         [RewardedVideoAd loadAdData];
     }
 }
@@ -58,8 +58,8 @@ NSString *const kPangleNetworkName = @"pangle";
     } else {
         NSError *error = [NSError
                           errorWithDomain:MoPubRewardedVideoAdsSDKDomain
-                          code:MPRewardedVideoAdErrorNoAdReady
-                          userInfo:@{NSLocalizedDescriptionKey : @"Rewarded ad is not ready to be presented."}];
+                          code:BUErrorCodeNERenderResultError
+                          userInfo:@{NSLocalizedDescriptionKey : @"Render error in showing Pangle Rewarded Video Ad."}];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
     }
@@ -74,10 +74,6 @@ NSString *const kPangleNetworkName = @"pangle";
 - (void)rewardedVideoAdDidLoad:(BURewardedVideoAd *)rewardedVideoAd {
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
-}
-
-- (void)rewardedVideoAdVideoDidLoad:(BURewardedVideoAd *)rewardedVideoAd {
-    
 }
 
 - (void)rewardedVideoAd:(BURewardedVideoAd *)rewardedVideoAd didFailWithError:(NSError *)error {
@@ -100,7 +96,7 @@ NSString *const kPangleNetworkName = @"pangle";
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
     
-    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
 }
 
@@ -115,19 +111,23 @@ NSString *const kPangleNetworkName = @"pangle";
     if (error != nil) {
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
+    } else {
+        MPLogInfo(@"Rewarded video video finish playing");
     }
 }
 
 - (void)rewardedVideoAdServerRewardDidSucceed:(BURewardedVideoAd *)rewardedVideoAd verify:(BOOL)verify {
     if (verify) {
-        MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc]initWithCurrencyType:self.rewardVideoAd.rewardedVideoModel.rewardName
-                                         amount:[NSNumber numberWithInteger:self.rewardVideoAd.rewardedVideoModel.rewardAmount]];
-        MPLogAdEvent([MPLogEvent adShouldRewardUserWithReward:reward], [self getAdNetworkId]);
+        MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyType:kMPRewardedVideoRewardCurrencyTypeUnspecified amount: @(kMPRewardedVideoRewardCurrencyAmountUnspecified)];
+        MPLogEvent([MPLogEvent adShouldRewardUserWithReward:reward]);
         [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:reward];
+    } else {
+        MPLogInfo(@"Rewarded video ad fail to verify.");
     }
 }
 
 - (void)rewardedVideoAdServerRewardDidFail:(BURewardedVideoAd *)rewardedVideoAd {
+    MPLogInfo(@"Rewarded video ad server fail to reward.");
 }
 
 - (NSString *) getAdNetworkId {
