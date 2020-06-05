@@ -91,6 +91,7 @@
 
 - (void)vungleAdDidLoad
 {
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     if (self.options) {
         self.options = nil;
     }
@@ -148,6 +149,7 @@
 
 - (void)vungleAdDidFailToLoad:(NSError *)error
 {
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getPlacementID]);
     NSError *loadFailError = nil;
     if (error) {
         loadFailError = error;
