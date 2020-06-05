@@ -26,11 +26,11 @@ static const CGFloat PangleInterstitialRatio2to3 = 2.f / 3.f;
     BOOL hasAdMarkup = adMarkup.length > 0;
     NSDictionary *renderInfo;
     self.appId = [info objectForKey:kPangleAppIdKey];
-    if (self.appId != nil) {
+    if (BUCheckValidString(self.appId)) {
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
     self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
-    if (self.adPlacementId == nil) {
+    if (!BUCheckValidString(self.adPlacementId)) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty userInfo:
                           @{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID. Failing ad request. Ensure the ad placement id is valid on the MoPub dashboard."}];
@@ -165,7 +165,7 @@ static const CGFloat PangleInterstitialRatio2to3 = 2.f / 3.f;
 - (void)nativeAd:(BUNativeAd *)nativeAd didFailWithError:(NSError *_Nullable)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
-    if (self.appId != nil && error.code == BUUnionAppSiteRelError) {
+    if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
         [self handleInvalidIdError];
     }
 }
@@ -205,7 +205,7 @@ static const CGFloat PangleInterstitialRatio2to3 = 2.f / 3.f;
 - (void)nativeExpresInterstitialAd:(BUNativeExpressInterstitialAd *)interstitialAd didFailWithError:(NSError *)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
-    if (self.appId != nil && error.code == BUUnionAppSiteRelError) {
+    if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
         [self handleInvalidIdError];
     }
 }
@@ -286,7 +286,7 @@ static const CGFloat PangleInterstitialRatio2to3 = 2.f / 3.f;
 - (void)fullscreenVideoAd:(BUFullscreenVideoAd *)fullscreenVideoAd didFailWithError:(NSError *)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
-    if (self.appId != nil && error.code == BUUnionAppSiteRelError) {
+    if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
         [self handleInvalidIdError];
     }
 }
@@ -303,7 +303,7 @@ static const CGFloat PangleInterstitialRatio2to3 = 2.f / 3.f;
 }
 
 - (NSString *) getAdNetworkId {
-    return (self.adPlacementId != nil) ? self.adPlacementId : @"";
+    return (BUCheckValidString(self.adPlacementId)) ? self.adPlacementId : @"";
 }
 
 @end

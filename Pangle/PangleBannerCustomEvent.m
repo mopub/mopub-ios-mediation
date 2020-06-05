@@ -23,11 +23,11 @@
     NSDictionary *renderInfo;
     
     self.appId = [info objectForKey:kPangleAppIdKey];
-    if (self.appId != nil) {
+    if (BUCheckValidString(self.appId)) {
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
     self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
-    if (self.adPlacementId == nil) {
+    if (!BUCheckValidString(self.adPlacementId)) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty
                                          userInfo:@{NSLocalizedDescriptionKey:
@@ -91,7 +91,7 @@
 }
 
 - (NSString *) getAdNetworkId {
-    return (self.adPlacementId != nil) ? self.adPlacementId : @"";
+    return (BUCheckValidString(self.adPlacementId)) ? self.adPlacementId : @"";
 }
 
 - (CGSize)sizeForCustomEventInfo:(CGSize)size {
@@ -158,7 +158,7 @@
 - (void)nativeExpressBannerAdView:(BUNativeExpressBannerView *)bannerAdView didLoadFailWithError:(NSError *_Nullable)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
-    if (self.appId != nil && error.code == BUUnionAppSiteRelError) {
+    if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
         [self handleInvalidIdError];
     }
 }
@@ -213,7 +213,7 @@
 - (void)nativeAd:(BUNativeAd *)nativeAd didFailWithError:(NSError *_Nullable)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
-    if (self.appId != nil && error.code == BUUnionAppSiteRelError) {
+    if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
         [self handleInvalidIdError];
     }
 }

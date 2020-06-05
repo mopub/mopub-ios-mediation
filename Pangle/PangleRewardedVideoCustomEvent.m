@@ -18,12 +18,12 @@
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
     self.appId = [info objectForKey:kPangleAppIdKey];
-    if (self.appId != nil) {
+    if (BUCheckValidString(self.appId)) {
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
     
     self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
-    if (self.adPlacementId == nil) {
+    if (!BUCheckValidString(self.adPlacementId)) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty
                                          userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID"}];
@@ -84,7 +84,7 @@
 - (void)rewardedVideoAd:(BURewardedVideoAd *)rewardedVideoAd didFailWithError:(NSError *)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
-    if (self.appId != nil && error.code == BUUnionAppSiteRelError) {
+    if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
         [self handleInvalidIdError];
     }
 }
@@ -139,7 +139,7 @@
 }
 
 - (NSString *) getAdNetworkId {
-    return (self.adPlacementId != nil) ? self.adPlacementId : @"";
+    return (BUCheckValidString(self.adPlacementId)) ? self.adPlacementId : @"";
 }
 
 @end
