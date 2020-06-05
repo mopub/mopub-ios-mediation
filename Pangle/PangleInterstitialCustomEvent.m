@@ -7,6 +7,9 @@
     #import "MoPub.h"
 #endif
 
+static const CGFloat PangleInterstitialRatio3to2 = 3.f / 2.f;
+static const CGFloat PangleInterstitialRatio2to3 = 2.f / 3.f;
+
 @interface PangleInterstitialCustomEvent () <BUNativeAdDelegate,BUNativeExpresInterstitialAdDelegate,BUFullscreenVideoAdDelegate,PangleNativeInterstitialViewDelegate>
 @property (nonatomic, strong) BUNativeAd *nativeInterstitialAd;
 @property (nonatomic, strong) PangleNativeInterstitialView *nativeInterstitialView;
@@ -15,14 +18,15 @@
 @property (nonatomic, assign) BUAdSlotAdType adType;
 @property (nonatomic, assign) PangleRenderMethod renderType;
 @property (nonatomic, copy) NSString *adPlacementId;
+@property (nonatomic, copy) NSString *appId;
 @end
 
 @implementation PangleInterstitialCustomEvent
 - (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
     NSDictionary *renderInfo;
-    NSString * appId = [info objectForKey:kPangleAppIdKey];
-    if (appId != nil) {
+    self.appId = [info objectForKey:kPangleAppIdKey];
+    if (self.appId != nil) {
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
     self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
@@ -59,9 +63,9 @@
             CGSize screenSize = [UIScreen mainScreen].bounds.size;
             CGFloat ratio;
             if (screenSize.height > screenSize.width) {
-                ratio = 3 / 2;
+                ratio = PangleInterstitialRatio3to2;
             } else {
-                ratio = 2 / 3;
+                ratio = PangleInterstitialRatio2to3;
             }
             BUSize *imgSize = [[BUSize alloc] init];
             imgSize.width = [UIScreen mainScreen].bounds.size.width;
@@ -146,6 +150,10 @@
     return NO;
 }
 
+- (void)handleInvalidIdError{
+    [BUAdSDKManager setAppID:self.appId];
+}
+
 #pragma mark - BUNativeAdDelegate - Traditional Interstitial
 
 - (void)nativeAdDidLoad:(BUNativeAd *)nativeAd {
@@ -157,6 +165,9 @@
 - (void)nativeAd:(BUNativeAd *)nativeAd didFailWithError:(NSError *_Nullable)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+    if (self.appId != nil && error.code == BUUnionAppSiteRelError) {
+        [self handleInvalidIdError];
+    }
 }
 
 - (void)nativeAdDidClick:(BUNativeAd *)nativeAd withView:(UIView *)view {
@@ -194,6 +205,9 @@
 - (void)nativeExpresInterstitialAd:(BUNativeExpressInterstitialAd *)interstitialAd didFailWithError:(NSError *)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+    if (self.appId != nil && error.code == BUUnionAppSiteRelError) {
+        [self handleInvalidIdError];
+    }
 }
 
 - (void)nativeExpresInterstitialAdRenderSuccess:(BUNativeExpressInterstitialAd *)interstitialAd {
@@ -272,9 +286,16 @@
 - (void)fullscreenVideoAd:(BUFullscreenVideoAd *)fullscreenVideoAd didFailWithError:(NSError *)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+    if (self.appId != nil && error.code == BUUnionAppSiteRelError) {
+        [self handleInvalidIdError];
+    }
 }
 
 - (void)fullscreenVideoAdDidPlayFinish:(BUFullscreenVideoAd *)fullscreenVideoAd didFailWithError:(NSError *)error {
+    if (error) {
+        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+    }
 }
 
 - (void)fullscreenVideoAdDidClickSkip:(BUFullscreenVideoAd *)fullscreenVideoAd {

@@ -15,14 +15,15 @@
 @interface PangleNativeCustomEvent () <BUNativeAdDelegate>
 @property (nonatomic, strong) BUNativeAd *nativeAd;
 @property (nonatomic, copy) NSString *adPlacementId;
+@property (nonatomic, copy) NSString *appId;
 @end
 
 @implementation PangleNativeCustomEvent
 
 - (void)requestAdWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
-    NSString * appId = [info objectForKey:kPangleAppIdKey];
-    if (appId != nil){
+    self.appId = [info objectForKey:kPangleAppIdKey];
+    if (self.appId != nil){
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
     self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
@@ -62,11 +63,18 @@
     [self.nativeAd loadAdData];
 }
 
+- (void)handleInvalidIdError{
+    [BUAdSDKManager setAppID:self.appId];
+}
+
 #pragma mark - BUNativeAdDelegate
 
 - (void)nativeAd:(BUNativeAd *)nativeAd didFailWithError:(NSError *)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
+    if (self.appId != nil && error.code == BUUnionAppSiteRelError) {
+        [self handleInvalidIdError];
+    }
 }
 
 - (void)nativeAdDidLoad:(BUNativeAd *)nativeAd {

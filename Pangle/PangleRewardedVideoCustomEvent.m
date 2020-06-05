@@ -10,14 +10,15 @@
 @interface PangleRewardedVideoCustomEvent ()<BURewardedVideoAdDelegate>
 @property (nonatomic, strong) BURewardedVideoAd *rewardVideoAd;
 @property (nonatomic, copy) NSString *adPlacementId;
+@property (nonatomic, copy) NSString *appId;
 @end
 
 @implementation PangleRewardedVideoCustomEvent
 
 - (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
-    NSString * appId = [info objectForKey:kPangleAppIdKey];
-    if (appId != nil) {
+    self.appId = [info objectForKey:kPangleAppIdKey];
+    if (self.appId != nil) {
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
     
@@ -69,6 +70,10 @@
     return NO;
 }
 
+- (void)handleInvalidIdError{
+    [BUAdSDKManager setAppID:self.appId];
+}
+
 #pragma mark BURewardedVideoAdDelegate
 
 - (void)rewardedVideoAdDidLoad:(BURewardedVideoAd *)rewardedVideoAd {
@@ -79,6 +84,9 @@
 - (void)rewardedVideoAd:(BURewardedVideoAd *)rewardedVideoAd didFailWithError:(NSError *)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+    if (self.appId != nil && error.code == BUUnionAppSiteRelError) {
+        [self handleInvalidIdError];
+    }
 }
 
 - (void)rewardedVideoAdDidVisible:(BURewardedVideoAd *)rewardedVideoAd {

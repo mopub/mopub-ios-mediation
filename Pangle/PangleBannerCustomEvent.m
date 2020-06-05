@@ -13,6 +13,7 @@
 @property (nonatomic, strong) BUNativeAd *nativeAd;
 @property (nonatomic, strong) PangleNativeBannerView *nativeBannerView;
 @property (nonatomic, copy) NSString *adPlacementId;
+@property (nonatomic, copy) NSString *appId;
 @end
 
 @implementation PangleBannerCustomEvent
@@ -21,8 +22,8 @@
     BOOL hasAdMarkup = adMarkup.length > 0;
     NSDictionary *renderInfo;
     
-    NSString * appId = [info objectForKey:kPangleAppIdKey];
-    if (appId != nil) {
+    self.appId = [info objectForKey:kPangleAppIdKey];
+    if (self.appId != nil) {
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
     self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
@@ -96,7 +97,7 @@
 - (CGSize)sizeForCustomEventInfo:(CGSize)size {
     CGFloat width = size.width;
     CGFloat height = size.height;
-    CGFloat renderRatio = height / width;
+    CGFloat renderRatio = height * 1.0 / width;
     if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_500].height * 1.0 /
         [BUSize sizeBy:BUProposalSize_Banner600_500].width) {
         return CGSizeMake(width, width *
@@ -144,6 +145,9 @@
     }
 }
 
+- (void)handleInvalidIdError{
+    [BUAdSDKManager setAppID:self.appId];
+}
 
 #pragma mark - BUNativeExpressBannerViewDelegate - Express Banner
 
@@ -154,6 +158,9 @@
 - (void)nativeExpressBannerAdView:(BUNativeExpressBannerView *)bannerAdView didLoadFailWithError:(NSError *_Nullable)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+    if (self.appId != nil && error.code == BUUnionAppSiteRelError) {
+        [self handleInvalidIdError];
+    }
 }
 
 - (void)nativeExpressBannerAdViewRenderSuccess:(BUNativeExpressBannerView *)bannerAdView {
@@ -206,6 +213,9 @@
 - (void)nativeAd:(BUNativeAd *)nativeAd didFailWithError:(NSError *_Nullable)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+    if (self.appId != nil && error.code == BUUnionAppSiteRelError) {
+        [self handleInvalidIdError];
+    }
 }
 
 - (void)nativeAdDidClick:(BUNativeAd *)nativeAd withView:(UIView *)view {
