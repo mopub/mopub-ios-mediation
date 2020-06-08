@@ -173,6 +173,9 @@
 - (void)nativeExpressBannerAdViewRenderFail:(BUNativeExpressBannerView *)bannerAdView error:(NSError * __nullable)error {
     MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+    if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
+        [self handleInvalidIdError];
+    }
 }
 
 - (void)nativeExpressBannerAdViewWillBecomVisible:(BUNativeExpressBannerView *)bannerAdView {
