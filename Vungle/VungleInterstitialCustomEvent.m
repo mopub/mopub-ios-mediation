@@ -158,8 +158,6 @@
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate fullscreenAdAdapterDidReceiveTap:self];
     [self.delegate fullscreenAdAdapterDidTrackClick:self];
-    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
-    [self.delegate fullscreenAdAdapterWillLeaveApplication:self];
 }
 
 - (void)vungleAdWillLeaveApplication

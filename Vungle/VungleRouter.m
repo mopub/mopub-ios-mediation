@@ -5,13 +5,13 @@
 //  Copyright (c) 2015 MoPub. All rights reserved.
 //
 
+#import <VungleSDK/VungleSDKHeaderBidding.h>
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
     #import "MPRewardedVideo.h"
     #import "MPRewardedVideoError.h"
     #import "MoPub.h"
 #endif
-#import <VungleSDK/VungleSDKHeaderBidding.h>
 #import "VungleAdapterConfiguration.h"
 #import "VungleInstanceMediationSettings.h"
 #import "VungleRouter.h"
