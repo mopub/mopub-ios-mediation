@@ -30,8 +30,16 @@ static const CGFloat PangleInterstitialRatio2to3 = 2.f / 3.f;
 }
 
 - (BOOL)hasAdAvailable {
-    // TODO: As we have 3 kinds of ad here, we'll need to deal with this different way.
-    return true;
+    if (self.adType == BUAdSlotAdTypeInterstitial) {
+        if (self.renderType == PangleRenderMethodExpress) {
+            return self.expressInterstitialAd.adValid;
+        } else {
+            return self.nativeInterstitialView.adValid;
+        }
+    } else if (self.adType == BUAdSlotAdTypeFullscreenVideo){
+        return self.fullScreenVideo.adValid;
+    }
+    return NO;
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
