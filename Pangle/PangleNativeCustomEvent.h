@@ -4,13 +4,15 @@
 #elif __has_include(<MoPubSDKFramework/MoPub.h>)
     #import <MoPubSDKFramework/MoPub.h>
 #else
-    #import "MPInlineAdAdapter.h"
-    #import "MoPub.h"
+    #import "MPNativeCustomEvent.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PangleBannerCustomEvent : MPInlineAdAdapter <MPThirdPartyInlineAdAdapter>
+@interface PangleNativeCustomEvent : MPNativeCustomEvent 
+
+- (void)requestAdWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup;
+- (void)requestAdWithCustomEventInfo:(NSDictionary *)info;
 
 @end
 

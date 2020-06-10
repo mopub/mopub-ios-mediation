@@ -1,28 +1,20 @@
-//
-//  BUDMopub_MPNativeCustomEvent.h
-//  BUDemo
-//
-//  Created by liudonghui on 2020/1/8.
-//  Copyright © 2020 bytedance. All rights reserved.
-//
-
-#if __has_include(<MoPub/MoPub.h>)
-#import <MoPub/MoPub.h>
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-#import <MoPubSDKFramework/MoPub.h>
-#else
-#import "MPNativeAdAdapter.h"
-#endif
-
 #import <BUAdSDK/BUNativeAd.h>
+#if __has_include(<MoPub/MoPub.h>)
+    #import <MoPub/MoPub.h>
+#elif __has_include(<MoPubSDKFramework/MoPub.h>)
+    #import <MoPubSDKFramework/MoPub.h>
+#else
+    #import "MPNativeAdAdapter.h"
+#endif
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface PangleNativeAdAdapter : NSObject  <MPNativeAdAdapter>
 
-- (instancetype)initWithBUNativeAd:(BUNativeAd *)nativeAd;
+@property(nonatomic, weak) id<MPNativeAdAdapterDelegate> delegate;
 @property (nonatomic, strong) NSDictionary *properties;
 @property (nonatomic, strong) NSURL *defaultActionURL;
+- (instancetype)initWithBUNativeAd:(BUNativeAd *)nativeAd placementId:(NSString *)placementId;
 
 @end
 

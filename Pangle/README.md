@@ -5,5 +5,3 @@
   
 ## Adapter integration
   * To integrate adapters, please visit our [integration tutorial](https://developers.mopub.com/docs/ios/integrating-networks/).
-
-
