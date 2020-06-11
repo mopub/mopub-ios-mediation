@@ -52,8 +52,9 @@
     self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
     if (!BUCheckValidString(self.adPlacementId)) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
-                                             code:BUErrorCodeAdSlotEmpty userInfo:
-                          @{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID. Failing ad request.Ensure the ad placement id is valid on the MoPub dashboard."}];
+                                             code:BUErrorCodeAdSlotEmpty
+                                         userInfo:@{NSLocalizedDescriptionKey:
+                                @"Invalid Pangle placement ID. Failing ad request. Ensure the ad placement id is valid on the MoPub dashboard."}];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
         return;
