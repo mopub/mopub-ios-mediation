@@ -30,7 +30,6 @@ typedef NS_ENUM(NSInteger, PangleRenderMethod) {
 @property (nonatomic, copy, readonly) NSString * moPubNetworkName;
 @property (nonatomic, copy, readonly) NSString * networkSdkVersion;
 
-// MPAdapterConfiguration
 extern NSString * const kPangleNetworkName;
 extern NSString * const kPangleAppIdKey;
 extern NSString * const kPanglePlacementIdKey;

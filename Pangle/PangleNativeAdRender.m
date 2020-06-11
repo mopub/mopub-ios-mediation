@@ -17,7 +17,7 @@
 #endif
 #import "PangleNativeAdAdapter.h"
 
-@interface PangleNativeAdRender ()<MPNativeAdRendererImageHandlerDelegate>
+@interface PangleNativeAdRender () <MPNativeAdRendererImageHandlerDelegate>
 
 @property (nonatomic, strong) UIView<MPNativeAdRendering> *adView;
 @property (nonatomic, strong) PangleNativeAdAdapter *adapter;

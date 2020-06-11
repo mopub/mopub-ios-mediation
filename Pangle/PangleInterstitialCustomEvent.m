@@ -7,7 +7,7 @@
     #import "MoPub.h"
 #endif
 
-@interface PangleInterstitialCustomEvent () <BUNativeAdDelegate,BUNativeExpresInterstitialAdDelegate,BUFullscreenVideoAdDelegate,PangleNativeInterstitialViewDelegate>
+@interface PangleInterstitialCustomEvent () <BUNativeAdDelegate, BUNativeExpresInterstitialAdDelegate, BUFullscreenVideoAdDelegate, PangleNativeInterstitialViewDelegate>
 @property (nonatomic, strong) BUNativeAd *nativeInterstitialAd;
 @property (nonatomic, strong) PangleNativeInterstitialView *nativeInterstitialView;
 @property (nonatomic, strong) BUNativeExpressInterstitialAd *expressInterstitialAd;
@@ -17,9 +17,6 @@
 @property (nonatomic, copy) NSString *adPlacementId;
 @property (nonatomic, copy) NSString *appId;
 @end
-
-static const CGFloat PangleInterstitialRatio3to2 = 3.f / 2.f;
-static const CGFloat PangleInterstitialRatio2to3 = 2.f / 3.f;
 
 @implementation PangleInterstitialCustomEvent
 
@@ -39,25 +36,29 @@ static const CGFloat PangleInterstitialRatio2to3 = 2.f / 3.f;
     } else if (self.adType == BUAdSlotAdTypeFullscreenVideo){
         return self.fullScreenVideo.adValid;
     }
+    
     return NO;
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
     NSDictionary *renderInfo;
+    
     self.appId = [info objectForKey:kPangleAppIdKey];
     if (BUCheckValidString(self.appId)) {
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
+    
     self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
     if (!BUCheckValidString(self.adPlacementId)) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty userInfo:
-                          @{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID. Failing ad request. Ensure the ad placement id is valid on the MoPub dashboard."}];
+                          @{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID. Failing ad request.Ensure the ad placement id is valid on the MoPub dashboard."}];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
         return;
     }
+    
     NSError *error = nil;
     renderInfo = [BUAdSDKManager AdTypeWithRit:self.adPlacementId error:&error];
     if (error) {
@@ -73,15 +74,18 @@ static const CGFloat PangleInterstitialRatio2to3 = 2.f / 3.f;
             self.expressInterstitialAd = [[BUNativeExpressInterstitialAd alloc] initWithSlotID:self.adPlacementId adSize:CGSizeMake(width, 0)];
             self.expressInterstitialAd.delegate = self;
             if (hasAdMarkup) {
-                MPLogInfo(@"Loading Pangle express interstiital ad markup for Advanced Bidding");
+                MPLogInfo(@"Loading Pangle express interstital ad markup for Advanced Bidding");
                 [self.expressInterstitialAd setMopubAdMarkUp:adMarkup];
             }else{
-                MPLogInfo(@"Loading Pangle express interstiital ad");
+                MPLogInfo(@"Loading Pangle express interstital ad");
                 [self.expressInterstitialAd loadAdData];
             }
         } else {
             CGSize screenSize = [UIScreen mainScreen].bounds.size;
+            CGFloat PangleInterstitialRatio3to2 = 3.f / 2.f;
+            CGFloat PangleInterstitialRatio2to3 = 2.f / 3.f;
             CGFloat ratio;
+            
             if (screenSize.height > screenSize.width) {
                 ratio = PangleInterstitialRatio3to2;
             } else {
@@ -105,10 +109,10 @@ static const CGFloat PangleInterstitialRatio2to3 = 2.f / 3.f;
             ad.delegate = self;
             self.nativeInterstitialAd = ad;
             if (hasAdMarkup) {
-                MPLogInfo(@"Loading Pangle traditional interstiital ad markup for Advanced Bidding");
+                MPLogInfo(@"Loading Pangle traditional interstitial ad markup for Advanced Bidding");
                 [ad setMopubAdMarkUp:adMarkup];
             } else {
-                MPLogInfo(@"Loading Pangle traditional interstiital ad");
+                MPLogInfo(@"Loading Pangle traditional interstitial ad");
                 [ad loadAdData];
             }
         }
@@ -170,7 +174,7 @@ static const CGFloat PangleInterstitialRatio2to3 = 2.f / 3.f;
     return NO;
 }
 
-- (void)handleInvalidIdError{
+- (void)updateAppId{
     [BUAdSDKManager setAppID:self.appId];
 }
 
@@ -186,7 +190,7 @@ static const CGFloat PangleInterstitialRatio2to3 = 2.f / 3.f;
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
-        [self handleInvalidIdError];
+        [self updateAppId];
     }
 }
 
@@ -219,14 +223,14 @@ static const CGFloat PangleInterstitialRatio2to3 = 2.f / 3.f;
 #pragma mark BUNativeExpresInterstitialAdDelegate - Express Interstitial
 
 - (void)nativeExpresInterstitialAdDidLoad:(BUNativeExpressInterstitialAd *)interstitialAd {
-    // The express interstitialAd instance need to attach to the view before fire the ad is loaded event.
+    // no-op
 }
 
 - (void)nativeExpresInterstitialAd:(BUNativeExpressInterstitialAd *)interstitialAd didFailWithError:(NSError *)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
-        [self handleInvalidIdError];
+        [self updateAppId];
     }
 }
 
@@ -307,7 +311,7 @@ static const CGFloat PangleInterstitialRatio2to3 = 2.f / 3.f;
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
-        [self handleInvalidIdError];
+        [self updateAppId];
     }
 }
 

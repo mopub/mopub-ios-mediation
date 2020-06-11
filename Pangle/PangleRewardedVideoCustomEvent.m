@@ -7,7 +7,7 @@
 #endif
 #import "PangleAdapterConfiguration.h"
 
-@interface PangleRewardedVideoCustomEvent ()<BURewardedVideoAdDelegate>
+@interface PangleRewardedVideoCustomEvent () <BURewardedVideoAdDelegate>
 @property (nonatomic, strong) BURewardedVideoAd *rewardVideoAd;
 @property (nonatomic, copy) NSString *adPlacementId;
 @property (nonatomic, copy) NSString *appId;
@@ -51,8 +51,8 @@
     
     BURewardedVideoAd *RewardedVideoAd = [[BURewardedVideoAd alloc] initWithSlotID:self.adPlacementId rewardedVideoModel:model];
     RewardedVideoAd.delegate = self;
-    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
     self.rewardVideoAd = RewardedVideoAd;
+    
     if (hasAdMarkup) {
         MPLogInfo(@"Loading Pangle rewarded video ad markup for Advanced Bidding");
         [RewardedVideoAd setMopubAdMarkUp:adMarkup];
@@ -60,12 +60,13 @@
         MPLogInfo(@"Loading Pangle rewarded video ad");
         [RewardedVideoAd loadAdData];
     }
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
 }
     
 - (void)presentAdFromViewController:(UIViewController *)viewController {
-    MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     if ([self hasAdAvailable]) {
         [self.rewardVideoAd showAdFromRootViewController:viewController];
+        MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     } else {
         NSError *error = [NSError
                           errorWithDomain:MoPubRewardedVideoAdsSDKDomain
@@ -76,7 +77,7 @@
     }
 }
 
-- (void)handleInvalidIdError{
+- (void)updateAppId{
     [BUAdSDKManager setAppID:self.appId];
 }
 
@@ -91,7 +92,7 @@
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
-        [self handleInvalidIdError];
+        [self updateAppId];
     }
 }
 
@@ -99,11 +100,11 @@
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate fullscreenAdAdapterAdWillAppear:self];
     
-    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
     
-    [self.delegate fullscreenAdAdapterAdDidAppear:self];
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate fullscreenAdAdapterAdDidAppear:self];
 }
 
 - (void)rewardedVideoAdDidClose:(BURewardedVideoAd *)rewardedVideoAd {
