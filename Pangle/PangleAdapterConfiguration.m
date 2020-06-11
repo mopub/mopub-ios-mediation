@@ -42,21 +42,24 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
             complete(error);
         }
     } else {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [BUAdSDKManager setAppID:appId];
-            MPBLogLevel logLevel = [MPLogging consoleLogLevel];
-            BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
-            
-            [BUAdSDKManager setLoglevel:(verboseLoggingEnabled == true ? BUAdSDKLogLevelDebug : BUAdSDKLogLevelNone)];
-            if ([[MoPub sharedInstance] isGDPRApplicable] != MPBoolUnknown) {
-                BOOL canCollectPersonalInfo =  [[MoPub sharedInstance] canCollectPersonalInfo];
-                /// Custom set the GDPR of the user,GDPR is the short of General Data Protection Regulation,the interface only works in The European.
-                /// @params GDPR 0 close privacy protection, 1 open privacy protection
-                [BUAdSDKManager setGDPR:canCollectPersonalInfo ? 0 : 1];
-            }
-            if (complete != nil) {
-                complete(nil);
-            }
+        static dispatch_once_t onceToken;
+        dispatch_once(&onceToken, ^{
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [BUAdSDKManager setAppID:appId];
+                MPBLogLevel logLevel = [MPLogging consoleLogLevel];
+                BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
+                
+                [BUAdSDKManager setLoglevel:(verboseLoggingEnabled == true ? BUAdSDKLogLevelDebug : BUAdSDKLogLevelNone)];
+                if ([[MoPub sharedInstance] isGDPRApplicable] != MPBoolUnknown) {
+                    BOOL canCollectPersonalInfo =  [[MoPub sharedInstance] canCollectPersonalInfo];
+                    /// Custom set the GDPR of the user,GDPR is the short of General Data Protection Regulation,the interface only works in The European.
+                    /// @params GDPR 0 close privacy protection, 1 open privacy protection
+                    [BUAdSDKManager setGDPR:canCollectPersonalInfo ? 0 : 1];
+                }
+                if (complete != nil) {
+                    complete(nil);
+                }
+            });
         });
     }
 }
