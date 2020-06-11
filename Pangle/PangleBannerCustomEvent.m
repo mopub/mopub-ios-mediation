@@ -8,7 +8,7 @@
     #import "MoPub.h"
 #endif
 
-@interface PangleBannerCustomEvent ()<BUNativeExpressBannerViewDelegate,BUNativeAdDelegate>
+@interface PangleBannerCustomEvent () <BUNativeExpressBannerViewDelegate, BUNativeAdDelegate>
 @property (nonatomic, strong) BUNativeExpressBannerView *expressBannerView;
 @property (nonatomic, strong) BUNativeAd *nativeAd;
 @property (nonatomic, strong) PangleNativeBannerView *nativeBannerView;
@@ -26,6 +26,7 @@
     if (BUCheckValidString(self.appId)) {
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
+    
     self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
     if (!BUCheckValidString(self.adPlacementId)) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
@@ -36,6 +37,7 @@
         [self.delegate inlineAdAdapter:self didFailToLoadAdWithError: error];
         return;
     }
+    
     NSError *error = nil;
     renderInfo = [BUAdSDKManager AdTypeWithRit:self.adPlacementId error:&error];
     if (error) {
@@ -45,7 +47,7 @@
 
     PangleRenderMethod renderType = [[renderInfo objectForKey:@"renderType"] integerValue];
     if (renderType == PangleRenderMethodExpress) {
-        CGSize expressRequestSize = [self sizeForCustomEventInfo:size];
+        CGSize expressRequestSize = [self sizeForAdapterInfo:size];
         self.expressBannerView = [[BUNativeExpressBannerView alloc] initWithSlotID:self.adPlacementId
                                                                 rootViewController:[self.delegate inlineAdAdapterViewControllerForPresentingModalView:self] adSize:expressRequestSize IsSupportDeepLink:YES];
         self.expressBannerView.frame = CGRectMake(0, 0, expressRequestSize.width, expressRequestSize.height);
@@ -58,8 +60,8 @@
             [self.expressBannerView loadAdData];
         }
     } else {
+        CGSize nativeRequestSize = [self sizeForAdapterInfo:size];
         BUSize *imageSize = [[BUSize alloc] init];
-        CGSize nativeRequestSize = [self sizeForCustomEventInfo:size];
         imageSize.width = nativeRequestSize.width;
         imageSize.height = nativeRequestSize.height;
         
@@ -94,10 +96,11 @@
     return (BUCheckValidString(self.adPlacementId)) ? self.adPlacementId : @"";
 }
 
-- (CGSize)sizeForCustomEventInfo:(CGSize)size {
+- (CGSize)sizeForAdapterInfo:(CGSize)size {
     CGFloat width = size.width;
     CGFloat height = size.height;
     CGFloat renderRatio = height * 1.0 / width;
+    
     if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_500].height * 1.0 /
         [BUSize sizeBy:BUProposalSize_Banner600_500].width) {
         return CGSizeMake(width, width *
@@ -145,28 +148,27 @@
     }
 }
 
-- (void)handleInvalidIdError{
+- (void)updateAppId{
     [BUAdSDKManager setAppID:self.appId];
 }
 
 #pragma mark - BUNativeExpressBannerViewDelegate - Express Banner
 
 - (void)nativeExpressBannerAdViewDidLoad:(BUNativeExpressBannerView *)bannerAdView {
-    // The express banner instance need to attach to the view before fire the ad is loaded event.
+    // no-op.
 }
 
 - (void)nativeExpressBannerAdView:(BUNativeExpressBannerView *)bannerAdView didLoadFailWithError:(NSError *_Nullable)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate inlineAdAdapter:self didFailToLoadAdWithError: error];
     if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
-        [self handleInvalidIdError];
+        [self updateAppId];
     }
 }
 
 - (void)nativeExpressBannerAdViewRenderSuccess:(BUNativeExpressBannerView *)bannerAdView {
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate inlineAdAdapter:self didLoadAdWithAdView:bannerAdView];
 }
 
@@ -174,11 +176,12 @@
     MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate inlineAdAdapter:self didFailToLoadAdWithError: error];
     if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
-        [self handleInvalidIdError];
+        [self updateAppId];
     }
 }
 
 - (void)nativeExpressBannerAdViewWillBecomVisible:(BUNativeExpressBannerView *)bannerAdView {
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate inlineAdAdapterDidTrackImpression:self];
 }
 
@@ -200,24 +203,27 @@
 #pragma mark - BUNativeAdDelegate - Traditional Banner
 
 - (void)nativeAdDidLoad:(BUNativeAd *)nativeAd {
-    if (!nativeAd.data || !(nativeAd == self.nativeAd)){
-        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class]) code:BUErrorCodeNOAdError userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle Data. Failing ad request."}];
+    if (!nativeAd.data || !nativeAd == self.nativeAd){
+        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
+                                             code:BUErrorCodeNOAdError
+                                         userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle Data. Failing ad request."}];
         [self.delegate inlineAdAdapter:self didFailToLoadAdWithError: error];
         return;
     }
     self.nativeAd = nil;
     [self.nativeBannerView refreshUIWithAd:nativeAd];
+    
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate inlineAdAdapter:self didLoadAdWithAdView:self.nativeBannerView];
 }
 
 - (void)nativeAd:(BUNativeAd *)nativeAd didFailWithError:(NSError *_Nullable)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+    
     [self.delegate inlineAdAdapter:self didFailToLoadAdWithError: error];
     if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
-        [self handleInvalidIdError];
+        [self updateAppId];
     }
 }
 
