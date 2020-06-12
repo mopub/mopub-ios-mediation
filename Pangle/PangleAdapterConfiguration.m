@@ -33,7 +33,8 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration complete:(void(^)(NSError *))complete {
     NSString *appId = configuration[kPangleAppIdKey];
-    if (!BUCheckValidString(appId)) {
+    
+    if (configuration.count == 0 || !BUCheckValidString(appId)) {
         NSError *error = [NSError errorWithDomain:kAdapterErrorDomain
                                              code:PangleAdapterErrorCodeMissingIdKey
                                          userInfo:@{NSLocalizedDescriptionKey:
