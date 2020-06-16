@@ -9,7 +9,7 @@
 
 @class VASCreativeInfo;
 
-@interface MPVerizonRewardedVideoCustomEvent : MPRewardedVideoCustomEvent
+@interface MPVerizonRewardedVideoCustomEvent : MPFullscreenAdAdapter <MPThirdPartyFullscreenAdAdapter>
 
 @property (nonatomic, readonly, nullable) VASCreativeInfo* creativeInfo;
 

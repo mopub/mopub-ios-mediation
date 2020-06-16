@@ -22,18 +22,18 @@ typedef enum {
 @interface MintegralBannerCustomEvent() <MTGBannerAdViewDelegate>
 
 @property(nonatomic,strong) MTGBannerAdView *bannerAdView;
-@property (nonatomic, strong) NSString *adUnitId;
+@property (nonatomic, copy) NSString *mintegralAdUnitId;
+@property (nonatomic, copy) NSString *adPlacementId;
 @property (nonatomic, copy) NSString *adm;
 @end
 
 @implementation MintegralBannerCustomEvent
 
-- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    MPLogInfo(@"requestAdWithSize for Mintegral");
-    
+- (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {    
     NSString *appId = [info objectForKey:@"appId"];
     NSString *appKey = [info objectForKey:@"appKey"];
     NSString *unitId = [info objectForKey:@"unitId"];
+    NSString *placementId = [info objectForKey:@"placementId"];
     
     NSString *errorMsg = nil;
     
@@ -46,18 +46,20 @@ typedef enum {
         
         if ([self.description respondsToSelector:@selector(bannerCustomEvent: didFailToLoadAdWithError:)]) {
             MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
-            [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+            [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
         }
         return;
     }
     
     self.adm = adMarkup;
-    _adUnitId = unitId;
+    self.mintegralAdUnitId = unitId;
+    self.adPlacementId = placementId;
+    
     
     [MintegralAdapterConfiguration initializeMintegral:info setAppID:appId appKey:appKey];
     
     UIViewController *vc =  [UIApplication sharedApplication].keyWindow.rootViewController;
-    _bannerAdView = [[MTGBannerAdView alloc] initBannerAdViewWithAdSize:size unitId:unitId rootViewController:vc];
+    _bannerAdView = [[MTGBannerAdView alloc] initBannerAdViewWithAdSize:size placementId:placementId unitId:unitId rootViewController:vc];
     _bannerAdView.delegate = self;
     
     if (self.adm) {
@@ -68,53 +70,57 @@ typedef enum {
         [_bannerAdView loadBannerAd];
     }
     
-    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.adUnitId);
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.mintegralAdUnitId);
 }
 
 #pragma mark -- MTGBannerAdViewDelegate
 - (void)adViewLoadSuccess:(MTGBannerAdView *)adView {
-    if ([self.delegate respondsToSelector:@selector(bannerCustomEvent: didLoadAd:)]) {
-        MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.adUnitId);
-        MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.adUnitId);
-        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.adUnitId);
-        [self.delegate bannerCustomEvent:self didLoadAd:adView];
+    if ([self.delegate respondsToSelector:@selector(inlineAdAdapter:didLoadAdWithAdView:)]) {
+        MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+        MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+        [self.delegate inlineAdAdapter:self didLoadAdWithAdView:adView];
     }
 }
 
 - (void)adViewLoadFailedWithError:(NSError *)error adView:(MTGBannerAdView *)adView {
-    if ([self.delegate respondsToSelector:@selector(bannerCustomEvent: didFailToLoadAdWithError:)]) {
+    if ([self.delegate respondsToSelector:@selector(inlineAdAdapter:didFailToLoadAdWithError:)]) {
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
     }
 }
 
 - (void)adViewWillLogImpression:(MTGBannerAdView *)adView {
     if ([self.delegate respondsToSelector:@selector(trackImpression)]) {
-        [self.delegate trackImpression];
+        [self.delegate inlineAdAdapterDidTrackImpression:self];
     }
 }
 
 - (void)adViewDidClicked:(MTGBannerAdView *)adView {
     if ([self.delegate respondsToSelector:@selector(trackClick)]) {
-        MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.adUnitId);
-        [self.delegate trackClick];
-        [self.delegate bannerCustomEventWillBeginAction:self];
+        MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+        [self.delegate inlineAdAdapterDidTrackClick:self];
+        [self.delegate inlineAdAdapterWillBeginUserAction:self];
     }
 }
 
 - (void)adViewWillLeaveApplication:(MTGBannerAdView *)adView {
-    if ([self.delegate respondsToSelector:@selector(bannerCustomEventWillLeaveApplication:)]) {
-        MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], self.adUnitId);
-        [self.delegate bannerCustomEventWillLeaveApplication:self];
+    if ([self.delegate respondsToSelector:@selector(handleAdEvent:)]) {
+        MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+        [self.delegate inlineAdAdapterWillLeaveApplication:self];
     }
 }
 
 - (void)adViewWillOpenFullScreen:(MTGBannerAdView *)adView {
-    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], self.adUnitId);
+    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
 }
 
 - (void)adViewCloseFullScreen:(MTGBannerAdView *)adView {
-    MPLogAdEvent([MPLogEvent adDidDismissModalForAdapter:NSStringFromClass(self.class)], self.adUnitId);
+    MPLogAdEvent([MPLogEvent adDidDismissModalForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+}
+
+- (void)adViewClosed:(MTGBannerAdView *)adView {
+    MPLogInfo(@"adViewClosed for MTGBannerAdView");
 }
 
 #pragma mark - Turn off auto impression and click

@@ -31,7 +31,19 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     [[UnityRouter sharedRouter] clearDelegate:self];
 }
 
-- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
+#pragma mark - MPFullscreenAdAdapter Override
+
+- (BOOL)isRewardExpected
+{
+    return NO;
+}
+
+- (BOOL)hasAdAvailable
+{
+    return [[UnityRouter sharedRouter] isAdAvailableForPlacementId:self.placementId];
+}
+
+- (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     self.loadRequested = YES;
     NSString *gameId = [info objectForKey:kMPUnityInterstitialVideoGameId];
     self.placementId = [info objectForKey:kUnityAdsOptionPlacementIdKey];
@@ -43,7 +55,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
                                        andReason:@"Configured with an invalid placement id"
                                    andSuggestion:@""];
           MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
 
         return;
     }
@@ -65,12 +77,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     return [NSError errorWithDomain:NSStringFromClass([self class]) code:0 userInfo:userInfo];
 }
 
-- (BOOL)hasAdAvailable
-{
-    return [[UnityRouter sharedRouter] isAdAvailableForPlacementId:self.placementId];
-}
-
-- (void)showInterstitialFromRootViewController:(UIViewController *)viewController
+- (void)presentAdFromViewController:(UIViewController *)viewController
 {
     if ([self hasAdAvailable]) {
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
@@ -81,30 +88,36 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
                              andSuggestion:@""];
         
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     }
 }
 
-- (void)handleCustomEventInvalidated
+- (void)handleDidInvalidateAd
 {
     [[UnityRouter sharedRouter] clearDelegate:self];
 }
 
-- (void)handleAdPlayedForCustomEventNetwork
+- (void)handleDidPlayAd
 {
     // If we no longer have an ad available, report back up to the application that this ad expired.
     // We receive this message only when this ad has reported an ad has loaded and another ad unit
     // has played a video for the same ad network.
     if (![self hasAdAvailable]) {
-        [self.delegate interstitialCustomEventDidExpire:self];
-    }}
+        [self.delegate fullscreenAdAdapterDidExpire:self];
+    }
+}
+
+- (BOOL)enableAutomaticImpressionAndClickTracking
+{
+    return NO;
+}
 
 #pragma mark - UnityRouterDelegate
 
 - (void)unityAdsReady:(NSString *)placementId
 {
     if (self.loadRequested) {
-        [self.delegate interstitialCustomEvent:self didLoadAd:placementId];
+        [self.delegate fullscreenAdAdapterDidLoadAd:self];
         MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
         self.loadRequested = NO;
     }
@@ -115,38 +128,42 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     NSError *errorLoad = [self createErrorWith:@"Unity Ads failed to load an ad"
                                  andReason:@""
                              andSuggestion:@""];
-    [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:errorLoad];
+    [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:errorLoad];
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:errorLoad], [self getAdNetworkId]);
 }
 
 - (void) unityAdsDidStart:(NSString *)placementId
 {
-    [self.delegate interstitialCustomEventWillAppear:self];
+    [self.delegate fullscreenAdAdapterAdWillAppear:self];
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 
-    [self.delegate interstitialCustomEventDidAppear:self];
+    [self.delegate fullscreenAdAdapterAdDidAppear:self];
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void) unityAdsDidFinish:(NSString *)placementId withFinishState:(UnityAdsFinishState)state
 {
-    [self.delegate interstitialCustomEventWillDisappear:self];
+    [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 
-    [self.delegate interstitialCustomEventDidDisappear:self];
+    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void) unityAdsDidClick:(NSString *)placementId
 {
-    [self.delegate interstitialCustomEventDidReceiveTapEvent:self];
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate fullscreenAdAdapterDidReceiveTap:self];
+    [self.delegate fullscreenAdAdapterDidTrackClick:self];
+    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate fullscreenAdAdapterWillLeaveApplication:self];
 }
 
 - (void)unityAdsDidFailWithError:(NSError *)error
 {
-    [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+    [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
 }
 

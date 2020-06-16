@@ -15,7 +15,25 @@
 
 @implementation ChartboostRewardedVideoCustomEvent
 
-- (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
+
+#pragma mark - MPFullscreenAdAdapter Override
+
+- (BOOL)isRewardExpected
+{
+    return YES;
+}
+
+- (BOOL)hasAdAvailable
+{
+    return self.ad.isCached;
+}
+
+- (BOOL)enableAutomaticImpressionAndClickTracking
+{
+    return NO;
+}
+
+- (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     NSString *location = [info objectForKey:@"location"];
     location = location.length > 0 ? location : CBLocationDefault;
@@ -30,7 +48,7 @@
         if (!initialized) {
             NSError *error = [NSError adRequestFailedDueToSDKStartWithAdOfType:@"rewarded"];
             MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], location);
-            [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+            [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
             return;
         }
         
@@ -40,15 +58,10 @@
     }];
 }
 
-- (void)presentRewardedVideoFromViewController:(UIViewController *)viewController
+- (void)presentAdFromViewController:(UIViewController *)viewController
 {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.ad.location);
     [self.ad showFromViewController:viewController];
-}
-
-- (BOOL)hasAdAvailable
-{
-    return self.ad.isCached;
 }
 
 #pragma mark - CHBRewardedDelegate
@@ -58,17 +71,17 @@
     if (error) {
         NSError *nserror = [NSError errorWithCacheEvent:event error:error];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:nserror], event.ad.location);
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:nserror];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:nserror];
     } else {
         MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], event.ad.location);
-        [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
+        [self.delegate fullscreenAdAdapterDidLoadAd:self];
     }
 }
 
 - (void)willShowAd:(CHBShowEvent *)event
 {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], event.ad.location);
-    [self.delegate rewardedVideoWillAppearForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterAdWillAppear:self];
 }
 
 - (void)didShowAd:(CHBShowEvent *)event error:(CHBShowError *)error
@@ -76,11 +89,13 @@
     if (error) {
         NSError *nserror = [NSError errorWithShowEvent:event error:error];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:nserror], self.ad.location);
-        [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:nserror];
+        [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:nserror];
     } else {
         MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], event.ad.location);
         MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], event.ad.location);
-        [self.delegate rewardedVideoDidAppearForCustomEvent:self];
+        [self.delegate fullscreenAdAdapterAdDidAppear:self];
+        
+        [self.delegate fullscreenAdAdapterDidTrackImpression:self];
     }
 }
 
@@ -89,24 +104,28 @@
     if (error) {
         NSError *nserror = [NSError errorWithClickEvent:event error:error];
         MPLogAdEvent([MPLogEvent error:nserror message:nil], event.ad.location);
+    } else {
+        [self.delegate fullscreenAdAdapterDidTrackClick:self];
+        [self.delegate fullscreenAdAdapterWillLeaveApplication:self];
     }
+    
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], event.ad.location);
-    [self.delegate rewardedVideoDidReceiveTapEventForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterDidReceiveTap:self];
 }
 
 - (void)didDismissAd:(CHBDismissEvent *)event
 {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], event.ad.location);
-    [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], event.ad.location);
-    [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
 }
 
 - (void)didEarnReward:(CHBRewardEvent *)event
 {
-    MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyAmount:@(event.reward)];
+    MPReward *reward = [[MPReward alloc] initWithCurrencyAmount:@(event.reward)];
     MPLogAdEvent([MPLogEvent adShouldRewardUserWithReward:reward], event.ad.location);
-    [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:reward];
+    [self.delegate fullscreenAdAdapter:self willRewardUser:reward];
 }
 
 @end

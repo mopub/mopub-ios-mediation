@@ -2,7 +2,7 @@
 #import "AppLovinAdapterConfiguration.h"
 
 #if __has_include("MoPub.h")
-    #import "MPRewardedVideoReward.h"
+    #import "MPReward.h"
     #import "MPError.h"
     #import "MPLogging.h"
     #import "MoPub.h"
@@ -25,11 +25,12 @@
 
 @interface AppLovinRewardedVideoCustomEvent() <ALAdLoadDelegate, ALAdDisplayDelegate, ALAdVideoPlaybackDelegate, ALAdRewardDelegate>
 
+@property (nonatomic, readonly) NSString *uniqueID;
 @property (nonatomic, strong) ALSdk *sdk;
 @property (nonatomic, strong) ALIncentivizedInterstitialAd *incent;
 
 @property (nonatomic, assign) BOOL fullyWatched;
-@property (nonatomic, strong) MPRewardedVideoReward *reward;
+@property (nonatomic, strong) MPReward *reward;
 @property (nonatomic, assign, getter=isTokenEvent) BOOL tokenEvent;
 @property (nonatomic, strong) ALAd *tokenAd;
 @property (nonatomic, copy) NSString *zoneIdentifier;
@@ -44,6 +45,13 @@ static NSString *const kALMoPubMediationErrorDomain = @"com.applovin.sdk.mediati
 // on every ad load regardless if ad was actually displayed or not.
 static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobalIncentivizedInterstitialAds;
 
+- (instancetype)init {
+    if ([super init]) {
+        _uniqueID = [NSUUID UUID].UUIDString;
+    }
+    return self;
+}
+
 #pragma mark - Class Initialization
 
 + (void)initialize
@@ -53,14 +61,25 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
     ALGlobalIncentivizedInterstitialAds = [NSMutableDictionary dictionary];
 }
 
-#pragma mark - MPRewardedVideoCustomEvent Overridden Methods
+#pragma mark - MPFullscreenAdAdapter Override
 
-- (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info
-{
-    [self requestRewardedVideoWithCustomEventInfo: info adMarkup: nil];
+- (BOOL)isRewardExpected {
+    return YES;
 }
 
-- (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
+- (BOOL)hasAdAvailable
+{
+    if ( [self isTokenEvent] )
+    {
+        return self.tokenAd != nil;
+    }
+    else
+    {
+        return self.incent.readyForDisplay;
+    }
+}
+
+- (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     // Collect and pass the user's consent from MoPub onto the AppLovin SDK
     if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
@@ -78,7 +97,7 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
                                          userInfo: @{NSLocalizedFailureReasonErrorKey: failureReason}];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], @"");
         
-        [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error: error];
+        [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
 
         return;
     }
@@ -122,19 +141,12 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
     }
 }
 
-- (BOOL)hasAdAvailable
+- (BOOL)enableAutomaticImpressionAndClickTracking
 {
-    if ( [self isTokenEvent] )
-    {
-        return self.tokenAd != nil;
-    }
-    else
-    {
-        return self.incent.readyForDisplay;
-    }
+    return NO;
 }
 
-- (void)presentRewardedVideoFromViewController:(UIViewController *)viewController
+- (void)presentAdFromViewController:(UIViewController *)viewController
 {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 
@@ -158,13 +170,10 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
                                              code: kALErrorCodeUnableToRenderAd
                                          userInfo: @{NSLocalizedFailureReasonErrorKey : @"Adapter requested to display a rewarded video before one was loaded"}];
         
-        [self.delegate rewardedVideoDidFailToPlayForCustomEvent: self error: error];
+        [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     }
 }
-
-- (void)handleCustomEventInvalidated { }
-- (void)handleAdPlayedForCustomEventNetwork { }
 
 #pragma mark - Ad Load Delegate
 
@@ -177,7 +186,7 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.delegate rewardedVideoDidLoadAdForCustomEvent: self];
+        [self.delegate fullscreenAdAdapterDidLoadAd:self];
         
         MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     });
@@ -190,7 +199,7 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
                                      userInfo: nil];
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent: self error: error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     });
 }
@@ -199,8 +208,9 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
 
 - (void)ad:(ALAd *)ad wasDisplayedIn:(UIView *)view
 {
-    [self.delegate rewardedVideoWillAppearForCustomEvent: self];
-    [self.delegate rewardedVideoDidAppearForCustomEvent: self];
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
+    [self.delegate fullscreenAdAdapterAdWillAppear:self];
+    [self.delegate fullscreenAdAdapterAdDidAppear:self];
     
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
@@ -211,11 +221,11 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
 {
     if ( self.fullyWatched && self.reward )
     {
-        [self.delegate rewardedVideoShouldRewardUserForCustomEvent: self reward: self.reward];
+        [self.delegate fullscreenAdAdapter:self willRewardUser:self.reward];
     }
     
-    [self.delegate rewardedVideoWillDisappearForCustomEvent: self];
-    [self.delegate rewardedVideoDidDisappearForCustomEvent: self];
+    [self.delegate fullscreenAdAdapterAdWillDisappear:self];
+    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
     
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     
@@ -224,10 +234,12 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
 
 - (void)ad:(ALAd *)ad wasClickedIn:(UIView *)view
 {
-    [self.delegate rewardedVideoDidReceiveTapEventForCustomEvent: self];
-    [self.delegate rewardedVideoWillLeaveApplicationForCustomEvent: self];
+    [self.delegate fullscreenAdAdapterDidTrackClick:self];
+    [self.delegate fullscreenAdAdapterDidReceiveTap:self];
+    [self.delegate fullscreenAdAdapterWillLeaveApplication:self];
     
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 #pragma mark - Video Playback Delegate
@@ -273,7 +285,7 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
     
     MPLogInfo(@"Rewarded %@ %@", amount, currency);
 
-    self.reward = [[MPRewardedVideoReward alloc] initWithCurrencyType: currency amount: amount];
+    self.reward = [[MPReward alloc] initWithCurrencyType: currency amount: amount];
 }
 
 #pragma mark - Utility Methods
@@ -320,9 +332,9 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
     ALIncentivizedInterstitialAd *incent;
     
     // Check if incentivized ad for zone already exists
-    if ( ALGlobalIncentivizedInterstitialAds[zoneIdentifier] )
+    if ( ALGlobalIncentivizedInterstitialAds[customEvent.uniqueID] )
     {
-        incent = ALGlobalIncentivizedInterstitialAds[zoneIdentifier];
+        incent = ALGlobalIncentivizedInterstitialAds[customEvent.uniqueID];
     }
     else
     {
@@ -337,7 +349,7 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
             incent = [[ALIncentivizedInterstitialAd alloc] initWithZoneIdentifier: zoneIdentifier sdk: sdk];
         }
         
-        ALGlobalIncentivizedInterstitialAds[zoneIdentifier] = incent;
+        ALGlobalIncentivizedInterstitialAds[customEvent.uniqueID] = incent;
     }
     
     incent.adVideoPlaybackDelegate = customEvent;

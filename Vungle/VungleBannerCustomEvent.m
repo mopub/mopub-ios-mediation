@@ -31,7 +31,7 @@
     return NO;
 }
 
-- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
+- (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     self.placementId = [info objectForKey:kVunglePlacementIdKey];
     self.options = nil;
@@ -45,7 +45,7 @@
         MPLogInfo(@"Vungle only supports 300*250, 320*50 and 728*90 sized ads. Please ensure your MoPub adunit's format is Medium Rectangle or Banner.");
         NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid sizes received. Vungle only supports 300 x 250, 320 x 50 and 728 x 90 ads."];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementId);
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
         
         return;
     }
@@ -54,12 +54,15 @@
     self.bannerInfo = info;
     self.isAdCached = NO;
     
-    self.timeOutTimer = [NSTimer scheduledTimerWithTimeInterval:BANNER_TIMEOUT_INTERVAL repeats:NO block:^(NSTimer * _Nonnull timer) {
+    if (@available(iOS 10.0, *)) {
+        self.timeOutTimer = [NSTimer scheduledTimerWithTimeInterval:BANNER_TIMEOUT_INTERVAL repeats:NO block:^(NSTimer * _Nonnull timer) {
         if (!self.isAdCached) {
             [[VungleRouter sharedRouter] clearDelegateForRequestingBanner];
         }
     }];
+    }
     
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.getPlacementID);
     [[VungleRouter sharedRouter] requestBannerAdWithCustomEventInfo:info size:self.bannerSize delegate:self];
 }
 
@@ -129,18 +132,23 @@
     
     if (bannerAdView) {
         [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId];
-        [self.delegate bannerCustomEvent:self didLoadAd:bannerAdView];
-        [self.delegate trackImpression];
+        MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.getPlacementID);
+        MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.getPlacementID);
+        [self.delegate inlineAdAdapter:self didLoadAdWithAdView:bannerAdView];
+        [self.delegate inlineAdAdapterDidTrackImpression:self];
+         MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.getPlacementID);
         self.isAdCached = YES;
     } else {
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:nil];
+        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:nil];
     }
 }
 
 - (void)vungleAdWasTapped
 {
     MPLogInfo(@"Vungle video banner was tapped");
-    [self.delegate trackClick];
+    [self.delegate inlineAdAdapterWillBeginUserAction:self];
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.getPlacementID);
+    [self.delegate inlineAdAdapterDidTrackClick:self];
 }
 
 - (void)vungleAdDidFailToLoad:(NSError *)error
@@ -151,13 +159,13 @@
         MPLogInfo(@"Vungle video banner failed to load with error: %@", error.localizedDescription);
     }
     
-    [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:loadFailError];
+    [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:loadFailError];
 }
 
 - (void)vungleAdWillLeaveApplication
 {
     MPLogInfo(@"Vungle video banner will leave the application");
-    [self.delegate bannerCustomEventWillLeaveApplication:self];
+    [self.delegate inlineAdAdapterWillLeaveApplication:self];
 }
 
 - (NSString *)getPlacementID

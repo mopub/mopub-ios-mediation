@@ -3,12 +3,12 @@
 #elif __has_include(<MoPubSDKFramework/MoPub.h>)
     #import <MoPubSDKFramework/MoPub.h>
 #else
-    #import "MPBannerCustomEvent.h"
+    #import "MPInlineAdAdapter.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface MintegralBannerCustomEvent : MPBannerCustomEvent
+@interface MintegralBannerCustomEvent : MPInlineAdAdapter <MPThirdPartyInlineAdAdapter>
 
 @end
 

@@ -4,12 +4,12 @@
 #elif __has_include(<MoPubSDKFramework/MoPub.h>)
     #import <MoPubSDKFramework/MoPub.h>
 #else
-    #import "MPInterstitialCustomEvent.h"
+    #import "MPFullscreenAdAdapter.h"
 #endif
 
 /*
  * Please reference the Supported Mediation Partner page at http://bit.ly/2mqsuFH for the
  * latest version and ad format certifications.
  */
-@interface TapjoyInterstitialCustomEvent : MPInterstitialCustomEvent
+@interface TapjoyInterstitialCustomEvent : MPFullscreenAdAdapter <MPThirdPartyFullscreenAdAdapter>
 @end

@@ -39,7 +39,17 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
     return self;
 }
 
-- (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary<NSString *, id> *)info adMarkup:(NSString *)adMarkup
+- (BOOL)isRewardExpected
+{
+    return YES;
+}
+
+- (BOOL)hasAdAvailable
+{
+    return self.adReady;
+}
+
+- (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.siteId);
     
@@ -47,9 +57,6 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
     
     self.adReady = NO;
     self.isVideoCompletionEventCalled = NO;
-    
-    __strong __typeof__(self.delegate) delegate = self.delegate;
-    
     self.siteId = info[kMoPubVASAdapterSiteId];
     NSString *placementId = info[kMoPubVASAdapterPlacementId];
     
@@ -61,7 +68,7 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
                                            description:[NSString stringWithFormat:@"Error occurred while fetching content for requestor [%@]", NSStringFromClass([self class])]
                                             underlying:nil];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.siteId);
-        [delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
         return;
     }
     
@@ -74,7 +81,7 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
                                            description:[NSString stringWithFormat:@"VAS adapter not properly intialized yet."]
                                             underlying:nil];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.siteId);
-        [delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
         return;
     }
     
@@ -93,7 +100,7 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
                                             underlying:nil];
         
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.siteId);
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
         
         return;
     }
@@ -104,12 +111,7 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
     [self.interstitialAdFactory load:self];
 }
 
-- (BOOL)hasAdAvailable
-{
-    return self.adReady;
-}
-
-- (void)presentRewardedVideoFromViewController:(UIViewController *)viewController
+- (void)presentAdFromViewController:(UIViewController *)viewController
 {
     if([self hasAdAvailable])
     {
@@ -119,7 +121,7 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.siteId);
         MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.siteId);
         
-        [self.delegate rewardedVideoWillAppearForCustomEvent:self];
+        [self.delegate fullscreenAdAdapterAdWillAppear:self];
     }
     else
     {
@@ -129,25 +131,24 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
                                            description:[NSString stringWithFormat:@"No video available for playback."]
                                             underlying:nil];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.siteId);
-        [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
+        [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
         return;
     }
 }
 
-- (void)handleCustomEventInvalidated
+- (void)handleDidInvalidateAd
 {
     [self.interstitialAd destroy];
     self.interstitialAd = nil;
-    self.delegate = nil;
 }
 
-- (void)handleAdPlayedForCustomEventNetwork
+- (void)handleDidPlayAd
 {
     // If we no longer have an ad available, report back up to the application that this ad expired.
     if (![self hasAdAvailable]) {
         MPLogDebug(@"Ad expired.");
         
-        [self.delegate rewardedVideoDidExpireForCustomEvent:self];
+        [self.delegate fullscreenAdAdapterDidExpire:self];
     }
 }
 
@@ -165,14 +166,9 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
 {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.siteId);
     
-    __weak __typeof__(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        __strong __typeof__(self) strongSelf = weakSelf;
-        if (strongSelf != nil)
-        {
-            [strongSelf.delegate rewardedVideoDidReceiveTapEventForCustomEvent:strongSelf];
-            [strongSelf.delegate trackClick];
-        }
+        [self.delegate fullscreenAdAdapterDidTrackClick:self];
+        [self.delegate fullscreenAdAdapterDidReceiveTap:self];
     });
 }
 
@@ -181,16 +177,10 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.siteId);
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.siteId);
     
-    __weak __typeof__(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        __strong __typeof__(self) strongSelf = weakSelf;
-        if (strongSelf != nil)
-        {
-            [strongSelf.delegate rewardedVideoWillDisappearForCustomEvent:strongSelf];
-            [strongSelf.delegate rewardedVideoDidDisappearForCustomEvent:strongSelf];
-            strongSelf.interstitialAd = nil;
-            strongSelf.delegate = nil;
-        }
+        [self.delegate fullscreenAdAdapterAdWillDisappear:self];
+        [self.delegate fullscreenAdAdapterAdDidDisappear:self];
+        self.interstitialAd = nil;
     });
 }
 
@@ -198,13 +188,8 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
 {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:errorInfo], self.siteId);
     
-    __weak __typeof__(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        __strong __typeof__(self) strongSelf = weakSelf;
-        if (strongSelf != nil)
-        {
-            [strongSelf.delegate rewardedVideoDidFailToPlayForCustomEvent:strongSelf error:errorInfo];
-        }
+        [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:errorInfo];
     });
 }
 
@@ -212,13 +197,8 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
 {
     MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], self.siteId);
     
-    __weak __typeof__(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        __strong __typeof__(self) strongSelf = weakSelf;
-        if (strongSelf != nil)
-        {
-            [strongSelf.delegate rewardedVideoWillLeaveApplicationForCustomEvent:strongSelf];
-        }
+        [self.delegate fullscreenAdAdapterWillLeaveApplication:self];
     });
 }
 
@@ -228,14 +208,9 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.siteId);
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.siteId);
     
-    __weak __typeof__(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        __strong __typeof__(self) strongSelf = weakSelf;
-        if (strongSelf != nil)
-        {
-            [strongSelf.delegate rewardedVideoDidAppearForCustomEvent:strongSelf];
-            [strongSelf.delegate trackImpression];
-        }
+        [self.delegate fullscreenAdAdapterDidTrackImpression:self];
+        [self.delegate fullscreenAdAdapterAdDidAppear:self];
     });
 }
 
@@ -244,17 +219,11 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
     MPLogTrace(@"VAS interstitialAdEvent: %@, source: %@, eventId: %@, arguments: %@", interstitialAdEvent, source, eventId, arguments);
     
     if ([eventId isEqualToString:kMoPubVASAdapterVideoCompleteEventId]
-        && !self.isVideoCompletionEventCalled
-        ) {
-        __weak __typeof__(self) weakSelf = self;
+        && !self.isVideoCompletionEventCalled) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            __strong __typeof__(self) strongSelf = weakSelf;
-            if (strongSelf != nil)
-            {
-                MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyAmount:@1];
-                [strongSelf.delegate rewardedVideoShouldRewardUserForCustomEvent:strongSelf reward:reward];
-                strongSelf.isVideoCompletionEventCalled = YES;
-            }
+            MPReward *reward = [[MPReward alloc] initWithCurrencyAmount:@1];
+            [self.delegate fullscreenAdAdapter:self willRewardUser:reward];
+            self.isVideoCompletionEventCalled = YES;
         });
     }
 }
@@ -273,13 +242,8 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
 {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:errorInfo], self.siteId);
     
-    __weak __typeof__(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        __strong __typeof__(self) strongSelf = weakSelf;
-        if (strongSelf != nil)
-        {
-            [strongSelf.delegate rewardedVideoDidFailToLoadAdForCustomEvent:strongSelf error:errorInfo];
-        }
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:errorInfo];
     });
 }
 
@@ -287,15 +251,10 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
 {
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.siteId);
     
-    __weak __typeof__(self) weakSelf = self;
     dispatch_async(dispatch_get_main_queue(), ^{
-        __strong __typeof__(self) strongSelf = weakSelf;
-        if (strongSelf != nil)
-        {
-            strongSelf.interstitialAd = interstitialAd;
-            strongSelf.adReady = YES;
-            [strongSelf.delegate rewardedVideoDidLoadAdForCustomEvent:strongSelf];
-        }
+        self.interstitialAd = interstitialAd;
+        self.adReady = YES;
+        [self.delegate fullscreenAdAdapterDidLoadAd:self];
     });
 }
 

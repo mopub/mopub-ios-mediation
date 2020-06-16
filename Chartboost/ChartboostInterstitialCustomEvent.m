@@ -17,7 +17,22 @@
 
 #pragma mark - MPInterstitialCustomEvent
 
-- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
+- (BOOL)isRewardExpected
+{
+    return NO;
+}
+
+- (BOOL)hasAdAvailable
+{
+    return self.ad.isCached;
+}
+
+- (BOOL)enableAutomaticImpressionAndClickTracking
+{
+    return NO;
+}
+
+- (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     NSString *location = [info objectForKey:@"location"];
     location = location.length > 0 ? location : CBLocationDefault;
@@ -32,7 +47,7 @@
         if (!initialized) {
             NSError *error = [NSError adRequestFailedDueToSDKStartWithAdOfType:@"interstitial"];
             MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], location);
-            [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+            [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
             return;
         }
         
@@ -42,7 +57,7 @@
     }];
 }
 
-- (void)showInterstitialFromRootViewController:(UIViewController *)viewController
+- (void)presentAdFromViewController:(UIViewController *)viewController
 {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.ad.location);
     [self.ad showFromViewController:viewController];
@@ -55,17 +70,17 @@
     if (error) {
         NSError *nserror = [NSError errorWithCacheEvent:event error:error];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:nserror], event.ad.location);
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:nserror];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:nserror];
     } else {
         MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], event.ad.location);
-        [self.delegate interstitialCustomEvent:self didLoadAd:nil];
+        [self.delegate fullscreenAdAdapterDidLoadAd:self];
     }
 }
 
 - (void)willShowAd:(CHBShowEvent *)event
 {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], event.ad.location);
-    [self.delegate interstitialCustomEventWillAppear:self];
+    [self.delegate fullscreenAdAdapterAdWillAppear:self];
 }
 
 - (void)didShowAd:(CHBShowEvent *)event error:(CHBShowError *)error
@@ -73,11 +88,13 @@
     if (error) {
         NSError *nserror = [NSError errorWithShowEvent:event error:error];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:nserror], self.ad.location);
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:nserror];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:nserror];
     } else {
         MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], event.ad.location);
         MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], event.ad.location);
-        [self.delegate interstitialCustomEventDidAppear:self];
+        [self.delegate fullscreenAdAdapterAdDidAppear:self];
+        
+        [self.delegate fullscreenAdAdapterDidTrackImpression:self];
     }
 }
 
@@ -86,17 +103,20 @@
     if (error) {
         NSError *nserror = [NSError errorWithClickEvent:event error:error];
         MPLogAdEvent([MPLogEvent error:nserror message:nil], event.ad.location);
+    } else {
+       [self.delegate fullscreenAdAdapterDidTrackClick:self];
     }
+    
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], event.ad.location);
-    [self.delegate interstitialCustomEventDidReceiveTapEvent:self];
+    [self.delegate fullscreenAdAdapterDidReceiveTap:self];
 }
 
 - (void)didDismissAd:(CHBDismissEvent *)event
 {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], event.ad.location);
-    [self.delegate interstitialCustomEventWillDisappear:self];
+    [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], event.ad.location);
-    [self.delegate interstitialCustomEventDidDisappear:self];
+    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
 }
 
 @end
