@@ -151,6 +151,7 @@
     [self.delegate inlineAdAdapterWillBeginUserAction:self];
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.getPlacementID);
     [self.delegate inlineAdAdapterDidTrackClick:self];
+    [self.delegate inlineAdAdapterDidEndUserAction:self];
 }
 
 - (void)vungleAdDidFailToLoad:(NSError *)error
