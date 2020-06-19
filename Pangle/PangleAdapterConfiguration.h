@@ -36,6 +36,21 @@ extern NSString * const kPanglePlacementIdKey;
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration
                                   complete:(void(^ _Nullable)(NSError * _Nullable))complete;
+
+
+// optional: Set userId for reward ad.
++ (void)setUserId:(NSString *)userId;
++ (NSString *)userId;
+// optional: Set rewardName for reward ad.
++ (void)setRewardName:(NSString *)rewardName;
++ (NSString *)rewardName;
+//optional: Set rewardAmount for reward ad.
++ (void)setRewardAmount:(NSInteger)rewardAmount;
++ (NSInteger)rewardAmount;
+//optional: Set extra for reward ad.
++ (void)setExtra:(NSString *)extra;
++ (NSString *)extra;
+
 @end
 
 NS_ASSUME_NONNULL_END

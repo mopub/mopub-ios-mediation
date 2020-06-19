@@ -59,7 +59,18 @@
     
     BURewardedVideoModel *model = [[BURewardedVideoModel alloc] init];
     model.userId = self.adPlacementId;
-    
+    if (BUCheckValidString([PangleAdapterConfiguration userId])) {
+        model.userId = [PangleAdapterConfiguration userId];
+    }
+    if (BUCheckValidString([PangleAdapterConfiguration rewardName])) {
+        model.rewardName = [PangleAdapterConfiguration rewardName];
+    }
+    if ([PangleAdapterConfiguration rewardAmount] != 0) {
+        model.rewardAmount = [PangleAdapterConfiguration rewardAmount];
+    }
+    if (BUCheckValidString([PangleAdapterConfiguration extra])) {
+        model.extra = [PangleAdapterConfiguration extra];
+    }
     BURewardedVideoAd *RewardedVideoAd = [[BURewardedVideoAd alloc] initWithSlotID:self.adPlacementId rewardedVideoModel:model];
     RewardedVideoAd.delegate = self;
     self.rewardVideoAd = RewardedVideoAd;
@@ -144,7 +155,8 @@
 
 - (void)rewardedVideoAdServerRewardDidSucceed:(BURewardedVideoAd *)rewardedVideoAd verify:(BOOL)verify {
     if (verify) {
-        MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyType:kMPRewardedVideoRewardCurrencyTypeUnspecified amount: @(kMPRewardedVideoRewardCurrencyAmountUnspecified)];
+        NSString *currencyType = BUCheckValidString(rewardedVideoAd.rewardedVideoModel.rewardName) ? rewardedVideoAd.rewardedVideoModel.rewardName :kMPRewardedVideoRewardCurrencyTypeUnspecified;
+        MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyType:currencyType amount: @(rewardedVideoAd.rewardedVideoModel.rewardAmount)];
         MPLogEvent([MPLogEvent adShouldRewardUserWithReward:reward]);
         [self.delegate fullscreenAdAdapter:self willRewardUser:reward];
     } else {
