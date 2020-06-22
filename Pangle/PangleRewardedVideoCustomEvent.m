@@ -68,9 +68,10 @@
     if ([PangleAdapterConfiguration rewardAmount] != 0) {
         model.rewardAmount = [PangleAdapterConfiguration rewardAmount];
     }
-    if (BUCheckValidString([PangleAdapterConfiguration extra])) {
-        model.extra = [PangleAdapterConfiguration extra];
+    if (BUCheckValidString([PangleAdapterConfiguration mediaExtra])) {
+        model.extra = [PangleAdapterConfiguration mediaExtra];
     }
+    
     BURewardedVideoAd *RewardedVideoAd = [[BURewardedVideoAd alloc] initWithSlotID:self.adPlacementId rewardedVideoModel:model];
     RewardedVideoAd.delegate = self;
     self.rewardVideoAd = RewardedVideoAd;

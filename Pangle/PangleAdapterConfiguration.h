@@ -48,8 +48,8 @@ extern NSString * const kPanglePlacementIdKey;
 + (void)setRewardAmount:(NSInteger)rewardAmount;
 + (NSInteger)rewardAmount;
 //optional: Set extra for reward ad.
-+ (void)setExtra:(NSString *)extra;
-+ (NSString *)extra;
++ (void)setMediaExtra:(NSString *)extra;
++ (NSString *)mediaExtra;
 
 @end
 
