@@ -66,7 +66,7 @@
     [[VungleRouter sharedRouter] requestBannerAdWithCustomEventInfo:info size:self.bannerSize delegate:self];
 }
 
-- (void) invalidate
+- (void)dealloc
 {
     [[VungleRouter sharedRouter] invalidateBannerAdViewForPlacementID:self.placementId
                                                              delegate:self];
