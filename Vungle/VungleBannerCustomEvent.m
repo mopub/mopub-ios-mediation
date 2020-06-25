@@ -26,6 +26,8 @@
 
 @implementation VungleBannerCustomEvent
 
+@synthesize bannerState;
+
 - (BOOL)enableAutomaticImpressionAndClickTracking
 {
     return NO;
@@ -68,8 +70,9 @@
 
 - (void)dealloc
 {
-    [[VungleRouter sharedRouter] invalidateBannerAdViewForPlacementID:self.placementId
-                                                             delegate:self];
+    if (self.bannerState == BannerRouterDelegateStatePlaying) {
+        [[VungleSDK sharedSDK] finishDisplayingAd:self.placementId];
+    }
 }
 
 - (CGSize)sizeForCustomEventInfo:(CGSize)size
@@ -130,10 +133,13 @@
     
     UIView *bannerAdView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.bannerSize.width, self.bannerSize.height)];
     
-    bannerAdView = [[VungleRouter sharedRouter] renderBannerAdInView:bannerAdView options:self.options forPlacementID:self.placementId size:self.bannerSize];
-    
+    bannerAdView = [[VungleRouter sharedRouter] renderBannerAdInView:bannerAdView
+                                                            delegate:self
+                                                             options:self.options
+                                                      forPlacementID:self.placementId
+                                                                size:self.bannerSize];
+
     if (bannerAdView) {
-        [[VungleRouter sharedRouter] completeBannerAdViewForPlacementID:self.placementId];
         MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.getPlacementID);
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.getPlacementID);
         [self.delegate inlineAdAdapter:self didLoadAdWithAdView:bannerAdView];
