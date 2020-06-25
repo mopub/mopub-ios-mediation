@@ -43,16 +43,26 @@ extern const CGSize kVNGLeaderboardBannerSize;
 - (NSString *)currentSuperToken;
 - (void)presentInterstitialAdFromViewController:(UIViewController *)viewController options:(NSDictionary *)options forPlacementId:(NSString *)placementId;
 - (void)presentRewardedVideoAdFromViewController:(UIViewController *)viewController customerId:(NSString *)customerId settings:(VungleInstanceMediationSettings *)settings forPlacementId:(NSString *)placementId;
-- (UIView *)renderBannerAdInView:(UIView *)bannerView options:(NSDictionary *)options forPlacementID:(NSString *)placementID size:(CGSize)size;
-- (void)completeBannerAdViewForPlacementID:(NSString *)placementID;
-- (void)invalidateBannerAdViewForPlacementID:(NSString *)placementID
-                                    delegate:(id<VungleRouterDelegate>)delegate;
+- (UIView *)renderBannerAdInView:(UIView *)bannerView
+                        delegate:(id<VungleRouterDelegate>)delegate
+                         options:(NSDictionary *)options
+                  forPlacementID:(NSString *)placementID
+                            size:(CGSize)size;
 - (void)updateConsentStatus:(VungleConsentStatus)status;
 - (VungleConsentStatus) getCurrentConsentStatus;
 - (void)clearDelegateForPlacementId:(NSString *)placementId;
 - (void)clearDelegateForRequestingBanner;
 
 @end
+
+typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
+    BannerRouterDelegateStateRequesting,
+    BannerRouterDelegateStateCached,
+    BannerRouterDelegateStatePlaying,
+    BannerRouterDelegateStateClosing,
+    BannerRouterDelegateStateClosed,
+    BannerRouterDelegateStateUnknown
+};
 
 @protocol VungleRouterDelegate <NSObject>
 
@@ -74,5 +84,7 @@ extern const CGSize kVNGLeaderboardBannerSize;
 - (void)vungleBannerAdDidLoadInView:(UIView *)view;
 
 - (CGSize)getBannerSize;
+
+@property(nonatomic) BannerRouterDelegateState bannerState;
 
 @end
