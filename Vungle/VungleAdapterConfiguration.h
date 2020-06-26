@@ -30,10 +30,10 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)updateInitializationParameters:(NSDictionary *)parameters;
 
 // MPAdapterConfiguration
-@property (nonatomic, copy, readonly) NSString *adapterVersion;
-@property (nonatomic, copy, readonly) NSString *biddingToken;
-@property (nonatomic, copy, readonly) NSString *moPubNetworkName;
-@property (nonatomic, copy, readonly) NSString *networkSdkVersion;
+@property (nonatomic, copy, readonly) NSString * adapterVersion;
+@property (nonatomic, copy, readonly) NSString * biddingToken;
+@property (nonatomic, copy, readonly) NSString * moPubNetworkName;
+@property (nonatomic, copy, readonly) NSString * networkSdkVersion;
 
 @property (nonatomic) BOOL shouldCollectDeviceId;
 

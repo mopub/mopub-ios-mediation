@@ -111,7 +111,7 @@
     }
 }
 
-- (void)invalidate
+- (void)dealloc
 {
     [[VungleRouter sharedRouter] clearDelegateForPlacementId:self.placementId];
 }
@@ -156,8 +156,8 @@
 - (void)vungleAdTrackClick
 {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
-    [self.delegate fullscreenAdAdapterDidReceiveTap:self];
     [self.delegate fullscreenAdAdapterDidTrackClick:self];
+    [self.delegate fullscreenAdAdapterDidReceiveTap:self];
 }
 
 - (void)vungleAdWillLeaveApplication

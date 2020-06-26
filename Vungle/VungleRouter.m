@@ -16,18 +16,18 @@
 #import "VungleInstanceMediationSettings.h"
 #import "VungleRouter.h"
 
-NSString * const kVungleAppIdKey = @"appId";
-NSString * const kVunglePlacementIdKey = @"pid";
-NSString * const kVungleFlexViewAutoDismissSeconds = @"flexViewAutoDismissSeconds";
-NSString * const kVungleUserId = @"userId";
-NSString * const kVungleOrdinal = @"ordinal";
-NSString * const kVungleStartMuted = @"muted";
-NSString * const kVungleSupportedOrientations = @"orientations";
+NSString *const kVungleAppIdKey = @"appId";
+NSString *const kVunglePlacementIdKey = @"pid";
+NSString *const kVungleFlexViewAutoDismissSeconds = @"flexViewAutoDismissSeconds";
+NSString *const kVungleUserId = @"userId";
+NSString *const kVungleOrdinal = @"ordinal";
+NSString *const kVungleStartMuted = @"muted";
+NSString *const kVungleSupportedOrientations = @"orientations";
 
-NSString * const kVungleSDKCollectDevice = @"collectDevice";
-NSString * const kVungleSDKMinSpaceForInit = @"vungleMinimumFileSystemSizeForInit";
-NSString * const kVungleSDKMinSpaceForAdRequest = @"vungleMinimumFileSystemSizeForAdRequest";
-NSString * const kVungleSDKMinSpaceForAssetLoad = @"vungleMinimumFileSystemSizeForAssetDownload";
+NSString *const kVungleSDKCollectDevice = @"collectDevice";
+NSString *const kVungleSDKMinSpaceForInit = @"vungleMinimumFileSystemSizeForInit";
+NSString *const kVungleSDKMinSpaceForAdRequest = @"vungleMinimumFileSystemSizeForAdRequest";
+NSString *const kVungleSDKMinSpaceForAssetLoad = @"vungleMinimumFileSystemSizeForAssetDownload";
 
 const CGSize kVNGMRECSize = {.width = 300.0f, .height = 250.0f};
 const CGSize kVNGBannerSize = {.width = 320.0f, .height = 50.0f};
