@@ -45,15 +45,15 @@ static NSString * const kChartboostAppSignatureKey = @"appSignature";
     if ([mopub isGDPRApplicable] == MPBoolYes) {
         if ([mopub allowLegitimateInterest]) {
             if ([mopub currentConsentStatus] == MPConsentStatusDenied || [mopub currentConsentStatus] == MPConsentStatusDoNotTrack) {
-                [Chartboost setPIDataUseConsent:NoBehavioral];
+                [Chartboost addDataUseConsent:[CHBGDPRDataUseConsent gdprConsent:CHBGDPRConsentNonBehavioral]];
             } else {
-                [Chartboost setPIDataUseConsent:YesBehavioral];
+                [Chartboost addDataUseConsent:[CHBGDPRDataUseConsent gdprConsent:CHBGDPRConsentBehavioral]];
             }
         } else {
             if ([mopub canCollectPersonalInfo]) {
-                [Chartboost setPIDataUseConsent:YesBehavioral];
+                [Chartboost addDataUseConsent:[CHBGDPRDataUseConsent gdprConsent:CHBGDPRConsentBehavioral]];
             } else {
-                [Chartboost setPIDataUseConsent:NoBehavioral];
+                [Chartboost addDataUseConsent:[CHBGDPRDataUseConsent gdprConsent:CHBGDPRConsentNonBehavioral]];
             }
         }
     }
