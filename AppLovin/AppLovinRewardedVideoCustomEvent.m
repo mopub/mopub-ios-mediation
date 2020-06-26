@@ -30,6 +30,7 @@
 @property (nonatomic, strong) ALIncentivizedInterstitialAd *incent;
 
 @property (nonatomic, assign) BOOL fullyWatched;
+@property (nonatomic, assign) BOOL didFireLoadDelegate;
 @property (nonatomic, strong) MPReward *reward;
 @property (nonatomic, assign, getter=isTokenEvent) BOOL tokenEvent;
 @property (nonatomic, strong) ALAd *tokenAd;
@@ -81,6 +82,7 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
+    self.didFireLoadDelegate = false;
     // Collect and pass the user's consent from MoPub onto the AppLovin SDK
     if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
         BOOL canCollectPersonalInfo = [[MoPub sharedInstance] canCollectPersonalInfo];
@@ -185,11 +187,15 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
         self.tokenAd = ad;
     }
     
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [self.delegate fullscreenAdAdapterDidLoadAd:self];
+    if (!self.didFireLoadDelegate)
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate fullscreenAdAdapterDidLoadAd:self];
         
-        MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    });
+            MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+            self.didFireLoadDelegate = true;
+        });
+    }
 }
 
 - (void)adService:(ALAdService *)adService didFailToLoadAdWithError:(int)code

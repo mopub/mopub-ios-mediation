@@ -7,10 +7,13 @@
 #import "MoPub.h"
 #endif
 
-@class VASCreativeInfo;
+@class VASCreativeInfo, VASErrorInfo, VASBid;
 
 @interface MPVerizonRewardedVideoCustomEvent : MPFullscreenAdAdapter <MPThirdPartyFullscreenAdAdapter>
 
 @property (nonatomic, readonly, nullable) VASCreativeInfo* creativeInfo;
+
++ (void)requestBidWithPlacementId:(nonnull NSString *)placementId
+                       completion:(void (^_Nonnull)(VASBid * _Nullable bid, VASErrorInfo * _Nullable error))completion;
 
 @end

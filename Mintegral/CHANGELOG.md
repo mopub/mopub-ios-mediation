@@ -1,4 +1,7 @@
 ## Changelog
+ * 6.3.2.0.0
+    * This version of the adapters has been certified with Mintegral 6.3.2.0 and MoPub 5.13.0.
+
  * 6.2.0.0.2
     * Refactor non-native adapter classes to use the new consolidated API from MoPub.
     * To use this and newer adapter versions, you must use MoPub 5.13.0 or newer.

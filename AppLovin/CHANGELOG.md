@@ -1,4 +1,10 @@
 ## Changelog
+   * 6.12.8.1
+     * Add didFireLoadDelegate logic to prevent redundent logging for fill metrics. 
+
+   * 6.12.8.0
+     * This version of the adapters has been certified with AppLovin SDK 6.12.8 and MoPub SDK 5.13.0.
+
    * 6.12.6.1
      * Refactor non-native adapter classes to use the new consolidated API from MoPub.
      * To use this and newer adapter versions, you must use MoPub 5.13.0 or newer.
