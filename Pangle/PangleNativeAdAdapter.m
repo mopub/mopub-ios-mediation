@@ -27,6 +27,7 @@
 - (NSDictionary *)nativeAdToDictionary:(BUNativeAd *)nativeAd {
     self.nativeAd = nativeAd;
     self.nativeAd.delegate = self;
+    
     NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
     [dictionary setValue:nativeAd.data.AdTitle forKey:kAdTitleKey];
     [dictionary setValue:nativeAd.data.AdDescription forKey:kAdTextKey];

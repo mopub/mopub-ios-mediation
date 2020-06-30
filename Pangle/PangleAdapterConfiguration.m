@@ -11,7 +11,7 @@ static NSString *mRewardName;
 static NSInteger mRewardAmount;
 static NSString *mMediaExtra;
 
-static NSString * const kAdapterVersion = @"3.0.0.7.1";
+static NSString * const kAdapterVersion = @"3.0.0.7.0";
 static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-pangle-adapters";
 
 typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
@@ -37,9 +37,7 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration complete:(void(^)(NSError *))complete {
-    NSString *appId = configuration[kPangleAppIdKey];
-    
-    if (configuration.count == 0 || !BUCheckValidString(appId)) {
+    if (configuration.count == 0 || !BUCheckValidString(configuration[kPangleAppIdKey])) {
         NSError *error = [NSError errorWithDomain:kAdapterErrorDomain
                                              code:PangleAdapterErrorCodeMissingIdKey
                                          userInfo:@{NSLocalizedDescriptionKey:
@@ -51,15 +49,15 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
             dispatch_async(dispatch_get_main_queue(), ^{
-                [BUAdSDKManager setAppID:appId];
+                [BUAdSDKManager setAppID:configuration[kPangleAppIdKey]];
+                
                 MPBLogLevel logLevel = [MPLogging consoleLogLevel];
                 BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
                 
                 [BUAdSDKManager setLoglevel:(verboseLoggingEnabled == true ? BUAdSDKLogLevelDebug : BUAdSDKLogLevelNone)];
                 if ([[MoPub sharedInstance] isGDPRApplicable] != MPBoolUnknown) {
                     BOOL canCollectPersonalInfo =  [[MoPub sharedInstance] canCollectPersonalInfo];
-                    /// Custom set the GDPR of the user,GDPR is the short of General Data Protection Regulation,the interface only works in The European.
-                    /// @params GDPR 0 close privacy protection, 1 open privacy protection
+                    
                     [BUAdSDKManager setGDPR:canCollectPersonalInfo ? 0 : 1];
                 }
                 if (complete != nil) {
@@ -70,31 +68,35 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
     }
 }
 
-// Optional: Set userId for reward ad.
+// Set optional data for rewarded ad
 + (void)setUserId:(NSString *)userId {
     mUserId = userId;
 }
+
 + (NSString *)userId {
     return mUserId;
 }
-// Optional: Set rewardName for reward ad.
+
 + (void)setRewardName:(NSString *)rewardName {
     mRewardName = rewardName;
 }
+
 + (NSString *)rewardName {
     return mRewardName;
 }
-// Optional: Set rewardAmount for reward ad.
+
 + (void)setRewardAmount:(NSInteger)rewardAmount {
     mRewardAmount = rewardAmount;
 }
+
 + (NSInteger)rewardAmount {
     return mRewardAmount;
 }
-// Optional: Set extra for reward ad.
+
 + (void)setMediaExtra:(NSString *)mediaExtra {
     mMediaExtra = mediaExtra;
 }
+
 + (NSString *)extra {
     return mMediaExtra;
 }
