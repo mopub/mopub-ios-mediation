@@ -10,14 +10,14 @@
 #elif __has_include(<MoPubSDKFramework/MoPub.h>)
     #import <MoPubSDKFramework/MoPub.h>
 #else
-    #import "MPInterstitialCustomEvent.h"
+    #import "MPFullscreenAdAdapter.h"
 #endif
 
 /*
  * The Vungle SDK does not provide an "application will leave" callback, thus this custom event
  * will not invoke the interstitialCustomEventWillLeaveApplication: delegate method.
  */
-@interface VungleInterstitialCustomEvent : MPInterstitialCustomEvent
+@interface VungleInterstitialCustomEvent : MPFullscreenAdAdapter <MPThirdPartyFullscreenAdAdapter>
 
 /**
  * Use the MoPub website to set your app ID in your network settings for Vungle.

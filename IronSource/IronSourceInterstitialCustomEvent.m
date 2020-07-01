@@ -17,13 +17,22 @@
 
 @implementation IronSourceInterstitialCustomEvent
 
-#pragma mark MoPub IronSourceInterstitialCustomEvent Methods
-
 - (NSString *) getAdNetworkId {
     return _instanceId;
 }
 
-- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
+#pragma mark - MPFullscreenAdAdapter Override
+
+- (BOOL)isRewardExpected {
+    return NO;
+}
+
+- (BOOL)enableAutomaticImpressionAndClickTracking
+{
+    return NO;
+}
+
+- (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     MPLogInfo(@"Attempting to send ad request to IronSource:requestInterstitialWithCustomEventInfo");
     
     // Collect and pass the user's consent from MoPub onto the ironSource SDK
@@ -41,7 +50,7 @@
                                      andSuggestion:@"make sure that server parameters are added"];
             
             MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.instanceId);
-            [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+            [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
             return;
         }
         
@@ -68,23 +77,23 @@
                                      andSuggestion:@"Make sure that 'applicationKey' server parameter is added"];
             
             MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-            [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+            [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
         }
     } @catch (NSException *exception) {
         MPLogInfo(@"IronSource Interstitial initialization with error: %@", exception);
 
         NSError *error = [NSError errorWithDomain:@"MoPubInterstitialSDKDomain" code:MOPUBErrorAdapterInvalid userInfo:@{NSLocalizedDescriptionKey: @"Custom event class Interstitial error.", NSLocalizedRecoverySuggestionErrorKey: @"Native Network or Custom Event adapter was configured incorrectly."}];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error: error], [self getAdNetworkId]);
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     }
 }
 
-- (void)showInterstitialFromRootViewController:(UIViewController *)rootViewController {
+- (void)presentAdFromViewController:(UIViewController *)viewController {
     MPLogInfo(@"IronSource is attempting to show interstitial ad for instance %@",
               [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     
-    [[IronSourceManager sharedManager] presentInterstitialAdFromViewController:rootViewController instanceID:self.instanceId];
+    [[IronSourceManager sharedManager] presentInterstitialAdFromViewController:viewController instanceID:self.instanceId];
 }
 
 #pragma mark IronSource Methods
@@ -105,7 +114,7 @@
     MPLogInfo(@"IronSource interstitial did load for instance %@ (current instance %@)",
               instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], instanceId);
-    [self.delegate interstitialCustomEvent:self didLoadAd:nil];
+    [self.delegate fullscreenAdAdapterDidLoadAd:self];
 }
 
 /*!
@@ -115,7 +124,7 @@
     MPLogInfo(@"IronSource interstitial ad did fail to load with error: %@, instanceId: %@ (current instanceId is %@)",
               error.localizedDescription, instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], instanceId);
-    [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+    [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
 }
 
 /*!
@@ -125,11 +134,13 @@
     MPLogInfo(@"IronSource interstitial did open for instance %@ (current instance %@)",
               instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], instanceId);
-    [self.delegate interstitialCustomEventWillAppear:self];
+    [self.delegate fullscreenAdAdapterAdWillAppear:self];
     
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], instanceId);
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], instanceId);
-    [self.delegate interstitialCustomEventDidAppear:self];
+    [self.delegate fullscreenAdAdapterAdDidAppear:self];
+    
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
 /*!
@@ -139,10 +150,10 @@
     MPLogInfo(@"IronSource interstitial did close for instance %@ (current instance %@)",
               instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], instanceId);
-    [self.delegate interstitialCustomEventWillDisappear:self];
+    [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], instanceId);
-    [self.delegate interstitialCustomEventDidDisappear:self];
+    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
 }
 
 /*!
@@ -154,8 +165,7 @@
     MPLogInfo(@"IronSource interstitial did fail to show for instance %@ (current instance %@)",
               instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], instanceId);
-    [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
-
+    [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
 }
 
 /*!
@@ -165,9 +175,9 @@
     MPLogInfo(@"IronSource interstitial did click for instance %@ (current instance %@)",
               instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], instanceId);
-    [self.delegate interstitialCustomEventDidReceiveTapEvent:self];
-    [self.delegate interstitialCustomEventWillLeaveApplication:self];
+    [self.delegate fullscreenAdAdapterDidReceiveTap:self];
+    [self.delegate fullscreenAdAdapterWillLeaveApplication:self];
+    [self.delegate fullscreenAdAdapterDidTrackClick:self];
 }
 
 @end
-

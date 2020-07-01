@@ -10,7 +10,7 @@
 #import "UnityAdsAdapterConfiguration.h"
 #import "UnityRouter.h"
 #if __has_include("MoPub.h")
-    #import "MPRewardedVideoReward.h"
+    #import "MPReward.h"
     #import "MPRewardedVideoError.h"
     #import "MPLogging.h"
 #endif
@@ -42,13 +42,25 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     [[UnityRouter sharedRouter] initializeWithGameId:gameId];
 }
 
-- (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
+#pragma mark - MPFullscreenAdAdapter Override
+
+- (BOOL)isRewardExpected
+{
+    return YES;
+}
+
+- (BOOL)hasAdAvailable
+{
+    return [[UnityRouter sharedRouter] isAdAvailableForPlacementId:self.placementId];
+}
+
+- (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     NSString *gameId = [info objectForKey:kMPUnityRewardedVideoGameId];
     if (gameId == nil) {
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorInvalidCustomEvent userInfo:@{NSLocalizedDescriptionKey: @"Custom event class data did not contain gameId.", NSLocalizedRecoverySuggestionErrorKey: @"Update your MoPub custom event class data to contain a valid Unity Ads gameId."}];
 
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         return;
     }
@@ -63,7 +75,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 
     if (self.placementId == nil) {
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorInvalidCustomEvent userInfo:@{NSLocalizedDescriptionKey: @"Custom event class data did not contain placementId.", NSLocalizedRecoverySuggestionErrorKey: @"Update your MoPub custom event class data to contain a valid Unity Ads placementId."}];
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         return;
     }
@@ -72,49 +84,51 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
 }
 
-- (BOOL)hasAdAvailable
-{
-    return [[UnityRouter sharedRouter] isAdAvailableForPlacementId:self.placementId];
-}
-
-- (void)presentRewardedVideoFromViewController:(UIViewController *)viewController
+- (void)presentAdFromViewController:(UIViewController *)viewController
 {
     if ([self hasAdAvailable]) {
-        UnityAdsInstanceMediationSettings *settings = [self.delegate instanceMediationSettingsForClass:[UnityAdsInstanceMediationSettings class]];
-
-        NSString *customerId = [self.delegate customerIdForRewardedVideoCustomEvent:self];
-
+        UnityAdsInstanceMediationSettings *settings = [self.delegate fullscreenAdAdapter:self instanceMediationSettingsForClass:[UnityAdsInstanceMediationSettings class]];
+        
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-        [[UnityRouter sharedRouter] presentVideoAdFromViewController:viewController customerId:customerId placementId:self.placementId settings:settings delegate:self];
+        [[UnityRouter sharedRouter] presentVideoAdFromViewController:viewController
+                                                          customerId:[self.delegate customerIdForAdapter:self]
+                                                         placementId:self.placementId
+                                                            settings:settings
+                                                            delegate:self];
 
-        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     } else {
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
-        [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
+        [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
          MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     }
 }
 
-- (void)handleCustomEventInvalidated
+- (void)handleDidInvalidateAd
 {
     [[UnityRouter sharedRouter] clearDelegate:self];
 }
 
-- (void)handleAdPlayedForCustomEventNetwork
+- (void)handleDidPlayAd
 {
     // If we no longer have an ad available, report back up to the application that this ad expired.
     // We receive this message only when this ad has reported an ad has loaded and another ad unit
     // has played a video for the same ad network.
     if (![self hasAdAvailable]) {
-        [self.delegate rewardedVideoDidExpireForCustomEvent:self];
+        [self.delegate fullscreenAdAdapterDidExpire:self];
         MPLogAdEvent([MPLogEvent adExpiredWithTimeInterval:0], [self getAdNetworkId]);
-    }}
+    }
+}
+
+- (BOOL)enableAutomaticImpressionAndClickTracking
+{
+    return NO;
+}
 
 #pragma mark - UnityRouterDelegate
 
 - (void)unityAdsReady:(NSString *)placementId
 {
-    [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterDidLoadAd:self];
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
@@ -167,38 +181,47 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
             break;
     }
     NSError *adapterError = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorUnknown userInfo:@{NSLocalizedDescriptionKey: unityErrorMessage}];
-    [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:adapterError];
-     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:adapterError], [self getAdNetworkId]);
+    [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:adapterError];
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:adapterError], [self getAdNetworkId]);
 }
 
 - (void) unityAdsDidStart:(NSString *)placementId
 {
-    [self.delegate rewardedVideoWillAppearForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterAdWillAppear:self];
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 
-    [self.delegate rewardedVideoDidAppearForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterAdDidAppear:self];
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 - (void) unityAdsDidFinish:(NSString *)placementId withFinishState:(UnityAdsFinishState)state
 {
     if (state == kUnityAdsFinishStateCompleted) {
-        MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyType:kMPRewardedVideoRewardCurrencyTypeUnspecified amount:@(kMPRewardedVideoRewardCurrencyAmountUnspecified)];
-        [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:reward];
+        MPReward *reward = [[MPReward alloc] initWithCurrencyType:kMPRewardCurrencyTypeUnspecified
+                                                           amount:@(kMPRewardCurrencyAmountUnspecified)];
+        [self.delegate fullscreenAdAdapter:self willRewardUser:reward];
     }
-    [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
-    [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
+    
+    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate fullscreenAdAdapterAdWillDisappear:self];
+    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
 }
 
 - (void) unityAdsDidClick:(NSString *)placementId
 {
-    [self.delegate rewardedVideoDidReceiveTapEventForCustomEvent:self];
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate fullscreenAdAdapterDidReceiveTap:self];
+    [self.delegate fullscreenAdAdapterDidTrackClick:self];
+    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate fullscreenAdAdapterWillLeaveApplication:self];
 }
 
 - (void)unityAdsDidFailWithError:(NSError *)error
 {
-    [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+    [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
 }
 

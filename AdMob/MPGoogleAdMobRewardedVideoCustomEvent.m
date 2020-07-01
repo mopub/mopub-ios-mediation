@@ -4,7 +4,7 @@
 #if __has_include("MoPub.h")
 #import "MPLogging.h"
 #import "MPRewardedVideoError.h"
-#import "MPRewardedVideoReward.h"
+#import "MPReward.h"
 #endif
 
 @interface MPGoogleAdMobRewardedVideoCustomEvent () <GADRewardedAdDelegate>
@@ -23,7 +23,17 @@
     });
 }
 
-- (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
+#pragma mark - MPFullscreenAdAdapter
+
+- (BOOL)isRewardExpected {
+    return YES;
+}
+
+- (BOOL)hasAdAvailable {
+    return self.rewardedAd.isReady;
+}
+
+- (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     [self initializeSdkWithParameters:info];
     
     // Cache the network initialization parameters
@@ -37,7 +47,7 @@
                         userInfo:@{NSLocalizedDescriptionKey : @"Ad Unit ID cannot be nil."}];
         
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
         return;
     }
     
@@ -78,21 +88,17 @@
     self.rewardedAd = [[GADRewardedAd alloc] initWithAdUnitID:self.admobAdUnitId];
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
     [self.rewardedAd loadRequest:request completionHandler:^(GADRequestError *error){
-      if (error) {
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
-      } else {
-        MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-        [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
-      }
+        if (error) {
+            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+            [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
+        } else {
+            MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+            [self.delegate fullscreenAdAdapterDidLoadAd:self];
+        }
     }];
 }
 
-- (BOOL)hasAdAvailable {
-    return self.rewardedAd.isReady;
-}
-
-- (void)presentRewardedVideoFromViewController:(UIViewController *)viewController {
+- (void)presentAdFromViewController:(UIViewController *)viewController {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     
     if (self.rewardedAd.isReady) {
@@ -104,7 +110,7 @@
                           code:MPRewardedVideoAdErrorNoAdReady
                           userInfo:@{NSLocalizedDescriptionKey : @"Rewarded ad is not ready to be presented."}];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-        [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
+        [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
     }
 }
 
@@ -112,53 +118,50 @@
     return NO;
 }
 
-// MoPub's API includes this method because it's technically possible for two MoPub custom events or
+// MoPub's API includes this method because it's technically possible for two MoPub adapters or
 // adapters to wrap the same SDK and therefore both claim ownership of the same cached ad. The
-// method will be called if 1) this custom event has already invoked
-// rewardedVideoDidLoadAdForCustomEvent: on the delegate, and 2) some other custom event plays a
-// rewarded video ad. It's a way of forcing this custom event to double-check that its ad is
+// method will be called if 1) this adapter has already invoked
+// fullscreenAdAdapter:self handleAdEvent:MPFullscreenAdEventDidLoad on the delegate, and 2) some other adapter plays a
+// rewarded video ad. It's a way of forcing this adapter to double-check that its ad is
 // definitely still available and is not the one that just played. If the ad is still available, no
-// action is necessary. If it's not, this custom event should call
-// rewardedVideoDidExpireForCustomEvent: to let the MoPub SDK know that it's no longer ready to play
+// action is necessary. If it's not, this adapter should call
+// fullscreenAdAdapter:self handleAdEvent:MPFullscreenAdEventDidExpire to let the MoPub SDK know that it's no longer ready to play
 // and needs to load another ad. That event will be passed on to the publisher app, which can then
 // trigger another load.
-- (void)handleAdPlayedForCustomEventNetwork {
+- (void)handleDidPlayAd {
     if (!self.rewardedAd.isReady) {
-        // Sending rewardedVideoDidExpireForCustomEvent: callback because the reward-based video ad will
-        // not be available once its been presented.
-        [self.delegate rewardedVideoDidExpireForCustomEvent:self];
+        [self.delegate fullscreenAdAdapterDidExpire:self];
     }
 }
 
 #pragma mark - GADRewardedAdDelegate methods
 
 - (void)rewardedAd:(GADRewardedAd *)rewardedAd userDidEarnReward:(GADAdReward *)reward {
-    MPRewardedVideoReward *moPubReward =
-    [[MPRewardedVideoReward alloc] initWithCurrencyType:reward.type amount:reward.amount];
-    [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:moPubReward];
+    MPReward *moPubReward = [[MPReward alloc] initWithCurrencyType:reward.type amount:reward.amount];
+    [self.delegate fullscreenAdAdapter:self willRewardUser:moPubReward];
 }
 
 - (void)rewardedAdDidPresent:(GADRewardedAd *)rewardedAd {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate rewardedVideoWillAppearForCustomEvent:self];
-    [self.delegate rewardedVideoDidAppearForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterAdWillAppear:self];
+    [self.delegate fullscreenAdAdapterAdDidAppear:self];
     // Recording an impression after the reward-based video ad appears on the screen.
-    [self.delegate trackImpression];
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
 - (void)rewardedAd:(GADRewardedAd *)rewardedAd didFailToPresentWithError:(NSError *)error {
     MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-    [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
+    [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
 }
 
 - (void)rewardedAdDidDismiss:(GADRewardedAd *)rewardedAd {
   MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-  [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
+  [self.delegate fullscreenAdAdapterAdWillDisappear:self];
 
   MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-  [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
+  [self.delegate fullscreenAdAdapterAdDidDisappear:self];
 }
 
 - (NSString *) getAdNetworkId {

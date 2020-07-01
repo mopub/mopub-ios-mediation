@@ -11,7 +11,7 @@
 
 @interface MintegralInterstitialCustomEvent()<MTGInterstitialVideoDelegate, MTGBidInterstitialVideoDelegate>
 
-@property (nonatomic, copy) NSString *adUnitId;
+@property (nonatomic, copy) NSString *mintegralAdUnitId;
 @property (nonatomic, copy) NSString *adPlacementId;
 @property (nonatomic, strong) NSTimer *queryTimer;
 @property (nonatomic, copy) NSString *adm;
@@ -22,9 +22,14 @@
 
 @implementation MintegralInterstitialCustomEvent
 
-- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
+#pragma mark - MPFullscreenAdAdapter Override
+
+- (BOOL)isRewardExpected {
+    return NO;
+}
+
+- (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
-    MPLogInfo(@"requestInterstitialWithCustomEventInfo for Mintegral");
     NSString *appId = [info objectForKey:@"appId"];
     NSString *appKey = [info objectForKey:@"appKey"];
     NSString *unitId = [info objectForKey:@"unitId"];
@@ -40,12 +45,12 @@
         NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:-1500 userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
         
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
         
         return;
     }
     
-    self.adUnitId = unitId;
+    self.mintegralAdUnitId = unitId;
     self.adPlacementId = placementId;
     self.adm = adMarkup;
     
@@ -72,7 +77,7 @@
         [_mtgInterstitialVideoAdManager loadAd];
     }
     
-    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.adUnitId);
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.mintegralAdUnitId);
 }
 
 - (BOOL)enableAutomaticImpressionAndClickTracking
@@ -80,86 +85,61 @@
     return NO;
 }
 
-- (void)showInterstitialFromRootViewController:(UIViewController *)rootViewController
+- (void)presentAdFromViewController:(UIViewController *)viewController
 {
     if (self.adm) {
-        MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.adUnitId);
+        MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
         _ivBidAdManager.playVideoMute = [MintegralAdapterConfiguration isMute];
-        [_ivBidAdManager showFromViewController:rootViewController];
+        [_ivBidAdManager showFromViewController:viewController];
     } else {
-        MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.adUnitId);
+        MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
         _mtgInterstitialVideoAdManager.playVideoMute = [MintegralAdapterConfiguration isMute];
-        [_mtgInterstitialVideoAdManager showFromViewController:rootViewController];
+        [_mtgInterstitialVideoAdManager showFromViewController:viewController];
     }
 }
 
 #pragma mark - MVInterstitialVideoAdLoadDelegate
 - (void)onInterstitialVideoLoadSuccess:(MTGInterstitialVideoAdManager *_Nonnull)adManager
 {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(interstitialCustomEvent: didLoadAd:)]) {
-        MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.adUnitId);
-        [self.delegate interstitialCustomEvent:self didLoadAd:nil];
-    }
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+    [self.delegate fullscreenAdAdapterDidLoadAd:self];
 }
 
 - (void)onInterstitialVideoLoadFail:(nonnull NSError *)error adManager:(MTGInterstitialVideoAdManager *_Nonnull)adManager
 {
-    if (self.delegate && [self.delegate respondsToSelector:@selector(interstitialCustomEvent: didFailToLoadAdWithError:)]) {
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
-    }
+    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
+    [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
 }
 
 - (void)onInterstitialVideoShowSuccess:(MTGInterstitialVideoAdManager *_Nonnull)adManager
 {
-    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.adUnitId);
-    
-    if (self.delegate && [self.delegate respondsToSelector:@selector(interstitialCustomEventWillAppear:)]) {
-        MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.adUnitId);
-        [self.delegate interstitialCustomEventWillAppear:self ];
-    }
-    
-    if (self.delegate && [self.delegate respondsToSelector:@selector(interstitialCustomEventDidAppear:)]) {
-        MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.adUnitId);
-        [self.delegate interstitialCustomEventDidAppear:self ];
-    }
-    
-    if (self.delegate && [self.delegate respondsToSelector:@selector(trackImpression)]) {
-        [self.delegate trackImpression];
-    }
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
+    [self.delegate fullscreenAdAdapterAdWillAppear:self];
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+    [self.delegate fullscreenAdAdapterAdDidAppear:self];
 }
 
 - (void)onInterstitialVideoShowFail:(nonnull NSError *)error adManager:(MTGInterstitialVideoAdManager *_Nonnull)adManager
 {
-    MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.adUnitId);
-    [self.delegate interstitialCustomEventDidExpire:self];
+    MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.mintegralAdUnitId);
+    [self.delegate fullscreenAdAdapterDidExpire:self];
 }
 
 - (void)onInterstitialVideoAdClick:(MTGInterstitialVideoAdManager *_Nonnull)adManager{
-    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.adUnitId);
-    
-    if (self.delegate && [self.delegate respondsToSelector:@selector(trackClick)]) {
-        [self.delegate trackClick];
-    }
-    
-    if (self.delegate && [self.delegate respondsToSelector:@selector(interstitialCustomEventDidReceiveTapEvent:)]) {
-        [self.delegate interstitialCustomEventDidReceiveTapEvent:self ];
-    }
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+    [self.delegate fullscreenAdAdapterDidReceiveTap:self];
+    [self.delegate fullscreenAdAdapterDidTrackClick:self];
 }
 
 - (void)onInterstitialVideoAdDismissedWithConverted:(BOOL)converted adManager:(MTGInterstitialVideoAdManager *_Nonnull)adManager
 {
-    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.adUnitId);
+    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+    [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     
-    if (self.delegate && [self.delegate respondsToSelector:@selector(interstitialCustomEventWillDisappear:)]) {
-        [self.delegate interstitialCustomEventWillDisappear:self ];
-    }
-    
-    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.adUnitId);
-    
-    if (self.delegate && [self.delegate respondsToSelector:@selector(interstitialCustomEventDidDisappear:)]) {
-        [self.delegate interstitialCustomEventDidDisappear:self ];
-    }
+    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
 }
 
 @end

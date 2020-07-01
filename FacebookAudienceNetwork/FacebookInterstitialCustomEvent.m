@@ -29,14 +29,19 @@
 
 @implementation FacebookInterstitialCustomEvent
 
-@synthesize hasTrackedImpression = _hasTrackedImpression;
+#pragma mark - MPFullscreenAdAdapter Override
 
-- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info
+- (BOOL)isRewardExpected
 {
-    [self requestInterstitialWithCustomEventInfo:info adMarkup:nil];
+    return NO;
 }
 
-- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
+- (BOOL)hasAdAvailable
+{
+    return self.fbInterstitialAd.isAdValid;
+}
+
+- (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     self.fbPlacementId = [info objectForKey:@"placement_id"];
     if (self.fbPlacementId == nil) {
@@ -47,7 +52,7 @@
         
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
         
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
         
         return;
     }
@@ -72,24 +77,25 @@
     }
 }
 
-- (void)showInterstitialFromRootViewController:(UIViewController *)controller {
+- (void)presentAdFromViewController:(UIViewController *)viewController
+{
     if (!self.fbInterstitialAd || !self.fbInterstitialAd.isAdValid) {        
         NSError *error = [self createErrorWith:@"Error in loading Facebook Interstitial"
                                      andReason:@""
                                  andSuggestion:@""];    
         
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.fbPlacementId);
-        [self.delegate interstitialCustomEventDidExpire:self];
+        [self.delegate fullscreenAdAdapterDidExpire:self];
     } else {
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
 
         MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
-        [self.delegate interstitialCustomEventWillAppear:self];
+        [self.delegate fullscreenAdAdapterAdWillAppear:self];
 
-        [self.fbInterstitialAd showAdFromRootViewController:controller];
+        [self.fbInterstitialAd showAdFromRootViewController:viewController];
         
         MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
-        [self.delegate interstitialCustomEventDidAppear:self];
+        [self.delegate fullscreenAdAdapterAdDidAppear:self];
         
         [self cancelExpirationTimer];
     }
@@ -118,7 +124,7 @@
 
 -(void)cancelExpirationTimer
 {
-    if (_expirationTimer != nil)
+    if (self.expirationTimer != nil)
     {
         [self.expirationTimer invalidate];
         self.expirationTimer = nil;
@@ -132,14 +138,14 @@
     [self cancelExpirationTimer];
 
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
-    [self.delegate interstitialCustomEvent:self didLoadAd:interstitialAd];
+    [self.delegate fullscreenAdAdapterDidLoadAd:self];
     
     // introduce timer for 1 hour per expiration logic introduced by FB
     __weak __typeof__(self) weakSelf = self;
     self.expirationTimer = [[MPRealTimeTimer alloc] initWithInterval:FB_ADS_EXPIRATION_INTERVAL block:^(MPRealTimeTimer *timer){
         __strong __typeof__(weakSelf) strongSelf = weakSelf;
         if (strongSelf && !strongSelf.hasTrackedImpression) {
-            [strongSelf.delegate interstitialCustomEventDidExpire:strongSelf];
+            [strongSelf.delegate fullscreenAdAdapterDidExpire:self];
 
             NSError *error = [self createErrorWith:@"Facebook interstitial ad expired  per Audience Network's expiration policy"
                                          andReason:@""
@@ -160,8 +166,8 @@
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
     
     //set the tracker to true when the ad is shown on the screen. So that the timer is invalidated.
-    _hasTrackedImpression = true;
-    [self.delegate trackImpression];
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
+    self.hasTrackedImpression = true;
 }
 
 - (void)interstitialAd:(FBInterstitialAd *)interstitialAd didFailWithError:(NSError *)error
@@ -169,26 +175,26 @@
     [self cancelExpirationTimer];
 
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.fbPlacementId);
-    [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+    [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
 }
 
 - (void)interstitialAdDidClick:(FBInterstitialAd *)interstitialAd
 {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
-    [self.delegate trackClick];
-    [self.delegate interstitialCustomEventDidReceiveTapEvent:self];
+    [self.delegate fullscreenAdAdapterDidTrackClick:self];
+    [self.delegate fullscreenAdAdapterDidReceiveTap:self];
 }
 
 - (void)interstitialAdDidClose:(FBInterstitialAd *)interstitialAd
 {
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
-    [self.delegate interstitialCustomEventDidDisappear:self];
+    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
 }
 
 - (void)interstitialAdWillClose:(FBInterstitialAd *)interstitialAd
 {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
-    [self.delegate interstitialCustomEventWillDisappear:self];
+    [self.delegate fullscreenAdAdapterAdWillDisappear:self];
 }
 
 @end

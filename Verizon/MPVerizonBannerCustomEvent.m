@@ -32,7 +32,7 @@
     return self;
 }
 
-- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
+- (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     MPLogInfo(@"Requesting VAS banner with event info %@.", info);
     
@@ -48,7 +48,7 @@
                                             underlying:nil];
         
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
         return;
     }
     
@@ -62,7 +62,7 @@
                                             underlying:nil];
         
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
         return;
     }
     
@@ -119,7 +119,7 @@
         __strong __typeof__(self) strongSelf = weakSelf;
         if (strongSelf != nil)
         {
-            [strongSelf.delegate bannerCustomEvent:strongSelf didFailToLoadAdWithError:errorInfo];
+            [strongSelf.delegate inlineAdAdapter:strongSelf didFailToLoadAdWithError:errorInfo];
         }
     });
     
@@ -136,8 +136,8 @@
             self.inlineAd = inlineAd;
             
             inlineAd.frame = CGRectMake(0, 0, inlineAd.adSize.width, inlineAd.adSize.height);
-            [strongSelf.delegate bannerCustomEvent:strongSelf didLoadAd:inlineAd];
-            [strongSelf.delegate trackImpression];
+            [strongSelf.delegate inlineAdAdapter:strongSelf didLoadAdWithAdView:inlineAd];
+            [strongSelf.delegate inlineAdAdapterDidTrackImpression:strongSelf];
             
             MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
             MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
@@ -159,7 +159,7 @@
         __strong __typeof__(self) strongSelf = weakSelf;
         if (strongSelf != nil)
         {
-            [strongSelf.delegate bannerCustomEventWillBeginAction:strongSelf];
+            [strongSelf.delegate inlineAdAdapterWillBeginUserAction:strongSelf];
         }
     });
     
@@ -173,7 +173,7 @@
         __strong __typeof__(self) strongSelf = weakSelf;
         if (strongSelf != nil)
         {
-            [strongSelf.delegate bannerCustomEventDidFinishAction:strongSelf];
+            [strongSelf.delegate inlineAdAdapterDidEndUserAction:strongSelf];
         }
     });
     
@@ -187,11 +187,11 @@
         __strong __typeof__(self) strongSelf = weakSelf;
         if (strongSelf != nil)
         {
-            [strongSelf.delegate bannerCustomEventDidFinishAction:strongSelf];
+            [strongSelf.delegate inlineAdAdapterDidEndUserAction:strongSelf];
             
             if (!strongSelf.didTrackClick)
             {
-                [strongSelf.delegate trackClick];
+                [strongSelf.delegate inlineAdAdapterDidTrackClick:strongSelf];
                 strongSelf.didTrackClick = YES;
             }
         }
@@ -207,7 +207,7 @@
         __strong __typeof__(self) strongSelf = weakSelf;
         if (strongSelf != nil)
         {
-            [strongSelf.delegate bannerCustomEventWillLeaveApplication:strongSelf];
+            [strongSelf.delegate inlineAdAdapterWillLeaveApplication:strongSelf];
         }
     });
     
@@ -218,7 +218,7 @@
 
 - (nullable UIViewController *)inlineAdPresentingViewController
 {
-    return [self.delegate viewControllerForPresentingModalView];
+    return [self.delegate inlineAdAdapterViewControllerForPresentingModalView:self];
 }
 
 - (void)inlineAd:(nonnull VASInlineAdView *)inlineAd event:(nonnull NSString *)eventId source:(nonnull NSString *)source arguments:(nonnull NSDictionary<NSString *,id> *)arguments {}

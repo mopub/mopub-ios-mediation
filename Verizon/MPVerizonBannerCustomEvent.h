@@ -9,7 +9,7 @@
 
 @class VASInlineAdSize, VASErrorInfo, VASBid;
 
-@interface MPVerizonBannerCustomEvent: MPBannerCustomEvent
+@interface MPVerizonBannerCustomEvent: MPInlineAdAdapter <MPThirdPartyInlineAdAdapter>
 
 + (void)requestBidWithPlacementId:(nonnull NSString *)placementId
                           adSizes:(nonnull NSArray<VASInlineAdSize *> *)adSizes

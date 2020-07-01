@@ -3,10 +3,10 @@
 #elif __has_include(<MoPubSDKFramework/MoPub.h>)
 #import <MoPubSDKFramework/MoPub.h>
 #else
-#import "MPRewardedVideoCustomEvent.h"
+#import "MPFullscreenAdAdapter.h"
 #endif
 #import "MPGoogleGlobalMediationSettings.h"
 
-@interface MPGoogleAdMobRewardedVideoCustomEvent : MPRewardedVideoCustomEvent
+@interface MPGoogleAdMobRewardedVideoCustomEvent : MPFullscreenAdAdapter <MPThirdPartyFullscreenAdAdapter>
 
 @end

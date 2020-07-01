@@ -9,7 +9,7 @@
 
 @class VASErrorInfo, VASBid;
 
-@interface MPVerizonInterstitialCustomEvent : MPInterstitialCustomEvent
+@interface MPVerizonInterstitialCustomEvent : MPFullscreenAdAdapter <MPThirdPartyFullscreenAdAdapter>
 
 + (void)requestBidWithPlacementId:(nonnull NSString *)placementId
                        completion:(void (^_Nonnull)(VASBid * _Nullable bid, VASErrorInfo * _Nullable error))completion;

@@ -10,9 +10,9 @@
 #elif __has_include(<MoPubSDKFramework/MoPub.h>)
     #import <MoPubSDKFramework/MoPub.h>
 #else
-    #import "MPBannerCustomEvent.h"
+    #import "MPInlineAdAdapter.h"
 #endif
 
-@interface FacebookBannerCustomEvent : MPBannerCustomEvent
+@interface FacebookBannerCustomEvent : MPInlineAdAdapter <MPThirdPartyInlineAdAdapter>
 
 @end

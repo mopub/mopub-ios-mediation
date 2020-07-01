@@ -3,9 +3,9 @@
 #elif __has_include(<MoPubSDKFramework/MoPub.h>)
     #import <MoPubSDKFramework/MoPub.h>
 #else
-    #import "MPRewardedVideoCustomEvent.h"
+    #import "MPFullscreenAdAdapter.h"
 #endif
 
-@interface MintegralRewardedVideoCustomEvent : MPRewardedVideoCustomEvent
+@interface MintegralRewardedVideoCustomEvent : MPFullscreenAdAdapter <MPThirdPartyFullscreenAdAdapter>
 
 @end

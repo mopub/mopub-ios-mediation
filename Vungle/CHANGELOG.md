@@ -1,4 +1,15 @@
 ## Changelog
+* 6.7.0.0
+    * This version of the adapters has been certified with Vungle 6.7.0 and MoPub SDK 5.13.0.
+    * Add support for Advanced Bidding for fullscreen ads.
+    * Add support for playing multiple banner ads at the same time.
+    * Add support for new Vungle SDK event `vungleAdTrackClick`.
+    * Add support for new Vungle SDK init API.
+
+* 6.5.3.2
+    * Refactor non-native adapter classes to use the new consolidated API from MoPub.
+    * This and newer adapter versions are only compatible with 5.13.0+ MoPub SDK.
+
 * 6.5.3.1
    * Fix `scheduledTimerWithTimeInterval` called for iOS 9.
 
