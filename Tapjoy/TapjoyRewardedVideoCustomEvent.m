@@ -6,7 +6,7 @@
 #if __has_include("MoPub.h")
     #import "MPRewardedVideoError.h"
     #import "MPLogging.h"
-    #import "MPRewardedVideoReward.h"
+    #import "MPReward.h"
     #import "MoPub.h"
 #endif
 #import "TapjoyGlobalMediationSettings.h"
@@ -60,7 +60,7 @@
     else {
         NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Tapjoy rewarded video is initialized with empty 'sdkKey'. You must call Tapjoy connect before requesting content."];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementName);
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     }
 }
 
@@ -71,7 +71,17 @@
     }
 }
 
-- (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
+#pragma mark - MPFullscreenAdAdapter Override
+
+- (BOOL)isRewardExpected {
+    return YES;
+}
+
+- (BOOL)hasAdAvailable {
+    return self.placement.isContentAvailable;
+}
+
+- (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     // Grab placement name defined in MoPub dashboard as custom event data
     self.placementName = info[@"name"];
 
@@ -116,11 +126,11 @@
     else {
         NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid Tapjoy placement name specified"];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementName);
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     }
 }
 
-- (void)presentRewardedVideoFromViewController:(UIViewController *)viewController {
+- (void)presentAdFromViewController:(UIViewController *)viewController {
     if ([self hasAdAvailable]) {
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.placementName);
         [self.placement showContentWithViewController:nil];
@@ -128,24 +138,20 @@
     else {
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementName);
-        [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
+        [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
     }
 }
 
-- (BOOL)hasAdAvailable {
-    return self.placement.isContentAvailable;
-}
-
-- (void)handleCustomEventInvalidated {
+- (void)handleDidInvalidateAd {
     self.placement.delegate = nil;
 }
 
-- (void)handleAdPlayedForCustomEventNetwork {
+- (void)handleDidPlayAd {
     // If we no longer have an ad available, report back up to the application that this ad expired.
     // We receive this message only when this ad has reported an ad has loaded and another ad unit
     // has played a video for the same ad network.
     if (![self hasAdAvailable]) {
-        [self.delegate rewardedVideoDidExpireForCustomEvent:self];
+        [self.delegate fullscreenAdAdapterDidExpire:self];
     }
 }
 
@@ -154,47 +160,56 @@
     _placement.delegate = nil;
 }
 
+- (BOOL)enableAutomaticImpressionAndClickTracking
+{
+    return NO;
+}
+
 #pragma mark - TJPlacementDelegate methods
 
 - (void)requestDidSucceed:(TJPlacement *)placement {
     if (!placement.isContentAvailable) {
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementName);
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     }
 }
 
 - (void)contentIsReady:(TJPlacement *)placement {
     MPLogInfo(@"Tapjoy rewarded video content is ready");
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.placementName);
-    [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterDidLoadAd:self];
 }
 
 - (void)requestDidFail:(TJPlacement *)placement error:(NSError *)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementName);
-    [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+    [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
 }
 
 - (void)contentDidAppear:(TJPlacement *)placement {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.placementName);
-    [self.delegate rewardedVideoWillAppearForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterAdWillAppear:self];
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.placementName);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.placementName);
-    [self.delegate rewardedVideoDidAppearForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterAdDidAppear:self];
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
 - (void)contentDidDisappear:(TJPlacement *)placement {
     [Tapjoy setVideoAdDelegate:nil];
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.placementName);
-    [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.placementName);
-    [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
 }
 
 - (void)didClick:(TJPlacement*)placement
 {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.placementName);
-    [self.delegate rewardedVideoDidReceiveTapEventForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterDidReceiveTap:self];
+    [self.delegate fullscreenAdAdapterDidTrackClick:self];
+    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], self.placementName);
+    [self.delegate fullscreenAdAdapterWillLeaveApplication:self];
 }
 
 #pragma mark Tapjoy Video
@@ -204,7 +219,8 @@
 }
 
 - (void)videoDidComplete:(TJPlacement*)placement {
-    [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:[[MPRewardedVideoReward alloc] initWithCurrencyAmount:@(kMPRewardedVideoRewardCurrencyAmountUnspecified)]];
+    MPReward *reward = [[MPReward alloc] initWithCurrencyAmount:@(kMPRewardedVideoRewardCurrencyAmountUnspecified)];
+    [self.delegate fullscreenAdAdapter:self willRewardUser:reward];
 }
 
 - (void)videoDidFail:(TJPlacement*)placement error:(NSString*)errorMsg {

@@ -46,11 +46,21 @@
     else {
         NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Tapjoy interstitial is initialized with empty 'sdkKey'. You must call Tapjoy connect before requesting content."];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementName);
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     }
 }
 
-- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
+#pragma mark - MPFullscreenAdAdapter Override
+
+- (BOOL)isRewardExpected {
+    return NO;
+}
+
+- (BOOL)hasAdAvailable {
+    return self.placement.isContentAvailable;
+}
+
+- (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     // Grab placement name defined in MoPub dashboard as custom event data
     self.placementName = info[@"name"];
     
@@ -94,11 +104,11 @@
     else {
         NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid Tapjoy placement name specified"];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     }
 }
 
-- (void)showInterstitialFromRootViewController:(UIViewController *)rootViewController {
+- (void)presentAdFromViewController:(UIViewController *)viewController {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.placementName);
     [self.placement showContentWithViewController:nil];
 }
@@ -108,44 +118,53 @@
     _placement.delegate = nil;
 }
 
+- (BOOL)enableAutomaticImpressionAndClickTracking
+{
+    return NO; // Disabled so adapters have control over the impression and click tracking behavior
+}
+
 #pragma mark - TJPlacementtDelegate
 
 - (void)requestDidSucceed:(TJPlacement *)placement {
     if (placement.isContentAvailable) {
         MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.placementName);
-        [self.delegate interstitialCustomEvent:self didLoadAd:nil];
+        [self.delegate fullscreenAdAdapterDidLoadAd:self];
     }
     else {
         NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"No Tapjoy interstitials available"];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementName);
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     }
 }
 
 - (void)requestDidFail:(TJPlacement *)placement error:(NSError *)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementName);
-    [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+    [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
 }
 
 - (void)contentDidAppear:(TJPlacement *)placement {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.placementName);
-    [self.delegate interstitialCustomEventWillAppear:self];
+    [self.delegate fullscreenAdAdapterAdWillAppear:self];
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.placementName);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.placementName);
-    [self.delegate interstitialCustomEventDidAppear:self];
+    [self.delegate fullscreenAdAdapterAdDidAppear:self];
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
 - (void)contentDidDisappear:(TJPlacement *)placement {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.placementName);
-    [self.delegate interstitialCustomEventWillDisappear:self];
+    [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.placementName);
-    [self.delegate interstitialCustomEventDidDisappear:self];
+    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
 }
 
 - (void)didClick:(TJPlacement*)placement
 {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.placementName);
-    [self.delegate interstitialCustomEventDidReceiveTapEvent:self];  
+    [self.delegate fullscreenAdAdapterDidReceiveTap:self];
+    [self.delegate fullscreenAdAdapterDidTrackClick:self];
+    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], self.placementName);
+    [self.delegate fullscreenAdAdapterWillLeaveApplication:self];
 }
 
 - (void)tjcConnectSuccess:(NSNotification*)notifyObj {
