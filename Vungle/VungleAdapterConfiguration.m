@@ -41,11 +41,12 @@ typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"6.5.3.1";
+    return @"6.7.0.0";
 }
 
 - (NSString *)biddingToken {
-    return nil;
+    NSString *bidToken = [[VungleRouter sharedRouter] currentSuperToken];
+    return bidToken;
 }
 
 - (NSString *)moPubNetworkName {

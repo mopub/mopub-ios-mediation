@@ -1,4 +1,8 @@
 ## Changelog
+  * 8.1.0.2
+      * Refactor non-native adapter classes to use the new consolidated API from MoPub.
+      * To use this and newer adapter versions, you must use MoPub 5.13.0 or newer.
+
   * 8.1.0.1
       * This version of the adapters has been certified MoPub SDK 5.12.0.
       * Fix Chartboost initialization and consent setting failure.

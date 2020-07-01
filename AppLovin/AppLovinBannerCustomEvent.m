@@ -51,14 +51,9 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
     ALGlobalAdViews = [NSMutableDictionary dictionary];
 }
 
-#pragma mark - MPBannerCustomEvent Overridden Methods
+#pragma mark - MPInlineAdAdapter Overridden Methods
 
-- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info
-{
-    [self requestAdWithSize: size customEventInfo: info adMarkup: nil];
-}
-
-- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
+- (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     // Collect and pass the user's consent from MoPub onto the AppLovin SDK
     if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
@@ -76,7 +71,7 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
                                          userInfo: @{NSLocalizedFailureReasonErrorKey: failureReason}];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], @"");
         
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError: error];
+        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError: error];
 
         return;
     }
@@ -248,8 +243,8 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 {
     // Ensure logic is ran on main queue
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.parentCustomEvent.delegate bannerCustomEvent: self.parentCustomEvent
-                                                 didLoadAd: self.parentCustomEvent.adView];
+        [self.parentCustomEvent.delegate inlineAdAdapter: self.parentCustomEvent
+                                           didLoadAdWithAdView: self.parentCustomEvent.adView];
         
         MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
         MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
@@ -264,7 +259,7 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
         NSError *error = [NSError errorWithDomain: kALMoPubMediationErrorDomain
                                              code: [self.parentCustomEvent toMoPubErrorCode: code]
                                          userInfo: nil];
-        [self.parentCustomEvent.delegate bannerCustomEvent: self.parentCustomEvent didFailToLoadAdWithError: error];
+        [self.parentCustomEvent.delegate inlineAdAdapter: self.parentCustomEvent didFailToLoadAdWithError: error];
         
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     });
@@ -276,7 +271,7 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 {
     // `didDisplayAd` of this class would not be called by MoPub on AppLovin banner refresh if enabled.
     // Only way to track impression of AppLovin refresh is via this callback.
-    [self.parentCustomEvent.delegate trackImpression];
+    [self.parentCustomEvent.delegate inlineAdAdapterDidTrackImpression:self];
     
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
@@ -290,8 +285,8 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 
 - (void)ad:(ALAd *)ad wasClickedIn:(UIView *)view
 {
-    [self.parentCustomEvent.delegate trackClick];
-    [self.parentCustomEvent.delegate bannerCustomEventWillLeaveApplication: self.parentCustomEvent];
+    [self.parentCustomEvent.delegate inlineAdAdapterDidTrackClick:self];
+    [self.parentCustomEvent.delegate inlineAdAdapterWillLeaveApplication:self];
     
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
@@ -300,7 +295,7 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 
 - (void)ad:(ALAd *)ad didPresentFullscreenForAdView:(ALAdView *)adView
 {
-    [self.parentCustomEvent.delegate bannerCustomEventWillBeginAction: self.parentCustomEvent];
+    [self.parentCustomEvent.delegate inlineAdAdapterWillBeginUserAction:self];
 }
 
 - (void)ad:(ALAd *)ad willDismissFullscreenForAdView:(ALAdView *)adView
@@ -311,7 +306,7 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 - (void)ad:(ALAd *)ad didDismissFullscreenForAdView:(ALAdView *)adView
 {
     MPLogInfo(@"Banner did dismiss fullscreen");
-    [self.parentCustomEvent.delegate bannerCustomEventDidFinishAction: self.parentCustomEvent];
+    [self.parentCustomEvent.delegate inlineAdAdapterDidEndUserAction:self];
 }
 
 - (void)ad:(ALAd *)ad willLeaveApplicationForAdView:(ALAdView *)adView

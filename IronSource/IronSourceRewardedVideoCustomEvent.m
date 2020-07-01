@@ -7,6 +7,7 @@
 #import "IronSourceConstants.h"
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
+    #import "MPReward.h"
     #import "MoPub.h"
 #endif
 
@@ -17,13 +18,29 @@
 @end
 @implementation IronSourceRewardedVideoCustomEvent
 
-#pragma mark Mopub IronSourceRewardedVideoCustomEvent Methods
-
 - (NSString *) getAdNetworkId {
     return _instanceID;
 }
 
-- (void)requestRewardedVideoWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
+#pragma mark - MPFullscreenAdAdapter Override
+
+- (BOOL)isRewardExpected {
+    return YES;
+}
+
+- (BOOL)hasAdAvailable {
+    BOOL isRVAvailable = [IronSource hasISDemandOnlyRewardedVideo:self.instanceID];
+    MPLogInfo(@"IronSource hasAdAvailable returned %d (current instance: %@)",
+              isRVAvailable, [self getAdNetworkId]);
+    return isRVAvailable;
+}
+
+- (BOOL)enableAutomaticImpressionAndClickTracking
+{
+    return NO;
+}
+
+- (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     MPLogInfo(@"IronSource requestRewardedVideoWithCustomEventInfo with: %@", info);
     
     // Collect and pass the user's consent from MoPub onto the ironSource SDK
@@ -41,7 +58,7 @@
                                                     andReason:@"serverParams is null"
                                                 andSuggestion:@"make sure that server parameters is added"];
             MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error: error], self.instanceID);
-            [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+            [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
             return;
         }
         if([info objectForKey:kIronSourceAppKey] != nil ){
@@ -55,7 +72,7 @@
                                                 andSuggestion:@"make sure that 'applicationKey' server parameter is added"];
             
             MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error: error], self.instanceID);
-            [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+            [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
             
             return;
         }
@@ -74,30 +91,16 @@
         MPLogInfo(@"IronSource Rewarded Video initialization with error: %@", exception);
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MOPUBErrorAdapterInvalid userInfo:@{NSLocalizedDescriptionKey: @"Custom event class Rewarded Video error.", NSLocalizedRecoverySuggestionErrorKey: @"Native Network or Custom Event adapter was configured incorrectly."}];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error: error], self.instanceID);
-        [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error:error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     }
 }
 
-- (BOOL)hasAdAvailable {
-    BOOL isRVAvailable = [IronSource hasISDemandOnlyRewardedVideo:self.instanceID];
-    MPLogInfo(@"IronSource hasAdAvailable returned %d (current instance: %@)",
-              isRVAvailable, [self getAdNetworkId]);
-    return isRVAvailable;
-}
-
-- (void)presentRewardedVideoFromViewController:(UIViewController *)viewController {
+- (void)presentAdFromViewController:(UIViewController *)viewController {
     MPLogInfo(@"IronSource showRewardedVideo for instance %@",
               [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [[IronSourceManager sharedManager] presentRewardedAdFromViewController:viewController
-                                                                 instanceID:_instanceID];}
-
-- (void)handleCustomEventInvalidated {
-    // do nothing
-}
-
-- (void)handleAdPlayedForCustomEventNetwork {
-    // do nothing
+                                                                 instanceID:_instanceID];
 }
 
 #pragma mark IronSource RV Methods
@@ -120,7 +123,7 @@
     MPLogInfo(@"IronSource RewardedVideo failed to show for instance %@ (current isntance %@)",
               instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], instanceId);
-    [self.delegate rewardedVideoDidFailToPlayForCustomEvent:self error:error];
+    [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
 }
 
 /*!
@@ -131,10 +134,12 @@
     MPLogInfo(@"IronSource RewardedVideo did open for instance %@ (current instance %@)",
               instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], instanceId);
-    [self.delegate rewardedVideoWillAppearForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterAdWillAppear:self];
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], instanceId);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], instanceId);
-    [self.delegate rewardedVideoDidAppearForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterAdDidAppear:self];
+    
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
 /*!
@@ -145,17 +150,18 @@
     MPLogInfo(@"IronSource RewardedVideo did close for instance %@ (current instance %@)",
               instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], instanceId);
-    [self.delegate rewardedVideoWillDisappearForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], instanceId);
-    [self.delegate rewardedVideoDidDisappearForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
 }
 
 - (void)rewardedVideoAdRewarded:(NSString *)instanceId {
     MPLogInfo(@"IronSource received reward for instance %@ (current instance %@)",
               instanceId, [self getAdNetworkId]);
-    MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyType:kMPRewardedVideoRewardCurrencyTypeUnspecified amount: @(kMPRewardedVideoRewardCurrencyAmountUnspecified)];
+    MPReward *reward = [[MPReward alloc] initWithCurrencyType:kMPRewardedVideoRewardCurrencyTypeUnspecified
+                                                       amount:@(kMPRewardedVideoRewardCurrencyAmountUnspecified)];
     MPLogEvent([MPLogEvent adShouldRewardUserWithReward:reward]);
-    [self.delegate rewardedVideoShouldRewardUserForCustomEvent:self reward:reward];
+    [self.delegate fullscreenAdAdapter:self willRewardUser:reward];
 }
 
 /*!
@@ -165,8 +171,9 @@
     MPLogInfo(@"IronSource RewardedVideo did click for instance %@ (current instance %@)",
               instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], instanceId);
-    [self.delegate rewardedVideoDidReceiveTapEventForCustomEvent:self];
-    [self.delegate rewardedVideoWillLeaveApplicationForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterDidReceiveTap:self];
+    [self.delegate fullscreenAdAdapterWillLeaveApplication:self];
+    [self.delegate fullscreenAdAdapterDidTrackClick:self];
 }
 
 
@@ -174,7 +181,7 @@
     MPLogDebug(@"IronSource RewardedVideo load fail for instance %@ (current instance: %@)",
                instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error: error], instanceId);
-    [self.delegate rewardedVideoDidFailToLoadAdForCustomEvent:self error: error];
+    [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
 }
 
 
@@ -182,7 +189,7 @@
     MPLogInfo(@"IronSource RewardedVideo did load for instance %@ (current instance: %@)",
               instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], instanceId);
-    [self.delegate rewardedVideoDidLoadAdForCustomEvent:self];
+    [self.delegate fullscreenAdAdapterDidLoadAd:self];
 }
 @end
 

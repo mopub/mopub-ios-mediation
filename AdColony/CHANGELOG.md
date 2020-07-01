@@ -1,4 +1,11 @@
 ## Changelog
+  * 4.1.5.0
+    * This version of the adapters has been certified with AdColony 4.1.5 and MoPub SDK 5.13.0.
+
+  * 4.1.4.1
+    * Refactor non-native adapter classes to use the new consolidated API from MoPub.
+    * To use this and newer adapter versions, you must use MoPub 5.13.0 or newer.
+  
   * 4.1.4.0
     * This version of the adapters has been certified with AdColony 4.1.4.
 

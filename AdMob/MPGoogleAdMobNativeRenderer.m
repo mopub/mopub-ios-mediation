@@ -116,7 +116,7 @@
   if ([self.adView respondsToSelector:@selector(nativeMainTextLabel)]) {
     [self.adView.nativeMainTextLabel addSubview:self.unifiedNativeAdView.bodyView];
     self.adView.nativeMainTextLabel.text = adapter.properties[kAdTextKey];
-    [self.unifiedNativeAdView gad_fillSuperview];
+    [self.unifiedNativeAdView.bodyView gad_fillSuperview];
   }
 
   if ([self.adView respondsToSelector:@selector(nativeCallToActionTextLabel)] &&
