@@ -81,11 +81,11 @@
     self.fullScreenVideo = [[BUFullscreenVideoAd alloc] initWithSlotID:self.adPlacementId];
     self.fullScreenVideo.delegate = self;
     if (hasAdMarkup) {
-        MPLogInfo(@"Loading Pangle interstitial ad markup for Advanced Bidding");
+        MPLogInfo(@"Load Pangle interstitial ad markup for Advanced Bidding");
         
         [self.fullScreenVideo setMopubAdMarkUp:adMarkup];
     } else {
-        MPLogInfo(@"Loading Pangle interstitial ad");
+        MPLogInfo(@"Load Pangle interstitial ad");
         
         [self.fullScreenVideo loadAdData];
     }

@@ -72,11 +72,11 @@
     self.expressBannerView.frame = CGRectMake(0, 0, expressRequestSize.width, expressRequestSize.height);
     self.expressBannerView.delegate = self;
     if (hasAdMarkup) {
-        MPLogInfo(@"Loading Pangle express banner ad markup for Advanced Bidding");
+        MPLogInfo(@"Load Pangle express banner ad markup for Advanced Bidding");
         
         [self.expressBannerView setMopubAdMarkUp:adMarkup];
     } else {
-        MPLogInfo(@"Loading Pangle express banner ad");
+        MPLogInfo(@"Load Pangle express banner ad");
         
         [self.expressBannerView loadAdData];
     }
@@ -187,6 +187,9 @@
 }
 
 - (void)nativeExpressBannerAdView:(BUNativeExpressBannerView *)bannerAdView dislikeWithReason:(NSArray<BUDislikeWords *> *_Nullable)filterwords {
+    /** dislike function, it is an optional method that you can use custom dialog.
+     * please refer to the access document from Pangle
+     */
     [bannerAdView removeFromSuperview];
 }
 

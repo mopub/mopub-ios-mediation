@@ -80,11 +80,11 @@
     self.rewardVideoAd = RewardedVideoAd;
     
     if (hasAdMarkup) {
-        MPLogInfo(@"Loading Pangle rewarded video ad markup for Advanced Bidding");
+        MPLogInfo(@"Load Pangle rewarded video ad markup for Advanced Bidding");
         
         [RewardedVideoAd setMopubAdMarkUp:adMarkup];
     } else {
-        MPLogInfo(@"Loading Pangle rewarded video ad");
+        MPLogInfo(@"Load Pangle rewarded video ad");
         
         [RewardedVideoAd loadAdData];
     }
@@ -163,7 +163,7 @@
         
         [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
     } else {
-        MPLogInfo(@"Rewarded video finishes playing");
+        MPLogInfo(@"Rewarded video finished playing");
     }
 }
 
@@ -176,12 +176,12 @@
         
         [self.delegate fullscreenAdAdapter:self willRewardUser:reward];
     } else {
-        MPLogInfo(@"Rewarded video ad fails to verify.");
+        MPLogInfo(@"Rewarded video ad failed to verify.");
     }
 }
 
 - (void)rewardedVideoAdServerRewardDidFail:(BURewardedVideoAd *)rewardedVideoAd {
-    MPLogInfo(@"Rewarded video ad server fails to reward.");
+    MPLogInfo(@"Rewarded video ad server failed to reward.");
 }
 
 - (NSString *) getAdNetworkId {

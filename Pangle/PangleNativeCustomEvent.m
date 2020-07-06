@@ -67,11 +67,11 @@
     }
     self.nativeAd.rootViewController = rootViewController;
     if (hasAdMarkup) {
-        MPLogInfo(@"Loading Pangle native ad markup for Advanced Bidding");
+        MPLogInfo(@"Load Pangle native ad markup for Advanced Bidding");
         
         [self.nativeAd setMopubAdMarkUp:adMarkup];
     } else {
-        MPLogInfo(@"Loading Pangle native ad");
+        MPLogInfo(@"Load Pangle native ad");
         
         [self.nativeAd loadAdData];
     }
