@@ -190,7 +190,7 @@
     /** dislike function, it is an optional method that you can use custom dialog.
      * please refer to the access document from Pangle
      */
-    [bannerAdView removeFromSuperview];
+    MPLogInfo(@"%@ Pangle DislikeInteractionCalback",[self getAdNetworkId]);
 }
 
 @end
