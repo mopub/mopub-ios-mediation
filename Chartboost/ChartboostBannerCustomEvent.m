@@ -50,26 +50,14 @@
     // The banner view bounds will have by default the same size as the requested ad size.
     // If the requested width or height is 0, as it happens for the first ad loaded using MoPub's max ad size presets,
     // we change the banner bounds to a standard size, so it is visible.
-    CGSize standardSize = [self standardSizeFromSize:size];
     CGSize bannerSize = banner.bounds.size;
     if (size.width <= 0) {
-        bannerSize.width = standardSize.width;
+        bannerSize.width = CHBBannerSizeStandard.width;
     }
     if (size.height <= 0) {
-        bannerSize.height = standardSize.height;
+        bannerSize.height = CHBBannerSizeStandard.height;
     }
     banner.bounds = CGRectMake(0, 0, bannerSize.width, bannerSize.height);
-}
-
-- (CHBBannerSize)standardSizeFromSize:(CGSize)size
-{
-    if (size.height >= CHBBannerSizeLeaderboard.height && size.width >= CHBBannerSizeLeaderboard.width) {
-        return CHBBannerSizeLeaderboard;
-    } else if (size.height >= CHBBannerSizeMedium.height && size.width >= CHBBannerSizeMedium.width) {
-        return CHBBannerSizeMedium;
-    } else {
-        return CHBBannerSizeStandard;
-    }
 }
 
 - (BOOL)enableAutomaticImpressionAndClickTracking
