@@ -90,6 +90,7 @@
     return (BUCheckValidString(self.adPlacementId)) ? self.adPlacementId : @"";
 }
 
+//Banner size mapping according to the incoming size in adapter and selected size on Pangle platform. Pangle will return the banner ads with appropriate size.
 - (CGSize)sizeForAdapterInfo:(CGSize)size {
     CGFloat width = size.width;
     CGFloat height = size.height;
