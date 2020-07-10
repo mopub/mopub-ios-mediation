@@ -49,8 +49,6 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
             dispatch_async(dispatch_get_main_queue(), ^{
-                [BUAdSDKManager setAppID:configuration[kPangleAppIdKey]];
-                
                 MPBLogLevel logLevel = [MPLogging consoleLogLevel];
                 BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
                 
@@ -60,6 +58,7 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
                     
                     [BUAdSDKManager setGDPR:canCollectPersonalInfo ? 0 : 1];
                 }
+                [BUAdSDKManager setAppID:configuration[kPangleAppIdKey]];
                 if (complete != nil) {
                     complete(nil);
                 }
