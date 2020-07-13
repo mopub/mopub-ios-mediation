@@ -7,9 +7,8 @@
     #import "MoPub.h"
 #endif
 
-@interface PangleInterstitialCustomEvent () <BUNativeAdDelegate, BUNativeExpresInterstitialAdDelegate, BUFullscreenVideoAdDelegate, PangleNativeInterstitialViewDelegate>
+@interface PangleInterstitialCustomEvent () <BUFullscreenVideoAdDelegate>
 @property (nonatomic, strong) BUFullscreenVideoAd *fullScreenVideo;
-@property (nonatomic, assign) BUAdSlotAdType adType;
 @property (nonatomic, copy) NSString *adPlacementId;
 @property (nonatomic, copy) NSString *appId;
 @end
@@ -27,7 +26,6 @@
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    NSDictionary *renderInfo;
     
     if (info.count == 0) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
@@ -56,27 +54,7 @@
         [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
         return;
     }
-    
-    NSError *error = nil;
-    renderInfo = [BUAdSDKManager AdTypeWithRit:self.adPlacementId error:&error];
-    if (error) {
-        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
-        return;
-    }
-    
-    self.adType = [[renderInfo objectForKey:@"adSlotType"] integerValue];
-    if ([[renderInfo objectForKey:@"adSlotType"] integerValue] != BUAdSlotAdTypeFullscreenVideo){
-        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
-                                             code:BUErrorCodeAdSlotEmpty
-                                         userInfo:@{NSLocalizedDescriptionKey:
-                                @"Mismatched Pangle placement ID. Please make sure the ad placement ID corresponds to Full Screen Video format in Pangle UI"}];
         
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-        
-        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
-        return;
-    }
-    
     self.fullScreenVideo = [[BUFullscreenVideoAd alloc] initWithSlotID:self.adPlacementId];
     self.fullScreenVideo.delegate = self;
     MPLogInfo(@"Load Pangle interstitial ad");

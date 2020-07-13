@@ -8,7 +8,7 @@
     #import "MoPub.h"
 #endif
 
-@interface PangleBannerCustomEvent () <BUNativeExpressBannerViewDelegate, BUNativeAdDelegate>
+@interface PangleBannerCustomEvent () <BUNativeExpressBannerViewDelegate>
 @property (nonatomic, strong) BUNativeExpressBannerView *expressBannerView;
 @property (nonatomic, copy) NSString *adPlacementId;
 @property (nonatomic, copy) NSString *appId;
@@ -17,7 +17,6 @@
 @implementation PangleBannerCustomEvent
 
 - (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    NSDictionary *renderInfo;
     
     if (info.count == 0) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
@@ -47,24 +46,6 @@
         return;
     }
     
-    NSError *error = nil;
-    renderInfo = [BUAdSDKManager AdTypeWithRit:self.adPlacementId error:&error];
-    if (error) {
-        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError: error];
-        return;
-    }
-
-    if ([[renderInfo objectForKey:@"renderType"] integerValue] != BUAdSlotAdTypeBanner) {
-        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
-                                                    code:BUErrorCodeAdSlotEmpty
-                                                userInfo:@{NSLocalizedDescriptionKey:
-                                                               @"Mismatched Pangle placement ID. Please make sure the ad placement ID corresponds to Express format in Pangle UI"}];
-               MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-        
-               [self.delegate inlineAdAdapter:self didFailToLoadAdWithError: error];
-               return;
-    }
-
     CGSize expressRequestSize = [self sizeForAdapterInfo:size];
     self.expressBannerView = [[BUNativeExpressBannerView alloc] initWithSlotID:self.adPlacementId
                                                             rootViewController:[self.delegate inlineAdAdapterViewControllerForPresentingModalView:self] adSize:expressRequestSize IsSupportDeepLink:YES];
