@@ -30,8 +30,6 @@
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    BOOL hasAdMarkup = adMarkup.length > 0;
-    
     if (info.count == 0) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty
@@ -79,15 +77,9 @@
     RewardedVideoAd.delegate = self;
     self.rewardVideoAd = RewardedVideoAd;
     
-    if (hasAdMarkup) {
-        MPLogInfo(@"Load Pangle rewarded video ad markup for Advanced Bidding");
-        
-        [RewardedVideoAd setMopubAdMarkUp:adMarkup];
-    } else {
-        MPLogInfo(@"Load Pangle rewarded video ad");
-        
-        [RewardedVideoAd loadAdData];
-    }
+    MPLogInfo(@"Load Pangle rewarded video ad");
+    
+    [RewardedVideoAd loadAdData];
     
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
 }

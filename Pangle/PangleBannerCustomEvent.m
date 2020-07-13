@@ -17,7 +17,6 @@
 @implementation PangleBannerCustomEvent
 
 - (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    BOOL hasAdMarkup = adMarkup.length > 0;
     NSDictionary *renderInfo;
     
     if (info.count == 0) {
@@ -71,15 +70,8 @@
                                                             rootViewController:[self.delegate inlineAdAdapterViewControllerForPresentingModalView:self] adSize:expressRequestSize IsSupportDeepLink:YES];
     self.expressBannerView.frame = CGRectMake(0, 0, expressRequestSize.width, expressRequestSize.height);
     self.expressBannerView.delegate = self;
-    if (hasAdMarkup) {
-        MPLogInfo(@"Load Pangle express banner ad markup for Advanced Bidding");
-        
-        [self.expressBannerView setMopubAdMarkUp:adMarkup];
-    } else {
-        MPLogInfo(@"Load Pangle express banner ad");
-        
-        [self.expressBannerView loadAdData];
-    }
+    MPLogInfo(@"Load Pangle express banner ad");
+    [self.expressBannerView loadAdData];
 }
 
 - (BOOL)enableAutomaticImpressionAndClickTracking {
