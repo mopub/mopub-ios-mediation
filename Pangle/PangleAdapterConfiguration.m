@@ -11,7 +11,7 @@ static NSString *mRewardName;
 static NSInteger mRewardAmount;
 static NSString *mMediaExtra;
 
-static NSString * const kAdapterVersion = @"3.0.0.7.0";
+static NSString * const kAdapterVersion = @"3.1.0.4.0";
 static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-pangle-adapters";
 
 typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
@@ -37,6 +37,16 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration complete:(void(^)(NSError *))complete {
+    MPBLogLevel logLevel = [MPLogging consoleLogLevel];
+    BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
+    
+    [BUAdSDKManager setLoglevel:(verboseLoggingEnabled == true ? BUAdSDKLogLevelDebug : BUAdSDKLogLevelNone)];
+    if ([[MoPub sharedInstance] isGDPRApplicable] != MPBoolUnknown) {
+        BOOL canCollectPersonalInfo =  [[MoPub sharedInstance] canCollectPersonalInfo];
+        
+        [BUAdSDKManager setGDPR:canCollectPersonalInfo ? 0 : 1];
+    }
+    
     if (configuration.count == 0 || !BUCheckValidString(configuration[kPangleAppIdKey])) {
         NSError *error = [NSError errorWithDomain:kAdapterErrorDomain
                                              code:PangleAdapterErrorCodeMissingIdKey
@@ -49,15 +59,6 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
             dispatch_async(dispatch_get_main_queue(), ^{
-                MPBLogLevel logLevel = [MPLogging consoleLogLevel];
-                BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
-                
-                [BUAdSDKManager setLoglevel:(verboseLoggingEnabled == true ? BUAdSDKLogLevelDebug : BUAdSDKLogLevelNone)];
-                if ([[MoPub sharedInstance] isGDPRApplicable] != MPBoolUnknown) {
-                    BOOL canCollectPersonalInfo =  [[MoPub sharedInstance] canCollectPersonalInfo];
-                    
-                    [BUAdSDKManager setGDPR:canCollectPersonalInfo ? 0 : 1];
-                }
                 [BUAdSDKManager setAppID:configuration[kPangleAppIdKey]];
                 if (complete != nil) {
                     complete(nil);
