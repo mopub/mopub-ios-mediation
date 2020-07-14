@@ -55,18 +55,18 @@
                 appOptions.testMode = instance.testModeEnabled;
 
                 if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
-                    appOptions.gdprRequired = YES;
+                    [appOptions setPrivacyFrameworkOfType:ADC_GDPR isRequired:YES];
                     if ([[MoPub sharedInstance] allowLegitimateInterest] == YES) {
                         if ([[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDenied ||
                             [[MoPub sharedInstance] currentConsentStatus] == MPConsentStatusDoNotTrack) {
-                            appOptions.gdprConsentString = @"0";
+                            [appOptions setPrivacyConsentString:@"0" forType:ADC_GDPR];
                         } else {
-                            appOptions.gdprConsentString = @"1";
+                            [appOptions setPrivacyConsentString:@"1" forType:ADC_GDPR];
                         }
                     } else if ([[MoPub sharedInstance] canCollectPersonalInfo]) {
-                        appOptions.gdprConsentString = @"1";
+                        [appOptions setPrivacyConsentString:@"1" forType:ADC_GDPR];
                     } else {
-                        appOptions.gdprConsentString = @"0";
+                        [appOptions setPrivacyConsentString:@"0" forType:ADC_GDPR];
                     }
                 }
 
