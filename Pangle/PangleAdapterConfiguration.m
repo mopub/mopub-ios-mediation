@@ -24,6 +24,10 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
     return kAdapterVersion;
 }
 
+- (NSString *)biddingToken {
+    return nil;
+}
+
 - (NSString *)moPubNetworkName {
     return @"pangle";
 }
