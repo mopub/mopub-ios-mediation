@@ -22,7 +22,7 @@ NSString *const kNetworkName = @"mintegral";
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"6.3.2.0.0";
+    return @"6.3.3.0.0";
 }
 
 - (NSString *)biddingToken {
@@ -34,7 +34,7 @@ NSString *const kNetworkName = @"mintegral";
 }
 
 - (NSString *)networkSdkVersion {
-    return @"6.3.2.0";
+    return @"6.3.3.0";
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *,id> *)configuration complete:(void (^)(NSError * _Nullable))complete {

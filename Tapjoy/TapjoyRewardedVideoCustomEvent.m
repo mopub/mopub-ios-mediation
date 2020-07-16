@@ -249,13 +249,13 @@
     if (gdprApplies != MPBoolUnknown ) {
         //Turn the MPBool into a proper bool
         if(gdprApplies == MPBoolYes) {
-            [Tapjoy subjectToGDPR:YES];
+            [[Tapjoy getPrivacyPolicy] setSubjectToGDPR:YES];
             
             NSString *consentString = [[MoPub sharedInstance] canCollectPersonalInfo] ? @"1" : @"0";
-            [Tapjoy setUserConsent: consentString];
+            [[Tapjoy getPrivacyPolicy] setUserConsent: consentString];
         } else {
-            [Tapjoy subjectToGDPR:NO];
-            [Tapjoy setUserConsent:@"-1"];
+            [[Tapjoy getPrivacyPolicy] setSubjectToGDPR:NO];
+            [[Tapjoy getPrivacyPolicy] setUserConsent: @"-1"];
         }
     }
 }
