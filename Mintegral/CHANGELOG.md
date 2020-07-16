@@ -1,5 +1,8 @@
 ## Changelog
 
+ * 6.3.5.0.0
+    * This version of the adapters has been certified with Mintegral 6.3.5.0 and MoPub 5.13.0.
+
  * 6.3.3.0.0
     * This version of the adapters has been certified with Mintegral 6.3.3.0 and MoPub 5.13.0.
 

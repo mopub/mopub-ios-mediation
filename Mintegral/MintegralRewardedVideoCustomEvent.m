@@ -171,10 +171,11 @@
         
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
-    
+}
+
+- (void)onVideoAdDidClosed:(NSString *)placementId unitId:(NSString *)unitId {
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
-    
 }
 
 @end
