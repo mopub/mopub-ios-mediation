@@ -57,7 +57,10 @@
         
     self.fullScreenVideo = [[BUFullscreenVideoAd alloc] initWithSlotID:self.adPlacementId];
     self.fullScreenVideo.delegate = self;
+    
     MPLogInfo(@"Load Pangle interstitial ad");
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
+    
     [self.fullScreenVideo loadAdData];
 }
 
@@ -104,6 +107,7 @@
 
 - (void)fullscreenVideoAdDidVisible:(BUFullscreenVideoAd *)fullscreenVideoAd{
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     
     [self.delegate fullscreenAdAdapterAdDidAppear:self];
     [self.delegate fullscreenAdAdapterDidTrackImpression:self];

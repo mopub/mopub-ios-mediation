@@ -51,7 +51,10 @@
                                                             rootViewController:[self.delegate inlineAdAdapterViewControllerForPresentingModalView:self] adSize:expressRequestSize IsSupportDeepLink:YES];
     self.expressBannerView.frame = CGRectMake(0, 0, expressRequestSize.width, expressRequestSize.height);
     self.expressBannerView.delegate = self;
+    
     MPLogInfo(@"Load Pangle express banner ad");
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
+    
     [self.expressBannerView loadAdData];
 }
 

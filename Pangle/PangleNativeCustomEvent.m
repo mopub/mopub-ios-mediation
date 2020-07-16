@@ -65,7 +65,9 @@
         rootViewController = rootViewController.presentedViewController;
     }
     self.nativeAd.rootViewController = rootViewController;
+    
     MPLogInfo(@"Load Pangle native ad");
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
     
     [self.nativeAd loadAdData];
 }
