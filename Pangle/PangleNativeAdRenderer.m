@@ -1,4 +1,4 @@
-#import "PangleNativeAdRender.h"
+#import "PangleNativeAdRenderer.h"
 
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
@@ -17,7 +17,7 @@
 #endif
 #import "PangleNativeAdAdapter.h"
 
-@interface PangleNativeAdRender () <MPNativeAdRendererImageHandlerDelegate>
+@interface PangleNativeAdRenderer () <MPNativeAdRendererImageHandlerDelegate>
 
 @property (nonatomic, strong) UIView<MPNativeAdRendering> *adView;
 @property (nonatomic, strong) PangleNativeAdAdapter *adapter;
@@ -27,7 +27,7 @@
 
 @end
 
-@implementation PangleNativeAdRender
+@implementation PangleNativeAdRenderer
 
 - (instancetype)initWithRendererSettings:(id<MPNativeAdRendererSettings>)rendererSettings {
     if (self = [super init]) {

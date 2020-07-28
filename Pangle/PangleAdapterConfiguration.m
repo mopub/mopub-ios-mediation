@@ -11,7 +11,7 @@ static NSString *mRewardName;
 static NSInteger mRewardAmount;
 static NSString *mMediaExtra;
 
-static NSString * const kAdapterVersion = @"3.1.0.4.0";
+static NSString * const kAdapterVersion = @"3.1.0.5.1";
 static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-pangle-adapters";
 
 typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
@@ -25,7 +25,7 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 }
 
 - (NSString *)biddingToken {
-    return nil;
+    return [BUAdSDKManager mopubBiddingToken];
 }
 
 - (NSString *)moPubNetworkName {
@@ -40,11 +40,10 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
     MPBLogLevel logLevel = [MPLogging consoleLogLevel];
     BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
     [BUAdSDKManager setLoglevel:(verboseLoggingEnabled == true ? BUAdSDKLogLevelDebug : BUAdSDKLogLevelNone)];
-    if ([[MoPub sharedInstance] isGDPRApplicable] != MPBoolUnknown) {
-        BOOL canCollectPersonalInfo =  [[MoPub sharedInstance] canCollectPersonalInfo];
-        
-        [BUAdSDKManager setGDPR:canCollectPersonalInfo ? 0 : 1];
-    }
+    
+    BOOL canCollectPersonalInfo =  [[MoPub sharedInstance] canCollectPersonalInfo];
+    [BUAdSDKManager setGDPR:canCollectPersonalInfo ? 0 : 1];
+    
     if (configuration.count == 0 || !BUCheckValidString(configuration[kPangleAppIdKey])) {
         NSError *error = [NSError errorWithDomain:kAdapterErrorDomain
                                              code:PangleAdapterErrorCodeMissingIdKey
