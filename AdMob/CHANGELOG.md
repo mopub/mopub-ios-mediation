@@ -1,4 +1,79 @@
 ## Changelog
+  * 7.62.0.0
+    * This version of the adapters has been certified with AdMob 7.62.0 and MoPub 5.13.1.
+
+  * 7.61.0.1
+    * Remove i386 architecture support for iPhone simulators.
+
+  * 7.61.0.0
+    * This version of the adapters has been certified with AdMob 7.61.0 and MoPub 5.13.0.
+
+  * 7.60.0.0
+    * This version of the adapters has been certified with AdMob 7.60.0 and MoPub 5.13.0.
+
+  * 7.59.0.1
+    * Refactor non-native adapter classes to use the new consolidated API from MoPub.
+    * Remove banner size mapping checks to fully take advantage of adaptive banner.
+    * To use this and newer adapter versions, you must use MoPub 5.13.0 or newer.
+    
+  * 7.59.0.0
+    * This version of the adapters has been certified with AdMob 7.59.0 and MoPub 5.12.1.
+
+  * 7.58.0.1
+    * Redefine valid architectures.
+
+  * 7.58.0.0
+    * This version of the adapters has been certified with AdMob 7.58.0 and MoPub 5.12.1.
+
+  * 7.57.0.0
+    * This version of the adapters has been certified with AdMob 7.57.0 and MoPub 5.11.0.
+
+  * 7.56.0.0
+    * This version of the adapters has been certified with AdMob 7.56.0
+
+  * 7.55.1.0
+    * This version of the adapters has been certified with AdMob 7.55.1
+
+  * 7.55.0.0
+    * This version of the adapters has been certified with AdMob 7.55.0
+
+  * 7.53.1.2
+    * MoPub now collects GDPR consent on behalf of Google.
+
+  * 7.53.1.1
+    * Maintain compatibility with v5.11.0 of the MoPub iOS SDK. This is the minimum adapter version for v5.11.0 integrations with MoPub. 
+
+  * 7.53.1.0
+    * This version of the adapters has been certified with AdMob 7.53.1.
+
+  * 7.52.0.3
+    * Fix an issue with native ads not responding to playback controls.
+
+  * 7.52.0.2
+    * Map banner ad sizes starting from largest height x width.
+
+  * 7.52.0.1
+    * Expose `setNpaString:` in `GoogleAdMobAdapterConfiguration.h` so publishers can set a new npa without re-initializing the MoPub SDK. 
+
+  * 7.52.0.0
+    * This version of the adapters has been certified with AdMob 7.52.0.
+
+  * 7.51.0.0
+    * This version of the adapters has been certified with AdMob 7.51.0.
+
+  * 7.50.0.1
+    * Stop implementing deprecated request API.
+
+  * 7.50.0.0
+    * This version of the adapters has been certified with AdMob 7.50.0 and is compatible with iOS 13.
+
+  * 7.49.0.0
+    * This version of the adapters has been certified with AdMob 7.49.0.
+    * Use ad sizes forwarded from the MoPub SDK instead of the ad server. To ensure an optimal ad experience, publishers should use the MoPub 5.8.0+ SDK and unified banner ad units. If you are using a pre-5.8.0 MoPub SDK or unable to pass the safe area in the 5.8.0 MoPub SDK, check your ad unit setup in the Advanced Options section on the MoPub UI (more info at https://developers.mopub.com/publishers/ui/apps/manage-ad-units/#create-an-ad-unit).
+
+  * 7.48.0.0
+    * This version of the adapters has been certified with AdMob 7.48.0.
+
   * 7.47.0.0
     * This version of the adapters has been certified with AdMob 7.47.0.
 

@@ -7,8 +7,7 @@
 #elif __has_include(<MoPubSDKFramework/MoPub.h>)
     #import <MoPubSDKFramework/MoPub.h>
 #else
-    #import "MPRewardedVideoReward.h"
-    #import "MPRewardedVideoCustomEvent.h"
+    #import "MPFullscreenAdAdapter.h"
 #endif
 
 #import "IronSourceRewardedVideoDelegate.h"
@@ -16,8 +15,6 @@
 #import "IronSourceManager.h"
 #import "IronSourceUtils.h"
 
-
-@interface IronSourceRewardedVideoCustomEvent : MPRewardedVideoCustomEvent
-
+@interface IronSourceRewardedVideoCustomEvent : MPFullscreenAdAdapter <MPThirdPartyFullscreenAdAdapter>
 
 @end

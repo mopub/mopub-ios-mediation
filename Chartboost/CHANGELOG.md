@@ -1,4 +1,44 @@
 ## Changelog
+  * 8.2.0.1 
+      * Add support for Chartboost `CHBGDPRDataUseConsent` API.
+  
+  * 8.2.0.0
+      * This version of the adapters has been certified with Chartboost 8.2.0 and MoPub SDK 5.13.1.
+
+  * 8.1.0.2
+      * Refactor non-native adapter classes to use the new consolidated API from MoPub.
+      * To use this and newer adapter versions, you must use MoPub 5.13.0 or newer.
+
+  * 8.1.0.1
+      * This version of the adapters has been certified MoPub SDK 5.12.0.
+      * Fix Chartboost initialization and consent setting failure.
+      * Revise majority of import statements
+
+  * 8.1.0.0
+      * This version of the adapters has been certified with Chartboost 8.1.0 and MoPub 5.11.0.
+      * Add support for multiple Chartboost ad instances.
+      * Refactor ad logic related code from `Chartboost Router` into related ad custom event objects.
+      * Add Chartboost Rewarded Video adapter import statements
+      
+  * 8.0.4.0
+      * This version of the adapters has been certified with Chartboost 8.0.4.
+
+  * 8.0.3.0
+      * This version of the adapters has been certified with Chartboost 8.0.3 and is compatible with iOS 13.
+
+  * 8.0.1.3
+      * Stop downcasting log level to `int`.
+
+  * 8.0.1.2
+      * Convert banner width and height to integers before passing them to Chartboost.
+
+  * 8.0.1.1
+      * Stop implementing deprecated request API.
+
+  * 8.0.1.0
+      * This version of the adapters has been certified with Chartboost 8.0.1.
+      * Added banner adapter.
+
   * 7.5.0.0
       * This version of the adapters has been certified with Chartboost 7.5.0.
       * Fix empty Chartboost location Strings.

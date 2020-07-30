@@ -1,4 +1,37 @@
 ## Changelog
+  * 4.2.0.1
+    * Fix initialization-related crashes when publishers use `MPMoPubConfiguration.mediatedNetworkConfigurations` to initialize AdColony with a dedicated configuration.
+
+  * 4.2.0.0
+    * This version of the adapters has been certified with AdColony 4.2.0 and MoPub SDK 5.13.1.
+
+  * 4.1.5.0
+    * This version of the adapters has been certified with AdColony 4.1.5 and MoPub SDK 5.13.0.
+
+  * 4.1.4.1
+    * Refactor non-native adapter classes to use the new consolidated API from MoPub.
+    * To use this and newer adapter versions, you must use MoPub 5.13.0 or newer.
+  
+  * 4.1.4.0
+    * This version of the adapters has been certified with AdColony 4.1.4.
+
+  * 4.1.3.0
+    * This version of the adapters has been certified with AdColony 4.1.3.
+    * Log the AdColony zone id in ad lifecycle events.
+
+  * 4.1.2.1
+    * Add support for banners (introduced in AdColony 4.1.0).
+    * Move AdColony parameters handling logic to `AdColonyAdapterConfiguration`.
+
+  * 4.1.2.0
+    * This version of the adapters has been certified with AdColony 4.1.2 and is compatible with iOS 13.
+  
+  * 3.3.8.1.2
+    * Stop implementing deprecated request API.
+
+  * 3.3.8.1.1
+    * Update extracting zone IDs `initializeNetworkWithConfiguration` to accommodate Unity MoPubManager changes.
+    
   * 3.3.8.1.0
     * This version of the adapters has been certified with AdColony 3.3.8.1.
 

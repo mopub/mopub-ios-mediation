@@ -21,8 +21,6 @@ NS_ASSUME_NONNULL_BEGIN
  for all adapter-level configuration.
  */
 @interface AppLovinAdapterConfiguration : MPBaseAdapterConfiguration
-// Test Mode
-@property (class, nonatomic) BOOL isTestMode;
 
 // MPAdapterConfiguration
 @property (nonatomic, copy, readonly) NSString * adapterVersion;

@@ -10,13 +10,13 @@
 #elif __has_include(<MoPubSDKFramework/MoPub.h>)
     #import <MoPubSDKFramework/MoPub.h>
 #else
-    #import "MPRewardedVideoCustomEvent.h"
+    #import "MPFullscreenAdAdapter.h"
 #endif
 
 /*
  * The Vungle SDK does not provide an "application will leave" callback, thus this custom event
  * will not invoke the rewardedVideoWillLeaveApplicationForCustomEvent: delegate method.
  */
-@interface VungleRewardedVideoCustomEvent : MPRewardedVideoCustomEvent
+@interface VungleRewardedVideoCustomEvent : MPFullscreenAdAdapter <MPThirdPartyFullscreenAdAdapter>
 
 @end

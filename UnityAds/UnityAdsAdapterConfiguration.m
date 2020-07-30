@@ -14,7 +14,7 @@
 #endif
 
 //Adapter version
-NSString *const ADAPTER_VERSION = @"3.1.0.0";
+NSString *const ADAPTER_VERSION = @"3.4.6.0";
 
 // Initialization configuration keys
 static NSString * const kUnityAdsGameId = @"gameId";
@@ -77,7 +77,7 @@ typedef NS_ENUM(NSInteger, UnityAdsAdapterErrorCode) {
         complete(nil);
     }
     
-    MPBLogLevel * logLevel = [[MoPub sharedInstance] logLevel];
+    MPBLogLevel logLevel = [[MoPub sharedInstance] logLevel];
     BOOL debugModeEnabled = logLevel == MPBLogLevelDebug;
 
     [UnityAds setDebugMode:debugModeEnabled];

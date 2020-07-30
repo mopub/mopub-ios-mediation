@@ -28,33 +28,31 @@
     return NO;
 }
 
-- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info
+- (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
-    [self requestAdWithSize:size customEventInfo:info adMarkup:nil];
-}
-
-- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
-{
+    // Determine if the inline ad format is a banner or medium rectangle since
+    // Facebook makes this distinction with their placements. Explicitly look
+    // for medium rectangle since the default case is `kFBAdSizeHeight50Banner`.
+    NSString * format = [info objectForKey:@"adunit_format"];
+    BOOL isMediumRectangleFormat = (format != nil ? ![[format lowercaseString] containsString:@"banner"] : NO);
+    
     /**
      * Facebook Banner ads can accept arbitrary widths for given heights of 50 and 90. We convert these sizes
      * to Facebook's constants and set the fbAdView's size to the intended size ("size" passed to this method).
      */
     self.fbPlacementId = [info objectForKey:@"placement_id"];
-    FBAdSize fbAdSize;
-    if (size.height == kFBAdSizeHeight250Rectangle.size.height) {
-        fbAdSize = kFBAdSizeHeight250Rectangle;
-    } else if (size.height == kFBAdSizeHeight90Banner.size.height) {
+    
+    // Default to standard banner size
+    FBAdSize fbAdSize = kFBAdSizeHeight50Banner;
+    
+    // Size can contain a Facebook 90 height banner
+    if (size.height >= kFBAdSizeHeight90Banner.size.height) {
         fbAdSize = kFBAdSizeHeight90Banner;
-    } else if (size.height == kFBAdSizeHeight50Banner.size.height) {
-        fbAdSize = kFBAdSizeHeight50Banner;
-    } else {
-        NSError *error = [self createErrorWith:@"Banner size does not match with Facebook's standard banner width or height"
-                                     andReason:@""
-                                 andSuggestion:@""];
-        
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.fbPlacementId);
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
-        return;
+    }
+    
+    // Size can contain a Facebook medium rectangle
+    if (isMediumRectangleFormat && size.height >= kFBAdSizeHeight250Rectangle.size.height) {
+        fbAdSize = kFBAdSizeHeight250Rectangle;
     }
     
     if (self.fbPlacementId == nil) {
@@ -63,14 +61,14 @@
                                  andSuggestion:@""];
         
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
 
         return;
     }
 
     self.fbAdView = [[FBAdView alloc] initWithPlacementID:self.fbPlacementId
                                                    adSize:fbAdSize
-                                       rootViewController:[self.delegate viewControllerForPresentingModalView]];
+                                       rootViewController:[self.delegate inlineAdAdapterViewControllerForPresentingModalView:self]];
     self.fbAdView.delegate = self;
 
     if (!self.fbAdView) {
@@ -78,7 +76,7 @@
                                      andReason:@""
                                  andSuggestion:@""];
         
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.fbPlacementId);
         return;
     }
@@ -89,7 +87,8 @@
      * (Confirmed in email with a FB Solutions Engineer)
      */
     CGRect fbAdFrame = self.fbAdView.frame;
-    fbAdFrame.size = size;
+    fbAdFrame.size.width = size.width;              // Since FB ad sizes are flexible width, use the container width
+    fbAdFrame.size.height = fbAdSize.size.height;   // Use the FB ad size height
     self.fbAdView.frame = fbAdFrame;
     [FBAdSettings setMediationService:[FacebookAdapterConfiguration mediationString]];
 
@@ -130,7 +129,7 @@
 {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
 
-    [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+    [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
 }
 
 - (void)adViewDidLoad:(FBAdView *)adView
@@ -139,32 +138,27 @@
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
 
-    [self.delegate bannerCustomEvent:self didLoadAd:adView];
+    [self.delegate inlineAdAdapter:self didLoadAdWithAdView:adView];
 }
 
 - (void)adViewWillLogImpression:(FBAdView *)adView
 {
     MPLogInfo(@"Facebook banner ad did log impression");
-    [self.delegate trackImpression];
+    [self.delegate inlineAdAdapterDidTrackImpression:self];
 }
 
 - (void)adViewDidClick:(FBAdView *)adView
 {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
 
-    [self.delegate trackClick];
-    [self.delegate bannerCustomEventWillBeginAction:self];
+    [self.delegate inlineAdAdapterDidTrackClick:self];
+    [self.delegate inlineAdAdapterWillBeginUserAction:self];
 }
 
 - (void)adViewDidFinishHandlingClick:(FBAdView *)adView
 {
     MPLogInfo(@"Facebook banner ad did finish handling click");
-    [self.delegate bannerCustomEventDidFinishAction:self];
-}
-
-- (UIViewController *)viewControllerForPresentingModalView
-{
-    return [self.delegate viewControllerForPresentingModalView];
+    [self.delegate inlineAdAdapterDidEndUserAction:self];
 }
 
 @end

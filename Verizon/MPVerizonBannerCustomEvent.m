@@ -1,4 +1,3 @@
-
 #import <VerizonAdsInlinePlacement/VerizonAdsInlinePlacement.h>
 #import <VerizonAdsStandardEdition/VerizonAdsStandardEdition.h>
 #import "MPVerizonBannerCustomEvent.h"
@@ -7,7 +6,7 @@
 #import "MPAdConfiguration.h"
 #endif
 #import "VerizonAdapterConfiguration.h"
-#import "VerizonBidCache.h"
+#import "MPVerizonBidCache.h"
 
 @interface MPVerizonBannerCustomEvent ()<VASInlineAdFactoryDelegate, VASInlineAdViewDelegate>
 @property (nonatomic, assign) BOOL didTrackClick;
@@ -33,20 +32,13 @@
     return self;
 }
 
-- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
+- (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     MPLogInfo(@"Requesting VAS banner with event info %@.", info);
     
     NSString *siteId = info[kMoPubVASAdapterSiteId];
-    if (siteId.length == 0)
-    {
-        siteId = info[kMoPubMillennialAdapterSiteId];
-    }
     NSString *placementId = info[kMoPubVASAdapterPlacementId];
-    if (placementId.length == 0)
-    {
-        placementId = info[kMoPubMillennialAdapterPlacementId];
-    }
+    
     if (siteId.length == 0 || placementId.length == 0)
     {
         NSError *error = [VASErrorInfo errorWithDomain:kMoPubVASAdapterErrorDomain
@@ -56,7 +48,7 @@
                                             underlying:nil];
         
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
         return;
     }
     
@@ -70,24 +62,43 @@
                                             underlying:nil];
         
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError:error];
+        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
         return;
     }
     
+    [VerizonAdapterConfiguration setCachedInitializationParameters:info];
     VASInlineAdSize *requestedSize = [[VASInlineAdSize alloc] initWithWidth:size.width height:size.height];
     
-    VASRequestMetadataBuilder *metaDataBuilder = [[VASRequestMetadataBuilder alloc] init];
-    [metaDataBuilder setAppMediator:VerizonAdapterConfiguration.appMediator];
-    self.inlineFactory = [[VASInlineAdFactory alloc] initWithPlacementId:placementId adSizes:@[requestedSize] vasAds:[VASAds sharedInstance] delegate:self];
-    [self.inlineFactory setRequestMetadata:metaDataBuilder.build];
+    [VASAds sharedInstance].locationEnabled = [MoPub sharedInstance].locationUpdatesEnabled;
     
-    VASBid *bid = [VerizonBidCache.sharedInstance bidForPlacementId:placementId];
+    self.inlineFactory = [[VASInlineAdFactory alloc] initWithPlacementId:placementId adSizes:@[requestedSize] vasAds:[VASAds sharedInstance] delegate:self];
+    
+    VASBid *bid = [MPVerizonBidCache.sharedInstance bidForPlacementId:placementId];
     
     if (bid) {
         [self.inlineFactory loadBid:bid inlineAdDelegate:self];
     } else {
+        VASRequestMetadataBuilder *metadataBuilder = [[VASRequestMetadataBuilder alloc] initWithRequestMetadata:[VASAds sharedInstance].requestMetadata];
+        metadataBuilder.mediator = VerizonAdapterConfiguration.mediator;
+            
+        MPLogInfo(@"%@: %@", kMoPubRequestMetadataAdContent, adMarkup);
+        
+        if (adMarkup.length > 0) {
+            NSMutableDictionary<NSString *, id> *placementData =
+            [NSMutableDictionary dictionaryWithDictionary:
+             @{
+                 kMoPubRequestMetadataAdContent : adMarkup,
+                 @"overrideWaterfallProvider"  : @"waterfallprovider/sideloading"
+             }
+             ];
+            
+            [metadataBuilder setPlacementData:placementData];
+        }
+        
+        [self.inlineFactory setRequestMetadata:metadataBuilder.build];
         [self.inlineFactory load:self];
     }
+    
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
 }
 
@@ -108,7 +119,7 @@
         __strong __typeof__(self) strongSelf = weakSelf;
         if (strongSelf != nil)
         {
-            [strongSelf.delegate bannerCustomEvent:strongSelf didFailToLoadAdWithError:errorInfo];
+            [strongSelf.delegate inlineAdAdapter:strongSelf didFailToLoadAdWithError:errorInfo];
         }
     });
     
@@ -125,8 +136,8 @@
             self.inlineAd = inlineAd;
             
             inlineAd.frame = CGRectMake(0, 0, inlineAd.adSize.width, inlineAd.adSize.height);
-            [strongSelf.delegate bannerCustomEvent:strongSelf didLoadAd:inlineAd];
-            [strongSelf.delegate trackImpression];
+            [strongSelf.delegate inlineAdAdapter:strongSelf didLoadAdWithAdView:inlineAd];
+            [strongSelf.delegate inlineAdAdapterDidTrackImpression:strongSelf];
             
             MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
             MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
@@ -148,7 +159,7 @@
         __strong __typeof__(self) strongSelf = weakSelf;
         if (strongSelf != nil)
         {
-            [strongSelf.delegate bannerCustomEventWillBeginAction:strongSelf];
+            [strongSelf.delegate inlineAdAdapterWillBeginUserAction:strongSelf];
         }
     });
     
@@ -162,7 +173,7 @@
         __strong __typeof__(self) strongSelf = weakSelf;
         if (strongSelf != nil)
         {
-            [strongSelf.delegate bannerCustomEventDidFinishAction:strongSelf];
+            [strongSelf.delegate inlineAdAdapterDidEndUserAction:strongSelf];
         }
     });
     
@@ -176,11 +187,11 @@
         __strong __typeof__(self) strongSelf = weakSelf;
         if (strongSelf != nil)
         {
-            [strongSelf.delegate bannerCustomEventDidFinishAction:strongSelf];
+            [strongSelf.delegate inlineAdAdapterDidEndUserAction:strongSelf];
             
             if (!strongSelf.didTrackClick)
             {
-                [strongSelf.delegate trackClick];
+                [strongSelf.delegate inlineAdAdapterDidTrackClick:strongSelf];
                 strongSelf.didTrackClick = YES;
             }
         }
@@ -196,7 +207,7 @@
         __strong __typeof__(self) strongSelf = weakSelf;
         if (strongSelf != nil)
         {
-            [strongSelf.delegate bannerCustomEventWillLeaveApplication:strongSelf];
+            [strongSelf.delegate inlineAdAdapterWillLeaveApplication:strongSelf];
         }
     });
     
@@ -205,12 +216,12 @@
 
 - (void)inlineAdDidResize:(VASInlineAdView *)inlineAd {}
 
-- (nullable UIViewController *)adPresentingViewController
+- (nullable UIViewController *)inlineAdPresentingViewController
 {
-    return [self.delegate viewControllerForPresentingModalView];
+    return [self.delegate inlineAdAdapterViewControllerForPresentingModalView:self];
 }
 
-- (void)inlineAdEvent:(VASInlineAdView *)inlineAd source:(NSString *)source eventId:(NSString *)eventId arguments:(NSDictionary<NSString *, id> *)arguments {}
+- (void)inlineAd:(nonnull VASInlineAdView *)inlineAd event:(nonnull NSString *)eventId source:(nonnull NSString *)source arguments:(nonnull NSDictionary<NSString *,id> *)arguments {}
 
 - (void)inlineAdDidRefresh:(nonnull VASInlineAdView *)inlineAd {}
 
@@ -218,26 +229,25 @@
 
 + (void)requestBidWithPlacementId:(nonnull NSString *)placementId
                           adSizes:(nonnull NSArray<VASInlineAdSize *> *)adSizes
-                       completion:(nonnull VASBidRequestCompletionHandler)completion {
+                       completion:(nonnull VASBidRequestCompletionHandler)completion
+{
     VASRequestMetadataBuilder *metaDataBuilder = [[VASRequestMetadataBuilder alloc] init];
-    [metaDataBuilder setAppMediator:VerizonAdapterConfiguration.appMediator];
+    metaDataBuilder.mediator = VerizonAdapterConfiguration.mediator;
+    
     [VASInlineAdFactory requestBidForPlacementId:placementId
                                          adSizes:adSizes
                                  requestMetadata:metaDataBuilder.build
                                           vasAds:[VASAds sharedInstance]
                                       completion:^(VASBid * _Nullable bid, VASErrorInfo * _Nullable errorInfo) {
-                                          dispatch_async(dispatch_get_main_queue(), ^{
-                                              if (bid) {
-                                                  [VerizonBidCache.sharedInstance storeBid:bid
-                                                                            forPlacementId:placementId
-                                                                                 untilDate:[NSDate dateWithTimeIntervalSinceNow:kMoPubVASAdapterSATimeoutInterval]];
-                                              }
-                                              completion(bid,errorInfo);
-                                          });
-                                      }];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (bid) {
+                [MPVerizonBidCache.sharedInstance storeBid:bid
+                                            forPlacementId:placementId
+                                                 untilDate:[NSDate dateWithTimeIntervalSinceNow:kMoPubVASAdapterSATimeoutInterval]];
+            }
+            completion(bid,errorInfo);
+        });
+    }];
 }
 
-
-@end
-@implementation MPMillennialBannerCustomEvent
 @end

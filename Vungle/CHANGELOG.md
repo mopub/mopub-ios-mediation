@@ -1,4 +1,42 @@
 ## Changelog
+* 6.7.0.0
+    * This version of the adapters has been certified with Vungle 6.7.0 and MoPub SDK 5.13.0.
+    * Add support for Advanced Bidding for fullscreen ads.
+    * Add support for playing multiple banner ads at the same time.
+    * Add support for new Vungle SDK event `vungleAdTrackClick`.
+    * Add support for new Vungle SDK init API.
+
+* 6.5.3.2
+    * Refactor non-native adapter classes to use the new consolidated API from MoPub.
+    * This and newer adapter versions are only compatible with 5.13.0+ MoPub SDK.
+
+* 6.5.3.1
+   * Fix `scheduledTimerWithTimeInterval` called for iOS 9.
+
+* 6.5.3.0
+   * This version of the adapters has been certified with Vungle 6.5.3 and MoPub SDK 5.11.0.
+
+* 6.5.2.0
+   * This version of the adapters has been certified with Vungle 6.5.2.
+   * Add support for Vungle's newly-introduced banner format.
+
+  * 6.4.6.1
+    * Remove duplicate `rewardedVideoDidAppearForCustomEvent` callback.
+    * Adapter logging cleanup.
+
+  * 6.4.6.0
+    * This version of the adapters has been certified with Vungle 6.4.6.
+    
+  * 6.4.5.1
+    * Pass mute and ad orientations settings for interstitial ad.
+    * Remove passing user ID setting for interstitial ad.
+
+  * 6.4.5.0
+    * This version of adapters has been certified with Vungle 6.4.5 and is compatible with iOS 13.
+    * Stop implementing deprecated request API.
+    * Prioritize reading data from `localExtras` for rewarded video.
+    * Add support for the newly-introduced Vungle's Medium Rectangle format demand.
+
   * 6.3.2.6
     * Allow supported mediated networks and publishers to opt-in to process a user’s personal data based on legitimate interest basis. More details [here](https://developers.mopub.com/docs/publisher/gdpr-guide/#legitimate-interest-support).
 

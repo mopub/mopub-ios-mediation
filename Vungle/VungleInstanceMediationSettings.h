@@ -28,8 +28,12 @@
  */
 @property (nonatomic, copy) NSString *userIdentifier;
 
-@property (nonatomic, assign) NSUInteger ordinal;
+@property (nonatomic) NSUInteger ordinal;
 
-@property (nonatomic, assign) NSTimeInterval flexViewAutoDismissSeconds;
+@property (nonatomic) NSTimeInterval flexViewAutoDismissSeconds;
+
+@property (nonatomic) BOOL startMuted;
+
+@property (nonatomic, assign) NSNumber *orientations;
 
 @end

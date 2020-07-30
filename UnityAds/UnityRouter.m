@@ -25,10 +25,6 @@
 @property (nonatomic, weak) id<UnityRouterDelegate> delegate;
 
 @property NSMutableDictionary* delegateMap;
-@property id<UnityAdsBannerDelegate> bannerDelegate;
-
-@property BOOL bannerLoadRequested;
-@property NSString* bannerPlacementId;
 
 @property (nonatomic, assign) int impressionOrdinal;
 @property (nonatomic, assign) int missedImpressionOrdinal;
@@ -56,19 +52,17 @@
 
 - (void)initializeWithGameId:(NSString *)gameId
 {
+    [self setIfUnityAdsCollectsPersonalInfo];
     static dispatch_once_t unityInitToken;
     dispatch_once(&unityInitToken, ^{
         UADSMediationMetaData *mediationMetaData = [[UADSMediationMetaData alloc] init];
         [mediationMetaData setName:@"MoPub"];
         [mediationMetaData setVersion:[[MoPub sharedInstance] version]];
-        [mediationMetaData set:@"enable_metadata_load" value:[NSNumber numberWithBool:YES]];
         [mediationMetaData set:@"adapter_version"  value:ADAPTER_VERSION];
         [mediationMetaData commit];
         
-        [UnityAdsBanner setDelegate:self];
-        [UnityAds initialize:gameId delegate:self];
+        [UnityAds initialize:gameId delegate:self testMode:false enablePerPlacementLoad:true];
     });
-    [self setIfUnityAdsCollectsPersonalInfo];
 }
 
 - (void) setIfUnityAdsCollectsPersonalInfo
@@ -100,42 +94,18 @@
 
 - (void)requestVideoAdWithGameId:(NSString *)gameId placementId:(NSString *)placementId delegate:(id<UnityRouterDelegate>)delegate;
 {
-    //Call metadata load API
-    NSString *uniqueEventId = [[NSUUID UUID] UUIDString];
-    UADSMetaData *loadMetaData = [[UADSMetaData alloc] initWithCategory:@"load"];
-    [loadMetaData set:uniqueEventId value:placementId];
-    [loadMetaData commit];
-    
-    if([UnityAds getPlacementState:placementId] == kUnityAdsPlacementStateNoFill){
-        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
-        [delegate unityAdsDidFailWithError:error];
-        return;
-    }
+    //Call load first, to minimize reporting discrepencies
+    [UnityAds load:placementId];
     
     if (!self.isAdPlaying) {
         [self.delegateMap setObject:delegate forKey:placementId];
-        [self initializeWithGameId:gameId];
-
-        // Need to check immediately as an ad may be cached.
-        if ([self isAdAvailableForPlacementId:placementId]) {
-            [self unityAdsReady:placementId];
+        
+        if (![UnityAds isInitialized]) {
+            [self initializeWithGameId:gameId];
         }
-        // MoPub timeout will handle the case for an ad failing to load.
     } else {
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorUnknown userInfo:nil];
         [delegate unityAdsDidFailWithError:error];
-    }
-}
-
--(void)requestBannerAdWithGameId:(NSString *)gameId placementId:(NSString *)placementId delegate:(id <UnityAdsBannerDelegate>)delegate {
-    [self initializeWithGameId:gameId];
-    self.bannerDelegate = delegate;
-
-    if ([UnityAds isReady:placementId]) {
-        [UnityAdsBanner loadBanner:placementId];
-    } else {
-        self.bannerLoadRequested = YES;
-        self.bannerPlacementId = placementId;
     }
 }
 
@@ -178,20 +148,11 @@
     }
 }
 
--(void)clearBannerDelegate {
-    self.bannerDelegate = nil;
-    self.bannerPlacementId = nil;
-    self.bannerLoadRequested = NO;
-}
-
 #pragma mark - UnityAdsExtendedDelegate
 
 - (void)unityAdsReady:(NSString *)placementId
 {
-    if ([placementId isEqualToString:self.bannerPlacementId] && self.bannerLoadRequested) {
-        self.bannerLoadRequested = NO;
-        [UnityAdsBanner loadBanner:self.bannerPlacementId];
-    } else if (!self.isAdPlaying) {
+    if (!self.isAdPlaying) {
         id delegate = [self getDelegate:placementId];
         if (delegate != nil) {
             [delegate unityAdsReady:placementId];
@@ -224,6 +185,7 @@
 
 - (void)unityAdsDidClick:(NSString *)placementId {
     id delegate = [self getDelegate:placementId];
+    
     if (delegate != nil) {
         [delegate unityAdsDidClick:placementId];
     }
@@ -239,28 +201,6 @@
         NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorUnknown userInfo:nil];
         [delegate unityAdsDidFailWithError:error];
     }
-}
-
-#pragma mark - UnityAdsBannerDelegate
-
--(void)unityAdsBannerDidLoad:(NSString *)placementId view:(UIView *)view {
-    [self.bannerDelegate unityAdsBannerDidLoad:placementId view:view];
-}
-
--(void)unityAdsBannerDidUnload:(NSString *)placementId {
-    [self.bannerDelegate unityAdsBannerDidUnload:placementId];
-}
--(void)unityAdsBannerDidShow:(NSString *)placementId {
-    [self.bannerDelegate unityAdsBannerDidShow:placementId];
-}
--(void)unityAdsBannerDidHide:(NSString *)placementId {
-    [self.bannerDelegate unityAdsBannerDidHide:placementId];
-}
--(void)unityAdsBannerDidClick:(NSString *)placementId {
-    [self.bannerDelegate unityAdsBannerDidClick:placementId];
-}
--(void)unityAdsBannerDidError:(NSString *)message {
-    [self.bannerDelegate unityAdsBannerDidError:message];
 }
 
 @end

@@ -1,8 +1,40 @@
 
 ## Changelog
+* 3.4.6.0
+  * This version of the adapters has been certified with Unity Ads 3.4.6 and MoPub SDK 5.13.0.
+
+* 3.4.2.1
+  * Refactor non-native adapter classes to use the new consolidated API from MoPub.
+  * This and newer adapter versions are only compatible with 5.13.0+ MoPub SDK.
+
+* 3.4.2.0
+  * This version of the adapters has been certified with Unity Ads 3.4.2.
+
+* 3.4.0.1
+  * Log Unity Ads placement Id in the ad lifecycle events.
+
+* 3.4.0.0
+  * This version of the adapters has been certified with Unity Ads 3.4.0.
+  
+* 3.3.0.1
+  * Update adapter to handle Unity Ads load behaviors seamlessly for fullscreen ads.
+  * Fix incompatible type warning for MoPub `logLevel`. 
+  
+* 3.3.0.0
+  * This version of the adapters has been certified with Unity Ads 3.3.0 and is compatible with iOS 13.
+  * Update the banner adapter to use new load API.
+  * Fix banner ads refresh to render correctly.
+
+* 3.2.0.1
+  * Stop implementing deprecated request API.
+
+* 3.2.0.0
+  * This version of the adapters has been certified with Unity Ads 3.2.0.
+  * **Note**:On MoPub adunit refresh, Unity Banners may not render correctly and this issue will be fixed in the upcoming Unity SDK versions. This behavior is inconsistent and there is no suggested workaround at the moment
+
 * 3.1.0.0
-    * This version of the adapters has been certified with Unity Ads 3.1.0.
-    * Add load API functionality via metadata API to prevent rewarded and interstitial placements from loading in UnityAds until `load` is called.
+  * This version of the adapters has been certified with Unity Ads 3.1.0.
+  * Add load API functionality via metadata API to prevent rewarded and interstitial placements from loading in UnityAds until `load` is called.
 
 * 3.0.3.0
   * This version of the adapters has been certified with UnityAds 3.0.3.

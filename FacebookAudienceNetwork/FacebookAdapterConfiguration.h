@@ -24,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 // Test Mode
 @property (class, nonatomic) BOOL isTestMode;
 
+@property (class, nonatomic, readonly) Boolean * isNativeBanner;
+
 // MPAdapterConfiguration
 @property (nonatomic, copy, readonly) NSString * adapterVersion;
 @property (nonatomic, copy, readonly) NSString * biddingToken;

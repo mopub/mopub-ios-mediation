@@ -73,7 +73,7 @@
     self.adapter = adapter;
     
     if (!self.renderingViewClass) {
-        FBNativeAd *fbNativeAd = ((FacebookNativeAdAdapter *)self.adapter).fbNativeAd;
+        FBNativeAdBase *fbNativeAd = ((FacebookNativeAdAdapter *)self.adapter).fbNativeAdBase;
         UIView *fbAdView = [FBNativeAdView nativeAdViewWithNativeAd:fbNativeAd];
         fbAdView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         return fbAdView;

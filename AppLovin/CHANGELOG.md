@@ -1,4 +1,88 @@
 ## Changelog
+   * 6.13.1.0
+     * This version of the adapters has been certified with AppLovin SDK 6.13.1 and MoPub SDK 5.13.1.
+
+   * 6.13.0.0
+     * This version of the adapters has been certified with AppLovin SDK 6.13.0 and MoPub SDK 5.13.0.
+   
+   * 6.12.8.1
+     * Add didFireLoadDelegate logic to prevent redundent logging for fill metrics. 
+
+   * 6.12.8.0
+     * This version of the adapters has been certified with AppLovin SDK 6.12.8 and MoPub SDK 5.13.0.
+
+   * 6.12.6.1
+     * Refactor non-native adapter classes to use the new consolidated API from MoPub.
+     * To use this and newer adapter versions, you must use MoPub 5.13.0 or newer.
+
+   * 6.12.6.0
+     * This version of the adapters has been certified with AppLovin SDK 6.12.6 and MoPub SDK 5.12.1.
+
+   * 6.12.5.0
+     * This version of the adapters has been certified with AppLovin SDK 6.12.5 and MoPub SDK 5.12.0.
+
+   * 6.12.4.0
+     * This version of the adapters has been certified with AppLovin SDK 6.12.4 and MoPub SDK 5.12.0.
+
+   * 6.12.2.0
+     * This version of the adapters has been certified with AppLovin SDK 6.12.2 and MoPub SDK 5.12.0.
+
+   * 6.12.1.0
+     * This version of the adapters has been certified with AppLovin SDK 6.12.1 and MoPub SDK 5.12.0.
+
+   * 6.12.0.0
+     * This version of the adapters has been certified with AppLovin SDK 6.12.0 and MoPub SDK 5.12.0.
+
+   * 6.11.6.0
+     * This version of the adapters has been certified with AppLovin SDK 6.11.6 and MoPub SDK 5.11.0.
+
+   * 6.11.5.0
+     * This version of the adapters has been certified with AppLovin SDK 6.11.5 and MoPub SDK 5.11.0.
+   
+   * 6.11.4.0
+     * This version of the adapters has been certified with AppLovin SDK 6.11.4.
+
+   * 6.11.3.0
+     * This version of the adapters has been certified with AppLovin SDK 6.11.3.
+
+   * 6.11.1.0
+     * This version of the adapters has been certified with AppLovin SDK 6.11.1.
+
+   * 6.11.0.0
+     * This version of the adapters has been certified with AppLovin SDK 6.11.0.
+  
+   * 6.10.2.0
+     * This version of the adapters has been certified with AppLovin SDK 6.10.2.
+     * Fix compiler warnings.
+
+   * 6.10.1.0
+     * This version of the adapters has been certified with AppLovin SDK 6.10.1.
+
+   * 6.10.0.0
+     * This version of the adapters has been certified with AppLovin SDK 6.10.0.
+     * Remove the ability to test and query test mode as it was deprecated in v6.10.0 of the AppLovin SDK.
+
+   * 6.9.5.0
+     * This version of the adapters has been certified with AppLovin SDK 6.9.5.
+
+   * 6.9.4.1
+     * Fail fast when the AppLovin SDK Key is not inputted.
+
+   * 6.9.4.0
+     * This version of the adapters has been certified with AppLovin SDK 6.9.4.
+
+   * 6.9.3.0
+     * This version of the adapters has been certified with AppLovin SDK 6.9.3.
+
+   * 6.8.1.0
+     * This version of the adapters has been certified with AppLovin SDK 6.8.1.
+
+   * 6.8.0.0
+     * This version of the adapters has been certified with AppLovin SDK 6.8.0.
+
+    * 6.7.1.1
+     * Fix banner size passing as part of ad format unification. This version is only compatible with the 5.8.0+ release of the MoPub SDK.
+
    * 6.7.1.0
      * This version of the adapters has been certified with AppLovin SDK 6.7.1.
 

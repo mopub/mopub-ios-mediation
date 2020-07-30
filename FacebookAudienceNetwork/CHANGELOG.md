@@ -1,4 +1,45 @@
 ## Changelog
+* 5.10.1.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.10.1 and MoPub 5.13.1.
+
+* 5.10.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.10.0 and MoPub 5.13.0.
+
+* 5.9.0.1
+    * Refactor non-native adapter classes to use the new consolidated API from MoPub.
+    * To use this and newer adapter versions, you must use MoPub 5.13.0 or newer.
+
+* 5.9.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.9.0 and MoPub 5.12.1.
+
+* 5.8.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.8.0 and MoPub 5.11.0.
+
+* 5.7.1.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.7.1.
+
+* 5.7.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.7.0.
+
+* 5.6.1.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.6.1.
+
+* 5.6.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.6.0.
+    * Add support for [native banner](https://developers.facebook.com/docs/audience-network/ios-native-banner/). Refer to the [Mediate Facebook page](https://developers.mopub.com/publishers/mediation/networks/facebook/) for integration instructions.
+
+* 5.5.1.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.5.1 and is compatible with iOS 13.
+
+* 5.5.0.1
+    * Remove native video handling code and associated comments. Publishers can enable/disable video on the Facebook Audience Network dashboard.
+
+* 5.5.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.5.0.
+
+* 5.4.0.1
+    * Fix banner size passing as part of ad format unification. This version is only compatible with the 5.8.0+ release of the MoPub SDK.
+
 * 5.4.0.0
     * This version of the adapters has been certified with Facebook Audience Network 5.4.0.
 

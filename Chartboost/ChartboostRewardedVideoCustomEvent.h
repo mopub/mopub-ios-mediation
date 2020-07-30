@@ -10,14 +10,8 @@
 #elif __has_include(<MoPubSDKFramework/MoPub.h>)
     #import <MoPubSDKFramework/MoPub.h>
 #else
-    #import "MPRewardedVideoCustomEvent.h"
+    #import "MPFullscreenAdAdapter.h"
 #endif
 
-@interface ChartboostRewardedVideoCustomEvent : MPRewardedVideoCustomEvent
-
-/**
- * A string that corresponds to a Chartboost CBLocation used for differentiating ad requests.
- */
-@property (nonatomic, copy) NSString *location;
-
+@interface ChartboostRewardedVideoCustomEvent : MPFullscreenAdAdapter <MPThirdPartyFullscreenAdAdapter>
 @end

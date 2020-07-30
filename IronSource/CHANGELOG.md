@@ -1,4 +1,61 @@
 ## Changelog
+* 6.18.0.0.0
+    * This version of the adapters has been certified with ironSource 6.18.0.0 and MoPub SDK 5.13.1.
+
+* 6.17.0.1.0
+    * This version of the adapters has been certified with ironSource 6.17.0.1 and MoPub SDK 5.13.1.
+    * Renamed `moPubNetworkName` to `ironsource` on the adapter configuration.
+
+* 6.16.3.0.0
+    * This version of the adapters has been certified with ironSource 6.16.3.0 and MoPub SDK 5.13.0.
+
+* 6.16.1.0.1
+    * Refactor non-native adapter classes to use the new consolidated API from MoPub.
+    * To use this and newer adapter versions, you must use MoPub 5.13.0 or newer.
+
+* 6.16.1.0.0
+    * This version of the adapters has been certified with ironSource 6.16.1.0 and MoPub SDK 5.12.0.
+
+* 6.16.0.0.0
+    * This version of the adapters has been certified with ironSource 6.16.0.0 and MoPub SDK 5.12.0.
+
+* 6.15.0.1.0
+    * This version of the adapters has been certified with ironSource 6.15.0.1 and MoPub SDK 5.11.0.
+
+* 6.14.0.0.0
+    * This version of the adapters has been certified with ironSource 6.14.0.0.
+
+* 6.13.0.1.0
+    * This version of the adapters has been certified with ironSource 6.13.0.1.
+    * Log the ironSource instance id in ad lifecycle events, and improve error console logs.
+
+* 6.13.0.0.0
+    * This version of the adapters has been certified with ironSource 6.13.0.0.
+
+* 6.11.0.0.0
+    * This version of the adapters has been certified with ironSource 6.11.0.0.
+
+* 6.10.0.0.0
+    * This version of the adapters has been certified with ironSource 6.10.0.0.
+
+* 6.8.7.0.0
+    * This version of the adapters has been certified with ironSource 6.8.7.0 and is compatible with iOS 13.
+
+* 6.8.6.0.0
+    * This version of the adapters has been certified with ironSource 6.8.6.0. ~~and is compatible with iOS 13.~~
+
+* 6.8.5.0.1
+    * Stop implementing deprecated request API.
+
+* 6.8.5.0.0
+    * This version of the adapters has been certified with ironSource 6.8.5.0.
+
+* 6.8.4.2.0
+    * This version of the adapters has been certified with ironSource 6.8.4.2.
+
+* 6.8.4.1.0
+    * This version of the adapters has been certified with ironSource 6.8.4.1.
+
  * 6.8.4.0.1
     * Fix missing `MPLogging.h` import to avoid build errors.
 
