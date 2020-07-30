@@ -14,11 +14,11 @@
 + (instancetype)sharedManager;
 - (void)initIronSourceSDKWithAppKey:(NSString *)appKey forAdUnits:(NSSet *)adUnits;
 - (void)loadRewardedAdWithDelegate:(id<IronSourceRewardedVideoDelegate>)delegate
-                        instanceID:(NSString *)instanceID;
+                        instanceID:(NSString *)instanceID WithAdMarkup: (NSString *) adMarkup;
 - (void)presentRewardedAdFromViewController:(nonnull UIViewController *)viewController
                                  instanceID:(NSString *)instanceID;
 - (void)requestInterstitialAdWithDelegate:(id<IronSourceInterstitialDelegate>)delegate
-                               instanceID:(NSString *)instanceID;
+                               instanceID:(NSString *)instanceID WithAdMarkup: (NSString *) adMarkup;
 - (void)presentInterstitialAdFromViewController:(nonnull UIViewController *)viewController
                                      instanceID: (NSString *) instanceID;
 

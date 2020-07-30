@@ -36,7 +36,7 @@ NSString * const kIronSourceAppkey = @"applicationKey";
 }
 
 - (NSString *)biddingToken {
-    return nil;
+    return [IronSource getISDemandOnlyBiddingData];
 }
 
 - (NSString *)moPubNetworkName {
