@@ -1,4 +1,8 @@
 ## Changelog
+  * 10.3.4.0
+    * This version of adapters has been certified with Flurry 10.3.4.
+    * Maintain compatibility with v5.13.1 of the MoPub iOS SDK. This is the minimum adapter version for v5.13.1 integrations with MoPub. 
+
   * 10.0.2.1
     * Maintain compatibility with v5.11.0 of the MoPub iOS SDK. This is the minimum adapter version for v5.11.0 integrations with MoPub. 
 

@@ -130,55 +130,68 @@
 
 #pragma mark - Flurry Ad Delegates
 
-- (void) adNativeWillPresent:(FlurryAdNative*) nativeAd
+- (void)adNativeWillPresent:(FlurryAdNative*)nativeAd
 {
     MPLogAdEvent([MPLogEvent adWillPresentModalForAdapter:NSStringFromClass(self.class)], nil);
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], nil);
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], nil);
 
     if ([self.delegate respondsToSelector:@selector(nativeAdWillPresentModalForAdapter:)]) {
-        [self.delegate nativeAdWillPresentModalForAdapter:self];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate nativeAdWillPresentModalForAdapter:self];
+        });
     }
 }
 
-- (void) adNativeWillLeaveApplication:(FlurryAdNative*) nativeAd
+- (void)adNativeWillLeaveApplication:(FlurryAdNative*)nativeAd
 {
+    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], nil);
+    
     if ([self.delegate respondsToSelector:@selector(nativeAdWillLeaveApplicationFromAdapter:)]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate nativeAdWillLeaveApplicationFromAdapter:self];
+        });
     }
 }
 
-- (void) adNativeWillDismiss:(FlurryAdNative*) nativeAd
+- (void)adNativeWillDismiss:(FlurryAdNative*)nativeAd
 {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], nil);
 }
 
-- (void) adNativeDidDismiss:(FlurryAdNative*) nativeAd
+- (void)adNativeDidDismiss:(FlurryAdNative*)nativeAd
 {
     MPLogAdEvent([MPLogEvent adDidDismissModalForAdapter:NSStringFromClass(self.class)], nil);
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], nil);
 
     if ([self.delegate respondsToSelector:@selector(nativeAdDidDismissModalForAdapter:)]) {
-        [self.delegate nativeAdDidDismissModalForAdapter:self];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate nativeAdDidDismissModalForAdapter:self];
+        });
     }
 }
 
-- (void) adNativeDidReceiveClick:(FlurryAdNative*) nativeAd
+- (void)adNativeDidReceiveClick:(FlurryAdNative*)nativeAd
 {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], nil);
 
     if ([self.delegate respondsToSelector:@selector(nativeAdDidClick:)]) {
-        [self.delegate nativeAdDidClick:self];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate nativeAdDidClick:self];
+        });
     } else {
         MPLogInfo(@"Delegate does not implement click tracking callback. Clicks likely not being tracked.");
     }
 }
 
-- (void) adNativeDidLogImpression:(FlurryAdNative*) nativeAd
+- (void)adNativeDidLogImpression:(FlurryAdNative*)nativeAd
 {
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], nil);
 
     if ([self.delegate respondsToSelector:@selector(nativeAdWillLogImpression:)]) {
-        [self.delegate nativeAdWillLogImpression:self];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate nativeAdWillLogImpression:self];
+        });
     } else {
         MPLogInfo(@"Delegate does not implement impression tracking callback. Impression likely not being tracked.");
     }

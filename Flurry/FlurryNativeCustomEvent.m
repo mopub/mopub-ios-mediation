@@ -58,7 +58,7 @@ NSString *const kFlurryAdSpaceName = @"adSpaceName";
 
 #pragma mark - Flurry Ad Delegates
 
-- (void) adNativeDidFetchAd:(FlurryAdNative *)flurryAd
+- (void)adNativeDidFetchAd:(FlurryAdNative *)flurryAd
 {
     FlurryNativeAdAdapter *adAdapter = [[FlurryNativeAdAdapter alloc] initWithFlurryAdNative:flurryAd];
     MPNativeAd *interfaceAd = [[MPNativeAd alloc] initWithAdAdapter:adAdapter];
@@ -67,7 +67,7 @@ NSString *const kFlurryAdSpaceName = @"adSpaceName";
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
-- (void) adNative:(FlurryAdNative *)flurryAd adError:(FlurryAdError)adError errorDescription:(NSError *)errorDescription
+- (void)adNative:(FlurryAdNative *)flurryAd adError:(FlurryAdError)adError errorDescription:(NSError *)errorDescription
 {
     MPLogInfo(@"Flurry native ad failed to load with error (customEvent): %@", errorDescription.description);
     [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:errorDescription];
@@ -75,7 +75,7 @@ NSString *const kFlurryAdSpaceName = @"adSpaceName";
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:errorDescription], [self getAdNetworkId]);
 }
 
-- (NSString *) getAdNetworkId {
+- (NSString *)getAdNetworkId {
     return kFlurryApiKey;
 }
 
