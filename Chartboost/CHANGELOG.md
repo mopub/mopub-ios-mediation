@@ -1,4 +1,10 @@
 ## Changelog
+  * 8.2.0.1 
+      * Add support for Chartboost `CHBGDPRDataUseConsent` API.
+  
+  * 8.2.0.0
+      * This version of the adapters has been certified with Chartboost 8.2.0 and MoPub SDK 5.13.1.
+
   * 8.1.0.2
       * Refactor non-native adapter classes to use the new consolidated API from MoPub.
       * To use this and newer adapter versions, you must use MoPub 5.13.0 or newer.

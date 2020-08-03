@@ -38,10 +38,26 @@
             weakSelf.banner.delegate = nil;
             weakSelf.banner = [[CHBBanner alloc] initWithSize:integerSize location:location mediation:[ChartboostRouter mediation] delegate:weakSelf];
             weakSelf.banner.automaticallyRefreshesContent = NO;
+            [weakSelf setInitialBoundsForBanner:weakSelf.banner size:integerSize];
             
             [weakSelf.banner showFromViewController:[weakSelf.delegate inlineAdAdapterViewControllerForPresentingModalView:weakSelf]];
         });
     }];
+}
+
+- (void)setInitialBoundsForBanner:(CHBBanner *)banner size:(CGSize)size
+{
+    // The banner view bounds will have by default the same size as the requested ad size.
+    // If the requested width or height is 0, as it happens for the first ad loaded using MoPub's max ad size presets,
+    // we change the banner bounds to a standard size, so it is visible.
+    CGSize bannerSize = banner.bounds.size;
+    if (size.width <= 0) {
+        bannerSize.width = CHBBannerSizeStandard.width;
+    }
+    if (size.height <= 0) {
+        bannerSize.height = CHBBannerSizeStandard.height;
+    }
+    banner.bounds = CGRectMake(0, 0, bannerSize.width, bannerSize.height);
 }
 
 - (BOOL)enableAutomaticImpressionAndClickTracking

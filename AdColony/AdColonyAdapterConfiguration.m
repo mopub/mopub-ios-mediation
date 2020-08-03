@@ -48,7 +48,7 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"4.1.5.0";
+    return @"4.2.0.1";
 }
 
 - (NSString *)biddingToken {
@@ -113,14 +113,22 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
     NSData   * dataToCheck = [zoneIdsToString dataUsingEncoding:NSUTF8StringEncoding];
     NSError  * error = nil;
     
+    if (!dataToCheck) {
+        return nil;
+    }
+    
     // Fetch zone ID array, encode to Json Onject to handle Unity prefab values and decode before passing it to AdColony.
     id jsonObject = [NSJSONSerialization JSONObjectWithData:dataToCheck options:0 error:&error];
     
     if (jsonObject != nil) {
         NSData  * data = [zoneIdsToString dataUsingEncoding:NSUTF8StringEncoding];
         NSError * error;
-        NSMutableArray *jsonZoneIds = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
-        return jsonZoneIds;
+        
+        // JSONObjectWithData: returns an NSDictionary, while AdColony's configureWithAppID:(NSString *) zoneIDs:(NSArray<NSString *> *) options:(nullable AdColonyAppOptions *) completion:(nullable void (^)(NSArray<AdColonyZone *> *zones)) accepts zone IDs as an NSArray, so a conversion must be done
+        NSDictionary *jsonZoneIds = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+        NSArray *zoneIds = [jsonZoneIds allValues];
+        
+        return zoneIds;
     } else {
         return allZoneIds;
     }
@@ -136,7 +144,7 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
 }
 
 + (NSError *)validateZoneIds:(NSArray *)zoneIds forOperation:(NSString *)operation {
-    if (zoneIds != nil && zoneIds.count > 0) {
+    if (zoneIds != nil || zoneIds.count > 0) {
         return nil;
     }
     

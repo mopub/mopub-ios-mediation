@@ -75,9 +75,6 @@
         return;
     }
     
-    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class)
-                                       dspCreativeId:nil
-                                             dspName:nil], [self getAdNetworkId]);
     [AdColonyAdapterConfiguration updateInitializationParameters:parameters];
     [AdColonyController initializeAdColonyCustomEventWithAppId:appId
                                                     allZoneIds:allZoneIds
@@ -119,8 +116,11 @@
         AdColonyAdOptions *adOptions = [AdColonyAdOptions new];
         adOptions.showPrePopup = showPrePopup;
         adOptions.showPostPopup = showPostPopup;
-        
-       [AdColony requestInterstitialInZone:self.zoneId
+
+        MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class)
+                                           dspCreativeId:nil
+                                                 dspName:nil], [self getAdNetworkId]);
+        [AdColony requestInterstitialInZone:self.zoneId
                                    options:adOptions
                                andDelegate:self];
     }];

@@ -1,11 +1,11 @@
 ## Changelog
 
+ * 6.3.5.0.1
+    * Add missing MoPub imports.
 
  * 6.3.5.0.0
     * This version of the adapters has been certified with Mintegral 6.3.5.0 and MoPub 5.13.1.
-    * Fix an issue that may cause Unity games unable to resume app audio after seeing a video.
 
-    
  * 6.3.4.0.0
     * This version of the adapters has been certified with Mintegral 6.3.4.0 and MoPub 5.13.1.
     * Add support for Mintegral's `onVideoAdDidClosed:`. MoPub's `fullscreenAdAdapterAdDidDisappear:` will fire at this time when the video has been closed.
