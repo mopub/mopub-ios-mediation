@@ -104,7 +104,8 @@ typedef enum {
     if ([self.delegate respondsToSelector:@selector(trackClick)]) {
         MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
         [self.delegate inlineAdAdapterDidTrackClick:self];
-        [self.delegate inlineAdAdapterWillBeginUserAction:self];
+        // Stop calling `inlineAdAdapterWillBeginUserAction:` to fix a freezing issue in Unity games.
+        // [self.delegate inlineAdAdapterWillBeginUserAction:self];
     }
 }
 

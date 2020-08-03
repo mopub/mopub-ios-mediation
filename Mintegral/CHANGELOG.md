@@ -1,5 +1,8 @@
 ## Changelog
 
+* 6.3.5.0.2
+   * Stop calling `inlineAdAdapterWillBeginUserAction:` to fix a freezing issue in Unity games.
+   
  * 6.3.5.0.1
     * Add missing MoPub imports.
 
