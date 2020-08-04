@@ -16,12 +16,19 @@
 @end
 
 @implementation IronSourceInterstitialCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
 
 - (NSString *) getAdNetworkId {
     return _instanceId;
 }
 
 #pragma mark - MPFullscreenAdAdapter Override
+
+- (BOOL)hasAdAvailable {
+    return [IronSource hasISDemandOnlyInterstitial:[self getAdNetworkId]];
+}
 
 - (BOOL)isRewardExpected {
     return NO;
@@ -69,7 +76,7 @@
             [[IronSourceManager sharedManager] initIronSourceSDKWithAppKey:appKey forAdUnits:[NSSet setWithObject:@[IS_INTERSTITIAL]]];
             [self loadInterstitial:self.instanceId];
         } else {
-            MPLogInfo(@"IronSource Interstitial initialization with empty or nil appKey for instance @s",
+            MPLogInfo(@"IronSource Interstitial initialization with empty or nil appKey for instance %@",
                       [self getAdNetworkId]);
 
             NSError *error = [IronSourceUtils createErrorWith:@"IronSource adapter failed to request interstitial"

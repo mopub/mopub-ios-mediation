@@ -17,6 +17,9 @@
 @property (nonatomic, copy) NSString *instanceID;
 @end
 @implementation IronSourceRewardedVideoCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
 
 - (NSString *) getAdNetworkId {
     return _instanceID;
@@ -158,8 +161,8 @@
 - (void)rewardedVideoAdRewarded:(NSString *)instanceId {
     MPLogInfo(@"IronSource received reward for instance %@ (current instance %@)",
               instanceId, [self getAdNetworkId]);
-    MPReward *reward = [[MPReward alloc] initWithCurrencyType:kMPRewardedVideoRewardCurrencyTypeUnspecified
-                                                       amount:@(kMPRewardedVideoRewardCurrencyAmountUnspecified)];
+    MPReward *reward = [[MPReward alloc] initWithCurrencyType:kMPRewardCurrencyTypeUnspecified
+                                                       amount:@(kMPRewardCurrencyAmountUnspecified)];
     MPLogEvent([MPLogEvent adShouldRewardUserWithReward:reward]);
     [self.delegate fullscreenAdAdapter:self willRewardUser:reward];
 }
@@ -191,5 +194,6 @@
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], instanceId);
     [self.delegate fullscreenAdAdapterDidLoadAd:self];
 }
+
 @end
 
