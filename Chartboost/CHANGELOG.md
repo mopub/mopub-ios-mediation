@@ -1,4 +1,7 @@
 ## Changelog
+  * 8.2.0.2
+      * Fix adapter compiler warnings.
+
   * 8.2.0.1 
       * Add support for Chartboost `CHBGDPRDataUseConsent` API.
   
