@@ -14,14 +14,14 @@
 #import "MPConstants.h"
 #endif
 
-#define FACEBOOK_ADAPTER_VERSION             @"5.10.1.0"
+#define FACEBOOK_ADAPTER_VERSION             @"5.10.1.1"
 #define MOPUB_NETWORK_NAME                   @"facebook"
 
 static NSString * const kFacebookPlacementIDs = @"placement_ids";
-static Boolean *sIsNativeBanner = nil;
+static MPBool sIsNativeBanner = MPBoolUnknown;
 
 @interface FacebookAdapterConfiguration()
-@property (class, nonatomic, readwrite) Boolean * isNativeBanner;
+@property (class, nonatomic, readwrite) MPBool isNativeBanner;
 @end
 
 @implementation FacebookAdapterConfiguration
@@ -65,12 +65,12 @@ static Boolean *sIsNativeBanner = nil;
     return [NSString stringWithFormat:@"MOPUB_%@:%@", MP_SDK_VERSION, FACEBOOK_ADAPTER_VERSION];
 }
 
-+ (Boolean *)isNativeBanner
++ (MPBool)isNativeBanner
 {
     return sIsNativeBanner;
 }
 
-+ (void)setIsNativeBanner:(Boolean *)pref
++ (void)setIsNativeBanner:(MPBool)pref
 {
     sIsNativeBanner = pref;
 }
