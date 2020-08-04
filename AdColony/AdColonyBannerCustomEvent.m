@@ -10,12 +10,13 @@
 
 @interface AdColonyBannerCustomEvent () <AdColonyAdViewDelegate>
 
-@property (nonatomic, retain) AdColonyAdView *adView;
 @property (nonatomic, copy) NSString *zoneId;
 
 @end
 
 @implementation AdColonyBannerCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
 
 #pragma mark - MPInlineAdAdapter Overridden Methods
 

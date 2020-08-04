@@ -27,6 +27,8 @@
 @end
 
 @implementation AdColonyRewardedVideoCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
 
 - (NSString *) getAdNetworkId {
     return _zoneId;
@@ -206,5 +208,7 @@
     
     [self.delegate fullscreenAdAdapterDidTrackClick:self];
 }
+
+@dynamic hasAdAvailable;
 
 @end

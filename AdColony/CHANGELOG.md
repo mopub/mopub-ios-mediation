@@ -1,4 +1,7 @@
 ## Changelog
+  * 4.2.0.2
+    * Fix adapter compiler warnings.
+
   * 4.2.0.1
     * Fix initialization-related crashes when publishers use `MPMoPubConfiguration.mediatedNetworkConfigurations` to initialize AdColony with a dedicated configuration.
 
