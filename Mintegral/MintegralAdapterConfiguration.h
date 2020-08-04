@@ -19,18 +19,10 @@ extern NSString *const kMintegralErrorDomain;
 
 @property (nonatomic, copy, readonly) NSString * moPubNetworkName;
 
-@property (nonatomic, readonly, nullable) NSDictionary<NSString *, NSString *> * moPubRequestOptions;
-
 @property (nonatomic, copy, readonly) NSString * networkSdkVersion;
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration
                                   complete:(void(^ _Nullable)(NSError * _Nullable))complete;
-
-- (void)addMoPubRequestOptions:(NSDictionary<NSString *, NSString *> *)options;
-
-+ (void)setCachedInitializationParameters:(NSDictionary<NSString *, id> * _Nullable)parameters;
-
-+ (NSDictionary<NSString *, id> * _Nullable)cachedInitializationParameters;
 
 +(BOOL)isSDKInitialized;
 

@@ -1,4 +1,7 @@
 ## Changelog
+ * 6.3.5.0.2
+    * Fix adapter compiler warnings.
+
  * 6.3.5.0.1
     * Add missing MoPub imports.
 
