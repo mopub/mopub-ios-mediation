@@ -1,4 +1,7 @@
 ## Changelog
+  * 7.62.0.1
+    * Fix adapter compiler warnings.
+
   * 7.62.0.0
     * This version of the adapters has been certified with AdMob 7.62.0 and MoPub 5.13.1.
 
