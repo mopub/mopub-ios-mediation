@@ -13,6 +13,8 @@
     #import "MPLogging.h"
 #endif
 
+#define ADCOLONY_AD_MARKUP @"adm"
+
 @interface AdColonyInterstitialCustomEvent () <AdColonyInterstitialDelegate>
 
 @property (nonatomic, retain) AdColonyInterstitial *ad;
@@ -80,8 +82,14 @@
             return;
         }
         
+        AdColonyAdOptions *adOptions = nil;
+        if (adMarkup != nil) {
+            adOptions = [AdColonyAdOptions new];
+            [adOptions setValue:adMarkup forKey:ADCOLONY_AD_MARKUP];
+        }
+        
         [AdColony requestInterstitialInZone:self.zoneId
-                                    options:nil
+                                    options:adOptions
                                 andDelegate:self];
     }];
 }

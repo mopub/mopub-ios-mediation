@@ -17,6 +17,7 @@
 #endif
 
 #define ADCOLONY_INITIALIZATION_TIMEOUT dispatch_time(DISPATCH_TIME_NOW, 30 * NSEC_PER_SEC)
+#define ADCOLONY_AD_MARKUP @"adm"
 
 @interface AdColonyRewardedVideoCustomEvent () <AdColonyInterstitialDelegate>
 
@@ -119,7 +120,9 @@
         AdColonyAdOptions *adOptions = [AdColonyAdOptions new];
         adOptions.showPrePopup = showPrePopup;
         adOptions.showPostPopup = showPostPopup;
-        
+        if (adMarkup != nil) {
+            [adOptions setValue:adMarkup forKey:ADCOLONY_AD_MARKUP];
+        }
        [AdColony requestInterstitialInZone:self.zoneId
                                    options:adOptions
                                andDelegate:self];

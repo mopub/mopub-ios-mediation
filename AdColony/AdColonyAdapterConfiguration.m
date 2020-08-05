@@ -52,7 +52,7 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
 }
 
 - (NSString *)biddingToken {
-    return @"1";
+    return [AdColony collectSignals];
 }
 
 - (NSString *)moPubNetworkName {
