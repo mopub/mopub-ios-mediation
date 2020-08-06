@@ -1,4 +1,13 @@
 ## Changelog
+* 5.10.1.1
+    * Fix adapter compiler warnings.
+
+* 5.10.1.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.10.1 and MoPub 5.13.1.
+
+* 5.10.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 5.10.0 and MoPub 5.13.0.
+
 * 5.9.0.1
     * Refactor non-native adapter classes to use the new consolidated API from MoPub.
     * To use this and newer adapter versions, you must use MoPub 5.13.0 or newer.

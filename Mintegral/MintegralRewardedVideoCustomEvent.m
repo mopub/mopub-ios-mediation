@@ -5,16 +5,22 @@
 #import "MintegralAdapterConfiguration.h"
 #if __has_include(<MoPubSDKFramework/MoPub.h>)
     #import <MoPubSDKFramework/MoPub.h>
+#elif __has_include(<MoPub/MoPub.h>)
+    #import <MoPub/MoPub.h>
 #else
     #import "MoPub.h"
 #endif
 #if __has_include(<MoPubSDKFramework/MPLogging.h>)
     #import <MoPubSDKFramework/MPLogging.h>
+#elif __has_include(<MoPub/MoPub.h>)
+    #import <MoPub/MPLogging.h>
 #else
     #import "MPLogging.h"
 #endif
 #if __has_include(<MoPubSDKFramework/MPRewardedVideoReward.h>)
     #import <MoPubSDKFramework/MPReward.h>
+#elif __has_include(<MoPub/MoPub.h>)
+    #import <MoPub/MPReward.h>
 #else
     #import "MPReward.h"
 #endif
@@ -28,6 +34,9 @@
 @end
 
 @implementation MintegralRewardedVideoCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
 
 #pragma mark - MPFullscreenAdAdapter Override
 
@@ -171,10 +180,11 @@
         
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
-    
+}
+
+- (void)onVideoAdDidClosed:(NSString *)placementId unitId:(NSString *)unitId {
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
-    
 }
 
 @end

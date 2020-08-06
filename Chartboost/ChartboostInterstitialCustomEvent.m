@@ -14,6 +14,9 @@
 @end
 
 @implementation ChartboostInterstitialCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
 
 #pragma mark - MPInterstitialCustomEvent
 

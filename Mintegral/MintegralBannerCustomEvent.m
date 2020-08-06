@@ -5,11 +5,15 @@
 #import <MTGSDKBanner/MTGBannerAdViewDelegate.h>
 #if __has_include(<MoPubSDKFramework/MoPub.h>)
     #import <MoPubSDKFramework/MoPub.h>
+#elif __has_include(<MoPub/MoPub.h>)
+    #import <MoPub/MoPub.h>
 #else
     #import "MoPub.h"
 #endif
 #if __has_include(<MoPubSDKFramework/MPLogging.h>)
     #import <MoPubSDKFramework/MPLogging.h>
+#elif __has_include(<MoPub/MoPub.h>)
+    #import <MoPub/MPLogging.h>
 #else
     #import "MPLogging.h"
 #endif
@@ -28,6 +32,8 @@ typedef enum {
 @end
 
 @implementation MintegralBannerCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
 
 - (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {    
     NSString *appId = [info objectForKey:@"appId"];
@@ -44,7 +50,7 @@ typedef enum {
     if (errorMsg) {
         NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:MintegralErrorBannerParaUnresolveable userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
         
-        if ([self.description respondsToSelector:@selector(bannerCustomEvent: didFailToLoadAdWithError:)]) {
+        if ([self.description respondsToSelector:@selector(inlineAdAdapter:didFailToLoadAdWithError:)]) {
             MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
             [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
         }
@@ -91,7 +97,7 @@ typedef enum {
 }
 
 - (void)adViewWillLogImpression:(MTGBannerAdView *)adView {
-    if ([self.delegate respondsToSelector:@selector(trackImpression)]) {
+    if ([self.delegate respondsToSelector:@selector(inlineAdAdapterDidTrackImpression:)]) {
         [self.delegate inlineAdAdapterDidTrackImpression:self];
     }
 }
@@ -100,12 +106,11 @@ typedef enum {
     if ([self.delegate respondsToSelector:@selector(trackClick)]) {
         MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
         [self.delegate inlineAdAdapterDidTrackClick:self];
-        [self.delegate inlineAdAdapterWillBeginUserAction:self];
     }
 }
 
 - (void)adViewWillLeaveApplication:(MTGBannerAdView *)adView {
-    if ([self.delegate respondsToSelector:@selector(handleAdEvent:)]) {
+    if ([self.delegate respondsToSelector:@selector(adWillLeaveApplicationForAdapter:)]) {
         MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
         [self.delegate inlineAdAdapterWillLeaveApplication:self];
     }

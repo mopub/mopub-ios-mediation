@@ -1,4 +1,13 @@
 ## Changelog
+   * 6.13.1.1
+     * Fix adapter compiler warnings.
+
+   * 6.13.1.0
+     * This version of the adapters has been certified with AppLovin SDK 6.13.1 and MoPub SDK 5.13.1.
+
+   * 6.13.0.0
+     * This version of the adapters has been certified with AppLovin SDK 6.13.0 and MoPub SDK 5.13.0.
+   
    * 6.12.8.1
      * Add didFireLoadDelegate logic to prevent redundent logging for fill metrics. 
 

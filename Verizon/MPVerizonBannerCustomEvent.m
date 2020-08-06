@@ -16,6 +16,8 @@
 @end
 
 @implementation MPVerizonBannerCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
 
 - (BOOL)enableAutomaticImpressionAndClickTracking
 {

@@ -20,13 +20,16 @@
 @interface FacebookRewardedVideoCustomEvent () <FBRewardedVideoAdDelegate>
 
 @property (nonatomic, strong) FBRewardedVideoAd *fbRewardedVideoAd;
-@property (nonatomic, strong) MPRealTimeTimer *expirationTimer;
-@property (nonatomic, assign) BOOL hasTrackedImpression;
+@property (nonatomic, strong) MPRealTimeTimer *timer;
+@property (nonatomic, assign) BOOL impressionTracked;
 @property (nonatomic, copy) NSString *fbPlacementId;
 
 @end
 
 @implementation FacebookRewardedVideoCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
 
 - (void)initializeSdkWithParameters:(NSDictionary *)parameters {
     // No SDK initialization method provided.
@@ -116,10 +119,10 @@
 
 -(void)cancelExpirationTimer
 {
-    if (self.expirationTimer != nil)
+    if (self.timer != nil)
     {
-        [self.expirationTimer invalidate];
-        self.expirationTimer = nil;
+        [self.timer invalidate];
+        self.timer = nil;
     }
 }
 
@@ -159,9 +162,9 @@
     
     // introduce timer for 1 hour per expiration logic introduced by FB
     __weak __typeof__(self) weakSelf = self;
-    self.expirationTimer = [[MPRealTimeTimer alloc] initWithInterval:FB_ADS_EXPIRATION_INTERVAL block:^(MPRealTimeTimer *timer){
+    self.timer = [[MPRealTimeTimer alloc] initWithInterval:FB_ADS_EXPIRATION_INTERVAL block:^(MPRealTimeTimer *timer){
         __strong __typeof__(weakSelf) strongSelf = weakSelf;
-        if (strongSelf && !strongSelf.hasTrackedImpression) {
+        if (strongSelf && !strongSelf.impressionTracked) {
             [strongSelf.delegate fullscreenAdAdapterDidExpire:strongSelf];
             
             NSError *error = [self createErrorWith:@"Facebook rewarded video ad expired  per Audience Network's expiration policy"
@@ -173,7 +176,7 @@
             strongSelf.fbRewardedVideoAd = nil;
         }
     }];
-    [self.expirationTimer scheduleNow];
+    [self.timer scheduleNow];
 }
 
 - (NSError *)createErrorWith:(NSString *)description andReason:(NSString *)reaason andSuggestion:(NSString *)suggestion {
@@ -245,7 +248,7 @@
 {
     MPLogInfo(@"Facebook rewarded video ad has finished playing successfully");
     // Passing the reward type and amount as unspecified. Set the reward value in mopub UI.
-    MPReward *reward = [[MPReward alloc] initWithCurrencyAmount:@(kMPRewardedVideoRewardCurrencyAmountUnspecified)];
+    MPReward *reward = [[MPReward alloc] initWithCurrencyAmount:@(kMPRewardCurrencyAmountUnspecified)];
     [self.delegate fullscreenAdAdapter:self willRewardUser:reward];
 }
 
@@ -264,7 +267,7 @@
 
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
     //set the tracker to true when the ad is shown on the screen. So that the timer is invalidated.
-    self.hasTrackedImpression = true;
+    self.impressionTracked = true;
 }
 
 @end

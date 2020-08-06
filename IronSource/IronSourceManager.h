@@ -11,15 +11,15 @@
 @interface IronSourceManager
 : NSObject <ISDemandOnlyRewardedVideoDelegate, ISDemandOnlyInterstitialDelegate>
 
-+ (instancetype)sharedManager;
-- (void)initIronSourceSDKWithAppKey:(NSString *)appKey forAdUnits:(NSSet *)adUnits;
-- (void)loadRewardedAdWithDelegate:(id<IronSourceRewardedVideoDelegate>)delegate
-                        instanceID:(NSString *)instanceID;
++ (instancetype _Nonnull )sharedManager;
+- (void)initIronSourceSDKWithAppKey:(NSString *_Nonnull)appKey forAdUnits:(NSSet *_Nonnull)adUnits;
+- (void)loadRewardedAdWithDelegate:(id<IronSourceRewardedVideoDelegate>_Nonnull)delegate
+                        instanceID:(NSString *_Nonnull)instanceID WithAdMarkup: (NSString *) adMarkup;;
 - (void)presentRewardedAdFromViewController:(nonnull UIViewController *)viewController
-                                 instanceID:(NSString *)instanceID;
-- (void)requestInterstitialAdWithDelegate:(id<IronSourceInterstitialDelegate>)delegate
-                               instanceID:(NSString *)instanceID;
+                                 instanceID:(NSString *_Nonnull)instanceID;
+- (void)requestInterstitialAdWithDelegate:(id<IronSourceInterstitialDelegate>_Nonnull)delegate
+                               instanceID:(NSString *_Nonnull)instanceID WithAdMarkup: (NSString *) adMarkup;
 - (void)presentInterstitialAdFromViewController:(nonnull UIViewController *)viewController
-                                     instanceID: (NSString *) instanceID;
+                                     instanceID: (NSString *_Nonnull) instanceID;
 
 @end

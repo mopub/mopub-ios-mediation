@@ -19,6 +19,8 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 @end
 
 @implementation UnityAdsBannerCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
 
 - (BOOL)enableAutomaticImpressionAndClickTracking
 {

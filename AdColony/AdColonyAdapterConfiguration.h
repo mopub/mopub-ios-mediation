@@ -47,8 +47,6 @@ extern NSString * const ADC_USER_ID_KEY;
 
 + (NSError *)validateZoneIds:(NSArray *)zoneIds forOperation:(NSString *)operation;
 
-+ (NSError *)createErrorForOperation:(NSString *)operation forParameter:(NSString *)parameter;
-
 + (NSError *)createErrorWith:(NSString *)description andReason:(NSString *)reason andSuggestion:(NSString *)suggestion;
 
 @end

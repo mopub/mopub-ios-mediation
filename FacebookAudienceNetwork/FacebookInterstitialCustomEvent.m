@@ -21,13 +21,16 @@
 @interface FacebookInterstitialCustomEvent () <FBInterstitialAdDelegate>
 
 @property (nonatomic, strong) FBInterstitialAd *fbInterstitialAd;
-@property (nonatomic, strong) MPRealTimeTimer *expirationTimer;
-@property (nonatomic, assign) BOOL hasTrackedImpression;
+@property (nonatomic, strong) MPRealTimeTimer *timer;
+@property (nonatomic, assign) BOOL impressionTracked;
 @property (nonatomic, copy) NSString *fbPlacementId;
 
 @end
 
 @implementation FacebookInterstitialCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
 
 #pragma mark - MPFullscreenAdAdapter Override
 
@@ -124,10 +127,10 @@
 
 -(void)cancelExpirationTimer
 {
-    if (self.expirationTimer != nil)
+    if (self.timer != nil)
     {
-        [self.expirationTimer invalidate];
-        self.expirationTimer = nil;
+        [self.timer invalidate];
+        self.timer = nil;
     }
 }
 
@@ -142,9 +145,9 @@
     
     // introduce timer for 1 hour per expiration logic introduced by FB
     __weak __typeof__(self) weakSelf = self;
-    self.expirationTimer = [[MPRealTimeTimer alloc] initWithInterval:FB_ADS_EXPIRATION_INTERVAL block:^(MPRealTimeTimer *timer){
+    self.timer = [[MPRealTimeTimer alloc] initWithInterval:FB_ADS_EXPIRATION_INTERVAL block:^(MPRealTimeTimer *timer){
         __strong __typeof__(weakSelf) strongSelf = weakSelf;
-        if (strongSelf && !strongSelf.hasTrackedImpression) {
+        if (strongSelf && !strongSelf.impressionTracked) {
             [strongSelf.delegate fullscreenAdAdapterDidExpire:self];
 
             NSError *error = [self createErrorWith:@"Facebook interstitial ad expired  per Audience Network's expiration policy"
@@ -156,7 +159,7 @@
             strongSelf.fbInterstitialAd = nil;
         }
     }];
-    [self.expirationTimer scheduleNow];
+    [self.timer scheduleNow];
 }
 
 - (void)interstitialAdWillLogImpression:(FBInterstitialAd *)interstitialAd
@@ -167,7 +170,7 @@
     
     //set the tracker to true when the ad is shown on the screen. So that the timer is invalidated.
     [self.delegate fullscreenAdAdapterDidTrackImpression:self];
-    self.hasTrackedImpression = true;
+    self.impressionTracked = true;
 }
 
 - (void)interstitialAd:(FBInterstitialAd *)interstitialAd didFailWithError:(NSError *)error

@@ -71,7 +71,7 @@
 
 #pragma mark - nativeAdManager init and delegate
 
-- (void)nativeAdsLoaded:(nullable NSArray *)nativeAds {
+- (void)nativeAdsLoaded:(nullable NSArray *)nativeAds nativeManager:(nonnull MTGNativeAdManager *)nativeManager {
     MPLogInfo(@"Mintegral traditional nativeAdsLoaded");
     MintegralNativeAdAdapter *adAdapter = [[MintegralNativeAdAdapter alloc] initWithNativeAds:nativeAds nativeAdManager:_mtgNativeAdManager bidAdManager:nil withUnitId:self.adUnitId];
     MPNativeAd *interfaceAd = [[MPNativeAd alloc] initWithAdAdapter:adAdapter];
@@ -80,7 +80,7 @@
     [self.delegate nativeCustomEvent:self didLoadAd:interfaceAd];
 }
 
-- (void)nativeAdsFailedToLoadWithError:(nonnull NSError *)error {
+- (void)nativeAdsFailedToLoadWithError:(nonnull NSError *)error nativeManager:(nonnull MTGNativeAdManager *)nativeManager {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:MPNativeAdNSErrorForInvalidAdServerResponse(error.localizedDescription)], self.adUnitId);
     [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
 }

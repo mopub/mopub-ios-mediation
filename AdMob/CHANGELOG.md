@@ -1,4 +1,16 @@
 ## Changelog
+  * 7.63.0.0
+    * This version of the adapters has been certified with AdMob 7.63.0 and MoPub 5.13.1.
+
+  * 7.62.0.1
+    * Fix adapter compiler warnings.
+
+  * 7.62.0.0
+    * This version of the adapters has been certified with AdMob 7.62.0 and MoPub 5.13.1.
+
+  * 7.61.0.1
+    * Remove i386 architecture support for iPhone simulators.
+
   * 7.61.0.0
     * This version of the adapters has been certified with AdMob 7.61.0 and MoPub 5.13.0.
 

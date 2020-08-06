@@ -16,6 +16,9 @@
 @end
 
 @implementation MPVerizonInterstitialCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
 
 - (BOOL)enableAutomaticImpressionAndClickTracking
 {
@@ -35,6 +38,10 @@
 - (void)invalidate
 {
     self.interstitialAd = nil;
+}
+
+- (BOOL)hasAdAvailable {
+    return (self.interstitialAd != nil);
 }
 
 - (BOOL)isRewardExpected {

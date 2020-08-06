@@ -61,7 +61,8 @@
         [mediationMetaData set:@"adapter_version"  value:ADAPTER_VERSION];
         [mediationMetaData commit];
         
-        [UnityAds initialize:gameId delegate:self testMode:false enablePerPlacementLoad:true];
+        [UnityAds initialize:gameId testMode:false enablePerPlacementLoad:true];
+        [UnityAds addDelegate:self];
     });
 }
 
