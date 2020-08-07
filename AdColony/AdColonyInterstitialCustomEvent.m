@@ -85,7 +85,7 @@
         AdColonyAdOptions *adOptions = nil;
         if (adMarkup != nil) {
             adOptions = [AdColonyAdOptions new];
-            [adOptions setValue:adMarkup forKey:ADCOLONY_AD_MARKUP];
+            [adOptions setOption:ADCOLONY_AD_MARKUP withStringValue:adMarkup];
         }
         
         [AdColony requestInterstitialInZone:self.zoneId

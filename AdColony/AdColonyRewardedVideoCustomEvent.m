@@ -121,7 +121,7 @@
         adOptions.showPrePopup = showPrePopup;
         adOptions.showPostPopup = showPostPopup;
         if (adMarkup != nil) {
-            [adOptions setValue:adMarkup forKey:ADCOLONY_AD_MARKUP];
+            [adOptions setOption:ADCOLONY_AD_MARKUP withStringValue:adMarkup];
         }
        [AdColony requestInterstitialInZone:self.zoneId
                                    options:adOptions
