@@ -1,4 +1,10 @@
 ## Changelog
+  * 10.3.4.0
+    * This version of the adapter has been certified with Flurry 12.5.0 and MoPub SDK 5.13.1.
+    * This version of the adapter will only support native ad format.
+    * Deprecate Flurry interstitial adapter support.
+    Note: We are [deprecating Flurry mediation support](https://developers.mopub.com/publishers/mediation/networks/yahooflurry/) for interstitial ad format. Publishers mediating Flurry via supported connection should migrate from Flurry connection to [Verizon Media Connection](https://developers.mopub.com/publishers/mediation/networks/verizon/) for interstitial format.
+
   * 10.0.2.1
     * Maintain compatibility with v5.11.0 of the MoPub iOS SDK. This is the minimum adapter version for v5.11.0 integrations with MoPub. 
 

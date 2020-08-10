@@ -28,6 +28,8 @@
 @end
 
 @implementation AdColonyRewardedVideoCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
 
 - (NSString *) getAdNetworkId {
     return _zoneId;
@@ -76,9 +78,6 @@
         return;
     }
     
-    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class)
-                                       dspCreativeId:nil
-                                             dspName:nil], [self getAdNetworkId]);
     [AdColonyAdapterConfiguration updateInitializationParameters:parameters];
     [AdColonyController initializeAdColonyCustomEventWithAppId:appId
                                                     allZoneIds:allZoneIds
@@ -123,7 +122,11 @@
         if (adMarkup != nil) {
             [adOptions setOption:ADCOLONY_AD_MARKUP withStringValue:adMarkup];
         }
-       [AdColony requestInterstitialInZone:self.zoneId
+
+        MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class)
+                                           dspCreativeId:nil
+                                                 dspName:nil], [self getAdNetworkId]);
+        [AdColony requestInterstitialInZone:self.zoneId
                                    options:adOptions
                                andDelegate:self];
     }];
@@ -209,5 +212,7 @@
     
     [self.delegate fullscreenAdAdapterDidTrackClick:self];
 }
+
+@dynamic hasAdAvailable;
 
 @end

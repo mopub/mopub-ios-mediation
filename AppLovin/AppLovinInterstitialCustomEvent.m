@@ -29,6 +29,10 @@
 @end
 
 @implementation AppLovinInterstitialCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
+
 static NSString *const kALMoPubMediationErrorDomain = @"com.applovin.sdk.mediation.mopub.errorDomain";
 
 // A dictionary of Zone -> Queue of `ALAd`s to be shared by instances of the custom event.
@@ -130,7 +134,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
             // If this is a default Zone, create the ad normally
             if ( [DEFAULT_ZONE isEqualToString: self.zoneIdentifier] )
             {
-                [self.sdk.adService loadNextAd: [ALAdSize sizeInterstitial] andNotify: self];
+                [self.sdk.adService loadNextAd: ALAdSize.interstitial andNotify: self];
                 
                 MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
             }

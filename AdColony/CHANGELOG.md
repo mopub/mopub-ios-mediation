@@ -1,6 +1,12 @@
 ## Changelog
-* 4.2.0.0
-* This version of the adapters has been certified with AdColony 4.2.0 and MoPub SDK 5.13.1.
+  * 4.2.0.2
+    * Fix adapter compiler warnings.
+
+  * 4.2.0.1
+    * Fix initialization-related crashes when publishers use `MPMoPubConfiguration.mediatedNetworkConfigurations` to initialize AdColony with a dedicated configuration.
+
+  * 4.2.0.0
+    * This version of the adapters has been certified with AdColony 4.2.0 and MoPub SDK 5.13.1.
 
   * 4.1.5.0
     * This version of the adapters has been certified with AdColony 4.1.5 and MoPub SDK 5.13.0.

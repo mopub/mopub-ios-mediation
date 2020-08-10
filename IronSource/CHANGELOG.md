@@ -1,4 +1,21 @@
 ## Changelog
+* 6.18.0.2.0
+    * This version of the adapters has been certified with ironSource 6.18.0.2 and MoPub SDK 5.13.1.
+
+* 6.18.0.1.0
+    * This version of the adapters has been certified with ironSource 6.18.0.1 and MoPub SDK 5.13.1.
+    * Support for Advanced Bidding.
+
+* 6.18.0.0.1
+    * Fix adapter compiler warnings.
+
+* 6.18.0.0.0
+    * This version of the adapters has been certified with ironSource 6.18.0.0 and MoPub SDK 5.13.1.
+
+* 6.17.0.1.0
+    * This version of the adapters has been certified with ironSource 6.17.0.1 and MoPub SDK 5.13.1.
+    * Renamed `moPubNetworkName` to `ironsource` on the adapter configuration.
+
 * 6.16.3.0.0
     * This version of the adapters has been certified with ironSource 6.16.3.0 and MoPub SDK 5.13.0.
 

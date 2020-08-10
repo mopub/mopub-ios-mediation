@@ -58,7 +58,7 @@ static GADAdChoicesPosition adChoicesPosition;
   }
   GADRequest *request = [GADRequest request];
   if ([self.localExtras objectForKey:@"testDevices"]) {
-    request.testDevices = self.localExtras[@"testDevices"];
+    GADMobileAds.sharedInstance.requestConfiguration.testDeviceIdentifiers = self.localExtras[@"testDevices"];
   }
   if ([self.localExtras objectForKey:@"tagForChildDirectedTreatment"]) {
     [GADMobileAds.sharedInstance.requestConfiguration tagForChildDirectedTreatment:self.localExtras[@"tagForChildDirectedTreatment"]];
@@ -79,7 +79,10 @@ static GADAdChoicesPosition adChoicesPosition;
   GADNativeAdImageAdLoaderOptions *nativeAdImageLoaderOptions =
       [[GADNativeAdImageAdLoaderOptions alloc] init];
   nativeAdImageLoaderOptions.shouldRequestMultipleImages = NO;
-  nativeAdImageLoaderOptions.preferredImageOrientation =
+    
+  GADNativeAdMediaAdLoaderOptions *nativeAdMediaAdLoaderOptions =
+      [[GADNativeAdMediaAdLoaderOptions alloc] init];
+  nativeAdMediaAdLoaderOptions.mediaAspectRatio =
       GADNativeAdImageAdLoaderOptionsOrientationAny;
 
   // In GADNativeAdViewAdOptions, the default preferredAdChoicesPosition is
@@ -91,7 +94,7 @@ static GADAdChoicesPosition adChoicesPosition;
       [[GADAdLoader alloc] initWithAdUnitID:self.admobAdUnitId
                          rootViewController:rootViewController
                                     adTypes:@[ kGADAdLoaderAdTypeUnifiedNative ]
-                                    options:@[ nativeAdImageLoaderOptions, nativeAdViewAdOptions ]];
+                                    options:@[ nativeAdImageLoaderOptions, nativeAdViewAdOptions, nativeAdMediaAdLoaderOptions ]];
   self.adLoader.delegate = self;
 
   // Consent collected from the MoPub’s consent dialogue should not be used to set up

@@ -22,6 +22,8 @@
 @end
 
 @implementation FacebookBannerCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
 
 - (BOOL)enableAutomaticImpressionAndClickTracking
 {

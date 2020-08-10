@@ -12,6 +12,7 @@
     #import <MoPubSDKFramework/MoPub.h>
 #else
     #import "MPBaseAdapterConfiguration.h"
+    #import "MPBool.h"
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
@@ -24,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 // Test Mode
 @property (class, nonatomic) BOOL isTestMode;
 
-@property (class, nonatomic, readonly) Boolean * isNativeBanner;
+@property (class, nonatomic, readonly) MPBool isNativeBanner;
 
 // MPAdapterConfiguration
 @property (nonatomic, copy, readonly) NSString * adapterVersion;

@@ -26,6 +26,9 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 @end
 
 @implementation UnityAdsRewardedVideoCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
 
 - (void)dealloc
 {

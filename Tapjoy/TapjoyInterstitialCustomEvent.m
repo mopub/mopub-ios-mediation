@@ -15,6 +15,9 @@
 @end
 
 @implementation TapjoyInterstitialCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
 
 - (void)setupListeners {
     [[NSNotificationCenter defaultCenter] addObserver:self

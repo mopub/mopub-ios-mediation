@@ -39,6 +39,10 @@
 @end
 
 @implementation AppLovinRewardedVideoCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
+
 static NSString *const kALMoPubMediationErrorDomain = @"com.applovin.sdk.mediation.mopub.errorDomain";
 
 // A dictionary of Zone -> `ALIncentivizedInterstitialAd` to be shared by instances of the custom event.

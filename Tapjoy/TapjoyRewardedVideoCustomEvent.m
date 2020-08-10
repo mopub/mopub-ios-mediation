@@ -18,6 +18,9 @@
 @end
 
 @implementation TapjoyRewardedVideoCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
 
 - (void)setupListeners {
     [[NSNotificationCenter defaultCenter] addObserver:self
@@ -219,7 +222,7 @@
 }
 
 - (void)videoDidComplete:(TJPlacement*)placement {
-    MPReward *reward = [[MPReward alloc] initWithCurrencyAmount:@(kMPRewardedVideoRewardCurrencyAmountUnspecified)];
+    MPReward *reward = [[MPReward alloc] initWithCurrencyAmount:@(kMPRewardCurrencyAmountUnspecified)];
     [self.delegate fullscreenAdAdapter:self willRewardUser:reward];
 }
 

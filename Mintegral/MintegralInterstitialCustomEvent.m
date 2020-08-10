@@ -5,6 +5,8 @@
 #import "MintegralAdapterConfiguration.h"
 #if __has_include(<MoPubSDKFramework/MoPub.h>)
     #import <MoPubSDKFramework/MoPub.h>
+#elif __has_include(<MoPub/MoPub.h>)
+    #import <MoPub/MoPub.h>
 #else
     #import "MoPub.h"
 #endif
@@ -21,8 +23,19 @@
 @end
 
 @implementation MintegralInterstitialCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
 
 #pragma mark - MPFullscreenAdAdapter Override
+
+- (BOOL)hasAdAvailable {
+    if (self.adm != nil) {
+        return [self.ivBidAdManager isVideoReadyToPlayWithPlacementId:self.adPlacementId unitId:self.mintegralAdUnitId];
+    }
+    
+    return [self.mtgInterstitialVideoAdManager isVideoReadyToPlayWithPlacementId:self.adPlacementId unitId:self.mintegralAdUnitId];
+}
 
 - (BOOL)isRewardExpected {
     return NO;

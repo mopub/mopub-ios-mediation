@@ -21,6 +21,8 @@
 @end
 
 @implementation MPGoogleAdMobInterstitialCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
 
 @synthesize interstitial = _interstitial;
 
@@ -55,7 +57,7 @@
     // Test device IDs can be passed via localExtras to request test ads.
     // Running in the simulator will automatically show test ads.
     if ([self.localExtras objectForKey:@"testDevices"]) {
-      request.testDevices = self.localExtras[@"testDevices"];
+      GADMobileAds.sharedInstance.requestConfiguration.testDeviceIdentifiers = self.localExtras[@"testDevices"];
     }
     if ([self.localExtras objectForKey:@"tagForChildDirectedTreatment"]) {
       [GADMobileAds.sharedInstance.requestConfiguration tagForChildDirectedTreatment:self.localExtras[@"tagForChildDirectedTreatment"]];
@@ -142,5 +144,7 @@ didFailToReceiveAdWithError:(GADRequestError *)error {
 - (NSString *) getAdNetworkId {
     return self.admobAdUnitId;
 }
+
+@dynamic hasAdAvailable;
 
 @end

@@ -17,7 +17,7 @@
 
 @property (nonatomic, readonly) FBAdOptionsView *adOptionsView;
 @property (nonatomic, readonly) FBMediaView *mediaView;
-@property (nonatomic, readonly) FBAdIconView *iconView;
+@property (nonatomic, readonly) FBMediaView *iconView;
 
 @end
 
@@ -36,7 +36,7 @@
             ((FBNativeAd *) _fbNativeAdBase).delegate = self;
         }
         _mediaView = [[FBMediaView alloc] init];
-        _iconView = [[FBAdIconView alloc] init];
+        _iconView = [[FBMediaView alloc] init];
 
         NSMutableDictionary *properties;
         if (adProps) {

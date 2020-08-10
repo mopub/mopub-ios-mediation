@@ -25,8 +25,15 @@
 @end
 
 @implementation VungleInterstitialCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
 
 #pragma mark - MPFullscreenAdAdapter Override
+
+- (BOOL)hasAdAvailable {
+    return [[VungleRouter sharedRouter] isAdAvailableForPlacementId:self.placementId];
+}
 
 - (BOOL)isRewardExpected {
     return NO;
@@ -182,4 +189,5 @@
 {
     return self.placementId;
 }
+
 @end

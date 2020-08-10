@@ -7,7 +7,7 @@
 
 #import <Foundation/Foundation.h>
 #import <UnityAds/UnityAds.h>
-#import <UnityAds/UnityAdsExtended.h>
+#import <UnityAds/UnityAdsExtendedDelegate.h>
 
 @protocol UnityRouterDelegate;
 @class UnityAdsInstanceMediationSettings;
