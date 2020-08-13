@@ -13,6 +13,8 @@
     #import "MPLogging.h"
 #endif
 
+#define ADCOLONY_AD_MARKUP @"adm"
+
 @interface AdColonyInterstitialCustomEvent () <AdColonyInterstitialDelegate>
 
 @property (nonatomic, retain) AdColonyInterstitial *ad;
@@ -21,6 +23,8 @@
 @end
 
 @implementation AdColonyInterstitialCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
 
 - (NSString *) getAdNetworkId {
     return _zoneId;
@@ -80,8 +84,14 @@
             return;
         }
         
+        AdColonyAdOptions *adOptions = nil;
+        if (adMarkup != nil) {
+            adOptions = [AdColonyAdOptions new];
+            [adOptions setOption:ADCOLONY_AD_MARKUP withStringValue:adMarkup];
+        }
+        
         [AdColony requestInterstitialInZone:self.zoneId
-                                    options:nil
+                                    options:adOptions
                                 andDelegate:self];
     }];
 }
@@ -167,5 +177,7 @@
     
     [self.delegate fullscreenAdAdapterDidTrackClick:self];
 }
+
+@dynamic hasAdAvailable;
 
 @end

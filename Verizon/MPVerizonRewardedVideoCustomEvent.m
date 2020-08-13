@@ -23,6 +23,9 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
 @end
 
 @implementation MPVerizonRewardedVideoCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
 
 - (BOOL)enableAutomaticImpressionAndClickTracking
 {
@@ -283,6 +286,5 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
         });
     }];
 }
-
 
 @end

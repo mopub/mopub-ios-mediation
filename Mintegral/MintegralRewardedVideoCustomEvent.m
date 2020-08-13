@@ -34,6 +34,9 @@
 @end
 
 @implementation MintegralRewardedVideoCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
 
 #pragma mark - MPFullscreenAdAdapter Override
 

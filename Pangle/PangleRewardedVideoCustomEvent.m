@@ -14,6 +14,9 @@
 @end
 
 @implementation PangleRewardedVideoCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
 
 #pragma mark - MPFullscreenAdAdapter Override
 
@@ -161,7 +164,7 @@
 
 - (void)rewardedVideoAdServerRewardDidSucceed:(BURewardedVideoAd *)rewardedVideoAd verify:(BOOL)verify {
     if (verify) {
-        NSString *currencyType = BUCheckValidString(rewardedVideoAd.rewardedVideoModel.rewardName) ? rewardedVideoAd.rewardedVideoModel.rewardName :kMPRewardedVideoRewardCurrencyTypeUnspecified;
+        NSString *currencyType = BUCheckValidString(rewardedVideoAd.rewardedVideoModel.rewardName) ? rewardedVideoAd.rewardedVideoModel.rewardName :kMPRewardCurrencyTypeUnspecified;
         MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyType:currencyType amount: @(rewardedVideoAd.rewardedVideoModel.rewardAmount)];
         
         MPLogEvent([MPLogEvent adShouldRewardUserWithReward:reward]);

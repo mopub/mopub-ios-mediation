@@ -41,7 +41,7 @@ typedef NS_ENUM(NSInteger, TapjoyAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"12.6.1.0";
+    return @"12.6.1.1";
 }
 
 - (NSString *)biddingToken {
@@ -106,8 +106,7 @@ typedef NS_ENUM(NSInteger, TapjoyAdapterErrorCode) {
         }
     }
     
-    MPBLogLevel * logLevel = [[MoPub sharedInstance] logLevel];
-    BOOL * debugEnabled = logLevel == MPBLogLevelDebug;
+    BOOL debugEnabled = (MPLogging.consoleLogLevel == MPBLogLevelDebug);
 
     [Tapjoy setDebugEnabled:debugEnabled];
 }

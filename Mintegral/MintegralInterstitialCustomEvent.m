@@ -23,8 +23,19 @@
 @end
 
 @implementation MintegralInterstitialCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
 
 #pragma mark - MPFullscreenAdAdapter Override
+
+- (BOOL)hasAdAvailable {
+    if (self.adm != nil) {
+        return [self.ivBidAdManager isVideoReadyToPlayWithPlacementId:self.adPlacementId unitId:self.mintegralAdUnitId];
+    }
+    
+    return [self.mtgInterstitialVideoAdManager isVideoReadyToPlayWithPlacementId:self.adPlacementId unitId:self.mintegralAdUnitId];
+}
 
 - (BOOL)isRewardExpected {
     return NO;

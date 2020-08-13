@@ -1,8 +1,14 @@
 ## Changelog
 
-* 6.3.5.0.2
+* 6.4.0.0.0
+    * This version of the adapters has been certified with Mintegral 6.4.0.0 and MoPub 5.13.1.
+    
+* 6.3.5.0.3
    * Stop calling `inlineAdAdapterWillBeginUserAction:` to fix a freezing issue in Unity games.
    
+ * 6.3.5.0.2
+    * Fix adapter compiler warnings.
+
  * 6.3.5.0.1
     * Add missing MoPub imports.
 

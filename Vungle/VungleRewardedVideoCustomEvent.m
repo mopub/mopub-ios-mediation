@@ -25,7 +25,9 @@
 @end
 
 @implementation VungleRewardedVideoCustomEvent
-
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
 
 - (void)initializeSdkWithParameters:(NSDictionary *)parameters
 {
@@ -70,7 +72,7 @@
                                                                      settings:settings
                                                                forPlacementId:self.placementId];
     } else {
-        NSError *error = [NSError errorWithCode:MPRewardedVideoAdErrorNoAdsAvailable localizedDescription:@"Failed to show Vungle rewarded video: Vungle now claims that there is no available video ad."];
+        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:@{ NSLocalizedDescriptionKey: @"Failed to show Vungle rewarded video: Vungle now claims that there is no available video ad."}];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getPlacementID]);
         [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
     }

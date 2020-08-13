@@ -21,6 +21,8 @@
 @end
 
 @implementation MPGoogleAdMobBannerCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
 
 - (id)init {
   self = [super init];
@@ -64,7 +66,7 @@
   // Test device IDs can be passed via localExtras to request test ads.
   // Running in the simulator will automatically show test ads.
   if ([self.localExtras objectForKey:@"testDevices"]) {
-    request.testDevices = self.localExtras[@"testDevices"];
+    GADMobileAds.sharedInstance.requestConfiguration.testDeviceIdentifiers = self.localExtras[@"testDevices"];
   }
 
   if ([self.localExtras objectForKey:@"tagForChildDirectedTreatment"]) {

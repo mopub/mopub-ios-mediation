@@ -32,11 +32,11 @@ NSString * const kIronSourceAppkey = @"applicationKey";
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"6.18.0.0.0";
+    return @"6.18.0.2.0";
 }
 
 - (NSString *)biddingToken {
-    return nil;
+    return [IronSource getISDemandOnlyBiddingData];
 }
 
 - (NSString *)moPubNetworkName {

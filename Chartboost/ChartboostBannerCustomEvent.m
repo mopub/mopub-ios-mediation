@@ -14,6 +14,8 @@
 @end
 
 @implementation ChartboostBannerCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
 
 - (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {

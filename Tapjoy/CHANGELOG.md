@@ -1,4 +1,7 @@
 ## Changelog
+  * 12.6.1.1
+    * Fix adapter compiler warnings.
+
   * 12.6.1.0
     * This version of the adapters has been certified with Tapjoy 12.6.1 and MoPub SDK 5.13.1.
 

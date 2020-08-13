@@ -13,6 +13,8 @@
 @end
 
 @implementation MPGoogleAdMobRewardedVideoCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
 
 - (void)initializeSdkWithParameters:(NSDictionary *)parameters {
     static dispatch_once_t onceToken;
@@ -53,7 +55,7 @@
     
     GADRequest *request = [GADRequest request];
     if ([self.localExtras objectForKey:@"testDevices"]) {
-      request.testDevices = self.localExtras[@"testDevices"];
+      GADMobileAds.sharedInstance.requestConfiguration.testDeviceIdentifiers = self.localExtras[@"testDevices"];
     }
 
     if ([self.localExtras objectForKey:@"tagForChildDirectedTreatment"]) {
@@ -167,5 +169,7 @@
 - (NSString *) getAdNetworkId {
     return self.admobAdUnitId;
 }
+
+@dynamic hasAdAvailable;
 
 @end

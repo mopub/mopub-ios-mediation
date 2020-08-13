@@ -16,12 +16,19 @@
 @end
 
 @implementation IronSourceInterstitialCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
 
 - (NSString *) getAdNetworkId {
     return _instanceId;
 }
 
 #pragma mark - MPFullscreenAdAdapter Override
+
+- (BOOL)hasAdAvailable {
+    return [IronSource hasISDemandOnlyInterstitial:[self getAdNetworkId]];
+}
 
 - (BOOL)isRewardExpected {
     return NO;
@@ -67,9 +74,9 @@
             // Cache the initialization parameters
             [IronSourceAdapterConfiguration updateInitializationParameters:info];
             [[IronSourceManager sharedManager] initIronSourceSDKWithAppKey:appKey forAdUnits:[NSSet setWithObject:@[IS_INTERSTITIAL]]];
-            [self loadInterstitial:self.instanceId];
+            [self loadInterstitial:self.instanceId WithAdMarkup:adMarkup];
         } else {
-            MPLogInfo(@"IronSource Interstitial initialization with empty or nil appKey for instance @s",
+            MPLogInfo(@"IronSource Interstitial initialization with empty or nil appKey for instance %@",
                       [self getAdNetworkId]);
 
             NSError *error = [IronSourceUtils createErrorWith:@"IronSource adapter failed to request interstitial"
@@ -98,11 +105,11 @@
 
 #pragma mark IronSource Methods
 
-- (void)loadInterstitial:(NSString *)instanceId {
+- (void)loadInterstitial:(NSString *)instanceId WithAdMarkup:(NSString *) adMarkup{
     MPLogInfo(@"IronSource load interstitial ad for instance %@ (current instance %@)",
               instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], instanceId);
-    [[IronSourceManager sharedManager] requestInterstitialAdWithDelegate:self instanceID:instanceId];
+    [[IronSourceManager sharedManager] requestInterstitialAdWithDelegate:self instanceID:instanceId WithAdMarkup: (NSString *) adMarkup];
 }
 
 #pragma mark IronSource DemandOnly Delegates implementation
