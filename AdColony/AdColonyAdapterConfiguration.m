@@ -48,11 +48,11 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"4.2.0.2";
+    return @"4.3.0.2";
 }
 
 - (NSString *)biddingToken {
-    return @"1";
+    return [AdColony collectSignals];;
 }
 
 - (NSString *)moPubNetworkName {
@@ -83,7 +83,16 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
         return;
     }
     
-    NSArray * allZoneIds = [self extractAllZoneIds:configuration];
+    NSArray * allZoneIds = [[NSMutableArray alloc] init];
+    if (configuration != nil) {
+        NSArray * extractedAllZoneIds = [self extractAllZoneIds:configuration];
+        if (extractedAllZoneIds != nil) {
+            allZoneIds = extractedAllZoneIds;
+        } else {
+            MPLogInfo(@"Failed to parse for AdColony zone IDs due to empty input. Make sure you pass an NSArray of Strings containing your AdColony zone IDs.");
+        }
+    }
+
     NSError * allZoneIdsError = [AdColonyAdapterConfiguration validateZoneIds:allZoneIds forOperation:@"initialization"];
     if (allZoneIdsError) {
         MPLogEvent([MPLogEvent error:allZoneIdsError message:nil]);
@@ -108,30 +117,24 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
 }
 
 - (NSArray *)extractAllZoneIds:(NSDictionary<NSString *, id> *)configuration {
-    NSArray  * allZoneIds = [configuration valueForKeyPath:ADC_ALL_ZONE_IDS_KEY];
-    NSString * zoneIdsToString = [allZoneIds description];
-    NSData   * dataToCheck = [zoneIdsToString dataUsingEncoding:NSUTF8StringEncoding];
-    NSError  * error = nil;
+    id allZoneIds = [configuration valueForKeyPath:ADC_ALL_ZONE_IDS_KEY];
     
-    if (!dataToCheck) {
-        return nil;
-    }
-    
-    // Fetch zone ID array, encode to Json Onject to handle Unity prefab values and decode before passing it to AdColony.
-    id jsonObject = [NSJSONSerialization JSONObjectWithData:dataToCheck options:0 error:&error];
-    
-    if (jsonObject != nil) {
-        NSData  * data = [zoneIdsToString dataUsingEncoding:NSUTF8StringEncoding];
-        NSError * error;
-        
-        // JSONObjectWithData: returns an NSDictionary, while AdColony's configureWithAppID:(NSString *) zoneIDs:(NSArray<NSString *> *) options:(nullable AdColonyAppOptions *) completion:(nullable void (^)(NSArray<AdColonyZone *> *zones)) accepts zone IDs as an NSArray, so a conversion must be done
-        NSDictionary *jsonZoneIds = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
-        NSArray *zoneIds = [jsonZoneIds allValues];
-        
-        return zoneIds;
-    } else {
+    if ([allZoneIds isKindOfClass:[NSArray class]]) {
         return allZoneIds;
+    } else if ([allZoneIds isKindOfClass:[NSString class]]) {
+        NSString * allZoneIdsDescription = [allZoneIds description];
+        NSData * allZoneIdsData = [allZoneIdsDescription dataUsingEncoding:NSUTF8StringEncoding];
+        NSError * error;
+        NSArray * allZoneIdsArray = [[NSMutableArray alloc] init];
+        allZoneIdsArray = [NSJSONSerialization JSONObjectWithData:allZoneIdsData options:0 error:&error];
+        
+        if (error) {
+            return nil;
+        } else if ([allZoneIdsArray count]) {
+            return allZoneIdsArray;
+        }
     }
+    return nil;
 }
 
 + (NSError *)validateParameter:(NSString *)parameter withName:(NSString *)parameterName forOperation:(NSString *)operation {

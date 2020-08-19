@@ -29,10 +29,15 @@
     AdColonyController *instance = [AdColonyController sharedInstance];
 
     @synchronized (instance) {
-        NSSet * allZoneIdsSet = [NSSet setWithArray:allZoneIds];
-        BOOL zoneIdsSame = [instance.currentAllZoneIds isEqualToSet:allZoneIdsSet];
+        NSSet * newAllZoneIds = [NSSet setWithArray:allZoneIds];
 
-        if (instance.initState == INIT_STATE_INITIALIZED && zoneIdsSame) {
+        // Compare AdColony Zone Ids that were used to initialize previously, and the new Zone Ids that will be used for the reconfiguration. If one of them is the subset of the other, then it means there's no need for reconfiguration of Zone Ids.
+        // AdColony SDK also fails if AdColony App Ids of these Zone Ids do not match each other. Please ensure using Zone Ids belonging to a single AdColony App Id.
+        BOOL currentZoneIdsAlreadyExist = [instance.currentAllZoneIds isSubsetOfSet:newAllZoneIds];
+        BOOL newZoneIdsAlreadyExist = [newAllZoneIds isSubsetOfSet:instance.currentAllZoneIds];
+        BOOL zoneIdsAlreadyExist = newZoneIdsAlreadyExist || currentZoneIdsAlreadyExist;
+
+        if (instance.initState == INIT_STATE_INITIALIZED && zoneIdsAlreadyExist) {
             if (callback) {
                 callback(nil);
             }
@@ -51,7 +56,7 @@
                     appOptions.userID = settings.customId;
                 }
 
-                instance.currentAllZoneIds = allZoneIdsSet;
+                instance.currentAllZoneIds = newAllZoneIds;
                 appOptions.testMode = instance.testModeEnabled;
 
                 if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {

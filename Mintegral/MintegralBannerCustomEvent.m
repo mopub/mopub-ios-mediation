@@ -50,7 +50,7 @@ typedef enum {
     if (errorMsg) {
         NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:MintegralErrorBannerParaUnresolveable userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
         
-        if ([self.description respondsToSelector:@selector(inlineAdAdapter:didFailToLoadAdWithError:)]) {
+        if ([self.delegate respondsToSelector:@selector(inlineAdAdapter:didFailToLoadAdWithError:)]) {
             MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], nil);
             [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
         }
@@ -103,14 +103,14 @@ typedef enum {
 }
 
 - (void)adViewDidClicked:(MTGBannerAdView *)adView {
-    if ([self.delegate respondsToSelector:@selector(trackClick)]) {
+    if ([self.delegate respondsToSelector:@selector(inlineAdAdapterDidTrackClick:)]) {
         MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
         [self.delegate inlineAdAdapterDidTrackClick:self];
     }
 }
 
 - (void)adViewWillLeaveApplication:(MTGBannerAdView *)adView {
-    if ([self.delegate respondsToSelector:@selector(adWillLeaveApplicationForAdapter:)]) {
+    if ([self.delegate respondsToSelector:@selector(inlineAdAdapterWillLeaveApplication:)]) {
         MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
         [self.delegate inlineAdAdapterWillLeaveApplication:self];
     }

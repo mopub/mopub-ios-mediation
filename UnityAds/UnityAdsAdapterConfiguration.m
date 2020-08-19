@@ -14,7 +14,7 @@
 #endif
 
 //Adapter version
-NSString *const ADAPTER_VERSION = @"3.4.6.1";
+NSString *const ADAPTER_VERSION = @"3.4.8.0";
 
 // Initialization configuration keys
 static NSString * const kUnityAdsGameId = @"gameId";

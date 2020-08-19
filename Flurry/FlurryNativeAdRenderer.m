@@ -1,13 +1,13 @@
 //
-//  FlurryNativeVideoAdRenderer.m
+//  FlurryNativeAdRenderer.m
 //  MoPub Mediates Flurry
 //
 //  Created by Flurry.
 //  Copyright (c) 2016 Yahoo, Inc. All rights reserved.
 //
 
+#import "FlurryNativeAdRenderer.h"
 #import "FlurryNativeAdAdapter.h"
-#import "FlurryNativeVideoAdRenderer.h"
 #if __has_include("MoPub.h")
     #import "MOPUBNativeVideoAdRendererSettings.h"
     #import "MPNativeAdRendererConfiguration.h"
@@ -23,7 +23,7 @@
 /**
  * Renderer that supports both static and video Flurry native ads
  */
-@interface FlurryNativeVideoAdRenderer () <MPNativeAdRendererImageHandlerDelegate>
+@interface FlurryNativeAdRenderer () <MPNativeAdRendererImageHandlerDelegate>
 
 @property (nonatomic) UIView<MPNativeAdRendering> *adView;
 @property (nonatomic) FlurryNativeAdAdapter<MPNativeAdAdapter> *adapter;
@@ -33,7 +33,7 @@
 
 @end
 
-@implementation FlurryNativeVideoAdRenderer
+@implementation FlurryNativeAdRenderer
 
 #pragma mark - MPNativeAdRenderer
 
@@ -167,7 +167,7 @@
     }
 }
 
-- (BOOL) shouldLoadMediaView
+- (BOOL)shouldLoadMediaView
 {
     return [self.adapter respondsToSelector:@selector(mainMediaView)] && [self.adapter mainMediaView]
         && [self.adView respondsToSelector:@selector(nativeMainImageView)];

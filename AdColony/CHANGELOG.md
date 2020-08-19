@@ -1,4 +1,15 @@
 ## Changelog
+  * 4.3.0.2
+    * Add support for AdColony `Collect Signal` API for Advance Bidding.
+
+  * 4.3.0.1
+    * Add functionality on AdColony interstitial and rewarded video adapters to forward contents of `adm` field in the bid request to AdColony Advanced Bidding requests.
+
+  * 4.3.0.0
+    * Convert `allZoneIds` parameter for AdColony network configuration from `JSONObject` to `NSArray`. 
+    * To pass zone IDs (i.e. via the `allZoneIds` parameter) on `mediatedNetworkConfigurations` during MoPub initialization, starting with this adapter versions, please pass `allZoneIds` entries as an NSArray, like `allZoneIds: ["zone_1", "zone_2"]`. This is mandatory for AdColony Advanced Bidding. More details [here](https://developers.mopub.com/publishers/mediation/networks/adcolony/).
+    * This version of the adapters has been certified with AdColony 4.3.0 and MoPub SDK 5.13.1.
+
   * 4.2.0.2
     * Fix adapter compiler warnings.
 

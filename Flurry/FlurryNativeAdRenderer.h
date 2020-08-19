@@ -1,5 +1,5 @@
 //
-//  FlurryNativeVideoAdRenderer.m
+//  FlurryNativeAdRenderer.m
 //  MoPub Mediates Flurry
 //
 //  Created by Flurry.
@@ -21,7 +21,7 @@
 @class MPStaticNativeAdRendererSettings;
 
 
-@interface FlurryNativeVideoAdRenderer : NSObject <MPNativeAdRenderer>
+@interface FlurryNativeAdRenderer : NSObject <MPNativeAdRenderer>
 
 @property (nonatomic, readonly) MPNativeViewSizeHandler viewSizeHandler;
 
