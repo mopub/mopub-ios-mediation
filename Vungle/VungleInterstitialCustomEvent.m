@@ -126,9 +126,9 @@
 - (void)vungleAdDidLoad
 {
     if (self.isAdLoaded) {
-        // Already invoked an ad load callback.
         return;
     }
+
     self.isAdLoaded = YES;
 
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
@@ -178,9 +178,9 @@
 - (void)vungleAdDidFailToLoad:(NSError *)error
 {
     if (self.isAdLoaded) {
-        // Already invoked an ad load callback.
         return;
     }
+    
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getPlacementID]);
     [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     [self cleanUp];

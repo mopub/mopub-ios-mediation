@@ -102,6 +102,7 @@
         // Already invoked an ad load callback.
         return;
     }
+
     self.isAdLoaded = YES;
 
     if (self.options) {
