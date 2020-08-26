@@ -82,6 +82,19 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
     self.sdk.mediationProvider = ALMediationProviderMoPub;
     [self.sdk setPluginVersion: AppLovinAdapterConfiguration.pluginVersion];
     
+    NSString *format = [info objectForKey:@"adunit_format"];
+    BOOL isBannerFormat = (format != nil ? [[format lowercaseString] containsString:@"banner"] : NO);
+    
+    if (!isBannerFormat) {
+        MPLogInfo(@"AppLovin only supports 320*50 and 728*90 sized ads. Please ensure your MoPub adunit's format is Banner.");
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd
+                           localizedDescription:@"Invalid sizes received. AppLovin only supports 320 x 50 and 728 x 90 ads."];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], @"");
+        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
+        
+        return;
+    }
+    
     [AppLovinAdapterConfiguration setCachedInitializationParameters: info];
     // Convert requested size to AppLovin Ad Size
     ALAdSize *adSize = [self appLovinAdSizeFromRequestedSize: size];
@@ -131,9 +144,6 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
     // Size can contain an AppLovin leaderboard ad size of 728x90
     if (size.width >= 728 && size.height >= 90) {
         adSize = ALAdSize.leader;
-    } else if (size.width >= 300 && size.height >= 250) {
-        // Size can contain an AppLovin medium rectangle
-        adSize = ALAdSize.mrec;
     }
     
     return adSize;
@@ -146,8 +156,6 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
     
     if (alAdSize == ALAdSize.leader) {
         adRect = CGRectMake(0, 0, 728, 90);
-    } else if (alAdSize == ALAdSize.mrec) {
-        adRect = CGRectMake(0, 0, 300, 250);
     }
     
     return adRect;
