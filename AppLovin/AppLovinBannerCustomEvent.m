@@ -138,27 +138,12 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 
 - (ALAdSize *)appLovinAdSizeFromRequestedSize:(CGSize)size
 {
-    // Default to standard banner size
-    ALAdSize * adSize = ALAdSize.banner;
-    
-    // Size can contain an AppLovin leaderboard ad size of 728x90
-    if (size.width >= 728 && size.height >= 90) {
-        adSize = ALAdSize.leader;
-    }
-    
-    return adSize;
+    return (size.width >= 728 && size.height >= 90) ? ALAdSize.leader : ALAdSize.banner;
 }
 
 - (CGRect)rectFromAppLovinAdSize:(ALAdSize *)alAdSize
 {
-    // Default to standard banner size
-    CGRect adRect = CGRectMake(0, 0, 320, 50);
-    
-    if (alAdSize == ALAdSize.leader) {
-        adRect = CGRectMake(0, 0, 728, 90);
-    }
-    
-    return adRect;
+    return alAdSize == ALAdSize.leader ? CGRectMake(0, 0, 728, 90) : CGRectMake(0, 0, 320, 50);
 }
 
 - (MOPUBErrorCode)toMoPubErrorCode:(int)appLovinErrorCode
