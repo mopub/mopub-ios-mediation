@@ -1,4 +1,8 @@
 ## Changelog
+
+* 8.3.0.0
+      * This version of the adapters has been certified with Chartboost 8.3.0 and MoPub SDK 5.13.1.
+      
 * 8.2.1.0
       * This version of the adapters has been certified with Chartboost 8.2.1 and MoPub SDK 5.13.1.
 
