@@ -1,4 +1,10 @@
 ## Changelog
+* 8.2.1.0
+      * This version of the adapters has been certified with Chartboost 8.2.1 and MoPub SDK 5.13.1.
+
+  * 8.2.0.3
+      * Disable passing `CBLoggingLevelVerbose` to prevent app crashes caused by Chartboost SDK 8.2.0 and 8.2.1
+
   * 8.2.0.2
       * Fix adapter compiler warnings.
 

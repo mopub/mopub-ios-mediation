@@ -4,7 +4,7 @@
 
 * 6.18.0.1.0
     * This version of the adapters has been certified with ironSource 6.18.0.1 and MoPub SDK 5.13.1.
-    * Support for Advanced Bidding.
+    * Service release. No new features.
 
 * 6.18.0.0.1
     * Fix adapter compiler warnings.

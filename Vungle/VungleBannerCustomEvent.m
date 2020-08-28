@@ -20,6 +20,7 @@
 @property (nonatomic, assign) NSDictionary *bannerInfo;
 @property (nonatomic, assign) NSTimer *timeOutTimer;
 @property (nonatomic) BOOL isAdCached;
+@property (nonatomic) BOOL isAdLoaded;
 @property (nonatomic) CGSize bannerSize;
 
 @end
@@ -97,6 +98,13 @@
 
 - (void)vungleAdDidLoad
 {
+    if (self.isAdLoaded) {
+        // Already invoked an ad load callback.
+        return;
+    }
+
+    self.isAdLoaded = YES;
+
     if (self.options) {
         self.options = nil;
     }
@@ -163,6 +171,11 @@
 
 - (void)vungleAdDidFailToLoad:(NSError *)error
 {
+    if (self.isAdLoaded) {
+        // Already invoked an ad load callback.
+        return;
+    }
+
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getPlacementID]);
     NSError *loadFailError = nil;
     if (error) {

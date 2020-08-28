@@ -21,6 +21,7 @@
 @interface VungleRewardedVideoCustomEvent ()  <VungleRouterDelegate>
 
 @property (nonatomic, copy) NSString *placementId;
+@property (nonatomic) BOOL isAdLoaded;
 
 @end
 
@@ -78,7 +79,7 @@
     }
 }
 
-- (void)handleDidInvalidateAd
+- (void)cleanUp
 {
     [[VungleRouter sharedRouter] clearDelegateForPlacementId:self.placementId];
 }
@@ -87,6 +88,12 @@
 
 - (void)vungleAdDidLoad
 {
+    if (self.isAdLoaded) {
+        return;
+    }
+
+    self.isAdLoaded = YES;
+
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate fullscreenAdAdapterDidLoadAd:self];
 }
@@ -115,6 +122,7 @@
 {
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
+    [self cleanUp];
 }
 
 - (void)vungleAdTrackClick
@@ -137,14 +145,19 @@
 
 - (void)vungleAdDidFailToLoad:(NSError *)error
 {
+    if (self.isAdLoaded) {
+        return;
+    }
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getPlacementID]);
     [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
+    [self cleanUp];
 }
 
 - (void)vungleAdDidFailToPlay:(NSError *)error
 {
     MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getPlacementID]);
     [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
+    [self cleanUp];
 }
 
 - (NSString *)getPlacementID

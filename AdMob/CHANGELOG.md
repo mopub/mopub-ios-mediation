@@ -1,4 +1,7 @@
 ## Changelog
+  * 7.64.0.1
+    * Remove unnecessary `VALID_ARCHS` declaration.
+
   * 7.64.0.0
     * This version of the adapters has been certified with AdMob 7.64.0 and MoPub 5.13.1. 
     * Note that, while AdMob 7.64.0 supports iOS 14, this adapter version is not certified using iOS 14. For iOS 14 compatibility, expect an upcoming adapter release.
