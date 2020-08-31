@@ -1,4 +1,7 @@
 ## Changelog
+* 6.8.0.0
+    * This version of the adapters has been certified with Vungle 6.8.0 and MoPub SDK 5.13.1.
+
 * 6.7.1.0
     * This version of the adapters has been certified with Vungle 6.7.1 and MoPub SDK 5.13.1.
     * Fix a Rewarded Video duplicated callbacks issue.
