@@ -1,7 +1,7 @@
 #import "ChartboostAdapterConfiguration.h"
 #import "ChartboostRouter.h"
 
-#define CHARTBOOST_ADAPTER_VERSION  @"8.2.1.0"
+#define CHARTBOOST_ADAPTER_VERSION  @"8.3.1.0"
 #define MOPUB_NETWORK_NAME          @"chartboost"
 
 // Constants
