@@ -21,6 +21,7 @@
 @implementation PangleNativeCustomEvent
 
 - (void)requestAdWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
+    BOOL hasAdMarkup = adMarkup.length > 0;
     
     if (info.count == 0) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
@@ -66,10 +67,17 @@
     }
     self.nativeAd.rootViewController = rootViewController;
     
-    MPLogInfo(@"Load Pangle native ad");
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
     
-    [self.nativeAd loadAdData];
+    if (hasAdMarkup) {
+        MPLogInfo(@"Load Pangle native ad markup for Advanced Bidding");
+
+        [self.nativeAd setMopubAdMarkUp:adMarkup];
+    } else {
+        MPLogInfo(@"Load Pangle native ad");
+
+        [self.nativeAd loadAdData];
+    }
 }
 
 - (void)requestAdWithCustomEventInfo:(NSDictionary *)info {

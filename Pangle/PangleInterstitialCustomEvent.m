@@ -29,6 +29,7 @@
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
+    BOOL hasAdMarkup = adMarkup.length > 0;
     
     if (info.count == 0) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
@@ -61,10 +62,17 @@
     self.fullScreenVideo = [[BUFullscreenVideoAd alloc] initWithSlotID:self.adPlacementId];
     self.fullScreenVideo.delegate = self;
     
-    MPLogInfo(@"Load Pangle interstitial ad");
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
     
-    [self.fullScreenVideo loadAdData];
+    if (hasAdMarkup) {
+        MPLogInfo(@"Load Pangle interstitial ad markup for Advanced Bidding");
+
+        [self.fullScreenVideo setMopubAdMarkUp:adMarkup];
+    } else {
+        MPLogInfo(@"Load Pangle interstitial ad");
+
+        [self.fullScreenVideo loadAdData];
+    }
 }
 
 - (void)presentAdFromViewController:(UIViewController *)viewController {

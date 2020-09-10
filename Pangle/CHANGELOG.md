@@ -1,4 +1,9 @@
 ## Changelog	
+   * 3.2.5.1.0
+     * Support Advanced Bidding.
+     * This version of the adapters has been certified with Pangle 3.2.5.1 and MoPub SDK 5.13.1.
+     * Note that, while Pangle 3.2.5.1 supports iOS 14, this adapter version is not certified using iOS 14. For iOS 14 compatibility, expect an upcoming adapter release.
+
    * 3.2.0.1.0
      * This version of the adapters has been certified with Pangle 3.2.0.1 and MoPub SDK 5.13.1.
 
