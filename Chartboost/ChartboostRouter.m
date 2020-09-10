@@ -30,7 +30,7 @@ static NSString * const kChartboostAppSignatureKey = @"appSignature";
 {
     switch (logLevel) {
         case MPBLogLevelDebug:
-            return CBLoggingLevelInfo;
+            return CBLoggingLevelVerbose;
         case MPBLogLevelInfo:
             return CBLoggingLevelInfo;
         case MPBLogLevelNone:
