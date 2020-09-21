@@ -1,6 +1,7 @@
 ## Changelog
 * 6.8.0.0
     * This version of the adapters has been certified with Vungle 6.8.0 and MoPub SDK 5.13.1.
+    * Note that, while Vungle 6.8.0 supports iOS 14, this adapter version is not certified using iOS 14. For iOS 14 compatibility, expect an upcoming adapter release.
 
 * 6.7.1.0
     * This version of the adapters has been certified with Vungle 6.7.1 and MoPub SDK 5.13.1.
