@@ -1,5 +1,11 @@
 ## Changelog
-* 8.2.1.0
+  * 8.3.1.0
+      * Re-enable passing of `CBLoggingLevelVerbose` on Chartboost log level settings.
+      * This version of the adapters has been certified with Chartboost 8.3.1 and MoPub SDK 5.13.1.
+      * Note that, while Chartboost 8.3.1 supports iOS 14, this adapter version is not certified using iOS 14.
+      For iOS 14 compatibility, expect an upcoming adapter release.
+
+  * 8.2.1.0
       * This version of the adapters has been certified with Chartboost 8.2.1 and MoPub SDK 5.13.1.
 
   * 8.2.0.3
