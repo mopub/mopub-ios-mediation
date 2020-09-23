@@ -4,7 +4,7 @@
 #import "VerizonAdapterConfiguration.h"
 #import <zlib.h>
 
-NSString * const kMoPubVASAdapterVersion = @"1.7.0.1";
+NSString * const kMoPubVASAdapterVersion = @"1.8.0.0";
 
 NSString * const kMoPubVASAdapterErrorWho = @"MoPubVASAdapter";
 NSString * const kMoPubVASAdapterPlacementId = @"placementId";
@@ -16,10 +16,8 @@ NSTimeInterval kMoPubVASAdapterSATimeoutInterval = 600;
 NSString * const kMoPubVASNetworkName   = @"verizon";
 NSString * const kMoPubServerExtrasAdContent     = @"adMarkup";
 NSString * const kMoPubRequestMetadataAdContent  = @"adContent";
+NSString * const kMoPubVASAdImpressionEventId    = @"adImpression";
 
-NSString * const kVASConfigDomain = @"com.verizon.ads";
-NSString * const kVASConfigEditionNameKey = @"editionName";
-NSString * const kVASConfigEditionVersionKey = @"editionVersion";
 NSString * const kVASBiddingTokenVersion = @"1.1";
 
 size_t kVASCompressionBufferSize = 4096;

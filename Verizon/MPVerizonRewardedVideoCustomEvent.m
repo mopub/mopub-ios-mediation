@@ -23,6 +23,7 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
 @end
 
 @implementation MPVerizonRewardedVideoCustomEvent
+
 @dynamic delegate;
 @dynamic localExtras;
 @dynamic hasAdAvailable;
@@ -90,8 +91,6 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
     }
     
     [VerizonAdapterConfiguration setCachedInitializationParameters:info];
-    
-    [VASAds sharedInstance].locationEnabled = [MoPub sharedInstance].locationUpdatesEnabled;
     
     self.interstitialAdFactory = [[VASInterstitialAdFactory alloc] initWithPlacementId:placementId vasAds:[VASAds sharedInstance] delegate:self];
     
@@ -219,7 +218,6 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.siteId);
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.delegate fullscreenAdAdapterDidTrackImpression:self];
         [self.delegate fullscreenAdAdapterAdDidAppear:self];
     });
 }
@@ -236,16 +234,11 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
             self.isVideoCompletionEventCalled = YES;
         });
     }
-}
-
-- (void)interstitialAdFactory:(nonnull VASInterstitialAdFactory *)adFactory cacheLoadedNumRequested:(NSInteger)numRequested numReceived:(NSInteger)numReceived
-{
-    MPLogDebug(@"VAS interstitial factory cache loaded with requested: %lu", (unsigned long)numRequested);
-}
-
-- (void)interstitialAdFactory:(nonnull VASInterstitialAdFactory *)adFactory cacheUpdatedWithCacheSize:(NSInteger)cacheSize
-{
-    MPLogDebug(@"VAS interstitial factory cache updated with size: %lu", (unsigned long)cacheSize);
+    else if ([eventId isEqualToString:kMoPubVASAdImpressionEventId]) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self.delegate fullscreenAdAdapterDidTrackImpression:self];
+        });
+    }
 }
 
 - (void)interstitialAdFactory:(nonnull VASInterstitialAdFactory *)adFactory didFailWithError:(nonnull VASErrorInfo *)errorInfo
