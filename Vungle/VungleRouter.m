@@ -313,11 +313,15 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
                     if ([[VungleSDK sharedSDK] loadPlacementWithID:placementID withSize:[self getVungleBannerAdSizeType:size] error:&error]) {
                         MPLogInfo(@"Vungle: Start to load an ad for Placement ID :%@", placementID);
                     } else {
-                        if ((error) && (error.code != VungleSDKResetPlacementForDifferentAdSize)) {
-                            [self requestBannerAdFailedWithError:error
-                                                     placementID:placementID
-                                                        delegate:delegate];
+                        if (!error) {
+                            NSString *errorMessage = [NSString stringWithFormat:@"Vungle: Unable to load an ad for Placement ID: %@.", placementID];
+                            error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd
+                                      localizedDescription:errorMessage];
                         }
+                        [self requestBannerAdFailedWithError:error
+                                                 placementID:placementID
+                                                    delegate:delegate];
+                        MPLogError(@"%@", error);
                     }
                 }
             }
