@@ -11,7 +11,7 @@
 @class MPStaticNativeAdRendererSettings;
 
 
-@interface PangleNativeAdRender : NSObject <MPNativeAdRenderer>
+@interface PangleNativeAdRenderer : NSObject <MPNativeAdRenderer>
 
 @property (nonatomic, readonly) MPNativeViewSizeHandler viewSizeHandler;
 

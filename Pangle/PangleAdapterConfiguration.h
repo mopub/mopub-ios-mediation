@@ -10,11 +10,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSInteger, PangleRenderMethod) {
-    PangleRenderMethodExpress = 1,
-    PangleRenderMethodTraditional = 2
-};
-
 @interface PangleAdapterConfiguration :MPBaseAdapterConfiguration
 
 // Caching
@@ -30,13 +25,24 @@ typedef NS_ENUM(NSInteger, PangleRenderMethod) {
 @property (nonatomic, copy, readonly) NSString * moPubNetworkName;
 @property (nonatomic, copy, readonly) NSString * networkSdkVersion;
 
-// MPAdapterConfiguration
 extern NSString * const kPangleNetworkName;
 extern NSString * const kPangleAppIdKey;
 extern NSString * const kPanglePlacementIdKey;
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration
                                   complete:(void(^ _Nullable)(NSError * _Nullable))complete;
+
+
+// Set optional data for rewarded ad
++ (void)setUserId:(NSString *)userId;
++ (NSString *)userId;
++ (void)setRewardName:(NSString *)rewardName;
++ (NSString *)rewardName;
++ (void)setRewardAmount:(NSInteger)rewardAmount;
++ (NSInteger)rewardAmount;
++ (void)setMediaExtra:(NSString *)extra;
++ (NSString *)mediaExtra;
+
 @end
 
 NS_ASSUME_NONNULL_END

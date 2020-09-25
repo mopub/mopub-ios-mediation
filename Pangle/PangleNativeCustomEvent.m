@@ -22,14 +22,30 @@
 
 - (void)requestAdWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
+    
+    if (info.count == 0) {
+        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
+                                             code:BUErrorCodeAdSlotEmpty
+                                         userInfo:@{NSLocalizedDescriptionKey:
+                                                        @"Incorrect or missing Pangle App ID or Placement ID on the network UI. Ensure the App ID and Placement ID is correct on the MoPub dashboard."}];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+        
+        [self.delegate nativeCustomEvent:self didFailToLoadAdWithError: error];
+        return;
+    }
+    
     self.appId = [info objectForKey:kPangleAppIdKey];
+    
     if (BUCheckValidString(self.appId)){
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
     self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
     if (!BUCheckValidString(self.adPlacementId)) {
-        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class]) code:BUErrorCodeAdSlotEmpty userInfo:@{NSLocalizedDescriptionKey: @"Invalid Pangle placement ID. Failing ad request. Ensure the ad placement id is valid on the MoPub dashboard."}];
+        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
+                                             code:BUErrorCodeAdSlotEmpty
+                                         userInfo:@{NSLocalizedDescriptionKey: @"Incorrect or missing Pangle placement ID. Failing ad request. Ensure the ad placement ID is correct on the MoPub dashboard."}];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+        
         [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
         return;
     }
@@ -50,11 +66,16 @@
         rootViewController = rootViewController.presentedViewController;
     }
     self.nativeAd.rootViewController = rootViewController;
+    
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
+    
     if (hasAdMarkup) {
-        MPLogInfo(@"Loading Pangle native ad markup for Advanced Bidding");
+        MPLogInfo(@"Load Pangle native ad markup for Advanced Bidding");
+
         [self.nativeAd setMopubAdMarkUp:adMarkup];
     } else {
-        MPLogInfo(@"Loading Pangle native ad");
+        MPLogInfo(@"Load Pangle native ad");
+
         [self.nativeAd loadAdData];
     }
 }
@@ -63,7 +84,7 @@
     [self.nativeAd loadAdData];
 }
 
-- (void)handleInvalidIdError{
+- (void)updateAppId{
     [BUAdSDKManager setAppID:self.appId];
 }
 
@@ -71,14 +92,16 @@
 
 - (void)nativeAd:(BUNativeAd *)nativeAd didFailWithError:(NSError *)error {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+    
     [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
     if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
-        [self handleInvalidIdError];
+        [self updateAppId];
     }
 }
 
 - (void)nativeAdDidLoad:(BUNativeAd *)nativeAd {
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    
     PangleNativeAdAdapter *adapter = [[PangleNativeAdAdapter alloc] initWithBUNativeAd:nativeAd placementId:self.adPlacementId];
     MPNativeAd *mp_nativeAd = [[MPNativeAd alloc] initWithAdAdapter:adapter];
     [self.delegate nativeCustomEvent:self didLoadAd:mp_nativeAd];

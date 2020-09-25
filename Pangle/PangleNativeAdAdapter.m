@@ -7,7 +7,7 @@
     #import "MPLogging.h"
 #endif
 
-@interface PangleNativeAdAdapter ()<BUNativeAdDelegate>
+@interface PangleNativeAdAdapter () <BUNativeAdDelegate>
 @property (nonatomic, strong) UIView *mediaView;
 @property (nonatomic, strong) BUNativeAdRelatedView *relatedView;
 @property (nonatomic, strong) BUNativeAd *nativeAd;
@@ -18,24 +18,25 @@
 
 - (instancetype)initWithBUNativeAd:(BUNativeAd *)nativeAd placementId:(NSString *)placementId {
     if (self = [super init]) {
-        self.properties = [self buNativeAdToDic:nativeAd];
+        self.properties = [self nativeAdToDictionary:nativeAd];
         self.placementId = placementId;
     }
     return self;
 }
 
-- (NSDictionary *)buNativeAdToDic:(BUNativeAd *)nativeAd {
+- (NSDictionary *)nativeAdToDictionary:(BUNativeAd *)nativeAd {
     self.nativeAd = nativeAd;
     self.nativeAd.delegate = self;
-    NSMutableDictionary *dict = [[NSMutableDictionary alloc] init];
-    [dict setValue:nativeAd.data.AdTitle forKey:kAdTitleKey];
-    [dict setValue:nativeAd.data.AdDescription forKey:kAdTextKey];
-    [dict setValue:nativeAd.data.buttonText forKey:kAdCTATextKey];
-    [dict setValue:nativeAd.data.icon.imageURL forKey:kAdIconImageKey];
-    [dict setValue:@(nativeAd.data.score) forKey:kAdStarRatingKey];
+    
+    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
+    [dictionary setValue:nativeAd.data.AdTitle forKey:kAdTitleKey];
+    [dictionary setValue:nativeAd.data.AdDescription forKey:kAdTextKey];
+    [dictionary setValue:nativeAd.data.buttonText forKey:kAdCTATextKey];
+    [dictionary setValue:nativeAd.data.icon.imageURL forKey:kAdIconImageKey];
+    [dictionary setValue:@(nativeAd.data.score) forKey:kAdStarRatingKey];
     
     if (nativeAd.data.imageAry.count > 0) {
-        [dict setValue:nativeAd.data.imageAry.firstObject.imageURL forKey:kAdMainImageKey];
+        [dictionary setValue:nativeAd.data.imageAry.firstObject.imageURL forKey:kAdMainImageKey];
     }
     
     self.mediaView = nil;
@@ -60,9 +61,9 @@
         }
     }
     
-    [dict setValue:self.mediaView forKey:kAdMainMediaViewKey];
-    [dict setValue:nativeAd forKey:@"bu_nativeAd"];
-    return [dict copy];
+    [dictionary setValue:self.mediaView forKey:kAdMainMediaViewKey];
+    [dictionary setValue:nativeAd forKey:@"bu_nativeAd"];
+    return [dictionary copy];
 }
 
 #pragma mark - BUNativeAdDelegate
