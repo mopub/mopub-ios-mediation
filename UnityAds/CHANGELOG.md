@@ -1,5 +1,19 @@
 
 ## Changelog
+* 3.4.8.0
+  * This version of the adapters has been certified with Unity Ads 3.4.8 and MoPub SDK 5.13.1.
+  * Note that, while Unity Ads 3.4.8 supports iOS 14, this adapter version is not certified using iOS 14. For iOS 14 compatibility, expect an upcoming adapter release.
+
+* 3.4.6.1
+  * Fix adapter compiler warnings.
+
+* 3.4.6.0
+  * This version of the adapters has been certified with Unity Ads 3.4.6 and MoPub SDK 5.13.0.
+
+* 3.4.2.1
+  * Refactor non-native adapter classes to use the new consolidated API from MoPub.
+  * This and newer adapter versions are only compatible with 5.13.0+ MoPub SDK.
+
 * 3.4.2.0
   * This version of the adapters has been certified with Unity Ads 3.4.2.
 

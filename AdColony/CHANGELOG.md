@@ -1,4 +1,39 @@
 ## Changelog
+  * 4.4.0.0
+    * This version of the adapters has been certified with AdColony 4.4.0 and MoPub SDK 5.13.1.
+
+  * 4.3.1.0
+    * This version of the adapters has been certified with AdColony 4.3.1 and MoPub SDK 5.13.1.
+
+  * 4.3.0.2
+    * Add support for AdColony `Collect Signal` API for Advance Bidding.
+
+  * 4.3.0.1
+    * Add functionality on AdColony interstitial and rewarded video adapters to forward contents of `adm` field in the bid request to AdColony Advanced Bidding requests.
+
+  * 4.3.0.0
+    * Convert `allZoneIds` parameter for AdColony network configuration from `JSONObject` to `NSArray`. 
+    * To pass zone IDs (i.e. via the `allZoneIds` parameter) on `mediatedNetworkConfigurations` during MoPub initialization, starting with this adapter versions, please pass `allZoneIds` entries as an NSArray, like `allZoneIds: ["zone_1", "zone_2"]`. This is mandatory for AdColony Advanced Bidding. More details [here](https://developers.mopub.com/publishers/mediation/networks/adcolony/).
+    * This version of the adapters has been certified with AdColony 4.3.0 and MoPub SDK 5.13.1.
+    * Note that, while AdColony 4.3.0 supports iOS 14, this adapter version is not certified using iOS 14.
+    For iOS 14 compatibility, expect an upcoming adapter release.
+
+  * 4.2.0.2
+    * Fix adapter compiler warnings.
+
+  * 4.2.0.1
+    * Fix initialization-related crashes when publishers use `MPMoPubConfiguration.mediatedNetworkConfigurations` to initialize AdColony with a dedicated configuration.
+
+  * 4.2.0.0
+    * This version of the adapters has been certified with AdColony 4.2.0 and MoPub SDK 5.13.1.
+
+  * 4.1.5.0
+    * This version of the adapters has been certified with AdColony 4.1.5 and MoPub SDK 5.13.0.
+
+  * 4.1.4.1
+    * Refactor non-native adapter classes to use the new consolidated API from MoPub.
+    * To use this and newer adapter versions, you must use MoPub 5.13.0 or newer.
+  
   * 4.1.4.0
     * This version of the adapters has been certified with AdColony 4.1.4.
 

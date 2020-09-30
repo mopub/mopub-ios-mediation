@@ -1,4 +1,29 @@
 ## Changelog
+  * 8.3.1.0
+      * Re-enable passing of `CBLoggingLevelVerbose` on Chartboost log level settings.
+      * This version of the adapters has been certified with Chartboost 8.3.1 and MoPub SDK 5.13.1.
+      * Note that, while Chartboost 8.3.1 supports iOS 14, this adapter version is not certified using iOS 14.
+      For iOS 14 compatibility, expect an upcoming adapter release.
+
+  * 8.2.1.0
+      * This version of the adapters has been certified with Chartboost 8.2.1 and MoPub SDK 5.13.1.
+
+  * 8.2.0.3
+      * Disable passing `CBLoggingLevelVerbose` to prevent app crashes caused by Chartboost SDK 8.2.0 and 8.2.1
+
+  * 8.2.0.2
+      * Fix adapter compiler warnings.
+
+  * 8.2.0.1 
+      * Add support for Chartboost `CHBGDPRDataUseConsent` API.
+  
+  * 8.2.0.0
+      * This version of the adapters has been certified with Chartboost 8.2.0 and MoPub SDK 5.13.1.
+
+  * 8.1.0.2
+      * Refactor non-native adapter classes to use the new consolidated API from MoPub.
+      * To use this and newer adapter versions, you must use MoPub 5.13.0 or newer.
+
   * 8.1.0.1
       * This version of the adapters has been certified MoPub SDK 5.12.0.
       * Fix Chartboost initialization and consent setting failure.

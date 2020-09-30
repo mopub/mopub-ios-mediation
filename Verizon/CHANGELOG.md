@@ -1,4 +1,23 @@
 ## Changelog
+* 1.8.0.0
+    * This version of the adapters has been certified with Verizon 1.8.0 and MoPub 5.13.1.
+    * Impression is no longer tracked on ad show, but via a dedicated callback from Verizon.
+
+* 1.7.0.1
+    * Fix adapter compiler warnings.
+
+* 1.7.0.0
+    * This version of the adapters has been certified with Verizon 1.7.0 and MoPub 5.13.1.
+
+* 1.6.0.0
+    * This version of the adapters has been certified with Verizon 1.6.0 and MoPub 5.13.0.
+    * Implement Advanced Bidding token compression and encoding.
+    * Add Super Auction and Advanced Bidding to Rewarded Video. 
+
+* 1.5.0.1
+    * Refactor non-native adapter classes to use the new consolidated API from MoPub.
+    * To use this and newer adapter versions, you must use MoPub 5.13.0 or newer.
+
 * 1.5.0.0
     * Compress the Advanced Bidding token to adhere to MoPub's spec.
     * This version of the adapters has been certified with Verizon 1.5.0 and MoPub 5.11.0.

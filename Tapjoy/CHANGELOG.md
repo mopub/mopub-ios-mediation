@@ -1,4 +1,22 @@
 ## Changelog
+  * 12.7.0.0
+    * This version of the adapters has been certified with Tapjoy 12.7.0 and MoPub SDK 5.13.1.
+    * Note that, while Tapjoy 12.7.0 supports iOS 14, this adapter version is not certified using iOS 14. For iOS 14 compatibility, expect an upcoming adapter release.
+
+  * 12.6.1.1
+    * Fix adapter compiler warnings.
+
+  * 12.6.1.0
+    * This version of the adapters has been certified with Tapjoy 12.6.1 and MoPub SDK 5.13.1.
+
+  * 12.6.0.0
+    * This version of the adapters has been certified with Tapjoy 12.6.0 and MoPub SDK 5.13.0.
+    * Update to new GDPR and consent APIs.
+    
+  * 12.4.2.1
+    * Refactor non-native adapter classes to use the new consolidated API from MoPub.
+    * This and newer adapter versions are only compatible with 5.13.0+ MoPub SDK.
+
   * 12.4.2.0
     * This version of the adapters has been certified with Tapjoy 12.4.2.
 

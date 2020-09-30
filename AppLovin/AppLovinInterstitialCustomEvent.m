@@ -19,6 +19,7 @@
 
 @interface AppLovinInterstitialCustomEvent() <ALAdLoadDelegate, ALAdDisplayDelegate, ALAdVideoPlaybackDelegate>
 
+@property (nonatomic, readonly) NSString *uniqueID;
 @property (nonatomic, strong) ALSdk *sdk;
 @property (nonatomic, strong) ALInterstitialAd *interstitialAd;
 @property (nonatomic, copy) NSString *zoneIdentifier; // The zone identifier this instance of the custom event is loading for
@@ -28,6 +29,10 @@
 @end
 
 @implementation AppLovinInterstitialCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
+
 static NSString *const kALMoPubMediationErrorDomain = @"com.applovin.sdk.mediation.mopub.errorDomain";
 
 // A dictionary of Zone -> Queue of `ALAd`s to be shared by instances of the custom event.
@@ -35,6 +40,13 @@ static NSString *const kALMoPubMediationErrorDomain = @"com.applovin.sdk.mediati
 // on every ad load regardless if ad was actually displayed or not.
 static NSMutableDictionary<NSString *, NSMutableArray<ALAd *> *> *ALGlobalInterstitialAds;
 static NSObject *ALGlobalInterstitialAdsLock;
+
+- (instancetype)init {
+    if ([super init]) {
+        _uniqueID = [NSUUID UUID].UUIDString;
+    }
+    return self;
+}
 
 #pragma mark - Class Initialization
 
@@ -46,19 +58,23 @@ static NSObject *ALGlobalInterstitialAdsLock;
     ALGlobalInterstitialAdsLock = [[NSObject alloc] init];
 }
 
-- (BOOL)enableAutomaticImpressionAndClickTracking
+- (BOOL)enableAutomaticImpressionAndClickTracking {
+    return NO;
+}
+
+#pragma mark - MPFullscreenAdAdapter Override
+
+- (BOOL)isRewardExpected
 {
     return NO;
 }
 
-#pragma mark - MPInterstitialCustomEvent Overridden Methods
-
-- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info
+- (BOOL)hasAdAvailable
 {
-    [self requestInterstitialWithCustomEventInfo: info adMarkup: nil];
+    return [self isTokenEvent] && self.tokenAd != nil;
 }
 
-- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
+- (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     
     // Collect and pass the user's consent from MoPub onto the AppLovin SDK
@@ -77,7 +93,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
                                          userInfo: @{NSLocalizedFailureReasonErrorKey: failureReason}];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], @"");
         
-        [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError: error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
 
         return;
     }
@@ -105,7 +121,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
         self.zoneIdentifier = ZONE_FROM_INFO(info);
         
         // Check if we already have a preloaded ad for the given zone
-        ALAd *preloadedAd = [[self class] dequeueAdForZoneIdentifier: self.zoneIdentifier];
+        ALAd *preloadedAd = [[self class] dequeueAdForUniqueID: self.uniqueID];
         if ( preloadedAd )
         {
             MPLogInfo(@"Found preloaded ad for zone: {%@}", self.zoneIdentifier);
@@ -118,7 +134,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
             // If this is a default Zone, create the ad normally
             if ( [DEFAULT_ZONE isEqualToString: self.zoneIdentifier] )
             {
-                [self.sdk.adService loadNextAd: [ALAdSize sizeInterstitial] andNotify: self];
+                [self.sdk.adService loadNextAd: ALAdSize.interstitial andNotify: self];
                 
                 MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
             }
@@ -133,7 +149,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
     }
 }
 
-- (void)showInterstitialFromRootViewController:(UIViewController *)rootViewController
+- (void)presentAdFromViewController:(UIViewController *)viewController
 {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 
@@ -145,7 +161,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
     }
     else
     {
-        preloadedAd = [[self class] dequeueAdForZoneIdentifier: self.zoneIdentifier];
+        preloadedAd = [[self class] dequeueAdForUniqueID: self.uniqueID];
     }
     
     if ( preloadedAd )
@@ -161,7 +177,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
                                              code: kALErrorCodeUnableToRenderAd
                                          userInfo: @{NSLocalizedFailureReasonErrorKey : @"Adapter requested to display an interstitial before one was loaded"}];
         
-        [self.delegate interstitialCustomEvent: self didFailToLoadAdWithError: error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     }
 }
@@ -176,11 +192,11 @@ static NSObject *ALGlobalInterstitialAdsLock;
     }
     else
     {
-        [[self class] enqueueAd: ad forZoneIdentifier: self.zoneIdentifier];
+        [[self class] enqueueAd: ad forUniqueId: self.uniqueID];
     }
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.delegate interstitialCustomEvent: self didLoadAd: ad];
+        [self.delegate fullscreenAdAdapterDidLoadAd:self];
 
         MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     });
@@ -193,7 +209,7 @@ static NSObject *ALGlobalInterstitialAdsLock;
                                      userInfo: nil];
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.delegate interstitialCustomEvent: self didFailToLoadAdWithError: error];
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     });
 }
@@ -203,40 +219,41 @@ static NSObject *ALGlobalInterstitialAdsLock;
 - (void)ad:(ALAd *)ad wasDisplayedIn:(UIView *)view
 {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate interstitialCustomEventWillAppear: self];
+    [self.delegate fullscreenAdAdapterAdWillAppear:self];
     
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate interstitialCustomEventDidAppear: self];
+    [self.delegate fullscreenAdAdapterAdDidAppear:self];
     
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate trackImpression];
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
 - (void)ad:(ALAd *)ad wasHiddenIn:(UIView *)view
 {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate interstitialCustomEventWillDisappear: self];
+    [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate interstitialCustomEventDidDisappear: self];
+    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
     
     self.interstitialAd = nil;
 }
 
 - (void)ad:(ALAd *)ad wasClickedIn:(UIView *)view
 {
-    [self.delegate interstitialCustomEventDidReceiveTapEvent: self];
-    [self.delegate interstitialCustomEventWillLeaveApplication: self];
-    [self.delegate trackClick];
+    [self.delegate fullscreenAdAdapterDidTrackClick:self];
+    [self.delegate fullscreenAdAdapterDidReceiveTap:self];
+    [self.delegate fullscreenAdAdapterWillLeaveApplication:self];
     
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
 #pragma mark - Video Playback Delegate
 
 - (void)videoPlaybackBeganInAd:(ALAd *)ad
 {
-    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogInfo(@"AppLovin interstitial video playback started.");
 }
 
 - (void)videoPlaybackEndedInAd:(ALAd *)ad atPlaybackPercent:(NSNumber *)percentPlayed fullyWatched:(BOOL)wasFullyWatched
@@ -246,13 +263,13 @@ static NSObject *ALGlobalInterstitialAdsLock;
 
 #pragma mark - Utility Methods
 
-+ (nullable ALAd *)dequeueAdForZoneIdentifier:(NSString *)zoneIdentifier
++ (nullable ALAd *)dequeueAdForUniqueID:(NSString *)uniqueID
 {
     @synchronized ( ALGlobalInterstitialAdsLock )
     {
         ALAd *preloadedAd;
         
-        NSMutableArray<ALAd *> *preloadedAds = ALGlobalInterstitialAds[zoneIdentifier];
+        NSMutableArray<ALAd *> *preloadedAds = ALGlobalInterstitialAds[uniqueID];
         if ( preloadedAds.count > 0 )
         {
             preloadedAd = preloadedAds[0];
@@ -263,15 +280,15 @@ static NSObject *ALGlobalInterstitialAdsLock;
     }
 }
 
-+ (void)enqueueAd:(ALAd *)ad forZoneIdentifier:(NSString *)zoneIdentifier
++ (void)enqueueAd:(ALAd *)ad forUniqueId:(NSString *)uniqueID
 {
     @synchronized ( ALGlobalInterstitialAdsLock )
     {
-        NSMutableArray<ALAd *> *preloadedAds = ALGlobalInterstitialAds[zoneIdentifier];
+        NSMutableArray<ALAd *> *preloadedAds = ALGlobalInterstitialAds[uniqueID];
         if ( !preloadedAds )
         {
             preloadedAds = [NSMutableArray array];
-            ALGlobalInterstitialAds[zoneIdentifier] = preloadedAds;
+            ALGlobalInterstitialAds[uniqueID] = preloadedAds;
         }
         
         [preloadedAds addObject: ad];

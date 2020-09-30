@@ -9,7 +9,6 @@
 #import "GoogleAdMobAdapterConfiguration.h"
 #import <GoogleMobileAds/GoogleMobileAds.h>
 #if __has_include("MoPub.h")
-#import "MPInterstitialAdController.h"
 #import "MPLogging.h"
 #endif
 #import <CoreLocation/CoreLocation.h>
@@ -22,12 +21,26 @@
 @end
 
 @implementation MPGoogleAdMobInterstitialCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
 
 @synthesize interstitial = _interstitial;
 
-#pragma mark - MPInterstitialCustomEvent Subclass Methods
+- (void)dealloc {
+    self.interstitial.delegate = nil;
+}
 
-- (void)requestInterstitialWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
+#pragma mark - MPFullscreenAdAdapter Override
+
+- (BOOL)isRewardExpected {
+    return NO;
+}
+
+- (BOOL)hasAdAvailable {
+    return self.interstitial.isReady;
+}
+
+- (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     self.admobAdUnitId = [info objectForKey:@"adUnitID"];
     self.interstitial = [[GADInterstitial alloc] initWithAdUnitID:self.admobAdUnitId];
     self.interstitial.delegate = self;
@@ -40,18 +53,11 @@
             request.contentURL = contentUrl;
         }
     }
-
-    CLLocation *location = self.delegate.location;
-    if (location) {
-        [request setLocationWithLatitude:location.coordinate.latitude
-                               longitude:location.coordinate.longitude
-                                accuracy:location.horizontalAccuracy];
-    }
     
-    // Here, you can specify a list of device IDs that will receive test ads.
+    // Test device IDs can be passed via localExtras to request test ads.
     // Running in the simulator will automatically show test ads.
     if ([self.localExtras objectForKey:@"testDevices"]) {
-      request.testDevices = self.localExtras[@"testDevices"];
+      GADMobileAds.sharedInstance.requestConfiguration.testDeviceIdentifiers = self.localExtras[@"testDevices"];
     }
     if ([self.localExtras objectForKey:@"tagForChildDirectedTreatment"]) {
       [GADMobileAds.sharedInstance.requestConfiguration tagForChildDirectedTreatment:self.localExtras[@"tagForChildDirectedTreatment"]];
@@ -80,14 +86,10 @@
     [self.interstitial loadRequest:request];
 }
 
-- (void)showInterstitialFromRootViewController:(UIViewController *)rootViewController {
+- (void)presentAdFromViewController:(UIViewController *)viewController {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     
-    [self.interstitial presentFromRootViewController:rootViewController];
-}
-
-- (void)dealloc {
-    self.interstitial.delegate = nil;
+    [self.interstitial presentFromRootViewController:viewController];
 }
 
 - (BOOL)enableAutomaticImpressionAndClickTracking {
@@ -98,7 +100,7 @@
 
 - (void)interstitialDidReceiveAd:(GADInterstitial *)interstitial {
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate interstitialCustomEvent:self didLoadAd:self];
+    [self.delegate fullscreenAdAdapterDidLoadAd:self];
 }
 
 - (void)interstitial:(GADInterstitial *)interstitial
@@ -109,7 +111,7 @@ didFailToReceiveAdWithError:(GADRequestError *)error {
     
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:mopubError], [self getAdNetworkId]);
     
-    [self.delegate interstitialCustomEvent:self didFailToLoadAdWithError:error];
+    [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:mopubError];
 }
 
 - (void)interstitialWillPresentScreen:(GADInterstitial *)interstitial {
@@ -117,30 +119,32 @@ didFailToReceiveAdWithError:(GADRequestError *)error {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate interstitialCustomEventWillAppear:self];
-    [self.delegate interstitialCustomEventDidAppear:self];
-    [self.delegate trackImpression];
+    [self.delegate fullscreenAdAdapterAdWillAppear:self];
+    [self.delegate fullscreenAdAdapterAdDidAppear:self];
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
 - (void)interstitialWillDismissScreen:(GADInterstitial *)ad {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate interstitialCustomEventWillDisappear:self];
+    [self.delegate fullscreenAdAdapterAdWillDisappear:self];
 }
 
 - (void)interstitialDidDismissScreen:(GADInterstitial *)ad {
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate interstitialCustomEventDidDisappear:self];
+    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
 }
 
 - (void)interstitialWillLeaveApplication:(GADInterstitial *)ad {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate interstitialCustomEventDidReceiveTapEvent:self];
-    [self.delegate interstitialCustomEventWillLeaveApplication:self];
-    [self.delegate trackClick];
+    [self.delegate fullscreenAdAdapterDidReceiveTap:self];
+    [self.delegate fullscreenAdAdapterWillLeaveApplication:self];
+    [self.delegate fullscreenAdAdapterDidTrackClick:self];
 }
 
 - (NSString *) getAdNetworkId {
     return self.admobAdUnitId;
 }
+
+@dynamic hasAdAvailable;
 
 @end

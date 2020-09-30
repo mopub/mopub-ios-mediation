@@ -27,7 +27,7 @@ NSString *const kFlurryAdSpaceName = @"adSpaceName";
 
 @implementation FlurryNativeCustomEvent
 
-- (void)requestAdWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
+- (void) requestAdWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     NSString *apiKey = [info objectForKey:kFlurryApiKey];
     NSString *adSpaceName = [info objectForKey:kFlurryAdSpaceName];

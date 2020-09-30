@@ -34,10 +34,13 @@
 
 @interface AppLovinBannerCustomEvent()
 @property (nonatomic, strong) ALSdk *sdk;
-@property (nonatomic, strong) ALAdView *adView;
+@property (nonatomic, strong) ALAdView *bannerView;
 @end
 
 @implementation AppLovinBannerCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+
 static NSString *const kALMoPubMediationErrorDomain = @"com.applovin.sdk.mediation.mopub.errorDomain";
 static NSString *zoneIdentifier;
 
@@ -51,14 +54,9 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
     ALGlobalAdViews = [NSMutableDictionary dictionary];
 }
 
-#pragma mark - MPBannerCustomEvent Overridden Methods
+#pragma mark - MPInlineAdAdapter Overridden Methods
 
-- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info
-{
-    [self requestAdWithSize: size customEventInfo: info adMarkup: nil];
-}
-
-- (void)requestAdWithSize:(CGSize)size customEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
+- (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     // Collect and pass the user's consent from MoPub onto the AppLovin SDK
     if ([[MoPub sharedInstance] isGDPRApplicable] == MPBoolYes) {
@@ -76,7 +74,7 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
                                          userInfo: @{NSLocalizedFailureReasonErrorKey: failureReason}];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], @"");
         
-        [self.delegate bannerCustomEvent:self didFailToLoadAdWithError: error];
+        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError: error];
 
         return;
     }
@@ -84,17 +82,32 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
     self.sdk.mediationProvider = ALMediationProviderMoPub;
     [self.sdk setPluginVersion: AppLovinAdapterConfiguration.pluginVersion];
     
+    zoneIdentifier = ZONE_FROM_INFO(info);
+    
+    MPLogInfo(@"Requesting AppLovin banner with zoneIdentifier: %@", zoneIdentifier);
+    
+    NSString *format = [info objectForKey:@"adunit_format"];
+    BOOL isBannerFormat = (format != nil ? [[format lowercaseString] containsString:@"banner"] : NO);
+    
+    if (!isBannerFormat) {
+        MPLogInfo(@"AppLovin only supports 320*50 and 728*90 sized ads. Please ensure your MoPub adunit's format is Banner.");
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd
+                           localizedDescription:@"Unsupported sizes received. AppLovin only supports 320 x 50 and 728 x 90 ads. Please ensure your adunit's format is Banner in MoPub UI."];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], zoneIdentifier);
+        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
+        
+        return;
+    }
+    
     [AppLovinAdapterConfiguration setCachedInitializationParameters: info];
     // Convert requested size to AppLovin Ad Size
     ALAdSize *adSize = [self appLovinAdSizeFromRequestedSize: size];
     BOOL hasAdMarkup = adMarkup.length > 0;
     
-    MPLogInfo(@"Requesting AppLovin banner of size %@ with info: %@ and with ad markup: %d", NSStringFromCGSize(size), info, hasAdMarkup);
-    
-    zoneIdentifier = ZONE_FROM_INFO(info);
+    MPLogInfo(@"Requesting AppLovin banner of size %@ and with ad markup: %d", NSStringFromCGSize(size), hasAdMarkup);
     
     // Create adview based off of zone (if any)
-    self.adView = [[self class] adViewForFrame: [self rectFromAppLovinAdSize: adSize]
+    self.bannerView = [[self class] adViewForFrame: [self rectFromAppLovinAdSize: adSize]
                                         adSize: adSize
                                 zoneIdentifier: zoneIdentifier
                                    customEvent: self
@@ -112,7 +125,7 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
     // Zone/regular ad load
     else
     {
-        [self.adView loadNextAd];
+        [self.bannerView loadNextAd];
         
         MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], zoneIdentifier);
     }
@@ -127,32 +140,12 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 
 - (ALAdSize *)appLovinAdSizeFromRequestedSize:(CGSize)size
 {
-    // Default to standard banner size
-    ALAdSize * adSize = ALAdSize.banner;
-    
-    // Size can contain an AppLovin leaderboard ad size of 728x90
-    if (size.width >= 728 && size.height >= 90) {
-        adSize = ALAdSize.leader;
-    } else if (size.width >= 300 && size.height >= 250) {
-        // Size can contain an AppLovin medium rectangle
-        adSize = ALAdSize.mrec;
-    }
-    
-    return adSize;
+    return (size.width >= 728 && size.height >= 90) ? ALAdSize.leader : ALAdSize.banner;
 }
 
 - (CGRect)rectFromAppLovinAdSize:(ALAdSize *)alAdSize
 {
-    // Default to standard banner size
-    CGRect adRect = CGRectMake(0, 0, 320, 50);
-    
-    if (alAdSize == ALAdSize.leader) {
-        adRect = CGRectMake(0, 0, 728, 90);
-    } else if (alAdSize == ALAdSize.mrec) {
-        adRect = CGRectMake(0, 0, 300, 250);
-    }
-    
-    return adRect;
+    return alAdSize == ALAdSize.leader ? CGRectMake(0, 0, 728, 90) : CGRectMake(0, 0, 320, 50);
 }
 
 - (MOPUBErrorCode)toMoPubErrorCode:(int)appLovinErrorCode
@@ -248,8 +241,8 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 {
     // Ensure logic is ran on main queue
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.parentCustomEvent.delegate bannerCustomEvent: self.parentCustomEvent
-                                                 didLoadAd: self.parentCustomEvent.adView];
+        [self.parentCustomEvent.delegate inlineAdAdapter: self.parentCustomEvent
+                                           didLoadAdWithAdView: self.parentCustomEvent.bannerView];
         
         MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
         MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
@@ -264,7 +257,7 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
         NSError *error = [NSError errorWithDomain: kALMoPubMediationErrorDomain
                                              code: [self.parentCustomEvent toMoPubErrorCode: code]
                                          userInfo: nil];
-        [self.parentCustomEvent.delegate bannerCustomEvent: self.parentCustomEvent didFailToLoadAdWithError: error];
+        [self.parentCustomEvent.delegate inlineAdAdapter: self.parentCustomEvent didFailToLoadAdWithError: error];
         
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     });
@@ -276,7 +269,7 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 {
     // `didDisplayAd` of this class would not be called by MoPub on AppLovin banner refresh if enabled.
     // Only way to track impression of AppLovin refresh is via this callback.
-    [self.parentCustomEvent.delegate trackImpression];
+    [self.parentCustomEvent.delegate inlineAdAdapterDidTrackImpression:self.parentCustomEvent];
     
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
@@ -290,8 +283,8 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 
 - (void)ad:(ALAd *)ad wasClickedIn:(UIView *)view
 {
-    [self.parentCustomEvent.delegate trackClick];
-    [self.parentCustomEvent.delegate bannerCustomEventWillLeaveApplication: self.parentCustomEvent];
+    [self.parentCustomEvent.delegate inlineAdAdapterDidTrackClick:self.parentCustomEvent];
+    [self.parentCustomEvent.delegate inlineAdAdapterWillLeaveApplication:self.parentCustomEvent];
     
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
@@ -300,7 +293,7 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 
 - (void)ad:(ALAd *)ad didPresentFullscreenForAdView:(ALAdView *)adView
 {
-    [self.parentCustomEvent.delegate bannerCustomEventWillBeginAction: self.parentCustomEvent];
+    [self.parentCustomEvent.delegate inlineAdAdapterWillBeginUserAction:self.parentCustomEvent];
 }
 
 - (void)ad:(ALAd *)ad willDismissFullscreenForAdView:(ALAdView *)adView
@@ -311,7 +304,7 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 - (void)ad:(ALAd *)ad didDismissFullscreenForAdView:(ALAdView *)adView
 {
     MPLogInfo(@"Banner did dismiss fullscreen");
-    [self.parentCustomEvent.delegate bannerCustomEventDidFinishAction: self.parentCustomEvent];
+    [self.parentCustomEvent.delegate inlineAdAdapterDidEndUserAction:self.parentCustomEvent];
 }
 
 - (void)ad:(ALAd *)ad willLeaveApplicationForAdView:(ALAdView *)adView
@@ -339,7 +332,7 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 
 - (void)adService:(ALAdService *)adService didLoadAd:(ALAd *)ad
 {
-    [self.parentCustomEvent.adView render: ad];
+    [self.parentCustomEvent.bannerView render: ad];
     [super adService: adService didLoadAd: ad];
 }
 
