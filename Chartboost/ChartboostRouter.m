@@ -10,6 +10,7 @@
 
 static NSString * const kChartboostAppIdKey        = @"appId";
 static NSString * const kChartboostAppSignatureKey = @"appSignature";
+static NSString * const kGADMAdapterMinimumOSVersion = @"10.0";
 
 @implementation ChartboostRouter
 
