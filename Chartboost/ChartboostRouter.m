@@ -22,6 +22,11 @@ static NSString * const kChartboostAppSignatureKey = @"appSignature";
 
 + (void)setLoggingLevel:(MPBLogLevel)loggingLevel
 {
+    if (SYSTEM_VERSION_LESS_THAN(kGADMAdapterMinimumOSVersion)) {
+        NSLog(@"Chartboost minimum supported OS version is iOS %@. Requested action is a no-op.", kGADMAdapterMinimumOSVersion);
+        return;
+    }
+    
     CBLoggingLevel chbLoggingLevel = [self chartboostLoggingLevelFromMopubLevel:loggingLevel];
     [Chartboost setLoggingLevel:chbLoggingLevel];
 }
@@ -41,6 +46,11 @@ static NSString * const kChartboostAppSignatureKey = @"appSignature";
 
 + (void)setDataUseConsentWithMopubConfiguration
 {
+    if (SYSTEM_VERSION_LESS_THAN(kGADMAdapterMinimumOSVersion)) {
+        NSLog(@"Chartboost minimum supported OS version is iOS %@. Requested action is a no-op.", kGADMAdapterMinimumOSVersion);
+        return;
+    }
+    
     MoPub *mopub = [MoPub sharedInstance];
     if ([mopub isGDPRApplicable] == MPBoolYes) {
         if ([mopub allowLegitimateInterest]) {
@@ -61,6 +71,11 @@ static NSString * const kChartboostAppSignatureKey = @"appSignature";
 
 + (void)startWithParameters:(NSDictionary *)parameters completion:(void (^)(BOOL))completion
 {
+    if (SYSTEM_VERSION_LESS_THAN(kGADMAdapterMinimumOSVersion)) {
+        NSLog(@"Chartboost minimum supported OS version is iOS %@. Requested action is a no-op.", kGADMAdapterMinimumOSVersion);
+        return;
+    }
+    
     NSString *appId = parameters[kChartboostAppIdKey];
     NSString *appSignature = parameters[kChartboostAppSignatureKey];
     

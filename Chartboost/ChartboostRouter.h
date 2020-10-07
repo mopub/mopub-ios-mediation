@@ -30,4 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)startWithParameters:(NSDictionary *)parameters completion:(void(^)(BOOL))completion;
 @end
 
+/// Minimum OS version.
+static NSString *const kGADMAdapterMinimumOSVersion = @"10.0";
+
 NS_ASSUME_NONNULL_END
