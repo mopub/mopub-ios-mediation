@@ -10,7 +10,7 @@
 
 static NSString * const kChartboostAppIdKey        = @"appId";
 static NSString * const kChartboostAppSignatureKey = @"appSignature";
-static NSString * const kGADMAdapterMinimumOSVersion = @"10.0";
+static NSString * const kChartboostMinimumOSVersion = @"10.0";
 
 @implementation ChartboostRouter
 
@@ -62,8 +62,8 @@ static NSString * const kGADMAdapterMinimumOSVersion = @"10.0";
 
 + (void)startWithParameters:(NSDictionary *)parameters completion:(void (^)(BOOL))completion
 {
-    if (SYSTEM_VERSION_LESS_THAN(kGADMAdapterMinimumOSVersion)) {
-        NSLog(@"Chartboost minimum supported OS version is iOS %@. Requested action is a no-op.", kGADMAdapterMinimumOSVersion);
+    if (SYSTEM_VERSION_LESS_THAN(kChartboostMinimumOSVersion)) {
+        NSLog(@"Chartboost minimum supported OS version is iOS %@. Requested action is a no-op.", kChartboostMinimumOSVersion);
         completion(NO);
         return;
     }
