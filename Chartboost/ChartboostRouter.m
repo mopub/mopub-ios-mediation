@@ -64,7 +64,8 @@ static NSString * const kChartboostMinimumOSVersion = @"10.0";
 {
     if (SYSTEM_VERSION_LESS_THAN(kChartboostMinimumOSVersion)) {
         NSString* logError = [NSString stringWithFormat:@"Chartboost minimum supported OS version is iOS %@. Requested action is a no-op.", kChartboostMinimumOSVersion];
-        NSError *error = [NSError errorWithCode:MOPUBErrorUnknown localizedDescription:logError];
+        NSError *error = [NSError errorWithCode:MOPUBErrorUnknown
+                           localizedDescription:logError];
         MPLogEvent([MPLogEvent error:error message:nil]);
         completion(NO);
         return;
