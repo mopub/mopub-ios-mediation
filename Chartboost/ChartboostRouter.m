@@ -46,12 +46,7 @@ static NSString * const kGADMAdapterMinimumOSVersion = @"10.0";
 }
 
 + (void)setDataUseConsentWithMopubConfiguration
-{
-    if (SYSTEM_VERSION_LESS_THAN(kGADMAdapterMinimumOSVersion)) {
-        NSLog(@"Chartboost minimum supported OS version is iOS %@. Requested action is a no-op.", kGADMAdapterMinimumOSVersion);
-        return;
-    }
-    
+{    
     MoPub *mopub = [MoPub sharedInstance];
     if ([mopub isGDPRApplicable] == MPBoolYes) {
         if ([mopub allowLegitimateInterest]) {
@@ -74,6 +69,7 @@ static NSString * const kGADMAdapterMinimumOSVersion = @"10.0";
 {
     if (SYSTEM_VERSION_LESS_THAN(kGADMAdapterMinimumOSVersion)) {
         NSLog(@"Chartboost minimum supported OS version is iOS %@. Requested action is a no-op.", kGADMAdapterMinimumOSVersion);
+        completion(NO);
         return;
     }
     
