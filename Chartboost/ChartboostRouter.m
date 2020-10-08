@@ -23,11 +23,6 @@ static NSString * const kGADMAdapterMinimumOSVersion = @"10.0";
 
 + (void)setLoggingLevel:(MPBLogLevel)loggingLevel
 {
-    if (SYSTEM_VERSION_LESS_THAN(kGADMAdapterMinimumOSVersion)) {
-        NSLog(@"Chartboost minimum supported OS version is iOS %@. Requested action is a no-op.", kGADMAdapterMinimumOSVersion);
-        return;
-    }
-    
     CBLoggingLevel chbLoggingLevel = [self chartboostLoggingLevelFromMopubLevel:loggingLevel];
     [Chartboost setLoggingLevel:chbLoggingLevel];
 }
