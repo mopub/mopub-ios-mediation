@@ -76,7 +76,9 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
         
     }
     
-    [[UnityRouter sharedRouter] initializeWithGameId:gameId];
+    if (![UnityAds isInitialized]) {
+        [[UnityRouter sharedRouter] initializeWithGameId:gameId withCompletionHandler:nil];
+    }
     
     CGSize adSize = [self unityAdsAdSizeFromRequestedSize:size];
     

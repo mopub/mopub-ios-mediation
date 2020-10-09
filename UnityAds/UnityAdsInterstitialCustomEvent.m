@@ -30,6 +30,10 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 @dynamic hasAdAvailable;
 
 #pragma mark - MPFullscreenAdAdapter Override
+- (void)dealloc
+{
+    
+}
 
 - (BOOL)isRewardExpected
 {
@@ -49,7 +53,6 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
                                    andSuggestion:@""];
           MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
-
         return;
     }
     
@@ -60,7 +63,6 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     if (![UnityAds isInitialized]){
         [[UnityRouter sharedRouter] initializeWithGameId:gameId withCompletionHandler:nil];
     }
-    
     [UnityAds load:self.placementId loadDelegate:self];
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
 }
@@ -87,7 +89,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
                              andSuggestion:@""];
         
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
+        [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
     }
 }
 
@@ -154,12 +156,12 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     return (self.placementId != nil) ? self.placementId : @"";
 }
 
-- (void)unityAdsAdFailedToLoad:(nonnull NSString *)placementId {
+- (void)unityAdsAdLoaded:(NSString *)placementId {
     [self.delegate fullscreenAdAdapterDidLoadAd:self];
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 }
 
-- (void)unityAdsAdLoaded:(nonnull NSString *)placementId {
+- (void)unityAdsAdFailedToLoad:(nonnull NSString *)placementId {
     NSError *errorLoad = [self createErrorWith:@"Unity Ads failed to load an ad"
                                  andReason:@""
                              andSuggestion:@""];
