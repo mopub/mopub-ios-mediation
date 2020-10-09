@@ -38,13 +38,6 @@
 }
 
 @end
-@interface UnityRouter ()
-
-@property (nonatomic, assign) BOOL isAdPlaying;
-@property (nonatomic, assign) int impressionOrdinal;
-@property (nonatomic, assign) int missedImpressionOrdinal;
-
-@end
 
 @implementation UnityRouter
 

@@ -19,7 +19,6 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 
 @interface UnityAdsInterstitialCustomEvent () <UnityAdsLoadDelegate, UnityAdsExtendedDelegate>
 
-@property BOOL loadRequested;
 @property (nonatomic, copy) NSString *placementId;
 
 @end
@@ -41,7 +40,6 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    self.loadRequested = YES;
     NSString *gameId = [info objectForKey:kMPUnityInterstitialVideoGameId];
     self.placementId = [info objectForKey:kUnityAdsOptionPlacementIdKey];
     if (self.placementId == nil) {
