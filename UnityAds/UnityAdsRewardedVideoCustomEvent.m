@@ -97,6 +97,10 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     }
 }
 
+- (void)handleDidInvalidateAd
+{
+    [UnityAds removeDelegate:self];
+}
 
 - (void)handleDidPlayAd
 {

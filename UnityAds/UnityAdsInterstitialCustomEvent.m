@@ -57,7 +57,6 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     // Only need to cache game ID for SDK initialization
     [UnityAdsAdapterConfiguration updateInitializationParameters:info];
 
-    
     if (![UnityAds isInitialized]){
         [[UnityRouter sharedRouter] initializeWithGameId:gameId withCompletionHandler:nil];
     }
@@ -88,6 +87,22 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
         
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
+    }
+}
+
+- (void)handleDidInvalidateAd
+{
+    [UnityAds removeDelegate:self];
+}
+
+- (void)handleDidPlayAd
+{
+    // If we no longer have an ad available, report back up to the application that this ad expired.
+    // We receive this message only when this ad has reported an ad has loaded and another ad unit
+    // has played a video for the same ad network.
+    if (![UnityAds isReady:_placementId]) {
+        [self.delegate fullscreenAdAdapterDidExpire:self];
+        MPLogAdEvent([MPLogEvent adExpiredWithTimeInterval:0], [self getAdNetworkId]);
     }
 }
 
