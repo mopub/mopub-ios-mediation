@@ -14,7 +14,7 @@
 #endif
 
 //Adapter version
-NSString *const ADAPTER_VERSION = @"3.4.8.0";
+NSString *const ADAPTER_VERSION = @"3.5.0.0";
 
 // Initialization configuration keys
 static NSString * const kUnityAdsGameId = @"gameId";
@@ -72,7 +72,7 @@ typedef NS_ENUM(NSInteger, UnityAdsAdapterErrorCode) {
         return;
     }
     
-    [[UnityRouter sharedRouter] initializeWithGameId:gameId];
+    [[UnityRouter sharedRouter] initializeWithGameId:gameId withCompletionHandler:complete];
     if (complete != nil) {
         complete(nil);
     }
