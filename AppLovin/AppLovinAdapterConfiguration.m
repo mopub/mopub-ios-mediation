@@ -20,7 +20,7 @@ static ALSdk *__nullable AppLovinAdapterConfigurationSDK;
 
 static NSString *const kAppLovinSDKInfoPlistKey = @"AppLovinSdkKey";
 static NSString *const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-applovin-adapters";
-static NSString *const kAdapterVersion = @"6.14.4.0";
+static NSString *const kAdapterVersion = @"6.14.4.1";
 
 static NSString *gSdkKey = nil;
 

@@ -1,4 +1,7 @@
 ## Changelog
+  * 12.7.0.1
+    * This version of the adapters has been certified with Tapjoy 12.7.0 and MoPub SDK 5.14.1.
+
   * 12.7.0.0
     * This version of the adapters has been certified with Tapjoy 12.7.0 and MoPub SDK 5.13.1.
     * Note that, while Tapjoy 12.7.0 supports iOS 14, this adapter version is not certified using iOS 14. For iOS 14 compatibility, expect an upcoming adapter release.
