@@ -31,6 +31,7 @@
     
     self.appId = [info objectForKey:kPangleAppIdKey];
     if (BUCheckValidString(self.appId)) {
+        [PangleAdapterConfiguration pangleSDKInitWithAppId:self.appId];
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
     
@@ -112,10 +113,6 @@ Banner size mapping according to the incoming size in adapter and selected size 
     }
 }
 
-- (void)updateAppId{
-    [BUAdSDKManager setAppID:self.appId];
-}
-
 #pragma mark - BUNativeExpressBannerViewDelegate - Express Banner
 
 - (void)nativeExpressBannerAdViewDidLoad:(BUNativeExpressBannerView *)bannerAdView {
@@ -126,9 +123,6 @@ Banner size mapping according to the incoming size in adapter and selected size 
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     
     [self.delegate inlineAdAdapter:self didFailToLoadAdWithError: error];
-    if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
-        [self updateAppId];
-    }
 }
 
 - (void)nativeExpressBannerAdViewRenderSuccess:(BUNativeExpressBannerView *)bannerAdView {
@@ -142,9 +136,6 @@ Banner size mapping according to the incoming size in adapter and selected size 
     MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     
     [self.delegate inlineAdAdapter:self didFailToLoadAdWithError: error];
-    if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
-        [self updateAppId];
-    }
 }
 
 - (void)nativeExpressBannerAdViewWillBecomVisible:(BUNativeExpressBannerView *)bannerAdView {

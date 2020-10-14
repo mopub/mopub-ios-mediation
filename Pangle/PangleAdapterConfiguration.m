@@ -37,12 +37,6 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration complete:(void(^)(NSError *))complete {
-    MPBLogLevel logLevel = [MPLogging consoleLogLevel];
-    BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
-    [BUAdSDKManager setLoglevel:(verboseLoggingEnabled == true ? BUAdSDKLogLevelDebug : BUAdSDKLogLevelNone)];
-    
-    BOOL canCollectPersonalInfo =  [[MoPub sharedInstance] canCollectPersonalInfo];
-    [BUAdSDKManager setGDPR:canCollectPersonalInfo ? 0 : 1];
     
     if (configuration.count == 0 || !BUCheckValidString(configuration[kPangleAppIdKey])) {
         NSError *error = [NSError errorWithDomain:kAdapterErrorDomain
@@ -56,13 +50,32 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
         static dispatch_once_t onceToken;
         dispatch_once(&onceToken, ^{
             dispatch_async(dispatch_get_main_queue(), ^{
-                [BUAdSDKManager setAppID:configuration[kPangleAppIdKey]];
+                [PangleAdapterConfiguration pangleSDKInitWithAppId:configuration[kPangleAppIdKey]];
                 if (complete != nil) {
                     complete(nil);
                 }
             });
         });
     }
+}
+
++ (void)pangleSDKInitWithAppId:(NSString *)appId {
+    if (!BUCheckValidString(appId)) {
+        return;
+    }
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            MPBLogLevel logLevel = [MPLogging consoleLogLevel];
+            BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
+            [BUAdSDKManager setLoglevel:(verboseLoggingEnabled == true ? BUAdSDKLogLevelDebug : BUAdSDKLogLevelNone)];
+            
+            BOOL canCollectPersonalInfo =  [[MoPub sharedInstance] canCollectPersonalInfo];
+            [BUAdSDKManager setGDPR:canCollectPersonalInfo ? 0 : 1];
+            
+            [BUAdSDKManager setAppID:appId];
+        });
+    });
 }
 
 // Set optional data for rewarded ad
