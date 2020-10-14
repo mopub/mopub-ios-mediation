@@ -47,15 +47,10 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
             complete(error);
         }
     } else {
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [PangleAdapterConfiguration pangleSDKInitWithAppId:configuration[kPangleAppIdKey]];
-                if (complete != nil) {
-                    complete(nil);
-                }
-            });
-        });
+        [PangleAdapterConfiguration pangleSDKInitWithAppId:configuration[kPangleAppIdKey]];
+        if (complete != nil) {
+            complete(nil);
+        }
     }
 }
 
