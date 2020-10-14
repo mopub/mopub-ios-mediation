@@ -1,4 +1,7 @@
 ## Changelog	
+   * 3.2.6.2.2
+     * Fix request fail if not initialized with Pangle’s `app_id`.
+
    * 3.2.6.2.1
      * This version of the adapters has been certified with Pangle 3.2.6.2 and MoPub SDK 5.14.1.
 

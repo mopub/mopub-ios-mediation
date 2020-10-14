@@ -124,7 +124,6 @@
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     
     [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
-    
 }
 
 - (void)rewardedVideoAdDidVisible:(BURewardedVideoAd *)rewardedVideoAd {

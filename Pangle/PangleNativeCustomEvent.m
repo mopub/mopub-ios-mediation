@@ -85,7 +85,6 @@
     [self.nativeAd loadAdData];
 }
 
-
 #pragma mark - BUNativeAdDelegate
 
 - (void)nativeAd:(BUNativeAd *)nativeAd didFailWithError:(NSError *)error {

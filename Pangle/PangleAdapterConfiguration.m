@@ -11,7 +11,7 @@ static NSString *mRewardName;
 static NSInteger mRewardAmount;
 static NSString *mMediaExtra;
 
-static NSString * const kAdapterVersion = @"3.2.6.2.1";
+static NSString * const kAdapterVersion = @"3.2.6.2.2";
 static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-pangle-adapters";
 
 typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
@@ -37,7 +37,6 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration complete:(void(^)(NSError *))complete {
-    
     if (configuration.count == 0 || !BUCheckValidString(configuration[kPangleAppIdKey])) {
         NSError *error = [NSError errorWithDomain:kAdapterErrorDomain
                                              code:PangleAdapterErrorCodeMissingIdKey
@@ -64,10 +63,10 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
             MPBLogLevel logLevel = [MPLogging consoleLogLevel];
             BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
             [BUAdSDKManager setLoglevel:(verboseLoggingEnabled == true ? BUAdSDKLogLevelDebug : BUAdSDKLogLevelNone)];
-            
+
             BOOL canCollectPersonalInfo =  [[MoPub sharedInstance] canCollectPersonalInfo];
             [BUAdSDKManager setGDPR:canCollectPersonalInfo ? 0 : 1];
-            
+
             [BUAdSDKManager setAppID:appId];
         });
     });
