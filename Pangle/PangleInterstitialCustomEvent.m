@@ -14,6 +14,10 @@
 @end
 
 @implementation PangleInterstitialCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
+@dynamic hasAdAvailable;
+
 
 #pragma mark - MPFullscreenAdAdapter Override
 
