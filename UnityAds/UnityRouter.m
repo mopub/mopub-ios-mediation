@@ -66,20 +66,24 @@
         [mediationMetaData setVersion:[[MoPub sharedInstance] version]];
         [mediationMetaData set:@"adapter_version"  value:ADAPTER_VERSION];
         [mediationMetaData commit];
-        
-        
-        UnityAdsAdapterInitializationDelegate *initDelegate = [[UnityAdsAdapterInitializationDelegate alloc] init];
-        
-        initDelegate.initializationCompleteBlock = ^{
-            complete(nil);
-        };
-        initDelegate.initializationFailedBlock = ^(int error, NSString *message) {
-            NSError *err = [NSError errorWithCode:(MOPUBErrorSDKNotInitialized) localizedDescription:message];
-            complete(err);
-        };
-        
-        [UnityAds initialize:gameId testMode:false enablePerPlacementLoad:true initializationDelegate:initDelegate];
     });
+
+    UnityAdsAdapterInitializationDelegate *initDelegate = [[UnityAdsAdapterInitializationDelegate alloc] init];
+
+    if ([UnityAds isInitialized]) {
+        complete(nil);
+        return;
+    }
+        
+    initDelegate.initializationCompleteBlock = ^{
+        complete(nil);
+    };
+    initDelegate.initializationFailedBlock = ^(int error, NSString *message) {
+        NSError *err = [NSError errorWithCode:(MOPUBErrorSDKNotInitialized) localizedDescription:message];
+        complete(err);
+    };
+        
+    [UnityAds initialize:gameId testMode:false enablePerPlacementLoad:true initializationDelegate:initDelegate];
 }
 
 - (void) setIfUnityAdsCollectsPersonalInfo

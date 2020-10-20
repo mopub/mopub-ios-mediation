@@ -77,11 +77,17 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         return;
     }
-    if (![UnityAds isInitialized]){
-        [[UnityRouter sharedRouter] initializeWithGameId:gameId withCompletionHandler:nil];
-    }
-    [UnityAds load:self.placementId loadDelegate:self];
-    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
+
+    [[UnityRouter sharedRouter] initializeWithGameId:gameId withCompletionHandler:^(NSError * error) {
+        if (error == nil) {
+            [UnityAds load:self.placementId loadDelegate:self];
+            MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
+        } else {
+            NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorUnknown userInfo:nil];
+            [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
+            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+        }
+    }];
 }
 
 - (void)presentAdFromViewController:(UIViewController *)viewController
