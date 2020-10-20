@@ -11,7 +11,7 @@ static NSString *mRewardName;
 static NSInteger mRewardAmount;
 static NSString *mMediaExtra;
 
-static NSString * const kAdapterVersion = @"3.2.6.2.0";
+static NSString * const kAdapterVersion = @"3.2.6.2.2";
 static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-pangle-adapters";
 
 typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
@@ -37,13 +37,6 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration complete:(void(^)(NSError *))complete {
-    MPBLogLevel logLevel = [MPLogging consoleLogLevel];
-    BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
-    [BUAdSDKManager setLoglevel:(verboseLoggingEnabled == true ? BUAdSDKLogLevelDebug : BUAdSDKLogLevelNone)];
-    
-    BOOL canCollectPersonalInfo =  [[MoPub sharedInstance] canCollectPersonalInfo];
-    [BUAdSDKManager setGDPR:canCollectPersonalInfo ? 0 : 1];
-    
     if (configuration.count == 0 || !BUCheckValidString(configuration[kPangleAppIdKey])) {
         NSError *error = [NSError errorWithDomain:kAdapterErrorDomain
                                              code:PangleAdapterErrorCodeMissingIdKey
@@ -53,16 +46,37 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
             complete(error);
         }
     } else {
-        static dispatch_once_t onceToken;
-        dispatch_once(&onceToken, ^{
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [BUAdSDKManager setAppID:configuration[kPangleAppIdKey]];
-                if (complete != nil) {
-                    complete(nil);
-                }
-            });
-        });
+        [PangleAdapterConfiguration pangleSDKInitWithAppId:configuration[kPangleAppIdKey]];
+        if (complete != nil) {
+            complete(nil);
+        }
     }
+}
+
++ (void)pangleSDKInitWithAppId:(NSString *)appId {
+    if (!BUCheckValidString(appId)) {
+        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
+                                             code:PangleAdapterErrorCodeMissingIdKey
+                                         userInfo:@{NSLocalizedDescriptionKey: @"Incorrect or missing Pangle appId. Failing to initialize. Ensure the appId is correct."}];
+        MPLogEvent([MPLogEvent error:error message:nil]);
+        return;
+    }
+    
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        dispatch_async(dispatch_get_main_queue(), ^{
+            MPBLogLevel logLevel = [MPLogging consoleLogLevel];
+            BOOL verboseLoggingEnabled = (logLevel == MPBLogLevelDebug);
+            [BUAdSDKManager setLoglevel:(verboseLoggingEnabled == true ? BUAdSDKLogLevelDebug : BUAdSDKLogLevelNone)];
+
+            BOOL canCollectPersonalInfo =  [[MoPub sharedInstance] canCollectPersonalInfo];
+            [BUAdSDKManager setGDPR:canCollectPersonalInfo ? 0 : 1];
+
+            [BUAdSDKManager setAppID:appId];
+            
+            MPLogInfo(@"Pangle SDK initialized succesfully with appId: %@.", appId);
+        });
+    });
 }
 
 // Set optional data for rewarded ad

@@ -48,6 +48,7 @@
     
     self.appId = [info objectForKey:kPangleAppIdKey];
     if (BUCheckValidString(self.appId)) {
+        [PangleAdapterConfiguration pangleSDKInitWithAppId:self.appId];
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
     
@@ -111,10 +112,6 @@
     }
 }
 
-- (void)updateAppId{
-    [BUAdSDKManager setAppID:self.appId];
-}
-
 #pragma mark BURewardedVideoAdDelegate
 
 - (void)rewardedVideoAdDidLoad:(BURewardedVideoAd *)rewardedVideoAd {
@@ -127,10 +124,6 @@
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     
     [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
-    
-    if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
-        [self updateAppId];
-    }
 }
 
 - (void)rewardedVideoAdDidVisible:(BURewardedVideoAd *)rewardedVideoAd {
