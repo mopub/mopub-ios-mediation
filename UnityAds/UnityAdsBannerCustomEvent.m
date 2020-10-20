@@ -76,17 +76,22 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
         
     }
     
-    if (![UnityAds isInitialized]) {
-        [[UnityRouter sharedRouter] initializeWithGameId:gameId withCompletionHandler:nil];
-    }
-    
-    CGSize adSize = [self unityAdsAdSizeFromRequestedSize:size];
-    
-    self.bannerAdView = [[UADSBannerView alloc] initWithPlacementId:self.placementId size:adSize];
-    self.bannerAdView.delegate = self;
-    [self.bannerAdView load];
+    [[UnityRouter sharedRouter] initializeWithGameId:gameId withCompletionHandler:^(NSError * error) {
+        if (error == nil) {
+            CGSize adSize = [self unityAdsAdSizeFromRequestedSize:size];
+            
+            self.bannerAdView = [[UADSBannerView alloc] initWithPlacementId:self.placementId size:adSize];
+            self.bannerAdView.delegate = self;
+            [self.bannerAdView load];
+            
+            MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
+        } else {
+            NSError *mopubAdaptorErrorMessage = [self createErrorWith:@"Unity Ads Banner returned unknown error" andReason:@"Unity Ads failed to initialize" andSuggestion:@""];
+            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:mopubAdaptorErrorMessage], [self getAdNetworkId]);
 
-    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
+            [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:nil];
+        }
+    }];
 }
 
 - (CGSize)unityAdsAdSizeFromRequestedSize:(CGSize)size
