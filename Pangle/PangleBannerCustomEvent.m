@@ -15,9 +15,12 @@
 @end
 
 @implementation PangleBannerCustomEvent
+@dynamic delegate;
+@dynamic localExtras;
 
 - (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    
+    BOOL hasAdMarkup = adMarkup.length > 0;
+
     if (info.count == 0) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty
@@ -53,10 +56,18 @@
     self.expressBannerView.frame = CGRectMake(0, 0, expressRequestSize.width, expressRequestSize.height);
     self.expressBannerView.delegate = self;
     
-    MPLogInfo(@"Load Pangle express banner ad");
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
     
-    [self.expressBannerView loadAdData];
+    if (hasAdMarkup) {
+        MPLogInfo(@"Load Pangle express banner ad markup for Advanced Bidding");
+
+        [self.expressBannerView setMopubAdMarkUp:adMarkup];
+    } else {
+        MPLogInfo(@"Load Pangle express banner ad");
+
+        [self.expressBannerView loadAdData];
+    }
+
 }
 
 - (BOOL)enableAutomaticImpressionAndClickTracking {
