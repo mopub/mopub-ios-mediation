@@ -8,6 +8,8 @@
 #import "MPLogging.h"
 #endif
 
+#define ADCOLONY_AD_MARKUP @"adm"
+
 @interface AdColonyBannerCustomEvent () <AdColonyAdViewDelegate>
 
 @property (nonatomic, copy) NSString *zoneId;
@@ -71,9 +73,15 @@
             [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
         } else {
             MPLogInfo(@"Requesting AdColony banner ad with width: %.0f and height: %.0f", adSize.width, adSize.height);
+            AdColonyAdOptions *adOptions = nil;
+            if (adMarkup != nil) {
+                adOptions = [AdColonyAdOptions new];
+                [adOptions setOption:ADCOLONY_AD_MARKUP withStringValue:adMarkup];
+            }
             UIViewController *viewController = [self.delegate inlineAdAdapterViewControllerForPresentingModalView:self];
             [AdColony requestAdViewInZone:self.zoneId
                                  withSize:adSize
+                               andOptions:adOptions
                            viewController:viewController
                               andDelegate:self];
         }

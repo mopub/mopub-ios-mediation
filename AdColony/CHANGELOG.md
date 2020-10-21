@@ -1,4 +1,7 @@
 ## Changelog
+  * 4.4.1.2.0
+    * Add functionality on AdColony banner ad adapters to forward contents of `adm` field in the bid request to AdColony Advanced Bidding requests.
+
   * 4.4.1.1.0
     * This version of the adapters has been certified with AdColony 4.4.1.1 and MoPub SDK 5.14.1.
 
