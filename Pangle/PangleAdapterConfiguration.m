@@ -11,7 +11,7 @@ static NSString *mRewardName;
 static NSInteger mRewardAmount;
 static NSString *mMediaExtra;
 
-static NSString * const kAdapterVersion = @"3.2.6.2.2";
+static NSString * const kAdapterVersion = @"3.2.6.2.3";
 static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-pangle-adapters";
 
 typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
@@ -55,8 +55,13 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 
 + (void)pangleSDKInitWithAppId:(NSString *)appId {
     if (!BUCheckValidString(appId)) {
+        NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
+                                             code:PangleAdapterErrorCodeMissingIdKey
+                                         userInfo:@{NSLocalizedDescriptionKey: @"Incorrect or missing Pangle appId. Failing to initialize. Ensure the appId is correct."}];
+        MPLogEvent([MPLogEvent error:error message:nil]);
         return;
     }
+    
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -68,6 +73,8 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
             [BUAdSDKManager setGDPR:canCollectPersonalInfo ? 0 : 1];
 
             [BUAdSDKManager setAppID:appId];
+            
+            MPLogInfo(@"Pangle SDK initialized succesfully with appId: %@.", appId);
         });
     });
 }

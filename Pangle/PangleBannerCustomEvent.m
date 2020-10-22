@@ -59,11 +59,11 @@
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
     
     if (hasAdMarkup) {
-        MPLogInfo(@"Load Pangle express banner ad markup for Advanced Bidding");
+        MPLogInfo(@"Loading Pangle express banner ad markup for Advanced Bidding");
 
         [self.expressBannerView setMopubAdMarkUp:adMarkup];
     } else {
-        MPLogInfo(@"Load Pangle express banner ad");
+        MPLogInfo(@"Loading Pangle express banner ad");
 
         [self.expressBannerView loadAdData];
     }
@@ -140,8 +140,8 @@ Banner size mapping according to the incoming size in adapter and selected size 
 }
 
 - (void)nativeExpressBannerAdView:(BUNativeExpressBannerView *)bannerAdView dislikeWithReason:(NSArray<BUDislikeWords *> *_Nullable)filterwords {
-    /** dislike function, it is an optional method that you can use custom dialog.
-     * please refer to the access document from Pangle
+    /** Pangle provided a dislike callback, it is an optional callback method when user click they dislike the ad.
+     *  Please reach out to Pangle team if you want to implement it.
      */
     MPLogInfo(@"%@ Pangle DislikeInteractionCalback",[self getAdNetworkId]);
 }

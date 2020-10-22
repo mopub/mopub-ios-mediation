@@ -84,11 +84,11 @@
     self.rewardVideoAd = RewardedVideoAd;
     
     if (hasAdMarkup) {
-        MPLogInfo(@"Load Pangle rewarded video ad markup for Advanced Bidding");
+        MPLogInfo(@"Loading Pangle rewarded video ad markup for Advanced Bidding");
 
         [RewardedVideoAd setMopubAdMarkUp:adMarkup];
     } else {
-        MPLogInfo(@"Load Pangle rewarded video ad");
+        MPLogInfo(@"Loading Pangle rewarded video ad");
         
         [RewardedVideoAd loadAdData];
     }

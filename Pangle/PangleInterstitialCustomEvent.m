@@ -66,11 +66,11 @@
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
     
     if (hasAdMarkup) {
-        MPLogInfo(@"Load Pangle interstitial ad markup for Advanced Bidding");
+        MPLogInfo(@"Loading Pangle interstitial ad markup for Advanced Bidding");
 
         [self.fullScreenVideo setMopubAdMarkUp:adMarkup];
     } else {
-        MPLogInfo(@"Load Pangle interstitial ad");
+        MPLogInfo(@"Loading Pangle interstitial ad");
 
         [self.fullScreenVideo loadAdData];
     }

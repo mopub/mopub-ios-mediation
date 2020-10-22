@@ -71,11 +71,11 @@
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
     
     if (hasAdMarkup) {
-        MPLogInfo(@"Load Pangle native ad markup for Advanced Bidding");
+        MPLogInfo(@"Loading Pangle native ad markup for Advanced Bidding");
 
         [self.nativeAd setMopubAdMarkUp:adMarkup];
     } else {
-        MPLogInfo(@"Load Pangle native ad");
+        MPLogInfo(@"Loading Pangle native ad");
 
         [self.nativeAd loadAdData];
     }
