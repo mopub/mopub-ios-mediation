@@ -2,6 +2,12 @@
 * 6.2.0.0
     * This version of the adapters has been certified with Facebook Audience Network 6.2.0 and MoPub 5.14.1.
 
+* 6.0.0.1
+    * This version of the adapters has been certified with Facebook Audience Network 6.0.0 and MoPub 5.14.0.
+
+* 6.0.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 6.0.0 and MoPub 5.13.1.
+
 * 5.10.1.1
     * Fix adapter compiler warnings.
 
