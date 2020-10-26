@@ -1,4 +1,13 @@
 ## Changelog
+   * 6.14.5.0
+     * This version of the adapters has been certified with AppLovin SDK 6.14.5 and MoPub SDK 5.14.1.
+
+   * 6.14.4.1
+     * This version of the adapters has been certified with AppLovin SDK 6.14.4 and MoPub SDK 5.14.0.
+
+   * 6.14.4.0
+     * This version of the adapters has been certified with AppLovin SDK 6.14.4 and MoPub SDK 5.13.1.
+
    * 6.14.3.0
      * This version of the adapters has been certified with AppLovin SDK 6.14.3 and MoPub SDK 5.13.1.
 

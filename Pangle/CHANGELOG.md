@@ -1,4 +1,13 @@
 ## Changelog	
+   * 3.2.6.2.3
+     * Add support for banner format.
+
+   * 3.2.6.2.2
+     * Fix ad request failures if Pangle is not initialized with an app ID.
+
+   * 3.2.6.2.1
+     * This version of the adapters has been certified with Pangle 3.2.6.2 and MoPub SDK 5.14.1.
+
    * 3.2.6.2.0
      * This version of the adapters has been certified with Pangle 3.2.6.2 and MoPub SDK 5.13.1.
 
