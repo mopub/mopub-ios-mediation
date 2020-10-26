@@ -1,4 +1,7 @@
 ## Changelog
+* 6.2.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 6.2.0 and MoPub 5.14.1.
+
 * 5.10.1.1
     * Fix adapter compiler warnings.
 
