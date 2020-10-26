@@ -72,7 +72,6 @@
 
     if ([UnityAds isInitialized]) {
         complete(nil);
-        return;
     }
         
     initDelegate.initializationCompleteBlock = ^{
