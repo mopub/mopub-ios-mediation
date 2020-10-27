@@ -1,4 +1,7 @@
 ## Changelog
+* 6.9.0.0
+    * This version of the adapters has been certified with Vungle 6.9.0 and MoPub SDK 5.15.0.
+
 * 6.8.1.3
     * Support `orientations` data passing through MoPub initialize in iOS and Unity iOS.
     * Available `orientations` values are: (1) Auto rotate (default): `0` (2) Landscape: `1` (2) Portrait: `2`.

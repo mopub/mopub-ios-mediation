@@ -44,7 +44,7 @@ typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"6.8.1.3";
+    return @"6.9.0.0";
 }
 
 - (NSString *)biddingToken {
