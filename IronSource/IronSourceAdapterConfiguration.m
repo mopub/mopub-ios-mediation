@@ -50,7 +50,11 @@ NSString * const kIronSourceAppkey = @"applicationKey";
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration
                                   complete:(void(^)(NSError *))complete {
-    NSString * appKey = configuration[kIronSourceAppKey];
+    NSString *appKey = configuration[kIronSourceAppKey];
+    NSString *rewardedVideoStatus = configuration[IS_REWARDED_VIDEO];
+    NSString *interstitialStatus = configuration[IS_INTERSTITIAL];
+    BOOL shouldInit = TRUE;
+    NSMutableSet *adUnitsSet = [NSMutableSet set];
     if ([appKey length] == 0) {
         MPLogInfo(@"IronSource Adapter failed to initialize, 'applicationKey' parameter is missing. Make sure that 'applicationKey' server parameter is added");
         
@@ -59,13 +63,28 @@ NSString * const kIronSourceAppkey = @"applicationKey";
         }
         return;
     }
+        
+    if(rewardedVideoStatus != nil && [rewardedVideoStatus isKindOfClass:[NSString class]]) {
+        if([rewardedVideoStatus boolValue]) {
+            [adUnitsSet addObject:IS_REWARDED_VIDEO];
+        }
+    }
     
-    MPLogInfo(@"Initializing IronSource with appkey %@", appKey);
-    dispatch_async(dispatch_get_main_queue(), ^{
-    [IronSource setMediationType:[NSString stringWithFormat:@"%@%@SDK%@",
-                                  kIronSourceMediationName,kIronSourceMediationVersion, [IronSourceUtils getMoPubSdkVersion]]];
-    [[IronSourceManager sharedManager] initIronSourceSDKWithAppKey:appKey forAdUnits:[NSSet setWithObjects:IS_REWARDED_VIDEO,IS_INTERSTITIAL, nil]];
-    });
+    if(interstitialStatus != nil && [rewardedVideoStatus isKindOfClass:[NSString class]]) {
+        if([interstitialStatus boolValue]) {
+            [adUnitsSet addObject:IS_INTERSTITIAL];
+        }
+    }
+    
+    MPLogInfo(@"IronSource adUnits to init are %@" , [adUnitsSet allObjects]);
+    if(shouldInit) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [IronSource setMediationType:[NSString stringWithFormat:@"%@%@SDK%@",
+                                          kIronSourceMediationName,kIronSourceMediationVersion, [IronSourceUtils getMoPubSdkVersion]]];
+            [[IronSourceManager sharedManager] initIronSourceSDKWithAppKey:appKey forAdUnits: adUnitsSet];
+        });
+    }
+    
     if (complete != nil) {
         complete(nil);
     }
