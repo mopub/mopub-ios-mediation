@@ -36,6 +36,10 @@ CGFloat adHeight;
   return self;
 }
 
+- (BOOL)enableAutomaticImpressionAndClickTracking {
+    return NO;
+}
+
 - (void)dealloc {
   self.adBannerView.delegate = nil;
 }
@@ -112,10 +116,15 @@ CGFloat adHeight;
   } else {
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
           
     [self.delegate inlineAdAdapter:self didLoadAdWithAdView:self.adBannerView];
   }
+}
+
+- (void)adViewDidRecordImpression:(GADBannerView *)bannerView {
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+
+    [self.delegate inlineAdAdapterDidTrackImpression:self];
 }
 
 - (void)adView:(GADBannerView *)bannerView didFailToReceiveAdWithError:(GADRequestError *)error {
@@ -138,7 +147,7 @@ CGFloat adHeight;
 - (void)adViewWillLeaveApplication:(GADBannerView *)bannerView {
   MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
 
-  [self.delegate inlineAdAdapterWillLeaveApplication:self];
+  [self.delegate inlineAdAdapterDidTrackClick:self];
 }
 
 - (NSString *) getAdNetworkId {

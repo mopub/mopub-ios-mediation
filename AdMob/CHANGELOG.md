@@ -1,6 +1,7 @@
 ## Changelog
   * 7.68.0.0
     * This version of the adapters has been certified with AdMob 7.68.0 and MoPub 5.14.1.
+    * MoPub now tracks banner impressions via Google's `adViewDidRecordImpression` callback.
 
   * 7.66.0.1
     * Prevent oversized banner ads from serving by failing the ad request if the creative's width or height is greater than the publishers-specified width or height.
