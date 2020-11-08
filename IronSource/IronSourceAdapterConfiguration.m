@@ -70,7 +70,7 @@ NSString * const kIronSourceAppkey = @"applicationKey";
         }
     }
     
-    if(interstitialStatus != nil && [rewardedVideoStatus isKindOfClass:[NSString class]]) {
+    if(interstitialStatus != nil && [interstitialStatus isKindOfClass:[NSString class]]) {
         if([interstitialStatus boolValue]) {
             [adUnitsSet addObject:IS_INTERSTITIAL];
         }
