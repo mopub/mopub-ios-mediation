@@ -32,7 +32,7 @@ NSString * const kIronSourceAppkey = @"applicationKey";
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"7.0.2.0.0";
+    return @"7.0.3.0.0";
 }
 
 - (NSString *)biddingToken {
@@ -72,7 +72,7 @@ NSString * const kIronSourceAppkey = @"applicationKey";
         }
     }
     
-    if (interstitialStatus != nil && [rewardedVideoStatus isKindOfClass:[NSString class]]) {
+    if (interstitialStatus != nil && [interstitialStatus isKindOfClass:[NSString class]]) {
         if ([interstitialStatus boolValue]) {
             [adUnitsSet addObject:IS_INTERSTITIAL];
         }
