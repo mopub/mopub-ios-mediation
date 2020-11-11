@@ -69,6 +69,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 - (void)vungleAdDidLoad;
 - (void)vungleAdWillAppear;
 - (void)vungleAdDidAppear;
+- (void)vungleAdViewed;
 - (void)vungleAdWillDisappear;
 - (void)vungleAdDidDisappear;
 - (void)vungleAdTrackClick;
