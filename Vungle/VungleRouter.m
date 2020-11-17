@@ -18,7 +18,6 @@
 
 NSString *const kVungleAppIdKey = @"appId";
 NSString *const kVunglePlacementIdKey = @"pid";
-NSString *const kVungleFlexViewAutoDismissSeconds = @"flexViewAutoDismissSeconds";
 NSString *const kVungleUserId = @"userId";
 NSString *const kVungleOrdinal = @"ordinal";
 NSString *const kVungleStartMuted = @"muted";
@@ -376,10 +375,9 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
         } else if (settings && settings.userIdentifier.length > 0) {
             options[VunglePlayAdOptionKeyUser] = settings.userIdentifier;
         }
-        if (settings.ordinal > 0)
+        if (settings.ordinal > 0) {
             options[VunglePlayAdOptionKeyOrdinal] = @(settings.ordinal);
-        if (settings.flexViewAutoDismissSeconds > 0)
-            options[VunglePlayAdOptionKeyFlexViewAutoDismissSeconds] = @(settings.flexViewAutoDismissSeconds);
+        }
         if (settings.startMuted) {
             options[VunglePlayAdOptionKeyStartMuted] = @(settings.startMuted);
         }

@@ -4,6 +4,7 @@
     * Remove VungleSDKResetPlacementForDifferentAdSize error check for loading Ads.
     * Fix the issue that fullscreen ads fail to load.
     * Introduce the new SDK delegate callback `vungleAdViewedForPlacement:` to track views.
+    * Remove invalid play option keys.
 
 * 6.8.1.3
     * Support `orientations` data passing through MoPub initialize in iOS and Unity iOS.

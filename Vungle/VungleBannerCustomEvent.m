@@ -111,15 +111,7 @@
     NSMutableDictionary *options = [NSMutableDictionary dictionary];
     
     if (self.localExtras != nil && [self.localExtras count] > 0) {
-        NSString *userId = [self.localExtras objectForKey:kVungleUserId];
-        if (userId != nil) {
-            NSString *userID = userId;
-            if (userID.length > 0) {
-                options[VunglePlayAdOptionKeyUser] = userID;
-            }
-        }
-        
-        NSString *ordinal = [self.localExtras objectForKey:kVungleUserId];
+        NSString *ordinal = [self.localExtras objectForKey:kVungleOrdinal];
         if (ordinal != nil) {
             NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[ordinal longLongValue]];
             NSUInteger ordinal = ordinalPlaceholder.unsignedIntegerValue;

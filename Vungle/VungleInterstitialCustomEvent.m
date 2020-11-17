@@ -76,14 +76,6 @@
                 }
             }
             
-            NSString *flexViewAutoDismissSeconds = [self.localExtras objectForKey:kVungleFlexViewAutoDismissSeconds];
-            if (flexViewAutoDismissSeconds != nil) {
-                NSTimeInterval flexDismissTime = [flexViewAutoDismissSeconds floatValue];
-                if (flexDismissTime > 0) {
-                    options[VunglePlayAdOptionKeyFlexViewAutoDismissSeconds] = @(flexDismissTime);
-                }
-            }
-            
             NSString *muted = [self.localExtras objectForKey:kVungleStartMuted];
             if ( muted != nil) {
                 BOOL startMutedPlaceholder = [muted boolValue];
