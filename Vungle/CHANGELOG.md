@@ -1,6 +1,6 @@
 ## Changelog
-* 6.9.0.0
-    * This version of the adapters has been certified with Vungle 6.9.0 and MoPub SDK 5.15.0.
+* 6.9.1.0
+    * This version of the adapters has been certified with Vungle 6.9.1 and MoPub SDK 5.15.0.
     * Remove VungleSDKResetPlacementForDifferentAdSize error check for loading Ads.
     * Fix the issue that fullscreen ads fail to load.
     * Introduce the new SDK delegate callback `vungleAdViewedForPlacement:` to track views.
