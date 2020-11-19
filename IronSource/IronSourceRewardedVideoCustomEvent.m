@@ -88,7 +88,7 @@
         MPLogInfo(@"IronSource Rewarded Video initialization with appkey %@", appKey);
         // Cache the initialization parameters
         [IronSourceAdapterConfiguration updateInitializationParameters:info];
-        [[IronSourceManager sharedManager] initIronSourceSDKWithAppKey:appKey forAdUnits:[NSSet setWithObject:@[IS_REWARDED_VIDEO]]];
+        [[IronSourceManager sharedManager] initIronSourceSDKWithAppKey:appKey forAdUnits:[NSSet setWithObject:IS_REWARDED_VIDEO]];
         [self loadRewardedVideo: self.instanceID WithAdMarkup: adMarkup];
     } @catch (NSException *exception) {
         MPLogInfo(@"IronSource Rewarded Video initialization with error: %@", exception);

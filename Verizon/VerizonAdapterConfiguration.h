@@ -27,6 +27,11 @@ extern NSString * const kMoPubServerExtrasAdContent;
 extern NSString * const kMoPubRequestMetadataAdContent;
 
 extern NSTimeInterval kMoPubVASAdapterSATimeoutInterval;
+extern NSString * const kMoPubVASAdImpressionEventId;
+
+extern NSString * const kVASConfigDomain;
+extern NSString * const kVASConfigEditionNameKey;
+extern NSString * const kVASConfigEditionVersionKey;
 
 @interface VerizonAdapterConfiguration : MPBaseAdapterConfiguration
 + (NSString *)mediator;

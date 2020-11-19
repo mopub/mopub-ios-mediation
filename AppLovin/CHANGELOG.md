@@ -1,4 +1,28 @@
 ## Changelog
+   * 6.14.8.1
+     * Add support for `fullscreenAdAdapterAdDidDismiss:` to signal that the fullscreen ad is closing and the state should be reset. To use this adapter version, you need v5.15.0 of the MoPub iOS SDK at the minimum.
+
+   * 6.14.8.0
+     * This version of the adapters has been certified with AppLovin SDK 6.14.8 and MoPub SDK 5.14.1.
+
+   * 6.14.6.0
+     * This version of the adapters has been certified with AppLovin SDK 6.14.6 and MoPub SDK 5.14.1.
+
+   * 6.14.5.0
+     * This version of the adapters has been certified with AppLovin SDK 6.14.5 and MoPub SDK 5.14.1.
+
+   * 6.14.4.1
+     * This version of the adapters has been certified with AppLovin SDK 6.14.4 and MoPub SDK 5.14.0.
+
+   * 6.14.4.0
+     * This version of the adapters has been certified with AppLovin SDK 6.14.4 and MoPub SDK 5.13.1.
+
+   * 6.14.3.0
+     * This version of the adapters has been certified with AppLovin SDK 6.14.3 and MoPub SDK 5.13.1.
+
+   * 6.14.2.0
+     * This version of the adapters has been certified with AppLovin SDK 6.14.2 and MoPub SDK 5.13.1.
+
    * 6.13.5.0
      * Remove MREC support from AppLovin banner adapter.
      * This version of the adapters has been certified with AppLovin SDK 6.13.5 and MoPub SDK 5.13.1.

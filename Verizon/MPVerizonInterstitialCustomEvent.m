@@ -82,8 +82,7 @@
         [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
         return;
     }
-    
-    [VASAds sharedInstance].locationEnabled = [MoPub sharedInstance].locationUpdatesEnabled;
+
     [VerizonAdapterConfiguration setCachedInitializationParameters:info];
     
     self.interstitialAdFactory = [[VASInterstitialAdFactory alloc] initWithPlacementId:placementId vasAds:[VASAds sharedInstance] delegate:self];
@@ -129,11 +128,6 @@
 }
 
 #pragma mark - VASInterstitialAdFactoryDelegate
-
-- (void)interstitialAdFactory:(nonnull VASInterstitialAdFactory *)adFactory cacheLoadedNumRequested:(NSInteger)numRequested numReceived:(NSInteger)numReceived {}
-
-- (void)interstitialAdFactory:(nonnull VASInterstitialAdFactory *)adFactory cacheUpdatedWithCacheSize:(NSInteger)cacheSize {}
-
 
 - (void)interstitialAdFactory:(nonnull VASInterstitialAdFactory *)adFactory didFailWithError:(nonnull VASErrorInfo *)errorInfo
 {
@@ -208,8 +202,6 @@
             [self.delegate fullscreenAdAdapterAdDidAppear:self];
             MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
             MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-            
-            [self.delegate fullscreenAdAdapterDidTrackImpression:self];
         }
     });
 }
@@ -230,7 +222,20 @@
     });
 }
 
-- (void)interstitialAdEvent:(nonnull VASInterstitialAd *)interstitialAd source:(nonnull NSString *)source eventId:(nonnull NSString *)eventId arguments:(nullable NSDictionary<NSString *,id> *)arguments {}
+- (void)interstitialAdEvent:(nonnull VASInterstitialAd *)interstitialAd source:(nonnull NSString *)source eventId:(nonnull NSString *)eventId arguments:(nullable NSDictionary<NSString *,id> *)arguments
+{
+    MPLogTrace(@"VAS interstitialAdEvent: %@, source: %@, eventId: %@, arguments: %@", interstitialAd, source, eventId, arguments);
+    if ([eventId isEqualToString:kMoPubVASAdImpressionEventId]) {
+        __weak __typeof__(self) weakSelf = self;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            __strong __typeof__(self) strongSelf = weakSelf;
+            if (strongSelf != nil)
+            {
+                [strongSelf.delegate fullscreenAdAdapterDidTrackImpression:strongSelf];
+            }
+        });
+    }
+}
 
 #pragma mark - Super Auction
 

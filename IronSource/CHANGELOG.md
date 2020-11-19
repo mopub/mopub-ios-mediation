@@ -1,4 +1,13 @@
 ## Changelog
+* 7.0.3.0.1
+    * Fix a bug in `IronSourceAdapterConfiguration.m ` to correctly parse `interstitialStatus`.
+
+* 7.0.3.0.0
+    * This version of the adapters has been certified with ironSource 7.0.3.0 and MoPub SDK 5.14.1.
+
+* 7.0.2.0.0
+    * This version of the adapters has been certified with ironSource 7.0.2.0 and MoPub SDK 5.14.1.
+
 * 7.0.1.0.0
     * This version of the adapters has been certified with ironSource 7.0.1.0 and MoPub SDK 5.13.1.
     * Note that, while ironSource 7.0.1.0 supports iOS 14, this adapter version is not certified using iOS 14.

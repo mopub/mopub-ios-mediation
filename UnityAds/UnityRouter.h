@@ -9,33 +9,14 @@
 #import <UnityAds/UnityAds.h>
 #import <UnityAds/UnityAdsExtendedDelegate.h>
 
-@protocol UnityRouterDelegate;
 @class UnityAdsInstanceMediationSettings;
 
-@interface UnityRouter : NSObject <UnityAdsExtendedDelegate>
+@interface UnityRouter : NSObject
 
-@property NSString* currentPlacementId;
+@property NSString* _Nonnull currentPlacementId;
 
-+ (UnityRouter *)sharedRouter;
++ (UnityRouter *_Nonnull)sharedRouter;
 
-- (void)initializeWithGameId:(NSString *)gameId;
-- (void)requestVideoAdWithGameId:(NSString *)gameId placementId:(NSString *)placementId delegate:(id<UnityRouterDelegate>)delegate;
-- (BOOL)isAdAvailableForPlacementId:(NSString *)placementId;
-- (void)presentVideoAdFromViewController:(UIViewController *)viewController customerId:(NSString *)customerId placementId:(NSString *)placementId settings:(UnityAdsInstanceMediationSettings *)settings delegate:(id<UnityRouterDelegate>)delegate;
-- (void)clearDelegate:(id<UnityRouterDelegate>)delegate;
-
-@end
-
-@protocol UnityRouterDelegate <NSObject>
-
-- (void)unityAdsReady:(NSString *)placementId;
-- (void)unityAdsDidError:(UnityAdsError)error withMessage:(NSString *)message;
-- (void)unityAdsDidStart:(NSString *)placementId;
-- (void)unityAdsDidFinish:(NSString *)placementId withFinishState:(UnityAdsFinishState)state;
-- (void)unityAdsDidClick:(NSString *)placementId;
-- (void)unityAdsDidFailWithError:(NSError *)error;
-
-@optional
-- (void)unityAdsPlacementStateChanged:(NSString*)placementId oldState:(UnityAdsPlacementState)oldState newState:(UnityAdsPlacementState)newState;
+- (void)initializeWithGameId:(NSString *_Nonnull)gameId withCompletionHandler:(void (^ _Nullable)(NSError *_Nullable))complete;
 
 @end
