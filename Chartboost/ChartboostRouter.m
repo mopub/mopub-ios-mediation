@@ -41,7 +41,7 @@ static NSString * const kChartboostMinimumOSVersion = @"10.0";
 }
 
 + (void)setDataUseConsentWithMopubConfiguration
-{    
+{
     MoPub *mopub = [MoPub sharedInstance];
     if ([mopub isGDPRApplicable] == MPBoolYes) {
         if ([mopub allowLegitimateInterest]) {
