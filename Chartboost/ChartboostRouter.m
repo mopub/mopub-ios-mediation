@@ -31,7 +31,7 @@ static NSString * const kChartboostMinimumOSVersion = @"10.0";
 {
     switch (logLevel) {
         case MPBLogLevelDebug:
-            return CBLoggingLevelInfo;
+            return CBLoggingLevelVerbose;
         case MPBLogLevelInfo:
             return CBLoggingLevelInfo;
         case MPBLogLevelNone:

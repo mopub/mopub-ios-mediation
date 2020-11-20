@@ -28,7 +28,8 @@
     {
         return nil;
     }
-    return self = [super init];
+    self = [super init];
+    return self;
 }
 
 - (void)requestAdWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
@@ -77,8 +78,6 @@
     }
     
     [VerizonAdapterConfiguration setCachedInitializationParameters:info];
-
-    [VASAds sharedInstance].locationEnabled = [MoPub sharedInstance].locationUpdatesEnabled;
     
     self.nativeAdFactory = [[VASNativeAdFactory alloc] initWithPlacementId:placementId adTypes:@[@"100", @"simpleImage", @"simpleVideo"] vasAds:[VASAds sharedInstance] delegate:self];
     self.nativeAdapter = [[MPVerizonNativeAdAdapter alloc] initWithSiteId:self.siteId];
@@ -99,16 +98,6 @@
 }
 
 #pragma mark - VASInlineAdFactoryDelegate
-
-- (void)nativeAdFactory:(nonnull VASNativeAdFactory *)adFactory cacheLoadedNumRequested:(NSUInteger)numRequested numReceived:(NSUInteger)numReceived
-{
-    MPLogDebug(@"VAS native factory cache loaded with requested: %lu", (unsigned long)numRequested);
-}
-
-- (void)nativeAdFactory:(nonnull VASNativeAdFactory *)adFactory cacheUpdatedWithCacheSize:(NSUInteger)cacheSize
-{
-    MPLogDebug(@"VAS native factory cache updated with size: %lu", (unsigned long)cacheSize);
-}
 
 - (void)nativeAdFactory:(nonnull VASNativeAdFactory *)adFactory didFailWithError:(nullable VASErrorInfo *)errorInfo
 {

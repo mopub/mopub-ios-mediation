@@ -4,7 +4,7 @@
 
 // IronSource internal reporting consts
 static NSString *const kIronSourceMediationName = @"mopub";
-static NSString *const kIronSourceMediationVersion = @"400";
+static NSString *const kIronSourceMediationVersion = @"500";
 // IronSource parameters keys
 static NSString *const kIronSourceAppKey        = @"applicationKey";
 static NSString *const kIronSourceInstanceId    = @"instanceId";

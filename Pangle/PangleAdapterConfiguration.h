@@ -43,6 +43,8 @@ extern NSString * const kPanglePlacementIdKey;
 + (void)setMediaExtra:(NSString *)extra;
 + (NSString *)mediaExtra;
 
++ (void)pangleSDKInitWithAppId:(NSString *)appId;
+
 @end
 
 NS_ASSUME_NONNULL_END

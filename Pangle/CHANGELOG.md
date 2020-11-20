@@ -1,4 +1,26 @@
-## Changelog	
+## Changelog
+   * 3.3.1.5.0
+     * This version of the adapters has been certified with Pangle 3.3.1.5 and MoPub SDK 5.14.1.
+
+   * 3.3.0.5.0
+     * This version of the adapters has been certified with Pangle 3.3.0.5 and MoPub SDK 5.14.1.
+     * Pangle SDK 3.3.0.5 resolves an issue that causes reporting discrepancy for Advanced Bidding ads.
+
+   * 3.2.6.2.3
+     * Add support for banner format.
+
+   * 3.2.6.2.2
+     * Fix ad request failures if Pangle is not initialized with an app ID.
+
+   * 3.2.6.2.1
+     * This version of the adapters has been certified with Pangle 3.2.6.2 and MoPub SDK 5.14.1.
+
+   * 3.2.6.2.0
+     * This version of the adapters has been certified with Pangle 3.2.6.2 and MoPub SDK 5.13.1.
+
+   * 3.2.5.2.0
+     * This version of the adapters has been certified with Pangle 3.2.5.2 and MoPub SDK 5.13.1.
+
    * 3.2.5.1.0
      * Support Advanced Bidding.
      * This version of the adapters has been certified with Pangle 3.2.5.1 and MoPub SDK 5.13.1.

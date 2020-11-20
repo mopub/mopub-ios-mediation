@@ -120,6 +120,12 @@
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], event.ad.location);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
+    
+    // Signal that the fullscreen ad is closing and the state should be reset.
+    // `fullscreenAdAdapterAdDidDismiss:` was introduced in MoPub SDK 5.15.0.
+    if ([self.delegate respondsToSelector:@selector(fullscreenAdAdapterAdDidDismiss:)]) {
+        [self.delegate fullscreenAdAdapterAdDidDismiss:self];
+    }
 }
 
 @end

@@ -1,4 +1,16 @@
 ## Changelog
+  * 4.4.1.1.2
+    * Add support for `fullscreenAdAdapterAdDidDismiss:` to signal that the fullscreen ad is closing and the state should be reset. To use this adapter version, you need v5.15.0 of the MoPub iOS SDK at the minimum.
+
+  * 4.4.1.1.1
+    * Add functionality on AdColony banner adapters to forward contents of `adm` field in the bid request to AdColony Advanced Bidding requests.
+
+  * 4.4.1.1.0
+    * This version of the adapters has been certified with AdColony 4.4.1.1 and MoPub SDK 5.14.1.
+
+  * 4.4.0.0
+    * This version of the adapters has been certified with AdColony 4.4.0 and MoPub SDK 5.13.1.
+
   * 4.3.1.0
     * This version of the adapters has been certified with AdColony 4.3.1 and MoPub SDK 5.13.1.
 
