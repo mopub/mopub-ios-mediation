@@ -8,6 +8,8 @@
 #import "ChartboostRouter.h"
 #import "ChartboostAdapterConfiguration.h"
 
+#define SYSTEM_VERSION_LESS_THAN(v)                 ([[[UIDevice currentDevice] systemVersion] compare:v options:NSNumericSearch] == NSOrderedAscending)
+
 static NSString * const kChartboostAppIdKey        = @"appId";
 static NSString * const kChartboostAppSignatureKey = @"appSignature";
 static NSString * const kChartboostMinimumOSVersion = @"10.0";
