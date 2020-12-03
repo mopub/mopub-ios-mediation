@@ -1,4 +1,10 @@
 ## Changelog
+* 7.0.3.0.3
+    * Replace imports using `MoPubSDKFramework` with `MoPubSDK`. No external impacts to publishers.
+
+* 7.0.3.0.2
+    * Add support for `fullscreenAdAdapterAdDidDismiss:` to signal that the fullscreen ad is closing and the state should be reset. To use this adapter version, you need v5.15.0 of the MoPub iOS SDK at the minimum.
+
 * 7.0.3.0.1
     * Fix a bug in `IronSourceAdapterConfiguration.m ` to correctly parse `interstitialStatus`.
 

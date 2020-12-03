@@ -93,15 +93,6 @@
         mainImageView.userInteractionEnabled = YES;
         [mainImageView addSubview:mediaView];
     }
-    
-    if ([self shouldLoadMainVideoView]) {
-        UIView *mediaView = [self.adapter mainMediaView];
-        UIView *mainVideoView = [self.adView nativeVideoView];
-        mediaView.frame = mainVideoView.bounds;
-        mediaView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        mainVideoView.userInteractionEnabled = YES;
-        [mainVideoView addSubview:mediaView];
-    }
 
     if ([self.adView respondsToSelector:@selector(nativeCallToActionTextLabel)] && self.adView.nativeCallToActionTextLabel) {
         self.adView.nativeCallToActionTextLabel.text = [adapter.properties objectForKey:kAdCTATextKey];
@@ -129,13 +120,6 @@
     && [self.adapter mainMediaView]
     && [self.adView respondsToSelector:@selector(nativeMainImageView)];
 }
-
-- (BOOL)shouldLoadMainVideoView {
-    return [self.adapter respondsToSelector:@selector(mainMediaView)]
-    && [self.adapter mainMediaView]
-    && [self.adView respondsToSelector:@selector(nativeVideoView)];
-}
-
 
 - (BOOL)hasIconView {
     return [self.adapter respondsToSelector:@selector(iconMediaView)]
