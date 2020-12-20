@@ -11,6 +11,7 @@
 @property (nonatomic, strong) BURewardedVideoAd *rewardVideoAd;
 @property (nonatomic, copy) NSString *adPlacementId;
 @property (nonatomic, copy) NSString *appId;
+@property (nonatomic, assign) BOOL adHasValid;
 @end
 
 @implementation PangleRewardedVideoCustomEvent
@@ -25,7 +26,7 @@
 }
 
 - (BOOL)hasAdAvailable {
-    return self.rewardVideoAd.isAdValid;
+    return self.adHasValid;
 }
 
 - (BOOL)enableAutomaticImpressionAndClickTracking {
@@ -34,6 +35,7 @@
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
+    self.adHasValid = NO;
     
     if (info.count == 0) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
@@ -116,7 +118,7 @@
 
 - (void)rewardedVideoAdDidLoad:(BURewardedVideoAd *)rewardedVideoAd {
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    
+    self.adHasValid = YES;
     [self.delegate fullscreenAdAdapterDidLoadAd:self];
 }
 
@@ -176,7 +178,7 @@
     }
 }
 
-- (void)rewardedVideoAdServerRewardDidFail:(BURewardedVideoAd *)rewardedVideoAd {
+- (void)rewardedVideoAdServerRewardDidFail:(BURewardedVideoAd *)rewardedVideoAd error:(nonnull NSError *)error {
     MPLogInfo(@"Rewarded video ad server failed to reward.");
 }
 

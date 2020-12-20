@@ -20,7 +20,7 @@
 
 - (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
-
+    
     if (info.count == 0) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty
@@ -52,7 +52,7 @@
     
     CGSize expressRequestSize = [self sizeForAdapterInfo:size];
     self.expressBannerView = [[BUNativeExpressBannerView alloc] initWithSlotID:self.adPlacementId
-                                                            rootViewController:[self.delegate inlineAdAdapterViewControllerForPresentingModalView:self] adSize:expressRequestSize IsSupportDeepLink:YES];
+                                                            rootViewController:[self.delegate inlineAdAdapterViewControllerForPresentingModalView:self] adSize:expressRequestSize];
     self.expressBannerView.frame = CGRectMake(0, 0, expressRequestSize.width, expressRequestSize.height);
     self.expressBannerView.delegate = self;
     

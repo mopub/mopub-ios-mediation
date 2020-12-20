@@ -11,6 +11,7 @@
 @property (nonatomic, strong) BUFullscreenVideoAd *fullScreenVideo;
 @property (nonatomic, copy) NSString *adPlacementId;
 @property (nonatomic, copy) NSString *appId;
+@property (nonatomic, assign) BOOL adHasValid;
 @end
 
 @implementation PangleInterstitialCustomEvent
@@ -25,11 +26,12 @@
 }
 
 - (BOOL)hasAdAvailable {
-    return self.fullScreenVideo.adValid;
+    return self.adHasValid;
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
+    self.adHasValid = NO;
     
     if (info.count == 0) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
@@ -77,7 +79,7 @@
 }
 
 - (void)presentAdFromViewController:(UIViewController *)viewController {
-    if (!self.fullScreenVideo || !self.fullScreenVideo.adValid) {
+    if (!self.fullScreenVideo || !self.adHasValid) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeNERenderResultError
                                          userInfo:@{NSLocalizedDescriptionKey: @"Failed to show Pangle intersitial ad."}];
@@ -99,7 +101,7 @@
 
 - (void)fullscreenVideoMaterialMetaAdDidLoad:(BUFullscreenVideoAd *)fullscreenVideoAd {
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    
+    self.adHasValid = YES;
     [self.delegate fullscreenAdAdapterDidLoadAd:self];
 }
 
