@@ -49,13 +49,14 @@
     }
     
     self.appId = [info objectForKey:kPangleAppIdKey];
-    if (BUCheckValidString(self.appId)) {
-        [PangleAdapterConfiguration pangleSDKInitWithAppId:self.appId];
+    NSString *appIdString = self.appId;
+    if (appIdString && [appIdString isKindOfClass:[NSString class]]) {
+        [PangleAdapterConfiguration pangleSDKInitWithAppId:appIdString];
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
     
     self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
-    if (!BUCheckValidString(self.adPlacementId)) {
+    if (!(self.adPlacementId && [self.adPlacementId isKindOfClass:[NSString class]])) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty
                                          userInfo:@{NSLocalizedDescriptionKey: @"Incorrect or missing Pangle placement ID. Failing ad request. Ensure the ad placement ID is correct on the MoPub dashboard."}];
@@ -68,17 +69,20 @@
     BURewardedVideoModel *model = [[BURewardedVideoModel alloc] init];
     model.userId = self.adPlacementId;
     
-    if (BUCheckValidString([PangleAdapterConfiguration userId])) {
-        model.userId = [PangleAdapterConfiguration userId];
+    NSString *userId = [PangleAdapterConfiguration userId];
+    if (userId && [userId isKindOfClass:[NSString class]]) {
+        model.userId = userId;
     }
-    if (BUCheckValidString([PangleAdapterConfiguration rewardName])) {
-        model.rewardName = [PangleAdapterConfiguration rewardName];
+    NSString *rewardName = [PangleAdapterConfiguration rewardName];
+    if (rewardName && [rewardName isKindOfClass:[NSString class]]) {
+        model.rewardName = rewardName;
     }
     if ([PangleAdapterConfiguration rewardAmount] != 0) {
         model.rewardAmount = [PangleAdapterConfiguration rewardAmount];
     }
-    if (BUCheckValidString([PangleAdapterConfiguration mediaExtra])) {
-        model.extra = [PangleAdapterConfiguration mediaExtra];
+    NSString *extra = [PangleAdapterConfiguration mediaExtra];
+    if (extra && [extra isKindOfClass:[NSString class]]) {
+        model.extra = extra;
     }
     
     BURewardedVideoAd *RewardedVideoAd = [[BURewardedVideoAd alloc] initWithSlotID:self.adPlacementId rewardedVideoModel:model];
@@ -167,7 +171,8 @@
 
 - (void)rewardedVideoAdServerRewardDidSucceed:(BURewardedVideoAd *)rewardedVideoAd verify:(BOOL)verify {
     if (verify) {
-        NSString *currencyType = BUCheckValidString(rewardedVideoAd.rewardedVideoModel.rewardName) ? rewardedVideoAd.rewardedVideoModel.rewardName :kMPRewardCurrencyTypeUnspecified;
+        NSString *rewardName = rewardedVideoAd.rewardedVideoModel.rewardName;
+        NSString *currencyType = (rewardName && [rewardName isKindOfClass:[NSString class]]) ? rewardName :kMPRewardCurrencyTypeUnspecified;
         MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyType:currencyType amount: @(rewardedVideoAd.rewardedVideoModel.rewardAmount)];
         
         MPLogEvent([MPLogEvent adShouldRewardUserWithReward:reward]);
@@ -183,7 +188,8 @@
 }
 
 - (NSString *) getAdNetworkId {
-    return (BUCheckValidString(self.adPlacementId)) ? self.adPlacementId : @"";
+    NSString *adPlacementId = self.adPlacementId;
+    return (adPlacementId && [adPlacementId isKindOfClass:[NSString class]]) ? adPlacementId : @"";
 }
 
 @end

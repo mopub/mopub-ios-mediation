@@ -37,7 +37,8 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration complete:(void(^)(NSError *))complete {
-    if (configuration.count == 0 || !BUCheckValidString(configuration[kPangleAppIdKey])) {
+    NSString *pangleAppIdKey = configuration[kPangleAppIdKey];
+    if (configuration.count == 0 || !(pangleAppIdKey && [pangleAppIdKey isKindOfClass:[NSString class]])) {
         NSError *error = [NSError errorWithDomain:kAdapterErrorDomain
                                              code:PangleAdapterErrorCodeMissingIdKey
                                          userInfo:@{NSLocalizedDescriptionKey:
@@ -54,7 +55,7 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 }
 
 + (void)pangleSDKInitWithAppId:(NSString *)appId {
-    if (!BUCheckValidString(appId)) {
+    if (!(appId && [appId isKindOfClass:[NSString class]])) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:PangleAdapterErrorCodeMissingIdKey
                                          userInfo:@{NSLocalizedDescriptionKey: @"Incorrect or missing Pangle appId. Failing to initialize. Ensure the appId is correct."}];
@@ -116,7 +117,7 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 + (void)updateInitializationParameters:(NSDictionary *)parameters {
     NSString * appId = parameters[kPangleAppIdKey];
     
-    if (BUCheckValidString(appId)) {
+    if (appId && [appId isKindOfClass:[NSString class]]) {
         NSDictionary * configuration = @{kPangleAppIdKey: appId};
         [PangleAdapterConfiguration setCachedInitializationParameters:configuration];
     }
