@@ -1,6 +1,5 @@
 #import "PangleNativeAdAdapter.h"
 #import <BUAdSDK/BUNativeAdRelatedView.h>
-#import <BUFoundation/UIImageView+BUWebCache.h>
 #if __has_include("MoPub.h")
     #import "MPNativeAd.h"
     #import "MPNativeAdConstants.h"
@@ -52,11 +51,11 @@
         if (nativeAd.data.imageAry.count > 0) {
             BUImage *img = nativeAd.data.imageAry.firstObject;
             if (img.imageURL.length > 0) {
-                [imageView sdBu_setImageWithURL:[NSURL URLWithString:img.imageURL] placeholderImage:nil];
+                [self setImageViewImage:imageView urlString:img.imageURL];
             }
         } else {
             if (nativeAd.data.icon.imageURL.length > 0) {
-                [imageView sdBu_setImageWithURL:[NSURL URLWithString:nativeAd.data.icon.imageURL] placeholderImage:nil];
+                [self setImageViewImage:imageView urlString:nativeAd.data.icon.imageURL];
             }
         }
     }
@@ -64,6 +63,21 @@
     [dictionary setValue:self.mediaView forKey:kAdMainMediaViewKey];
     [dictionary setValue:nativeAd forKey:@"bu_nativeAd"];
     return [dictionary copy];
+}
+
+- (void)setImageViewImage:(UIImageView *)imageView urlString:(NSString *)urlString {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        UIImage *image = [self loadImage:[NSURL URLWithString:urlString]];
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [imageView setImage:image];
+        });
+    });
+}
+
+- (UIImage *)loadImage:(NSURL *)url {
+    NSData *data = [NSData dataWithContentsOfURL:url];
+    UIImage *image = [UIImage imageWithData: data];
+    return image;
 }
 
 #pragma mark - BUNativeAdDelegate
