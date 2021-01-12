@@ -22,6 +22,8 @@ NSString * const kVNGSDKOptionsOrientations = @"orientations";
 
 static NSString *mOrientations;
 
+static NSString *bidToken = nil;
+
 typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
     VungleAdapterErrorCodeMissingAppId,
 };
@@ -48,7 +50,11 @@ typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
 }
 
 - (NSString *)biddingToken {
-    NSString *bidToken = [[VungleRouter sharedRouter] currentSuperToken];
+    NSString *token = [[VungleRouter sharedRouter] currentSuperToken];
+    if (token.length) {
+        bidToken = token;
+    }
+    MPLogInfo(@"Vungle: Get bid token: %@.", bidToken);
     return bidToken;
 }
 

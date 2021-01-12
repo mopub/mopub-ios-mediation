@@ -339,10 +339,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
 }
 
 - (NSString *)currentSuperToken {
-    if (self.sdkInitializeState == SDKInitializeStateInitialized) {
-        return [[VungleSDK sharedSDK] currentSuperToken];
-    }
-    return nil;
+    return [[VungleSDK sharedSDK] currentSuperToken];
 }
 
 - (void)presentInterstitialAdFromViewController:(UIViewController *)viewController
