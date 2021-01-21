@@ -38,7 +38,7 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration complete:(void(^)(NSError *))complete {
     NSString *pangleAppIdKey = configuration[kPangleAppIdKey];
-    if (configuration.count == 0 || !(pangleAppIdKey && [pangleAppIdKey isKindOfClass:[NSString class]])) {
+    if (configuration.count == 0 || !(pangleAppIdKey && [pangleAppIdKey isKindOfClass:[NSString class]] && pangleAppIdKey.length > 0)) {
         NSError *error = [NSError errorWithDomain:kAdapterErrorDomain
                                              code:PangleAdapterErrorCodeMissingIdKey
                                          userInfo:@{NSLocalizedDescriptionKey:
@@ -55,7 +55,7 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 }
 
 + (void)pangleSDKInitWithAppId:(NSString *)appId {
-    if (!(appId && [appId isKindOfClass:[NSString class]])) {
+    if (!(appId && [appId isKindOfClass:[NSString class]] && appId.length > 0)) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:PangleAdapterErrorCodeMissingIdKey
                                          userInfo:@{NSLocalizedDescriptionKey: @"Incorrect or missing Pangle appId. Failing to initialize. Ensure the appId is correct."}];
@@ -72,6 +72,8 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 
             BOOL canCollectPersonalInfo =  [[MoPub sharedInstance] canCollectPersonalInfo];
             [BUAdSDKManager setGDPR:canCollectPersonalInfo ? 0 : 1];
+            
+            [BUAdSDKManager setUserExtData:@"[{\"name\":\"mediation\",\"value\":\"mopub\"},{\"name\":\"adapter_version\",\"value\":\"1.2.0\"}]"];
 
             [BUAdSDKManager setAppID:appId];
             
@@ -117,7 +119,7 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 + (void)updateInitializationParameters:(NSDictionary *)parameters {
     NSString * appId = parameters[kPangleAppIdKey];
     
-    if (appId && [appId isKindOfClass:[NSString class]]) {
+    if (appId && [appId isKindOfClass:[NSString class]] && appId.length > 0) {
         NSDictionary * configuration = @{kPangleAppIdKey: appId};
         [PangleAdapterConfiguration setCachedInitializationParameters:configuration];
     }

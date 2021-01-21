@@ -45,14 +45,14 @@
     }
     NSString *appId = [info objectForKey:kPangleAppIdKey];
     self.appId = appId;
-    if (appId && [appId isKindOfClass:[NSString class]]) {
+    if (appId && [appId isKindOfClass:[NSString class]] && appId.length > 0) {
         [PangleAdapterConfiguration pangleSDKInitWithAppId:self.appId];
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
     
     NSString *adPlacementId = [info objectForKey:kPanglePlacementIdKey];
     self.adPlacementId = adPlacementId;
-    if (!(adPlacementId && [adPlacementId isKindOfClass:[NSString class]])) {
+    if (!(adPlacementId && [adPlacementId isKindOfClass:[NSString class]] && adPlacementId.length > 0)) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty
                                          userInfo:@{NSLocalizedDescriptionKey:
