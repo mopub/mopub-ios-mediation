@@ -34,14 +34,16 @@
         return;
     }
     
-    self.appId = [info objectForKey:kPangleAppIdKey];
-    
-    if (BUCheckValidString(self.appId)){
+    NSString *appId = [info objectForKey:kPangleAppIdKey];
+    self.appId = appId;
+    if (appId && [appId isKindOfClass:[NSString class]] && appId.length > 0) {
         [PangleAdapterConfiguration pangleSDKInitWithAppId:self.appId];
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
-    self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
-    if (!BUCheckValidString(self.adPlacementId)) {
+    
+    NSString *adPlacementId = [info objectForKey:kPanglePlacementIdKey];
+    self.adPlacementId = adPlacementId;
+    if (!(adPlacementId && [adPlacementId isKindOfClass:[NSString class]] && adPlacementId.length > 0)) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty
                                          userInfo:@{NSLocalizedDescriptionKey: @"Incorrect or missing Pangle placement ID. Failing ad request. Ensure the ad placement ID is correct on the MoPub dashboard."}];
@@ -54,8 +56,7 @@
     BUAdSlot *slot = [[BUAdSlot alloc] init];
     slot.AdType = BUAdSlotAdTypeFeed;
     slot.position = BUAdSlotPositionTop;
-    slot.imgSize = [BUSize sizeBy:BUProposalSize_Feed690_388];
-    slot.isSupportDeepLink = YES;
+    slot.imgSize = [BUSize sizeBy:BUProposalSize_Feed690_388]; 
     self.nativeAd = [[BUNativeAd alloc] initWithSlot:slot];
     self.nativeAd.delegate = self;
     
@@ -102,7 +103,8 @@
 }
 
 - (NSString *) getAdNetworkId {
-    return BUCheckValidString(self.adPlacementId) ? self.adPlacementId : @"";
+    NSString *adPlacementId = self.adPlacementId;
+    return (adPlacementId && [adPlacementId isKindOfClass:[NSString class]]) ? adPlacementId : @"";
 }
 
 @end

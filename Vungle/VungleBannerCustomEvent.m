@@ -102,9 +102,8 @@
         // Already invoked an ad load callback.
         return;
     }
-
     self.isAdLoaded = YES;
-
+    
     if (self.options) {
         self.options = nil;
     }
@@ -175,7 +174,7 @@
         // Already invoked an ad load callback.
         return;
     }
-
+    
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getPlacementID]);
     NSError *loadFailError = nil;
     if (error) {
