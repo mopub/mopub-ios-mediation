@@ -11,6 +11,7 @@
 @property (nonatomic, strong) BUFullscreenVideoAd *fullScreenVideo;
 @property (nonatomic, copy) NSString *adPlacementId;
 @property (nonatomic, copy) NSString *appId;
+@property (nonatomic, assign) BOOL adHasValid;
 @end
 
 @implementation PangleInterstitialCustomEvent
@@ -25,11 +26,12 @@
 }
 
 - (BOOL)hasAdAvailable {
-    return self.fullScreenVideo.adValid;
+    return self.adHasValid;
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
+    self.adHasValid = NO;
     
     if (info.count == 0) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
@@ -41,15 +43,16 @@
         [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError: error];
         return;
     }
-    
-    self.appId = [info objectForKey:kPangleAppIdKey];
-    if (BUCheckValidString(self.appId)) {
+    NSString *appId = [info objectForKey:kPangleAppIdKey];
+    self.appId = appId;
+    if (appId && [appId isKindOfClass:[NSString class]] && appId.length > 0) {
         [PangleAdapterConfiguration pangleSDKInitWithAppId:self.appId];
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
     
-    self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
-    if (!BUCheckValidString(self.adPlacementId)) {
+    NSString *adPlacementId = [info objectForKey:kPanglePlacementIdKey];
+    self.adPlacementId = adPlacementId;
+    if (!(adPlacementId && [adPlacementId isKindOfClass:[NSString class]] && adPlacementId.length > 0)) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty
                                          userInfo:@{NSLocalizedDescriptionKey:
@@ -77,7 +80,7 @@
 }
 
 - (void)presentAdFromViewController:(UIViewController *)viewController {
-    if (!self.fullScreenVideo || !self.fullScreenVideo.adValid) {
+    if (!self.fullScreenVideo || !self.adHasValid) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeNERenderResultError
                                          userInfo:@{NSLocalizedDescriptionKey: @"Failed to show Pangle intersitial ad."}];
@@ -99,7 +102,7 @@
 
 - (void)fullscreenVideoMaterialMetaAdDidLoad:(BUFullscreenVideoAd *)fullscreenVideoAd {
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    
+    self.adHasValid = YES;
     [self.delegate fullscreenAdAdapterDidLoadAd:self];
 }
 
@@ -165,7 +168,8 @@
 }
 
 - (NSString *) getAdNetworkId {
-    return (BUCheckValidString(self.adPlacementId)) ? self.adPlacementId : @"";
+    NSString *adPlacementId = self.adPlacementId;
+    return (adPlacementId && [adPlacementId isKindOfClass:[NSString class]]) ? adPlacementId : @"";
 }
 
 @end

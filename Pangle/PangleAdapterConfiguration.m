@@ -11,8 +11,7 @@ static NSString *mRewardName;
 static NSInteger mRewardAmount;
 static NSString *mMediaExtra;
 
-static NSString * const kAdapterVersion = @"3.3.6.2.0";
-
+static NSString * const kAdapterVersion = @"3.3.6.2.1";
 static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-pangle-adapters";
 
 typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
@@ -38,7 +37,8 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration complete:(void(^)(NSError *))complete {
-    if (configuration.count == 0 || !BUCheckValidString(configuration[kPangleAppIdKey])) {
+    NSString *pangleAppIdKey = configuration[kPangleAppIdKey];
+    if (configuration.count == 0 || !(pangleAppIdKey && [pangleAppIdKey isKindOfClass:[NSString class]] && pangleAppIdKey.length > 0)) {
         NSError *error = [NSError errorWithDomain:kAdapterErrorDomain
                                              code:PangleAdapterErrorCodeMissingIdKey
                                          userInfo:@{NSLocalizedDescriptionKey:
@@ -55,7 +55,7 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 }
 
 + (void)pangleSDKInitWithAppId:(NSString *)appId {
-    if (!BUCheckValidString(appId)) {
+    if (!(appId && [appId isKindOfClass:[NSString class]] && appId.length > 0)) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:PangleAdapterErrorCodeMissingIdKey
                                          userInfo:@{NSLocalizedDescriptionKey: @"Incorrect or missing Pangle appId. Failing to initialize. Ensure the appId is correct."}];
@@ -72,6 +72,8 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 
             BOOL canCollectPersonalInfo =  [[MoPub sharedInstance] canCollectPersonalInfo];
             [BUAdSDKManager setGDPR:canCollectPersonalInfo ? 0 : 1];
+            
+            [BUAdSDKManager setUserExtData:@"[{\"name\":\"mediation\",\"value\":\"mopub\"},{\"name\":\"adapter_version\",\"value\":\"1.2.0\"}]"];
 
             [BUAdSDKManager setAppID:appId];
             
@@ -117,7 +119,7 @@ typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {
 + (void)updateInitializationParameters:(NSDictionary *)parameters {
     NSString * appId = parameters[kPangleAppIdKey];
     
-    if (BUCheckValidString(appId)) {
+    if (appId && [appId isKindOfClass:[NSString class]] && appId.length > 0) {
         NSDictionary * configuration = @{kPangleAppIdKey: appId};
         [PangleAdapterConfiguration setCachedInitializationParameters:configuration];
     }

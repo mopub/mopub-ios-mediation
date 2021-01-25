@@ -1,4 +1,9 @@
 ## Changelog
+	
+   * 3.3.6.2.1
+     * Native icon bug fixed
+     * Native 1:1 Video Creatives Supported
+     
    * 3.3.6.2.0
      * This version of the adapters has been certified with Pangle 3.3.6.2 and MoPub SDK 5.15.0.
 
