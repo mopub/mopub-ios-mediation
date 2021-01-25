@@ -99,18 +99,6 @@
         [iconImageView addSubview:iconView];
     }
     
-    if ([self.adView respondsToSelector:@selector(nativeVideoView)]) {
-        UIView *mediaView = [adapter.properties objectForKey:kVASVideoViewKey];
-        UIView *videoView = [self.adView nativeVideoView];
-        
-        mediaView.frame = videoView.bounds;
-        mediaView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        mediaView.userInteractionEnabled = YES;
-        videoView.userInteractionEnabled = YES;
-        
-        [videoView addSubview:mediaView];
-    }
-    
     // Verizon native does not have privacy icon image, but does provide a disclaimer text under "disclaimer" key in the properties  dictionary which should be handled as custom assets and displayed with the "layoutCustomAssetsWithProperties:imageLoader:" function
     
     self.adView.nativePrivacyInformationIconImageView.userInteractionEnabled = NO;

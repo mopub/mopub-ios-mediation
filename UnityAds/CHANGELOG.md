@@ -1,5 +1,24 @@
 
 ## Changelog
+* 3.6.0.0
+  * This version of the adapters has been certified with Unity Ads 3.6.0 and MoPub SDK 5.15.0.
+
+* 3.5.1.2
+  * Replace imports using `MoPubSDKFramework` with `MoPubSDK`. No external impacts to publishers.
+
+* 3.5.1.1
+  * Add support for `fullscreenAdAdapterAdDidDismiss:` to signal that the fullscreen ad is closing and the state should be reset. To use this adapter version, you need v5.15.0 of the MoPub iOS SDK at the minimum.
+
+* 3.5.1.0
+  * This version of the adapters has been certified with Unity Ads 3.5.1 and MoPub SDK 5.14.1.
+
+* 3.5.0.0
+  * This version of the adapters has been certified with Unity Ads 3.5.0 and MoPub SDK 5.14.1.
+  * Note that Unity Ads team does not recommend this version of their SDK with iOS 14. For full compliance, expect an upcoming adapter release for Unity Ads upcoming version 3.5.1.
+
+* 3.4.8.1
+  * This version of the adapters has been certified with Unity Ads 3.4.8 and MoPub SDK 5.14.1.
+
 * 3.4.8.0
   * This version of the adapters has been certified with Unity Ads 3.4.8 and MoPub SDK 5.13.1.
   * Note that, while Unity Ads 3.4.8 supports iOS 14, this adapter version is not certified using iOS 14. For iOS 14 compatibility, expect an upcoming adapter release.

@@ -18,6 +18,9 @@ static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-vu
 
 NSString * const kVNGSDKOptionsMinSpaceForInit = @"vngMinSpaceForInit";
 NSString * const kVNGSDKOptionsMinSpaceForAdLoad = @"vngMinSpaceForAdLoad";
+NSString * const kVNGSDKOptionsOrientations = @"orientations";
+
+static NSString *mOrientations;
 
 typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
     VungleAdapterErrorCodeMissingAppId,
@@ -41,7 +44,7 @@ typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"6.8.0.1";
+    return @"6.8.1.3";
 }
 
 - (NSString *)biddingToken {
@@ -67,6 +70,10 @@ typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
         // Even if we don't have an app ID, we want to update the SDK with this value now.
         self.shouldCollectDeviceId = [configuration[kVungleSDKCollectDevice] boolValue];
         [VungleRouter.sharedRouter setShouldCollectDeviceId:self.shouldCollectDeviceId];
+    }
+    
+    if (configuration[kVNGSDKOptionsOrientations]){
+        mOrientations = configuration[kVNGSDKOptionsOrientations];
     }
     
     NSMutableDictionary *sizeOverrideDict = [NSMutableDictionary dictionary];
@@ -103,6 +110,11 @@ typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
     if (complete != nil) {
         complete(nil);
     }
+}
+
+// (Optional) Set rewarded video playback orientation
++ (NSString *)orientations {
+    return mOrientations;
 }
 
 @end

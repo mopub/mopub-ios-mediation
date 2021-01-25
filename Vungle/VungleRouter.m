@@ -386,6 +386,9 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
         }
         
         int appOrientation = [settings.orientations intValue];
+        if (appOrientation == 0 && [VungleAdapterConfiguration orientations] != nil) {
+            appOrientation = [[VungleAdapterConfiguration orientations] intValue];
+        }
         
         NSNumber *orientations = @(UIInterfaceOrientationMaskAll);
         if (appOrientation == 1) {
