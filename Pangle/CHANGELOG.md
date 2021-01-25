@@ -1,4 +1,9 @@
-## Changelog	
+## Changelog
+
+   * 3.2.6.2.4
+     * Native icon bug fixed
+     * Native 1:1 Video Creatives Supported
+    
    * 3.2.6.2.3
      * Add support for banner format.
 
