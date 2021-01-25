@@ -1,4 +1,32 @@
-## Changelog	
+## Changelog
+   * 3.3.6.2.0
+     * This version of the adapters has been certified with Pangle 3.3.6.2 and MoPub SDK 5.15.0.
+
+   * 3.3.6.1.0
+     * This version of the adapters has been certified with Pangle 3.3.6.1 and MoPub SDK 5.15.0.
+
+   * 3.3.6.0.1
+     * Service release. No new features.
+     
+   * 3.3.6.0.0
+     * Drop support for deep link in banner and native ad adapters. 
+     * Support an error argument in the `rewardedVideoAdServerRewardDidFail:` callback
+     * This version of the adapters has been certified with Pangle 3.3.6.0 and MoPub SDK 5.15.0.
+
+   * 3.3.1.5.2
+     * Replace imports using `MoPubSDKFramework` with `MoPubSDK`. No external impacts to publishers.
+
+   * 3.3.1.5.1
+     * Add support for `fullscreenAdAdapterAdDidDismiss:` to signal that the fullscreen ad is closing and the state should be reset. To use this adapter version, you need v5.15.0 of the MoPub iOS SDK at the minimum.
+     * Remove `nativeVideoView` as part of MoPub's native video code removal. This does not impact Pangle. No external changes or actions rerquired for publishers. 
+
+   * 3.3.1.5.0
+     * This version of the adapters has been certified with Pangle 3.3.1.5 and MoPub SDK 5.14.1.
+
+   * 3.3.0.5.0
+     * This version of the adapters has been certified with Pangle 3.3.0.5 and MoPub SDK 5.14.1.
+     * Pangle SDK 3.3.0.5 resolves an issue that causes reporting discrepancy for Advanced Bidding ads.
+
    * 3.2.6.2.3
      * Add support for banner format.
 

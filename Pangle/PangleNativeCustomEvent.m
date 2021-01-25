@@ -53,9 +53,7 @@
     
     BUAdSlot *slot = [[BUAdSlot alloc] init];
     slot.AdType = BUAdSlotAdTypeFeed;
-    slot.position = BUAdSlotPositionTop;
     slot.imgSize = [BUSize sizeBy:BUProposalSize_Feed690_388];
-    slot.isSupportDeepLink = YES;
     self.nativeAd = [[BUNativeAd alloc] initWithSlot:slot];
     self.nativeAd.delegate = self;
     

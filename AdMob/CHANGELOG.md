@@ -1,4 +1,24 @@
 ## Changelog
+  * 7.69.0.1
+    * Fix a bug where native video playback controls were not responsive to user gestures.
+
+  * 7.69.0.0
+    * This version of the adapters has been certified with AdMob 7.69.0 and MoPub 5.15.0.
+
+  * 7.68.0.2
+    * Replace imports using `MoPubSDKFramework` with `MoPubSDK`. No external impacts to publishers.
+
+  * 7.68.0.1
+    * Add support for `fullscreenAdAdapterAdDidDismiss:` to signal that the fullscreen ad is closing and the state should be reset. To use this adapter version, you need v5.15.0 of the MoPub iOS SDK at the minimum.
+    * Remove `nativeVideoView` as part of MoPub's native video code removal. This does not impact AdMob. No external changes or actions rerquired for publishers. 
+
+  * 7.68.0.0
+    * This version of the adapters has been certified with AdMob 7.68.0 and MoPub 5.14.1.
+    * MoPub now tracks banner impressions via Google's `adViewDidRecordImpression` callback.
+
+  * 7.66.0.1
+    * Prevent oversized banner ads from serving by failing the ad request if the creative's width or height is greater than the publishers-specified width or height.
+
   * 7.66.0.0
     * This version of the adapters has been certified with AdMob 7.66.0 and MoPub 5.14.0.
 

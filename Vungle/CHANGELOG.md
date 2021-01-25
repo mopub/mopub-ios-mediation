@@ -1,4 +1,17 @@
 ## Changelog
+* 6.8.1.3
+    * Support `orientations` data passing through MoPub initialize in iOS and Unity iOS.
+    * Available `orientations` values are: (1) Auto rotate (default): `0` (2) Landscape: `1` (2) Portrait: `2`.
+
+* 6.8.1.2
+    * Replace imports using `MoPubSDKFramework` with `MoPubSDK`. No external impacts to publishers.
+
+* 6.8.1.1
+    * Add support for `fullscreenAdAdapterAdDidDismiss:` to signal that the fullscreen ad is closing and the state should be reset. To use this adapter version, you need v5.15.0 of the MoPub iOS SDK at the minimum.
+
+* 6.8.1.0
+    * This version of the adapters has been certified with Vungle 6.8.1 and MoPub SDK 5.14.1.
+
 * 6.8.0.1
     * This version of the adapters has been certified with Vungle 6.8.0 and MoPub SDK 5.14.0.
 

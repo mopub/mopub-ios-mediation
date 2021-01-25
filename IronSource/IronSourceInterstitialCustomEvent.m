@@ -73,7 +73,7 @@
             MPLogInfo(@"IronSource Interstitial initialization with appkey %@", appKey);
             // Cache the initialization parameters
             [IronSourceAdapterConfiguration updateInitializationParameters:info];
-            [[IronSourceManager sharedManager] initIronSourceSDKWithAppKey:appKey forAdUnits:[NSSet setWithObject:@[IS_INTERSTITIAL]]];
+            [[IronSourceManager sharedManager] initIronSourceSDKWithAppKey:appKey forAdUnits:[NSSet setWithObject:IS_INTERSTITIAL]];
             [self loadInterstitial:self.instanceId WithAdMarkup:adMarkup];
         } else {
             MPLogInfo(@"IronSource Interstitial initialization with empty or nil appKey for instance %@",
@@ -161,6 +161,12 @@
     
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], instanceId);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
+    
+    // Signal that the fullscreen ad is closing and the state should be reset.
+    // `fullscreenAdAdapterAdDidDismiss:` was introduced in MoPub SDK 5.15.0.
+    if ([self.delegate respondsToSelector:@selector(fullscreenAdAdapterAdDidDismiss:)]) {
+        [self.delegate fullscreenAdAdapterAdDidDismiss:self];
+    }
 }
 
 /*!

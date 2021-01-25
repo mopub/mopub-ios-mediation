@@ -52,7 +52,7 @@
     
     CGSize expressRequestSize = [self sizeForAdapterInfo:size];
     self.expressBannerView = [[BUNativeExpressBannerView alloc] initWithSlotID:self.adPlacementId
-                                                            rootViewController:[self.delegate inlineAdAdapterViewControllerForPresentingModalView:self] adSize:expressRequestSize IsSupportDeepLink:YES];
+                                                            rootViewController:[self.delegate inlineAdAdapterViewControllerForPresentingModalView:self] adSize:expressRequestSize];
     self.expressBannerView.frame = CGRectMake(0, 0, expressRequestSize.width, expressRequestSize.height);
     self.expressBannerView.delegate = self;
     
