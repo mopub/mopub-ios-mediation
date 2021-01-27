@@ -56,7 +56,8 @@
     }
     
     self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
-    if (!(self.adPlacementId && [self.adPlacementId isKindOfClass:[NSString class]] && self.adPlacementId.length > 0)) {
+    if (!(self.adPlacementId &&
+          [self.adPlacementId isKindOfClass:[NSString class]] && self.adPlacementId.length > 0)) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty
                                          userInfo:@{NSLocalizedDescriptionKey: @"Incorrect or missing Pangle placement ID. Failing ad request. Ensure the ad placement ID is correct on the MoPub dashboard."}];
@@ -73,13 +74,16 @@
     if (userId && [userId isKindOfClass:[NSString class]] && userId.length > 0) {
         model.userId = userId;
     }
+    
     NSString *rewardName = [PangleAdapterConfiguration rewardName];
     if (rewardName && [rewardName isKindOfClass:[NSString class]] && rewardName.length > 0) {
         model.rewardName = rewardName;
     }
+    
     if ([PangleAdapterConfiguration rewardAmount] != 0) {
         model.rewardAmount = [PangleAdapterConfiguration rewardAmount];
     }
+    
     NSString *extra = [PangleAdapterConfiguration mediaExtra];
     if (extra && [extra isKindOfClass:[NSString class]] && extra.length > 0) {
         model.extra = extra;

@@ -20,7 +20,7 @@
 
 - (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     BOOL hasAdMarkup = adMarkup.length > 0;
-    
+
     if (info.count == 0) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty
@@ -34,6 +34,7 @@
     
     NSString *appIdString = [info objectForKey:kPangleAppIdKey];
     self.appId = appIdString;
+    
     if (appIdString && [appIdString isKindOfClass:[NSString class]] && appIdString.length > 0) {
         [PangleAdapterConfiguration pangleSDKInitWithAppId:appIdString];
         [PangleAdapterConfiguration updateInitializationParameters:info];
@@ -41,6 +42,7 @@
     
     NSString *adPlacementId = [info objectForKey:kPanglePlacementIdKey];
     self.adPlacementId = adPlacementId;
+    
     if (!(adPlacementId && [adPlacementId isKindOfClass:[NSString class]] && adPlacementId.length > 0)) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty
