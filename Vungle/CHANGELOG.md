@@ -1,10 +1,9 @@
 ## Changelog
 * 6.9.1.0
     * This version of the adapters has been certified with Vungle 6.9.1 and MoPub SDK 5.15.0.
-    * Remove VungleSDKResetPlacementForDifferentAdSize error check for loading Ads.
-    * Fix the issue that fullscreen ads fail to load.
-    * Introduce the new SDK delegate callback `vungleAdViewedForPlacement:` to track views.
-    * Remove invalid play option keys.
+    * Remove `VungleSDKResetPlacementForDifferentAdSize` error check for loading ads.
+    * Introduce new Vungle SDK delegate `vungleAdViewedForPlacement:` to track impression.
+    * Remove invalid play option key.
 
 * 6.8.1.3
     * Support `orientations` data passing through MoPub initialize in iOS and Unity iOS.

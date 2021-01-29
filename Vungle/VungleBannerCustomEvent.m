@@ -143,7 +143,6 @@
         MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.getPlacementID);
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.getPlacementID);
         [self.delegate inlineAdAdapter:self didLoadAdWithAdView:bannerAdView];
-        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.getPlacementID);
         self.isAdCached = YES;
     } else {
         [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:nil];
@@ -208,7 +207,7 @@
 
 - (void)vungleAdViewed
 {
-    MPLogInfo(@"Vungle video banner did view");
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.getPlacementID);
     __weak VungleBannerCustomEvent *weakself = self;
     dispatch_async(dispatch_get_main_queue(), ^{
         [weakself.delegate inlineAdAdapterDidTrackImpression:weakself];

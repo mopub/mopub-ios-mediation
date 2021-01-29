@@ -54,7 +54,7 @@ typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
     if (token.length) {
         bidToken = token;
     }
-    MPLogInfo(@"Vungle: Get bid token: %@.", bidToken);
+    
     return bidToken;
 }
 
