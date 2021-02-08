@@ -20,6 +20,8 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 @interface UnityAdsInterstitialCustomEvent () <UnityAdsLoadDelegate, UnityAdsExtendedDelegate>
 
 @property (nonatomic, copy) NSString *placementId;
+@property (nonatomic) int impressionOrdinal;
+@property (nonatomic) int missedImpressionOrdinal;
 
 @end
 
@@ -214,10 +216,10 @@ int missedImpressionOrdinal;
 - (void) sendMetadataAdShownCorrect: (BOOL) isAdShown {
     UADSMediationMetaData *headerBiddingMeta = [[UADSMediationMetaData alloc]initWithCategory:@"mediation"];
     if(isAdShown) {
-        [headerBiddingMeta setOrdinal: ++impressionOrdinal];
+        [headerBiddingMeta setOrdinal: ++_impressionOrdinal];
     }
     else {
-        [headerBiddingMeta setMissedImpressionOrdinal: ++missedImpressionOrdinal];
+        [headerBiddingMeta setMissedImpressionOrdinal: ++_missedImpressionOrdinal];
     }
     [headerBiddingMeta commit];
 }

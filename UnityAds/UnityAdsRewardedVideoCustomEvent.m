@@ -22,6 +22,8 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 @interface UnityAdsRewardedVideoCustomEvent () <UnityAdsLoadDelegate, UnityAdsExtendedDelegate>
 
 @property (nonatomic, copy) NSString *placementId;
+@property (nonatomic) int impressionOrdinal;
+@property (nonatomic) int missedImpressionOrdinal;
 
 @end
 
@@ -29,9 +31,6 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 @dynamic delegate;
 @dynamic localExtras;
 @dynamic hasAdAvailable;
-
-int impressionOrdinal;
-int missedImpressionOrdinal;
 
 - (void)initializeSdkWithParameters:(NSDictionary *)parameters {
     NSString *gameId = [parameters objectForKey:kMPUnityRewardedVideoGameId];
@@ -220,10 +219,10 @@ int missedImpressionOrdinal;
 - (void) sendMetadataAdShownCorrect: (BOOL) isAdShown {
     UADSMediationMetaData *headerBiddingMeta = [[UADSMediationMetaData alloc]initWithCategory:@"mediation"];
     if(isAdShown) {
-        [headerBiddingMeta setOrdinal: ++impressionOrdinal];
+        [headerBiddingMeta setOrdinal: ++_impressionOrdinal];
     }
     else {
-        [headerBiddingMeta setMissedImpressionOrdinal: ++missedImpressionOrdinal];
+        [headerBiddingMeta setMissedImpressionOrdinal: ++_missedImpressionOrdinal];
     }
     [headerBiddingMeta commit];
 }
