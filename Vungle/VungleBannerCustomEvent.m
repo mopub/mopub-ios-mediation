@@ -5,7 +5,6 @@
 //  Copyright © 2019 MoPub. All rights reserved.
 //
 
-#import <VungleSDK/VungleSDK.h>
 #import "VungleBannerCustomEvent.h"
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
@@ -16,6 +15,8 @@
 @interface VungleBannerCustomEvent () <VungleRouterDelegate>
 
 @property (nonatomic, copy) NSString *placementId;
+@property (nonatomic, copy) NSString *adMarkup;
+@property (nonatomic, copy) NSString *eventId;
 @property (nonatomic, copy) NSDictionary *options;
 @property (nonatomic, assign) NSDictionary *bannerInfo;
 @property (nonatomic, assign) NSTimer *timeOutTimer;
@@ -39,7 +40,9 @@
 - (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     self.placementId = [info objectForKey:kVunglePlacementIdKey];
+    self.adMarkup = adMarkup;
     self.options = nil;
+    self.eventId = [[VungleRouter sharedRouter] parseEventId:adMarkup];
     
     NSString *format = [info objectForKey:@"adunit_format"];
     BOOL isMediumRectangleFormat = (format != nil ? [[format lowercaseString] containsString:@"medium_rectangle"] : NO);
@@ -61,10 +64,10 @@
     
     if (@available(iOS 10.0, *)) {
         self.timeOutTimer = [NSTimer scheduledTimerWithTimeInterval:BANNER_TIMEOUT_INTERVAL repeats:NO block:^(NSTimer * _Nonnull timer) {
-        if (!self.isAdCached) {
-            [[VungleRouter sharedRouter] clearDelegateForRequestingBanner];
-        }
-    }];
+            if (!self.isAdCached) {
+                [[VungleRouter sharedRouter] clearDelegateForRequestingBanner];
+            }
+        }];
     }
     
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.getPlacementID);
@@ -73,9 +76,7 @@
 
 - (void)dealloc
 {
-    if (self.bannerState == BannerRouterDelegateStatePlaying) {
-        [[VungleSDK sharedSDK] finishDisplayingAd:self.placementId];
-    }
+    [[VungleRouter sharedRouter] completeBannerAdViewForDelegate:self];
 }
 
 - (CGSize)sizeForCustomEventInfo:(CGSize)size
@@ -186,6 +187,16 @@
 - (NSString *)getPlacementID
 {
     return self.placementId;
+}
+
+- (NSString *)getAdMarkup
+{
+    return self.adMarkup;
+}
+
+- (NSString *)getEventId
+{
+    return self.eventId;
 }
 
 - (CGSize)getBannerSize
