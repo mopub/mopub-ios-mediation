@@ -37,14 +37,12 @@
 }
 
 NSString * const kIMErrorDomain = @"com.inmobi.mopubcustomevent.iossdk";
-NSString * const kIMPlacementIdKey = @"placementid";
-NSString * const kIMAccountIdKey   = @"accountid";
+NSString * const kIMPlacementIdKey = @"placementId";
+NSString * const kIMAccountIdKey   = @"accountId";
 
 static const NSString * IM_MPADAPTER_GDPR_CONSENT_AVAILABLE = @"gdpr_consent_available";
 static const NSString * IM_MPADAPTER_GDPR_CONSENT_APPLICABLE = @"gdpr";
 static const NSString * IM_MPADAPTER_GDPR_CONSENT_IAB = @"gdpr_consent";
-
-NSDictionary * userConsentDictionary;
 
 static BOOL isInMobiSDKInitialized = false;
 
@@ -69,23 +67,26 @@ static BOOL isInMobiSDKInitialized = false;
 
 + (void)initializeInMobiSDK:(NSString *)accountId {
     if(!isInMobiSDKInitialized) {
-        NSDictionary * gdprConsentObject = [self getGDPRConsentDictionary];
         [IMSdk setLogLevel:[self getInMobiLoggingLevelFromMopubLogLevel:[MPLogging consoleLogLevel]]];
         
         IMCompletionBlock completionBlock = ^{
-            [IMSdk initWithAccountID:accountId consentDictionary:gdprConsentObject andCompletionHandler:nil];
+            [IMSdk initWithAccountID:accountId consentDictionary:nil andCompletionHandler:^( NSError* _Nullable error) {
+                if (error) {
+                    [self createErrorWith:@"InMobi initialization encountered an error."
+                                andReason:error.description
+                            andSuggestion:@"Will attempt to initialize again on the first ad request."];
+                } else {
+                    MPLogInfo(@"InMobi initialization completed.");
+                }
+            }];
         };
-        [InMobiAdapterConfiguration invokeOnMainThreadAsSynced:YES withCompletionBlock:completionBlock];
         
+        [InMobiAdapterConfiguration invokeOnMainThreadAsSynced:YES withCompletionBlock:completionBlock];
         MPLogInfo(@"InMobi SDK initialized successfully.");
         isInMobiSDKInitialized = true;
     } else {
         MPLogInfo(@"InMobi SDK already initialized, no need to reinitialize.");
     }
-}
-
-+ (void)updateGDPRConsent {
-    [IMSdk updateGDPRConsent:[self getGDPRConsentDictionary]];
 }
 
 #pragma mark - InMobiAdapterConfiguration Error Handling Methods
@@ -172,30 +173,6 @@ static BOOL isInMobiSDKInitialized = false;
     [IMSdk setLocationWithCity:@"BAN" state:@"KAN" country:@"IND"];
     [IMSdk setLanguage:@"ENG"];
     */
-}
-
-#pragma mark - InMobiAdapterConfiguration GDPR Consent
-
-/**
- * @discussion Use this method to pass the consent dictionary which has to be consumed by the InMobi SDK
- * The following keys are currently supported by the InMobi SDK and are available as a const NSStirng as part of the adapter
- * 1) IM_MPADAPTER_GDPR_CONSENT_AVAILABLE = Use this key to set the Boolean consent as given by the user
- * 2) IM_MPADAPTER_GDPR_CONSENT_APPLICABLE = Use this key to indicate whether GDPR is applicable for this user
- * 3) IM_MPADAPTER_GDPR_CONSENT_IAB = Usde this key to set the IAB GDPR Consent string
- * This method can be invoked multiple times during a session  to update the consent as required
- *
- * @param consentDictionary An NSDictionary object which contains the user's consent
- */
-+ (void)setGDPRConsentDictionary:(NSDictionary *)consentDictionary {
-    userConsentDictionary = consentDictionary;
-}
-
-/**
- * @discussion Use this method to read the currently set ConsentDictionary.
- * @return A NSDictionary instance which was set using setGDPRConsentDictionary: method or nil, otherwise
- */
-+ (NSDictionary *)getGDPRConsentDictionary {
-    return userConsentDictionary;
 }
 
 + (void)invokeOnMainThreadAsSynced:(BOOL)sync withCompletionBlock:(IMCompletionBlock)compBlock {

@@ -39,8 +39,6 @@ extern NSString * const kIMAccountIdKey;
 
 + (void)initializeInMobiSDK:(NSString *)accountId;
 
-+ (void)updateGDPRConsent;
-
 + (NSError *)validateAccountId:(NSString *)accountId forOperation:(NSString *)operation;
 
 + (NSError *)validatePlacementId:(NSString *)placementId forOperation:(NSString *)operation;
@@ -50,10 +48,6 @@ extern NSString * const kIMAccountIdKey;
 + (NSError *)createErrorWith:(NSString *)description andReason:(NSString *)reason andSuggestion:(NSString *)suggestion;
 
 + (void)setupInMobiSDKDemographicsParams:(NSString *)accountId;
-
-+ (void)setGDPRConsentDictionary:(NSDictionary*)consentDictionary;
-
-+ (NSDictionary*)getGDPRConsentDictionary;
 
 typedef void (^IMCompletionBlock)(void);
 
