@@ -13,9 +13,9 @@
 #endif
 #import <CoreLocation/CoreLocation.h>
 
-@interface MPGoogleAdMobInterstitialCustomEvent () <GADInterstitialDelegate>
+@interface MPGoogleAdMobInterstitialCustomEvent () <GADFullScreenContentDelegate>
 
-@property(nonatomic, strong) GADInterstitial *interstitial;
+@property(nonatomic, strong) GADInterstitialAd *interstitial;
 @property(nonatomic, copy) NSString *admobAdUnitId;
 
 @end
@@ -27,7 +27,7 @@
 @synthesize interstitial = _interstitial;
 
 - (void)dealloc {
-    self.interstitial.delegate = nil;
+    self.interstitial.fullScreenContentDelegate = nil;
 }
 
 #pragma mark - MPFullscreenAdAdapter Override
@@ -37,13 +37,11 @@
 }
 
 - (BOOL)hasAdAvailable {
-    return self.interstitial.isReady;
+    return self.interstitial;
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     self.admobAdUnitId = [info objectForKey:@"adUnitID"];
-    self.interstitial = [[GADInterstitial alloc] initWithAdUnitID:self.admobAdUnitId];
-    self.interstitial.delegate = self;
     
     GADRequest *request = [GADRequest request];
     
@@ -83,30 +81,52 @@
     // Cache the network initialization parameters
     [GoogleAdMobAdapterConfiguration updateInitializationParameters:info];
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
-    [self.interstitial loadRequest:request];
+    
+    [GADInterstitialAd loadWithAdUnitID:self.admobAdUnitId
+                                request:request
+                      completionHandler:^(GADInterstitialAd *ad, NSError *error) {
+      if (error) {
+        NSLog(@"Failed to load Google interstitial ad with error: %@", [error localizedDescription]);
+        return;
+      }
+
+      self.interstitial = ad;
+      self.interstitial.fullScreenContentDelegate = self;
+        
+      MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+      [self.delegate fullscreenAdAdapterDidLoadAd:self];
+    }];
 }
 
 - (void)presentAdFromViewController:(UIViewController *)viewController {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     
-    [self.interstitial presentFromRootViewController:viewController];
+    if (self.interstitial) {
+      [self.interstitial presentFromRootViewController:viewController];
+    } else {
+      NSError *mopubError = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Failed to show Google interstitial. An ad wasn't ready"];
+      [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:mopubError];
+    }
 }
 
 - (BOOL)enableAutomaticImpressionAndClickTracking {
     return NO;
 }
 
-#pragma mark - GADInterstitialDelegate
+#pragma mark - GADFullScreenContentDelegate
 
-- (void)interstitialDidReceiveAd:(GADInterstitial *)interstitial {
-    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate fullscreenAdAdapterDidLoadAd:self];
+- (void)adDidPresentFullScreenContent:(id)ad {
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    
+    [self.delegate fullscreenAdAdapterAdWillAppear:self];
+    [self.delegate fullscreenAdAdapterAdDidAppear:self];
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
-- (void)interstitial:(GADInterstitial *)interstitial
-didFailToReceiveAdWithError:(GADRequestError *)error {
-    
-    NSString *failureReason = [NSString stringWithFormat: @"Google AdMob Interstitial failed to load with error: %@", error.localizedDescription];
+- (void)ad:(id)ad didFailToPresentFullScreenContentWithError:(NSError *)error {
+    NSString *failureReason = [NSString stringWithFormat: @"Google interstitial failed to show with error: %@", error.localizedDescription];
     NSError *mopubError = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:failureReason];
     
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:mopubError], [self getAdNetworkId]);
@@ -114,33 +134,15 @@ didFailToReceiveAdWithError:(GADRequestError *)error {
     [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:mopubError];
 }
 
-- (void)interstitialWillPresentScreen:(GADInterstitial *)interstitial {
-    MPLogAdEvent(MPLogEvent.adShowSuccess, self.admobAdUnitId);
-    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate fullscreenAdAdapterAdWillAppear:self];
-    [self.delegate fullscreenAdAdapterAdDidAppear:self];
-    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
-}
-
-- (void)interstitialWillDismissScreen:(GADInterstitial *)ad {
+- (void)adDidDismissFullScreenContent:(id)ad {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     [self.delegate fullscreenAdAdapterAdWillDismiss:self];
-}
-
-- (void)interstitialDidDismissScreen:(GADInterstitial *)ad {
+    
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
     [self.delegate fullscreenAdAdapterAdDidDismiss:self];
-}
-
-- (void)interstitialWillLeaveApplication:(GADInterstitial *)ad {
-    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate fullscreenAdAdapterDidReceiveTap:self];
-    [self.delegate fullscreenAdAdapterWillLeaveApplication:self];
-    [self.delegate fullscreenAdAdapterDidTrackClick:self];
 }
 
 - (NSString *) getAdNetworkId {
