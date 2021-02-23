@@ -101,7 +101,7 @@
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:adNotAvailableError],
                      [self getAdNetworkId]);
         
-        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:adNotAvailableError];
+        [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:adNotAvailableError];
     }
 }
 
@@ -156,6 +156,7 @@
 -(void)interstitialWillDismiss:(IMInterstitial*)interstitial {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)],
                  [self getAdNetworkId]);
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
 }
 
