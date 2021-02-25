@@ -1,4 +1,7 @@
 ## Changelog
+  * 7.69.0.3
+    * Fix static banner size leaking to subsequent adapter instances.
+
   * 7.69.0.2
     * Add support for `fullscreenAdAdapterAdWillDismiss` when a fullscreen creative is about to close. Publishers must use v5.16.1 of the MoPub SDK at the minimum.
 
