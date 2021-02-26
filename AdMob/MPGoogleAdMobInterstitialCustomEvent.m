@@ -127,17 +127,13 @@ didFailToReceiveAdWithError:(GADRequestError *)error {
 - (void)interstitialWillDismissScreen:(GADInterstitial *)ad {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
 }
 
 - (void)interstitialDidDismissScreen:(GADInterstitial *)ad {
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
-    
-    // Signal that the fullscreen ad is closing and the state should be reset.
-    // `fullscreenAdAdapterAdDidDismiss:` was introduced in MoPub SDK 5.15.0.
-    if ([self.delegate respondsToSelector:@selector(fullscreenAdAdapterAdDidDismiss:)]) {
-        [self.delegate fullscreenAdAdapterAdDidDismiss:self];
-    }
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
 }
 
 - (void)interstitialWillLeaveApplication:(GADInterstitial *)ad {

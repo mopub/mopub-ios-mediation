@@ -76,14 +76,6 @@
                 }
             }
             
-            NSString *flexViewAutoDismissSeconds = [self.localExtras objectForKey:kVungleFlexViewAutoDismissSeconds];
-            if (flexViewAutoDismissSeconds != nil) {
-                NSTimeInterval flexDismissTime = [flexViewAutoDismissSeconds floatValue];
-                if (flexDismissTime > 0) {
-                    options[VunglePlayAdOptionKeyFlexViewAutoDismissSeconds] = @(flexDismissTime);
-                }
-            }
-            
             NSString *muted = [self.localExtras objectForKey:kVungleStartMuted];
             if ( muted != nil) {
                 BOOL startMutedPlaceholder = [muted boolValue];
@@ -92,17 +84,13 @@
             
             NSString *supportedOrientation = [self.localExtras objectForKey:kVungleSupportedOrientations];
             if ( supportedOrientation != nil) {
-                int appOrientation = [supportedOrientation intValue];
-                NSNumber *orientations = @(UIInterfaceOrientationMaskAll);
-                
-                if (appOrientation == 1) {
-                    orientations = @(UIInterfaceOrientationMaskLandscape);
-                } else if (appOrientation == 2) {
-                    orientations = @(UIInterfaceOrientationMaskPortrait);
-                }
-                
-                options[VunglePlayAdOptionKeyOrientations] = orientations;
+                [self setOrientationOptions:options supportedOrientation:supportedOrientation];
+            } else if ([VungleAdapterConfiguration orientations] != nil) {
+                [self setOrientationOptions:options supportedOrientation:[VungleAdapterConfiguration orientations]];
             }
+            
+        } else if ([VungleAdapterConfiguration orientations] != nil) {
+            [self setOrientationOptions:options supportedOrientation:[VungleAdapterConfiguration orientations]];
         }
 
         self.options = options.count ? options : nil;
@@ -114,6 +102,20 @@
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getPlacementID]);
         [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     }
+}
+
+- (void)setOrientationOptions:(NSMutableDictionary *)options supportedOrientation:(NSString *)supportedOrientation
+{
+    int appOrientation = [supportedOrientation intValue];
+    NSNumber *orientations = @(UIInterfaceOrientationMaskAll);
+    
+    if (appOrientation == 1) {
+        orientations = @(UIInterfaceOrientationMaskLandscape);
+    } else if (appOrientation == 2) {
+        orientations = @(UIInterfaceOrientationMaskPortrait);
+    }
+    
+    options[VunglePlayAdOptionKeyOrientations] = orientations;
 }
 
 - (void)cleanUp
@@ -143,15 +145,20 @@
 
 - (void)vungleAdDidAppear
 {
-    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate fullscreenAdAdapterAdDidAppear:self];
+}
+
+- (void)vungleAdViewed
+{
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
 - (void)vungleAdWillDisappear
 {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
 }
 
@@ -159,12 +166,7 @@
 {
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
-    
-    // Signal that the fullscreen ad is closing and the state should be reset.
-    // `fullscreenAdAdapterAdDidDismiss:` was introduced in MoPub SDK 5.15.0.
-    if ([self.delegate respondsToSelector:@selector(fullscreenAdAdapterAdDidDismiss:)]) {
-        [self.delegate fullscreenAdAdapterAdDidDismiss:self];
-    }
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
     
     [self cleanUp];
     

@@ -1,4 +1,7 @@
 ## Changelog
+  * 12.7.1.3
+    * Add support for `fullscreenAdAdapterAdWillDismiss` when a fullscreen creative is about to close. Publishers must use v5.16.1 of the MoPub SDK at the minimum.
+    
   * 12.7.1.2
     * Replace imports using `MoPubSDKFramework` with `MoPubSDK`. No external impacts to publishers.
 

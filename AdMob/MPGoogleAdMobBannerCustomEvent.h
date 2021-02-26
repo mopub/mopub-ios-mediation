@@ -17,7 +17,5 @@
 #import "MPGoogleGlobalMediationSettings.h"
 
 @interface MPGoogleAdMobBannerCustomEvent : MPInlineAdAdapter <MPThirdPartyInlineAdAdapter>
-+(CGFloat) adWidth;
-+(CGFloat) adHeight;
 
 @end

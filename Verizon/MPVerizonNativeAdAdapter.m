@@ -1,22 +1,20 @@
 #import <VerizonAdsNativePlacement/VerizonAdsNativePlacement.h>
 #import <VerizonAdsVerizonNativeController/VerizonAdsVerizonNativeController.h>
 #import "MPVerizonNativeAdAdapter.h"
+#import "VerizonAdapterConfiguration.h"
 #if __has_include("MoPub.h")
 #import "MPNativeAdConstants.h"
 #import "MPLogging.h"
 #endif
 
-NSString * const kVASDisclaimerKey = @"vasdisclaimer";
-NSString * const kVASVideoViewKey = @"vasvideoview";
-
-static NSString * const kTitleCompId        = @"title";
-static NSString * const kBodyCompId         = @"body";
-static NSString * const kCTACompId          = @"callToAction";
-static NSString * const kRatingCompId       = @"rating";
-static NSString * const kDisclaimerCompId   = @"disclaimer";
-static NSString * const kMainImageCompId    = @"mainImage";
-static NSString * const kIconImageCompId    = @"iconImage";
-static NSString * const kVideoCompId        = @"video";
+NSString * const kVASNativeAd       = @"vasNativeAd";
+NSString * const kTitleCompId       = @"title";
+NSString * const kBodyCompId        = @"body";
+NSString * const kCTACompId         = @"callToAction";
+NSString * const kRatingCompId      = @"rating";
+NSString * const kDisclaimerCompId  = @"disclaimer";
+NSString * const kMainImageCompId   = @"mainImage";
+NSString * const kIconImageCompId   = @"iconImage";
 
 @interface MPVerizonNativeAdAdapter() <VASNativeAdDelegate>
 @property (nonatomic, strong) NSString *siteId;
@@ -42,28 +40,21 @@ static NSString * const kVideoCompId        = @"video";
     
     self.vasAdProperties = [NSMutableDictionary dictionary];
     
+    self.vasAdProperties[kVASNativeAd] = self.vasNativeAd;
+    
     id<VASComponent> titleComponent = [vasNativeAd component:kTitleCompId];
     if ([titleComponent conformsToProtocol:@protocol(VASNativeTextComponent)]) {
-        NSString *titleText = ((id<VASNativeTextComponent>) titleComponent).text;
-        if (titleText) {
-            self.vasAdProperties[kAdTitleKey] = titleText;
-        }
+        self.vasAdProperties[kTitleCompId] = titleComponent;
     }
-    
+
     id<VASComponent> bodyComponent = [vasNativeAd component:kBodyCompId];
     if ([bodyComponent conformsToProtocol:@protocol(VASNativeTextComponent)]) {
-        NSString *bodyText = ((id<VASNativeTextComponent>) bodyComponent).text;
-        if (bodyText) {
-            self.vasAdProperties[kAdTextKey] = bodyText;
-        }
+        self.vasAdProperties[kBodyCompId] = bodyComponent;
     }
     
     id<VASComponent> ctaComponent = [vasNativeAd component:kCTACompId];
     if ([ctaComponent conformsToProtocol:@protocol(VASNativeTextComponent)]) {
-        NSString *ctaText = ((id<VASNativeTextComponent>) ctaComponent).text;
-        if (ctaText) {
-            self.vasAdProperties[kAdCTATextKey] = ctaText;
-        }
+        self.vasAdProperties[kCTACompId] = ctaComponent;
     }
     
     id<VASComponent> ratingComponent = [vasNativeAd component:kRatingCompId];
@@ -74,38 +65,19 @@ static NSString * const kVideoCompId        = @"video";
         }
     }
     
+    id<VASComponent> disclaimerComponent = [vasNativeAd component:kDisclaimerCompId];
+    if ([disclaimerComponent conformsToProtocol:@protocol(VASNativeTextComponent)]) {
+        self.vasAdProperties[kDisclaimerCompId] = disclaimerComponent;
+    }
+  
     id<VASComponent> mainImageComponent = [vasNativeAd component:kMainImageCompId];
     if ([mainImageComponent conformsToProtocol:@protocol(VASViewComponent)]) {
-        UIView *mainImageView = ((id<VASViewComponent>) mainImageComponent).view;
-        if (mainImageView) {
-            self.vasAdProperties[kAdMainMediaViewKey] = mainImageView;
-        }
+        self.vasAdProperties[kMainImageCompId] = mainImageComponent;
     }
     
     id<VASComponent> iconImageComponent = [vasNativeAd component:kIconImageCompId];
     if ([iconImageComponent conformsToProtocol:@protocol(VASViewComponent)]) {
-        UIView *iconView = ((id<VASViewComponent>) iconImageComponent).view;
-        if (iconView) {
-            self.vasAdProperties[kAdIconImageViewKey] = iconView;
-        }
-    }
-    
-    // Verizon Native Properties
-    
-    id<VASComponent> disclaimerComponent = [vasNativeAd component:kDisclaimerCompId];
-    if ([disclaimerComponent conformsToProtocol:@protocol(VASNativeTextComponent)]) {
-        NSString *disclaimerTest = ((id<VASNativeTextComponent>) disclaimerComponent).text;
-        if (disclaimerTest) {
-            self.vasAdProperties[kVASDisclaimerKey] = disclaimerTest;
-        }
-    }
-    
-    id<VASComponent> videoComponent = [vasNativeAd component:kVideoCompId];
-    if ([videoComponent conformsToProtocol:@protocol(VASViewComponent)]) {
-        UIView *videoView = ((id<VASViewComponent>) videoComponent).view;
-        if (videoView) {
-            self.vasAdProperties[kVASVideoViewKey] = videoView;
-        }
+        self.vasAdProperties[kIconImageCompId] = iconImageComponent;
     }
 }
 
@@ -119,16 +91,6 @@ static NSString * const kVideoCompId        = @"video";
 - (NSURL *)defaultActionURL
 {
     return nil;
-}
-
-- (UIView *)mainMediaView
-{
-    return self.vasAdProperties[kAdMainMediaViewKey];
-}
-
-- (UIView *)iconMediaView
-{
-    return self.vasAdProperties[kAdIconImageViewKey];
 }
 
 #pragma mark - Impression and Click Tracking
@@ -158,9 +120,6 @@ static NSString * const kVideoCompId        = @"video";
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.siteId);
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.siteId);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.siteId);
-    
-    [self.delegate nativeAdWillLogImpression:self];
-    [self.vasNativeAd fireImpression];
 }
 
 #pragma mark - VASNativeAdDelegate
@@ -210,6 +169,17 @@ static NSString * const kVideoCompId        = @"video";
 - (void)nativeAd:(nonnull VASNativeAd *)nativeAd event:(nonnull NSString *)eventId source:(nonnull NSString *)source arguments:(nonnull NSDictionary<NSString *,id> *)arguments
 {
     MPLogTrace(@"VAS nativeAdEvent: %@, source: %@, eventId: %@, arguments: %@", nativeAd, source, eventId, arguments);
+    
+    if ([eventId isEqualToString:kMoPubVASAdImpressionEventId]) {
+      __weak __typeof__(self) weakSelf = self;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            __strong __typeof__(self) strongSelf = weakSelf;
+            if (strongSelf != nil)
+            {
+                [strongSelf.delegate nativeAdWillLogImpression:strongSelf];
+            }
+        });
+    }
 }
 
 - (nullable UIViewController *)nativeAdPresentingViewController

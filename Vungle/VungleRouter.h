@@ -11,7 +11,6 @@
 
 extern NSString *const kVungleAppIdKey;
 extern NSString *const kVunglePlacementIdKey;
-extern NSString *const kVungleFlexViewAutoDismissSeconds;
 extern NSString *const kVungleUserId;
 extern NSString *const kVungleOrdinal;
 extern NSString *const kVungleStartMuted;
@@ -69,6 +68,7 @@ typedef NS_ENUM(NSUInteger, BannerRouterDelegateState) {
 - (void)vungleAdDidLoad;
 - (void)vungleAdWillAppear;
 - (void)vungleAdDidAppear;
+- (void)vungleAdViewed;
 - (void)vungleAdWillDisappear;
 - (void)vungleAdDidDisappear;
 - (void)vungleAdTrackClick;
