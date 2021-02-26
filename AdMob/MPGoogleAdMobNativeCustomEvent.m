@@ -1,6 +1,10 @@
 #import "MPGoogleAdMobNativeCustomEvent.h"
 #import "MPGoogleAdMobNativeAdAdapter.h"
 #import "GoogleAdMobAdapterConfiguration.h"
+#import "GADQueryInfo_Preview.h"
+#import "GADAdInfo_Preview.h"
+#import "GADRequest+AdInfo_Preview.h"
+
 #if __has_include("MoPub.h")
 #import "MPLogging.h"
 #import "MPNativeAd.h"
@@ -108,6 +112,18 @@ static GADAdChoicesPosition adChoicesPosition;
     [request registerAdNetworkExtras:extras];
   }
     
+    if (adMarkup) {
+      NSString *requestId = GADIdentifierFromAdString(adMarkup);
+
+      NSCache *dv3Tokens = GoogleAdMobAdapterConfiguration.dv3Tokens;
+      GADQueryInfo *queryInfo = [dv3Tokens objectForKey: requestId];
+        
+      [dv3Tokens removeObjectForKey:requestId];
+
+      GADAdInfo *adInfo = [[GADAdInfo alloc] initWithQueryInfo:queryInfo adString:adMarkup];
+      request.adInfo = adInfo;
+    }
+
   // Cache the network initialization parameters
   [GoogleAdMobAdapterConfiguration updateInitializationParameters:info];
   MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.admobAdUnitId);

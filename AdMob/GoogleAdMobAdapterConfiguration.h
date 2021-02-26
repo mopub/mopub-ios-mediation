@@ -40,6 +40,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration
                                   complete:(void(^ _Nullable)(NSError * _Nullable))complete;
+- (void)refreshBidderToken;
+
+@property (class, nonatomic, copy, readonly) NSCache * dv3Tokens;
+
 @end
 
 NS_ASSUME_NONNULL_END

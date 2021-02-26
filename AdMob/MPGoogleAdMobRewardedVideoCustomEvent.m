@@ -1,6 +1,10 @@
 #import "MPGoogleAdMobRewardedVideoCustomEvent.h"
 #import "GoogleAdMobAdapterConfiguration.h"
 #import <GoogleMobileAds/GoogleMobileAds.h>
+#import "GADQueryInfo_Preview.h"
+#import "GADAdInfo_Preview.h"
+#import "GADRequest+AdInfo_Preview.h"
+
 #if __has_include("MoPub.h")
 #import "MPLogging.h"
 #import "MPRewardedVideoError.h"
@@ -65,6 +69,18 @@
     if ([self.localExtras objectForKey:@"tagForUnderAgeOfConsent"]) {
       [GADMobileAds.sharedInstance.requestConfiguration
           tagForUnderAgeOfConsent:self.localExtras[@"tagForUnderAgeOfConsent"]];
+    }
+
+    if (adMarkup) {
+      NSString *requestId = GADIdentifierFromAdString(adMarkup);
+
+      NSCache *dv3Tokens = GoogleAdMobAdapterConfiguration.dv3Tokens;
+      GADQueryInfo *queryInfo = [dv3Tokens objectForKey: requestId];
+        
+      [dv3Tokens removeObjectForKey:requestId];
+
+      GADAdInfo *adInfo = [[GADAdInfo alloc] initWithQueryInfo:queryInfo adString:adMarkup];
+      request.adInfo = adInfo;
     }
 
     request.requestAgent = @"MoPub";

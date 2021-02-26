@@ -10,6 +10,10 @@
 #import <CoreLocation/CoreLocation.h>
 #import <GoogleMobileAds/GoogleMobileAds.h>
 #import "MPGoogleAdMobBannerCustomEvent.h"
+#import "GADQueryInfo_Preview.h"
+#import "GADAdInfo_Preview.h"
+#import "GADRequest+AdInfo_Preview.h"
+
 #if __has_include("MoPub.h")
 #import "MPLogging.h"
 #endif
@@ -85,6 +89,18 @@
   
   request.requestAgent = @"MoPub";
 
+  if (adMarkup) {
+    NSString *requestId = GADIdentifierFromAdString(adMarkup);
+
+    NSCache *dv3Tokens = GoogleAdMobAdapterConfiguration.dv3Tokens;
+    GADQueryInfo *queryInfo = [dv3Tokens objectForKey: requestId];
+      
+    [dv3Tokens removeObjectForKey:requestId];
+
+    GADAdInfo *adInfo = [[GADAdInfo alloc] initWithQueryInfo:queryInfo adString:adMarkup];
+    request.adInfo = adInfo;
+  }
+    
   NSString *npaValue = GoogleAdMobAdapterConfiguration.npaString;
 
   if (npaValue.length > 0) {

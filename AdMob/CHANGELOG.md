@@ -1,4 +1,7 @@
 ## Changelog
+  * 7.69.0.4
+    * Add support for DV360 demand.
+
   * 7.69.0.3
     * Fix static banner size leaking to subsequent adapter instances.
 
