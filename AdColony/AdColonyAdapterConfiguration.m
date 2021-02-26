@@ -48,11 +48,11 @@ typedef NS_ENUM(NSInteger, AdColonyAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"4.4.1.1.3";
+    return @"4.5.0.2";
 }
 
 - (NSString *)biddingToken {
-    return [AdColony collectSignals];;
+    return [AdColony collectSignals];
 }
 
 - (NSString *)moPubNetworkName {

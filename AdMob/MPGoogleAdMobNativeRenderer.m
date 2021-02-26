@@ -153,6 +153,8 @@
   if ([self.adView respondsToSelector:@selector(nativeMainImageView)]) {
     [self.adView.nativeMainImageView addSubview:self.unifiedNativeAdView.mediaView];
     [self.unifiedNativeAdView.mediaView gad_fillSuperview];
+      
+    self.adView.nativeMainImageView.userInteractionEnabled = YES;
   }
 }
 

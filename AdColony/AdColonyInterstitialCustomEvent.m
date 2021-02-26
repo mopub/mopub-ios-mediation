@@ -101,17 +101,13 @@
                  [self getAdNetworkId]);
     
     if (self.ad) {
-        if ([self.ad showWithPresentingViewController:viewController]) {
-            MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)],
-                         [self getAdNetworkId]);
-            [self.delegate fullscreenAdAdapterAdWillAppear:self];
-        } else {
+        if (![self.ad showWithPresentingViewController:viewController]) {
             NSError *unknownError = [AdColonyAdapterConfiguration createErrorWith:@"Failed to show AdColony Interstitial"
                                                                         andReason:@"AdColony SDK failed to show"
                                                                     andSuggestion:@""];
             MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class)
                                                       error:unknownError], [self getAdNetworkId]);
-            [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:unknownError];
+            [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:unknownError];
         }
     } else {
         NSError *adNotAvailableError = [AdColonyAdapterConfiguration createErrorWith:@"Failed to show AdColony Interstitial"
@@ -119,7 +115,7 @@
                                                                        andSuggestion:@""];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:adNotAvailableError],
                      [self getAdNetworkId]);
-        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:adNotAvailableError];
+        [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:adNotAvailableError];
     }
 }
 
@@ -140,6 +136,7 @@
 }
 
 - (void)adColonyInterstitialWillOpen:(AdColonyInterstitial * _Nonnull)interstitial {
+    [self.delegate fullscreenAdAdapterAdWillAppear:self];
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)],
                  [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)],
@@ -152,17 +149,13 @@
 - (void)adColonyInterstitialDidClose:(AdColonyInterstitial * _Nonnull)interstitial {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)],
                  [self getAdNetworkId]);
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)],
                  [self getAdNetworkId]);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
- 
-    // Signal that the fullscreen ad is closing and the state should be reset.
-    // `fullscreenAdAdapterAdDidDismiss:` was introduced in MoPub SDK 5.15.0.
-    if ([self.delegate respondsToSelector:@selector(fullscreenAdAdapterAdDidDismiss:)]) {
-        [self.delegate fullscreenAdAdapterAdDidDismiss:self];
-    }
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
 }
 
 - (void)adColonyInterstitialExpired:(AdColonyInterstitial * _Nonnull)interstitial {

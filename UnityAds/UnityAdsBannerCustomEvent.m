@@ -77,7 +77,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
     if (![UnityAds isInitialized]) {
         [[UnityRouter sharedRouter] initializeWithGameId:gameId withCompletionHandler:nil];
         
-        NSError *error = [self createErrorWith:@"Unity Ads adapter failed to request interstitial ad, Unity Ads is not initialized yet. Failing this ad request and calling Unity Ads initialization so it would be available for an upcoming ad request"
+        NSError *error = [self createErrorWith:@"Unity Ads adapter failed to request banner ad, Unity Ads is not initialized yet. Failing this ad request and calling Unity Ads initialization so it would be available for an upcoming ad request"
                                      andReason:@"Unity Ads is not initialized."
                                  andSuggestion:@""];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
