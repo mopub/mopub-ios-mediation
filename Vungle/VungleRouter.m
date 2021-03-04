@@ -414,7 +414,8 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
         BOOL success = [[VungleSDK sharedSDK] addAdViewToView:bannerView withOptions:options placementID:placementID adMarkup:[delegate getAdMarkup] error:&bannerError];
         
         if (success) {
-            [self completeBannerAdViewForDelegate:delegate];
+            [self completeOldBannerAdViewForDelegate:delegate];
+            MPLogInfo(@"Vungle: Rendering a Banner ad for %@ eventID %@", placementID, [delegate getEventId]);
             // For a refresh banner delegate, if the Banner view is constructed successfully,
             // it will replace the old banner delegate.
             [self replaceOldBannerDelegateWithDelegate:delegate];
@@ -428,20 +429,36 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     return nil;
 }
 
+- (void)completeOldBannerAdViewForDelegate:(id<VungleRouterDelegate>)newDelegate
+{
+    @synchronized (self) {
+        NSString *placementID = [newDelegate getPlacementID];
+        id<VungleRouterDelegate> oldDelegate;
+        NSMapTable<NSString *, id<VungleRouterDelegate>> *bannerDelegatesCopy = [self.bannerDelegates mutableCopy];
+        for(NSString *key in bannerDelegatesCopy) {
+            oldDelegate = [bannerDelegatesCopy objectForKey:key];
+            if ([key containsString:placementID] && [oldDelegate bannerState] == BannerRouterDelegateStatePlaying) {
+                BOOL isHeaderBidding = [newDelegate getEventId] || [oldDelegate getEventId];
+                if (isHeaderBidding && [oldDelegate getEventId] == [newDelegate getEventId]) {
+                    continue;
+                }
+                MPLogInfo(@"Vungle: Triggering a Banner ad completion call in refresh for %@ eventID: %@", placementID, [oldDelegate getEventId]);
+                [[VungleSDK sharedSDK] finishDisplayingAd:placementID adMarkup:[oldDelegate getAdMarkup]];
+                oldDelegate.bannerState = BannerRouterDelegateStateClosing;
+                [self.bannerDelegates removeObjectForKey:[self getKeyFromDelegate:oldDelegate]];
+            }
+        }
+    }
+}
+
 - (void)completeBannerAdViewForDelegate:(id<VungleRouterDelegate>)delegate
 {
     @synchronized (self) {
-        NSString *placementID = [delegate getPlacementID];
-        if (placementID.length > 0) {
-            MPLogInfo(@"Vungle: Triggering a Banner ad completion call for %@", placementID);
-            id<VungleRouterDelegate> bannerDelegate =
-            [self getBannerDelegateWithPlacement:placementID
-                                         eventID:[delegate getEventId]
-                                 withBannerState:BannerRouterDelegateStatePlaying];
-            if (bannerDelegate) {
-                [[VungleSDK sharedSDK] finishDisplayingAd:placementID adMarkup:[bannerDelegate getAdMarkup]];
-                bannerDelegate.bannerState = BannerRouterDelegateStateClosing;
-            }
+        if ([delegate bannerState] == BannerRouterDelegateStatePlaying) {
+            MPLogInfo(@"Vungle: Triggering a Banner ad completion call in dealloc for %@ eventID: %@", [delegate getPlacementID], [delegate getEventId]);
+            [[VungleSDK sharedSDK] finishDisplayingAd:[delegate getPlacementID] adMarkup:[delegate getAdMarkup]];
+            delegate.bannerState = BannerRouterDelegateStateClosing;
+            [self.bannerDelegates removeObjectForKey:[self getKeyFromDelegate:delegate]];
         }
     }
 }
