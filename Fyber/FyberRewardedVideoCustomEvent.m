@@ -9,7 +9,6 @@
 #import "FyberRewardedVideoCustomEvent.h"
 
 #import "FyberAdapterConfiguration.h"
-#import "FyberAdapterData.h"
 
 #import <IASDKCore/IASDKCore.h>
 #import <IASDKMRAID/IASDKMRAID.h>
