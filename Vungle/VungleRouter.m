@@ -704,6 +704,60 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     [self vungleAdPlayabilityUpdate:isAdPlayable placementID:placementID adMarkup:nil error:error];
 }
 
+- (void)vungleWillShowAdForPlacementID:(nullable NSString *)placementID
+{
+    if (!placementID.length) {
+        return;
+    }
+    [self vungleWillShowAdForPlacementID:placementID adMarkup:nil];
+}
+
+- (void)vungleDidShowAdForPlacementID:(nullable NSString *)placementID
+{
+    [self vungleDidShowAdForPlacementID:placementID adMarkup:nil];
+}
+
+- (void)vungleAdViewedForPlacement:(NSString *)placementID
+{
+    if (!placementID.length) {
+        return;
+    }
+    [self vungleAdViewedForPlacementID:placementID adMarkup:nil];
+}
+
+- (void)vungleWillCloseAdForPlacementID:(nonnull NSString *)placementID
+{
+    [self vungleWillCloseAdForPlacementID:placementID adMarkup:nil];
+}
+
+- (void)vungleDidCloseAdForPlacementID:(nonnull NSString *)placementID
+{
+    if (!placementID.length) {
+        return;
+    }
+    [self vungleDidCloseAdForPlacementID:placementID adMarkup:nil];
+}
+
+- (void)vungleTrackClickForPlacementID:(nullable NSString *)placementID
+{
+    if (!placementID.length) {
+        return;
+    }
+    [self vungleTrackClickForPlacementID:placementID adMarkup:nil];
+}
+
+- (void)vungleRewardUserForPlacementID:(nullable NSString *)placementID
+{
+    [self vungleRewardUserForPlacementID:placementID adMarkup:nil];
+}
+
+- (void)vungleWillLeaveApplicationForPlacementID:(nullable NSString *)placementID
+{
+    [self vungleWillLeaveApplicationForPlacementID:placementID adMarkup:nil];
+}
+
+#pragma mark - VungleSDKHBDelegate Methods
+
 - (void)vungleAdPlayabilityUpdate:(BOOL)isAdPlayable
                       placementID:(NSString *)placementID
                          adMarkup:(NSString *)adMarkup
@@ -750,14 +804,6 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     }
 }
 
-- (void)vungleWillShowAdForPlacementID:(nullable NSString *)placementID
-{
-    if (!placementID.length) {
-        return;
-    }
-    [self vungleWillShowAdForPlacementID:placementID adMarkup:nil];
-}
-
 - (void)vungleWillShowAdForPlacementID:(NSString *)placementID
                               adMarkup:(NSString *)adMarkup
 {
@@ -779,11 +825,6 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     }
 }
 
-- (void)vungleDidShowAdForPlacementID:(nullable NSString *)placementID
-{
-    [self vungleDidShowAdForPlacementID:placementID adMarkup:nil];
-}
-
 - (void)vungleDidShowAdForPlacementID:(NSString *)placementID
                              adMarkup:(NSString *)adMarkup
 {
@@ -793,16 +834,8 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     }
 }
 
-- (void)vungleAdViewedForPlacement:(NSString *)placementID
-{
-    if (!placementID.length) {
-        return;
-    }
-    [self vungleAdViewedForPlacement:placementID adMarkup:nil];
-}
-
-- (void)vungleAdViewedForPlacement:(NSString *)placementID
-                          adMarkup:(NSString *)adMarkup
+- (void)vungleAdViewedForPlacementID:(NSString *)placementID
+                            adMarkup:(NSString *)adMarkup
 {
     id<VungleRouterDelegate> targetDelegate = [self getFullScreenDelegateWithPlacement:placementID adMarkup:adMarkup];
     if (!targetDelegate) {
@@ -816,11 +849,6 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     [targetDelegate vungleAdViewed];
 }
 
-- (void)vungleWillCloseAdForPlacementID:(nonnull NSString *)placementID
-{
-    [self vungleWillCloseAdForPlacementID:placementID adMarkup:nil];
-}
-
 - (void)vungleWillCloseAdForPlacementID:(NSString *)placementID
                                adMarkup:(NSString *)adMarkup
 {
@@ -829,14 +857,6 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
         [targetDelegate vungleAdWillDisappear];
         self.isAdPlaying = NO;
     }
-}
-
-- (void)vungleDidCloseAdForPlacementID:(nonnull NSString *)placementID
-{
-    if (!placementID.length) {
-        return;
-    }
-    [self vungleDidCloseAdForPlacementID:placementID adMarkup:nil];
 }
 
 - (void)vungleDidCloseAdForPlacementID:(NSString *)placementID
@@ -861,14 +881,6 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     }
 }
 
-- (void)vungleTrackClickForPlacementID:(nullable NSString *)placementID
-{
-    if (!placementID.length) {
-        return;
-    }
-    [self vungleTrackClickForPlacementID:placementID adMarkup:nil];
-}
-
 - (void)vungleTrackClickForPlacementID:(NSString *)placementID
                               adMarkup:(NSString *)adMarkup
 {
@@ -876,11 +888,6 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
                                                                      adMarkup:adMarkup
                                                              withBannerState:BannerRouterDelegateStatePlaying];
     [targetDelegate vungleAdTrackClick];
-}
-
-- (void)vungleRewardUserForPlacementID:(nullable NSString *)placementID
-{
-    [self vungleRewardUserForPlacementID:placementID adMarkup:nil];
 }
 
 - (void)vungleRewardUserForPlacementID:(NSString *)placementID
@@ -892,11 +899,6 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     }
 }
 
-- (void)vungleWillLeaveApplicationForPlacementID:(nullable NSString *)placementID
-{
-    [self vungleWillLeaveApplicationForPlacementID:placementID adMarkup:nil];
-}
-
 - (void)vungleWillLeaveApplicationForPlacementID:(NSString *)placementID
                                         adMarkup:(NSString *)adMarkup
 {
@@ -904,82 +906,6 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
                                                                      adMarkup:adMarkup
                                                              withBannerState:BannerRouterDelegateStatePlaying];
     [targetDelegate vungleAdWillLeaveApplication];
-}
-
-#pragma mark - VungleSDKHBDelegate Methods
-
-- (void)vungleAdPlayabilityUpdate:(BOOL)isAdPlayable
-                         adMarkup:(nullable NSString *)adMarkup
-                            error:(nullable NSError *)error
-{
-    if (!adMarkup.length) {
-        return;
-    }
-    [self vungleAdPlayabilityUpdate:isAdPlayable placementID:nil adMarkup:adMarkup error:error];
-}
-
-- (void)vungleWillShowAdForAdMarkup:(nullable NSString *)adMarkup
-{
-    if (!adMarkup.length) {
-        return;
-    }
-    [self vungleWillShowAdForPlacementID:nil adMarkup:adMarkup];
-}
-
-- (void)vungleDidShowAdForAdMarkup:(nullable NSString *)adMarkup
-{
-    if (!adMarkup.length) {
-        return;
-    }
-    [self vungleDidShowAdForPlacementID:nil adMarkup:adMarkup];
-}
-
-- (void)vungleAdViewedForAdUnit:(nullable NSString *)adMarkup
-{
-    if (!adMarkup.length) {
-        return;
-    }
-    [self vungleAdViewedForPlacement:nil adMarkup:adMarkup];
-}
-
-- (void)vungleWillCloseAdForAdMarkup:(nonnull NSString *)adMarkup
-{
-    if (!adMarkup.length) {
-        return;
-    }
-    [self vungleWillCloseAdForPlacementID:nil adMarkup:adMarkup];
-}
-
-- (void)vungleDidCloseAdForAdMarkup:(nonnull NSString *)adMarkup
-{
-    if (!adMarkup.length) {
-        return;
-    }
-    [self vungleDidCloseAdForPlacementID:nil adMarkup:adMarkup];
-}
-
-- (void)vungleTrackClickForAdMarkup:(nullable NSString *)adMarkup
-{
-    if (!adMarkup.length) {
-        return;
-    }
-    [self vungleTrackClickForPlacementID:nil adMarkup:adMarkup];
-}
-
-- (void)vungleRewardUserForAdMarkup:(nullable NSString *)adMarkup
-{
-    if (!adMarkup.length) {
-        return;
-    }
-    [self vungleRewardUserForPlacementID:nil adMarkup:adMarkup];
-}
-
-- (void)vungleWillLeaveApplicationForAdMarkup:(nullable NSString *)adMarkup
-{
-    if (!adMarkup.length) {
-        return;
-    }
-    [self vungleWillLeaveApplicationForPlacementID:nil adMarkup:adMarkup];
 }
 
 - (void)invalidateObjectsForPlacementID:(nullable NSString *)placementID
