@@ -62,12 +62,6 @@
     [FyberAdapterConfiguration collectConsentStatusFromMopub];
     
     IAUserData *userData = [IAUserData build:^(id<IAUserDataBuilder>  _Nonnull builder) {
-#warning Set up targeting in order to increase revenue:
-        /*
-        builder.age = 34;
-        builder.gender = IAUserGenderTypeMale;
-        builder.zipCode = @"90210";
-         */
     }];
     
     self.spotID = spotID;
