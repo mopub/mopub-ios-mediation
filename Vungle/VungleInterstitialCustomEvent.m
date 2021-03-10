@@ -12,6 +12,7 @@
 #import "VungleAdapterConfiguration.h"
 #import "VungleInterstitialCustomEvent.h"
 #import "VungleRouter.h"
+#import <VungleSDK/VungleSDK.h>
 
 // If you need to play ads with vungle options, you may modify playVungleAdFromRootViewController and create an options dictionary and call the playAd:withOptions: method on the vungle SDK.
 

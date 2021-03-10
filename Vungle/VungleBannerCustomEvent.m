@@ -11,6 +11,7 @@
     #import "MoPub.h"
 #endif
 #import "VungleRouter.h"
+#import <VungleSDK/VungleSDK.h>
 
 @interface VungleBannerCustomEvent () <VungleRouterDelegate>
 

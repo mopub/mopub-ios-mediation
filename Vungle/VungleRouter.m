@@ -39,7 +39,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     SDKInitializeStateInitialized
 };
 
-@interface VungleRouter () <VungleSDKDelegate, VungleSDKNativeAds>
+@interface VungleRouter () <VungleSDKDelegate, VungleSDKNativeAds, VungleSDKHBDelegate>
 
 @property (nonatomic, copy) NSString *vungleAppID;
 @property (nonatomic) BOOL isAdPlaying;
@@ -332,7 +332,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
 }
 
 - (NSString *)currentSuperToken {
-    return [[VungleSDK sharedSDK] currentSuperToken];
+    return [[VungleSDK sharedSDK] currentSuperTokenForSize:1000];
 }
 
 - (void)presentInterstitialAdFromViewController:(UIViewController *)viewController
