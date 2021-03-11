@@ -49,7 +49,6 @@ static dispatch_queue_t sIASDKInitSyncQueue = nil;
 }
 
 - (NSString *)moPubNetworkName {
-#warning This should match your Mopub Dashboard settings;
     return @"fyber";
 }
 
