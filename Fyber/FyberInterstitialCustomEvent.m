@@ -47,7 +47,6 @@
  *  @param info An Info dictionary is a JSON object that is defined in the MoPub console.
  */
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-#warning Set your spotID or define it @MoPub console inside the "extra" JSON:
     NSString *spotID = @"";
     
     if (info && [info isKindOfClass:NSDictionary.class] && info.count) {

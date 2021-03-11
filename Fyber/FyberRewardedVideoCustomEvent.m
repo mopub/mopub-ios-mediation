@@ -48,7 +48,6 @@
  * request. This data is configurable on the MoPub website, and may be used to pass a dynamic information, such as spotID.
  */
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-#warning Set your spotID or define it @MoPub console inside the "extra" JSON:
     NSString *spotID = @"";
     
     if (info && [info isKindOfClass:NSDictionary.class] && info.count) {
@@ -214,7 +213,6 @@
 
 // in order to use the rewarded callback for all available rewarded content, you will have to implement this method (not the `IAVideoCompleted:`;
 - (void)IAAdDidReward:(IAUnitController * _Nullable)unitController {
-    #warning Set desired reward or pass it via Mopub console JSON (info object), or via IASDKMediationSettings object and connect it here:
     MPReward *reward = [[MPReward alloc] initWithCurrencyType:kMPRewardCurrencyTypeUnspecified
                                                                                  amount:@(kMPRewardCurrencyAmountUnspecified)];
     

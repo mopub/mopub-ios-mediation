@@ -49,7 +49,6 @@
     ((size.width == kIADefaultIPhoneBannerWidth) && (size.height == kIADefaultIPhoneBannerHeight)) ||
     ((size.width == kIADefaultIPadBannerWidth) && (size.height == kIADefaultIPadBannerHeight));
     
-#warning Set your spotID or define it @MoPub console inside the "extra" JSON:
     NSString *spotID = @"";
     
     if (info && [info isKindOfClass:NSDictionary.class] && info.count) {
