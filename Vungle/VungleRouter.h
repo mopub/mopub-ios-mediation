@@ -5,6 +5,7 @@
 //  Copyright (c) 2015 MoPub. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
 #import <VungleSDK/VungleSDK.h>
 #import <VungleSDK/VungleSDKNativeAds.h>
