@@ -60,6 +60,8 @@ typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
     if ( sdk )
     {
         AppLovinAdapterConfigurationSDK = sdk;
+        sdk.mediationProvider = ALMediationProviderMoPub;
+        [sdk setPluginVersion: AppLovinAdapterConfiguration.pluginVersion];
     }
     // If SDK could not be retrieved, it means SDK key was missing from `configuration` (cached or not) AND the Info.plist
     else
