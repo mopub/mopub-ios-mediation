@@ -7,8 +7,6 @@
 
 #import <UIKit/UIKit.h>
 #import <Foundation/Foundation.h>
-#import <VungleSDK/VungleSDK.h>
-#import <VungleSDK/VungleSDKNativeAds.h>
 
 extern NSString *const kVungleAppIdKey;
 extern NSString *const kVunglePlacementIdKey;
@@ -28,8 +26,9 @@ extern const CGSize kVNGLeaderboardBannerSize;
 
 @protocol VungleRouterDelegate;
 @class VungleInstanceMediationSettings;
+typedef NS_ENUM(NSInteger, VungleConsentStatus);
 
-@interface VungleRouter : NSObject <VungleSDKDelegate, VungleSDKNativeAds>
+@interface VungleRouter : NSObject
 
 + (VungleRouter *)sharedRouter;
 

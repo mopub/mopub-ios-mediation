@@ -5,7 +5,9 @@
 //  Copyright (c) 2015 MoPub. All rights reserved.
 //
 
+#import <VungleSDK/VungleSDK.h>
 #import <VungleSDK/VungleSDKHeaderBidding.h>
+#import <VungleSDK/VungleSDKNativeAds.h>
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
     #import "MoPub.h"
@@ -37,7 +39,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     SDKInitializeStateInitialized
 };
 
-@interface VungleRouter ()
+@interface VungleRouter () <VungleSDKDelegate, VungleSDKNativeAds>
 
 @property (nonatomic, copy) NSString *vungleAppID;
 @property (nonatomic) BOOL isAdPlaying;
