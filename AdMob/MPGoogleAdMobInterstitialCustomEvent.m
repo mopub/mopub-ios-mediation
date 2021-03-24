@@ -84,9 +84,6 @@
 
       [dv3Tokens removeObjectForKey:requestId];
     }
-
-    // Consent collected from the MoPub’s consent dialogue should not be used to set up Google's
-    // personalization preference. Publishers should work with Google to be GDPR-compliant.
     
     NSString *npaValue = GoogleAdMobAdapterConfiguration.npaString;
     
