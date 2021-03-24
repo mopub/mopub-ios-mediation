@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
                                   complete:(void(^ _Nullable)(NSError * _Nullable))complete;
 - (void)refreshBidderToken;
 
-@property (class, nonatomic, copy, readonly) NSCache * dv3Tokens;
+@property (class, nonatomic, copy, readonly) NSMutableDictionary * dv3Tokens;
 
 @end
 

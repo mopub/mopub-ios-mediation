@@ -46,14 +46,6 @@ static GADAdChoicesPosition adChoicesPosition;
   });
   
   self.admobAdUnitId = info[@"adunit"];
-  if (self.admobAdUnitId == nil) {
-    MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class)
-                                                error:MPNativeAdNSErrorForInvalidAdServerResponse(@"Ad unit ID cannot be nil.")], self.admobAdUnitId);
-    [self.delegate nativeCustomEvent:self
-            didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidAdServerResponse(
-                                         @"Ad unit ID cannot be nil.")];
-    return;
-  }
 
   UIWindow *window = [UIApplication sharedApplication].keyWindow;
   UIViewController *rootViewController = window.rootViewController;
@@ -114,14 +106,14 @@ static GADAdChoicesPosition adChoicesPosition;
     
     if (adMarkup) {
       NSString *requestId = GADIdentifierFromAdString(adMarkup);
-
-      NSCache *dv3Tokens = GoogleAdMobAdapterConfiguration.dv3Tokens;
-      GADQueryInfo *queryInfo = [dv3Tokens objectForKey: requestId];
-        
-      [dv3Tokens removeObjectForKey:requestId];
+      NSMutableDictionary *dv3Tokens = GoogleAdMobAdapterConfiguration.dv3Tokens;
+      NSMutableDictionary *queryInfoParams = [dv3Tokens objectForKey: requestId];
+      GADQueryInfo *queryInfo = [queryInfoParams objectForKey:@"queryInfo"];
 
       GADAdInfo *adInfo = [[GADAdInfo alloc] initWithQueryInfo:queryInfo adString:adMarkup];
       request.adInfo = adInfo;
+
+      [dv3Tokens removeObjectForKey:requestId];
     }
 
   // Cache the network initialization parameters

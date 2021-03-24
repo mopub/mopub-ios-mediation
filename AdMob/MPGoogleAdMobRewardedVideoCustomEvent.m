@@ -46,16 +46,6 @@
     [GoogleAdMobAdapterConfiguration updateInitializationParameters:info];
     
     self.admobAdUnitId = [info objectForKey:@"adunit"];
-    if (self.admobAdUnitId == nil) {
-        NSError *error =
-        [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain
-                            code:MPRewardedVideoAdErrorInvalidAdUnitID
-                        userInfo:@{NSLocalizedDescriptionKey : @"Ad Unit ID cannot be nil."}];
-        
-        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
-        return;
-    }
     
     GADRequest *request = [GADRequest request];
     if ([self.localExtras objectForKey:@"testDevices"]) {
@@ -73,14 +63,14 @@
 
     if (adMarkup) {
       NSString *requestId = GADIdentifierFromAdString(adMarkup);
-
-      NSCache *dv3Tokens = GoogleAdMobAdapterConfiguration.dv3Tokens;
-      GADQueryInfo *queryInfo = [dv3Tokens objectForKey: requestId];
-        
-      [dv3Tokens removeObjectForKey:requestId];
+      NSMutableDictionary *dv3Tokens = GoogleAdMobAdapterConfiguration.dv3Tokens;
+      NSMutableDictionary *queryInfoParams = [dv3Tokens objectForKey: requestId];
+      GADQueryInfo *queryInfo = [queryInfoParams objectForKey:@"queryInfo"];
 
       GADAdInfo *adInfo = [[GADAdInfo alloc] initWithQueryInfo:queryInfo adString:adMarkup];
       request.adInfo = adInfo;
+
+      [dv3Tokens removeObjectForKey:requestId];
     }
 
     request.requestAgent = @"MoPub";

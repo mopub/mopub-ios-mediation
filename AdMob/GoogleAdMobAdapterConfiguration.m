@@ -13,14 +13,12 @@
 
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
-    #import "MPRealTimeTimer.h"
 #endif
 
 #define FIFTEEN_MINUTES_S 900
 
 @interface GoogleAdMobAdapterConfiguration()
-@property (class, nonatomic, copy, readwrite) NSCache * dv3Tokens;
-@property (nonatomic, strong) MPRealTimeTimer *timer;
+@property (class, nonatomic, copy, readwrite) NSMutableDictionary * dv3Tokens;
 
 @end
 
@@ -31,7 +29,7 @@ static NSString * const kAdMobApplicationIdKey = @"appid";
 static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-admob-adapters";
 
 static NSString * tokenReference;
-static NSCache *gDv3Tokens = nil;
+static NSMutableDictionary *gDv3Tokens = nil;
 
 typedef NS_ENUM(NSInteger, AdMobAdapterErrorCode) {
     AdMobAdapterErrorCodeMissingAppId,
@@ -59,9 +57,7 @@ typedef NS_ENUM(NSInteger, AdMobAdapterErrorCode) {
 }
 
 - (NSString *)biddingToken {
-    if ([tokenReference length] == 0) {
-      [self refreshBidderToken];
-    }
+    [self refreshBidderToken];
     
     return tokenReference;
 }
@@ -86,7 +82,7 @@ typedef NS_ENUM(NSInteger, AdMobAdapterErrorCode) {
               complete(nil);
             }
 
-            gDv3Tokens = [[NSCache alloc] init];
+            gDv3Tokens = [[NSMutableDictionary alloc] init];
 
             [self refreshBidderToken];
           }];
@@ -95,6 +91,10 @@ typedef NS_ENUM(NSInteger, AdMobAdapterErrorCode) {
 }
 
 - (void)refreshBidderToken {
+    // On initialization and on each ad request, remove tokens older than 15 minutes
+    // before adding new ones
+    [self expireTokens];
+
     GADRequest *request = [GADRequest request];
     
     [GADQueryInfo createQueryInfoWithRequest:request
@@ -107,26 +107,33 @@ typedef NS_ENUM(NSInteger, AdMobAdapterErrorCode) {
         
         if (queryInfo) {
             tokenReference = queryInfo.query;
+                            
+            NSMutableDictionary *queryInfoParams = [[NSMutableDictionary alloc] init];
 
-            [gDv3Tokens setObject:queryInfo forKey:queryInfo.requestIdentifier];
-                        
-            self.timer = [[MPRealTimeTimer alloc] initWithInterval:FIFTEEN_MINUTES_S block:^(MPRealTimeTimer *timer) {
-              [gDv3Tokens removeAllObjects];
-              tokenReference = nil;
-              
-              [self cancelExpirationTimer];
-            }];
+            NSDate *now = [NSDate date];
+            NSTimeInterval epochTime = [now timeIntervalSince1970];
+            
+            [queryInfoParams setObject:@(epochTime) forKey:@"timeStamp"];
+            [queryInfoParams setObject:queryInfo forKey:@"queryInfo"];
 
-            [self.timer scheduleNow];
+            [gDv3Tokens setObject:queryInfoParams forKey:queryInfo.requestIdentifier];
         }
     }];
 }
 
-- (void)cancelExpirationTimer
-{
-    if (self.timer != nil) {
-      [self.timer invalidate];
-      self.timer = nil;
+- (void)expireTokens {
+    if (gDv3Tokens && [gDv3Tokens count] > 0) {
+        for (id key in gDv3Tokens) {
+            NSDate *now = [NSDate date];
+            NSTimeInterval epochTime = [now timeIntervalSince1970];
+
+            NSMutableDictionary *queryInfoParams = [gDv3Tokens objectForKey:key];
+            NSTimeInterval oldEpochTime = [[queryInfoParams objectForKey:@"timeStamp"] doubleValue];
+            
+            if (epochTime - oldEpochTime >= FIFTEEN_MINUTES_S) {
+                [gDv3Tokens removeObjectForKey:key];
+            }
+        }
     }
 }
 
@@ -136,14 +143,14 @@ typedef NS_ENUM(NSInteger, AdMobAdapterErrorCode) {
     return !MoPub.sharedInstance.canCollectPersonalInfo ? @"1" : @"";
 }
 
-+ (NSCache *)dv3Tokens
++ (NSMutableDictionary *)dv3Tokens
 {
     return gDv3Tokens;
 }
 
-+ (void)setDv3Tokens:(NSCache *)cache
++ (void)setDv3Tokens:(NSMutableDictionary *)dictionary
 {
-    gDv3Tokens = cache;
+    gDv3Tokens = dictionary;
 }
 
 @end

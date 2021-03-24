@@ -91,14 +91,14 @@
 
   if (adMarkup) {
     NSString *requestId = GADIdentifierFromAdString(adMarkup);
-
-    NSCache *dv3Tokens = GoogleAdMobAdapterConfiguration.dv3Tokens;
-    GADQueryInfo *queryInfo = [dv3Tokens objectForKey: requestId];
-      
-    [dv3Tokens removeObjectForKey:requestId];
+    NSMutableDictionary *dv3Tokens = GoogleAdMobAdapterConfiguration.dv3Tokens;
+    NSMutableDictionary *queryInfoParams = [dv3Tokens objectForKey: requestId];
+    GADQueryInfo *queryInfo = [queryInfoParams objectForKey:@"queryInfo"];
 
     GADAdInfo *adInfo = [[GADAdInfo alloc] initWithQueryInfo:queryInfo adString:adMarkup];
     request.adInfo = adInfo;
+      
+    [dv3Tokens removeObjectForKey:requestId];
   }
     
   NSString *npaValue = GoogleAdMobAdapterConfiguration.npaString;
