@@ -1,15 +1,6 @@
-//
-//  FyberRewardedVideoCustomEvent.m
-//  FyberMarketplaceTestApp
-//
-//  Created by Fyber 10/03/2021.
-//  Copyright (c) 2021 Fyber. All rights reserved.
-//
-
 #import "FyberRewardedVideoCustomEvent.h"
 
 #import "FyberAdapterConfiguration.h"
-
 #import <IASDKCore/IASDKCore.h>
 #import <IASDKMRAID/IASDKMRAID.h>
 #import <IASDKVideo/IASDKVideo.h>
@@ -25,9 +16,6 @@
 @property (nonatomic) BOOL clickTracked;
 @property (nonatomic, copy) void (^fetchAdBlock)(void);
 
-/**
- *  @brief The view controller, that presents the Inneractive Interstitial Ad.
- */
 @property (nonatomic, weak) UIViewController *viewControllerForPresentingModalView;
 
 @end
@@ -40,13 +28,6 @@
 
 #pragma mark - MPRewardedVideoCustomEvent
 
-/**
- *
- *  @brief Is called each time the MoPub SDK requests a new rewarded video ad. MoPub >= 5.13.
- *
- *  @param info A dictionary containing additional custom data associated with a given custom event
- * request. This data is configurable on the MoPub website, and may be used to pass a dynamic information, such as spotID.
- */
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     NSString *spotID = @"";
     
@@ -59,10 +40,9 @@
         
         [FyberAdapterConfiguration configureIASDKWithInfo:info];
     }
-    [FyberAdapterConfiguration collectConsentStatusFromMopub];
+    [FyberAdapterConfiguration collectConsentStatusFromMoPub];
     
-    IAUserData *userData = [IAUserData build:^(id<IAUserDataBuilder>  _Nonnull builder) {
-    }];
+    IAUserData *userData = [IAUserData build:^(id<IAUserDataBuilder>  _Nonnull builder) {}];
     
 	IAAdRequest *request = [IAAdRequest build:^(id<IAAdRequestBuilder>  _Nonnull builder) {
 		builder.spotID = spotID;
@@ -158,9 +138,8 @@
     }
 }
 
-// new
 - (BOOL)enableAutomaticImpressionAndClickTracking {
-    return NO; // we will track it manually;
+    return NO;
 }
 
 - (BOOL)isRewardExpected {
@@ -181,7 +160,7 @@
     }
     
     NSDictionary *userInfo = @{NSLocalizedFailureReasonErrorKey : reason};
-    NSError *error = [NSError errorWithDomain:kIASDKMopubAdapterErrorDomain code:IASDKMopubAdapterErrorInternal userInfo:userInfo];
+    NSError *error = [NSError errorWithDomain:kIASDKMoPubAdapterErrorDomain code:IASDKMopubAdapterErrorInternal userInfo:userInfo];
     
     if (isLoad) {
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.spotID);
@@ -200,22 +179,18 @@
 - (void)IAAdDidReceiveClick:(IAUnitController * _Nullable)unitController {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.spotID);
 	[self.delegate fullscreenAdAdapterDidReceiveTap:self];
-    if (!self.clickTracked) {
-        self.clickTracked = YES;
-        [self.delegate fullscreenAdAdapterDidTrackClick:self]; // manual track;
-    }
+    [self.delegate fullscreenAdAdapterDidTrackClick:self];
 }
 
 - (void)IAAdWillLogImpression:(IAUnitController * _Nullable)unitController {
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.spotID);
-    [self.delegate fullscreenAdAdapterDidTrackImpression:self]; // manual track;
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
-// in order to use the rewarded callback for all available rewarded content, you will have to implement this method (not the `IAVideoCompleted:`;
 - (void)IAAdDidReward:(IAUnitController * _Nullable)unitController {
     MPReward *reward = [[MPReward alloc] initWithCurrencyType:kMPRewardCurrencyTypeUnspecified
                                                                                  amount:@(kMPRewardCurrencyAmountUnspecified)];
-    
+    MPLogAdEvent([MPLogEvent adShouldRewardUserWithReward:reward], self.spotID);
     [self.delegate fullscreenAdAdapter:self willRewardUser:reward];
 }
 
@@ -231,31 +206,15 @@
 
 - (void)IAUnitControllerWillDismissFullscreen:(IAUnitController * _Nullable)unitController {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.spotID);
-    SEL selector = @selector(fullscreenAdAdapterAdWillDismiss:);
-    
-    if ([self.delegate respondsToSelector:selector]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-        [self.delegate performSelector:selector withObject:self];
-#pragma clang diagnostic pop
-    }
-    
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
 }
 
 - (void)IAUnitControllerDidDismissFullscreen:(IAUnitController * _Nullable)unitController {
+    
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.spotID);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
-     // Signal that the fullscreen ad is closing and the state should be reset.
-    // `fullscreenAdAdapterAdDidDismiss:` was introduced in MoPub SDK 5.15.0.
-    SEL selector = @selector(fullscreenAdAdapterAdDidDismiss:);
-    
-    if ([self.delegate respondsToSelector:selector]) {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-        [self.delegate performSelector:selector withObject:self];
-#pragma clang diagnostic pop
-    }
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
 }
 
 - (void)IAUnitControllerWillOpenExternalApp:(IAUnitController * _Nullable)unitController {
@@ -264,7 +223,12 @@
 }
 
 - (void)IAAdDidExpire:(IAUnitController * _Nullable)unitController {
-    MPLogInfo(@"<Fyber> IAAdDidExpire");
+    NSError *error = [NSError errorWithCode:MOPUBErrorVideoPlayerFailedToPlay
+                       localizedDescription:@"Fyber ad is expired."];
+    
+    MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.spotID);
+    [self.delegate fullscreenAdAdapterDidExpire:self];
+    [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
 }
 
 #pragma mark - IAMRAIDContentDelegate
@@ -274,24 +238,17 @@
 #pragma mark - IAVideoContentDelegate
 
 - (void)IAVideoCompleted:(IAVideoContentController * _Nullable)contentController {
-    MPLogInfo(@"<Fyber> video completed;");
+    MPLogInfo(@"video completed;");
 }
 
 - (void)IAVideoContentController:(IAVideoContentController * _Nullable)contentController videoInterruptedWithError:(NSError *)error {
-    MPLogInfo(@"<Fyber> video error: %@;", error.localizedDescription);
+    MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.spotID);
     [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
 }
 
 - (void)IAVideoContentController:(IAVideoContentController * _Nullable)contentController videoDurationUpdated:(NSTimeInterval)videoDuration {
-    MPLogInfo(@"<Fyber> video duration updated: %.02lf", videoDuration);
+    MPLogInfo(@"video duration updated: %.02lf", videoDuration);
 }
-
-// Implement if needed:
-/*
- - (void)IAVideoContentController:(IAVideoContentController * _Nullable)contentController videoProgressUpdatedWithCurrentTime:(NSTimeInterval)currentTime totalTime:(NSTimeInterval)totalTime {
- 
- }
- */
 
 #pragma mark - Memory management
 

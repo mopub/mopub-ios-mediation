@@ -1,22 +1,15 @@
-//
-//  FyberAdapterConfiguration.m
-//  FyberMarketplaceTestApp
-//
-//  Created by Fyber on 10/03/21.
-//  Copyright © 2021 Fyber. All rights reserved.
-//
-
 #import "FyberAdapterConfiguration.h"
 
 #import <IASDKCore/IASDKCore.h>
+#import "MPLogging.h"
 
 @implementation FyberAdapterConfiguration
 
 #pragma mark - Consts
 
 NSString * const kIASDKMopubAdapterAppIDKey = @"appID";
-NSString * const kIASDKMopubAdapterErrorDomain = @"com.mopub.IASDKAdapter";
-NSString * const kIASDKShouldUseMopubGDPRConsentKey = @"IASDKShouldUseMopubGDPRConsentKey";
+NSString * const kIASDKMoPubAdapterErrorDomain = @"com.mopub.IASDKAdapter";
+NSString * const kIASDKShouldUseMoPubGDPRConsentKey = @"IASDKShouldUseMopubGDPRConsentKey";
 NSNotificationName _Nonnull kIASDKInitCompleteNotification = @"kIASDKInitCompleteNotification";
 
 #pragma mark - Static members
@@ -36,20 +29,9 @@ static dispatch_queue_t sIASDKInitSyncQueue = nil;
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    NSString *version = @"";
-    
-    if (IASDKCore.sharedInstance.version) {
-        version = [NSString stringWithFormat:@"%@.0", IASDKCore.sharedInstance.version];
-    }
-    
-    return version;
+    return @"7.8.2.0";
 }
 
-/**
- *  @brief Is not supported in the VAMP SDK.
- *
- *  @discussion Please use the FairBidSDK for the programmatic bidding.
- */
 - (NSString *)biddingToken {
     return nil;
 }
@@ -64,11 +46,10 @@ static dispatch_queue_t sIASDKInitSyncQueue = nil;
 
 #pragma mark - Overrides
 
-// new
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> *)configuration complete:(void(^)(NSError *))complete {
     NSString *appID = configuration[kIASDKMopubAdapterAppIDKey];
     
-    if ([appID isEqualToString:IASDKCore.sharedInstance.appID]) { // already initialised;
+    if ([appID isEqualToString:IASDKCore.sharedInstance.appID]) {
         if (complete) {
             complete(nil);
         }
@@ -91,8 +72,8 @@ static dispatch_queue_t sIASDKInitSyncQueue = nil;
                         errorCode = IASDKMopubAdapterErrorMissingAppID;
                     }
                     
-                    error = [NSError errorWithDomain:kIASDKMopubAdapterErrorDomain code:errorCode userInfo:error.userInfo];
-                    MPLogEvent([MPLogEvent error:error message:error.description ?: @""]);
+                    error = [NSError errorWithDomain:kIASDKMoPubAdapterErrorDomain code:errorCode userInfo:error.userInfo];
+                    MPLogEvent([MPLogEvent error:error message:nil]);
                 } else {
                     [self.class setCachedInitializationParameters:configuration];
                 }
@@ -115,12 +96,12 @@ static dispatch_queue_t sIASDKInitSyncQueue = nil;
     });
 }
 
-+ (void)collectConsentStatusFromMopub {
-    BOOL shouldUseMopubGDPRConsent =
-    [NSUserDefaults.standardUserDefaults boolForKey:kIASDKShouldUseMopubGDPRConsentKey] ||
++ (void)collectConsentStatusFromMoPub {
+    BOOL shouldUseMoPubGDPRConsent =
+    [NSUserDefaults.standardUserDefaults boolForKey:kIASDKShouldUseMoPubGDPRConsentKey] ||
     (IASDKCore.sharedInstance.GDPRConsent == IAGDPRConsentTypeUnknown);
     
-    if (shouldUseMopubGDPRConsent && (MoPub.sharedInstance.isGDPRApplicable == MPBoolYes)) {
+    if (shouldUseMoPubGDPRConsent && (MoPub.sharedInstance.isGDPRApplicable == MPBoolYes)) {
         if (MoPub.sharedInstance.allowLegitimateInterest) {
             if ((MoPub.sharedInstance.currentConsentStatus == MPConsentStatusDenied) ||
                 (MoPub.sharedInstance.currentConsentStatus == MPConsentStatusDoNotTrack) ||
@@ -135,7 +116,7 @@ static dispatch_queue_t sIASDKInitSyncQueue = nil;
             IASDKCore.sharedInstance.GDPRConsent = (canCollectPersonalInfo) ? IAGDPRConsentTypeGiven : IAGDPRConsentTypeDenied;
         }
         
-        [NSUserDefaults.standardUserDefaults setBool:YES forKey:kIASDKShouldUseMopubGDPRConsentKey];
+        [NSUserDefaults.standardUserDefaults setBool:YES forKey:kIASDKShouldUseMoPubGDPRConsentKey];
     }
 }
 

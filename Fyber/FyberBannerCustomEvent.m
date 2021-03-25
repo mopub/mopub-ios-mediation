@@ -1,11 +1,3 @@
-//
-//  FyberBannerCustomEvent.m
-//  FyberMarketplaceTestApp
-//
-//  Created by Fyber 10/03/2021.
-//  Copyright (c) 2021 Fyber. All rights reserved.
-//
-
 #import "FyberBannerCustomEvent.h"
 
 #import "FyberAdapterConfiguration.h"
@@ -23,7 +15,6 @@
 @property (nonatomic, copy) void (^fetchAdBlock)(void);
 
 @property (nonatomic) BOOL isIABanner;
-@property (atomic) BOOL clickTracked;
 
 @end
 
@@ -34,22 +25,27 @@
 
 #pragma mark -
 
-/**
- *  @brief Is called each time the MoPub SDK requests a new banner ad. MoPub >= 5.13.
- *
- *  @discussion Also, when this method is invoked, this class is a new instance, it is not reused,
- * which makes call of this method only once per it's instance lifetime.
- *
- *  @param size Ad size.
- *  @param info An Info dictionary is a JSON object that is defined in the MoPub console.
- */
-
-- (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
+- (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
+{
     _isIABanner =
     ((size.width == kIADefaultIPhoneBannerWidth) && (size.height == kIADefaultIPhoneBannerHeight)) ||
     ((size.width == kIADefaultIPadBannerWidth) && (size.height == kIADefaultIPadBannerHeight));
     
     NSString *spotID = @"";
+    NSString *format = [info objectForKey:@"adunit_format"];
+    
+    BOOL isMediumRectangleFormat = (format != nil ? [[format lowercaseString] containsString:@"medium_rectangle"] : NO);
+    BOOL isBannerFormat = (format != nil ? [[format lowercaseString] containsString:@"banner"] : NO);
+
+     //Fyber only supports Medium Rectangle or Banner
+    if (!isMediumRectangleFormat && !isBannerFormat) {
+        MPLogInfo(@"Fyber only supports 300*250, 320*50 and 728*90 sized ads. Please ensure your MoPub adunit's format is Medium Rectangle or Banner.");
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid sizes received. Fyber only supports 300 x 250, 320 x 50 and 728 x 90 ads."];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.spotID);
+         [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
+         
+        return;
+     }
     
     if (info && [info isKindOfClass:NSDictionary.class] && info.count) {
         NSString *receivedSpotID = info[@"spotID"];
@@ -60,7 +56,7 @@
         
         [FyberAdapterConfiguration configureIASDKWithInfo:info];
     }
-    [FyberAdapterConfiguration collectConsentStatusFromMopub];
+    [FyberAdapterConfiguration collectConsentStatusFromMoPub];
     
     IAUserData *userData = [IAUserData build:^(id<IAUserDataBuilder>  _Nonnull builder) {
     }];
@@ -89,8 +85,8 @@
 		[builder addSupportedUnitController:self.bannerUnitController];
 		builder.mediationType = [IAMediationMopub new];
 	}];
+    
 	MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.spotID);
-    self.clickTracked = NO;
     
     __weak __typeof__(self) weakSelf = self;
     
@@ -133,9 +129,6 @@
     }
 }
 
-/**
- *  @discussion This method is called only once per instance lifecycle.
- */
 - (void)didDisplayAd {
     // set constraints for rotations support; this method override can be deleted, if rotations treatment is not needed;
     UIView *view = self.bannerUnitController.adView;
@@ -157,9 +150,8 @@
     }
 }
 
-// new
 - (BOOL)enableAutomaticImpressionAndClickTracking {
-    return NO; // we will track it manually;
+    return NO;
 }
 
 #pragma mark - Service
@@ -170,7 +162,7 @@
     }
     
     NSDictionary *userInfo = @{NSLocalizedFailureReasonErrorKey : reason};
-    NSError *error = [NSError errorWithDomain:kIASDKMopubAdapterErrorDomain code:IASDKMopubAdapterErrorInternal userInfo:userInfo];
+    NSError *error = [NSError errorWithDomain:kIASDKMoPubAdapterErrorDomain code:IASDKMopubAdapterErrorInternal userInfo:userInfo];
     
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.spotID);
     [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
@@ -184,29 +176,25 @@
 
 - (void)IAAdDidReceiveClick:(IAUnitController * _Nullable)unitController {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.spotID);
-    if (!self.clickTracked) {
-        self.clickTracked = YES;
-        [self.delegate inlineAdAdapterDidTrackClick:self]; // manual track;
-    }
+    [self.delegate inlineAdAdapterDidTrackClick:self];
 }
 
 - (void)IAAdWillLogImpression:(IAUnitController * _Nullable)unitController {
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.spotID);
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.spotID);
-    [self.delegate inlineAdAdapterDidTrackImpression:self]; // manual track;
+    [self.delegate inlineAdAdapterDidTrackImpression:self];
 }
 
 - (void)IAUnitControllerWillPresentFullscreen:(IAUnitController * _Nullable)unitController {
-    MPLogAdEvent([MPLogEvent adWillPresentModalForAdapter:NSStringFromClass(self.class)], self.spotID);
-    [self.delegate inlineAdAdapterWillBeginUserAction:self];
+    MPLogInfo(@"ad will present fullscreen;");
 }
 
 - (void)IAUnitControllerDidPresentFullscreen:(IAUnitController * _Nullable)unitController {
-    MPLogInfo(@"<Fyber> ad did present fullscreen;");
+    MPLogInfo(@"ad did present fullscreen;");
 }
 
 - (void)IAUnitControllerWillDismissFullscreen:(IAUnitController * _Nullable)unitController {
-    MPLogInfo(@"<Fyber> ad will dismiss fullscreen;");
+    MPLogInfo(@"ad will dismiss fullscreen;");
 }
 
 - (void)IAUnitControllerDidDismissFullscreen:(IAUnitController * _Nullable)unitController {
@@ -222,15 +210,15 @@
 #pragma mark - IAMRAIDContentDelegate
 
 - (void)IAMRAIDContentController:(IAMRAIDContentController * _Nullable)contentController MRAIDAdWillResizeToFrame:(CGRect)frame {
-    MPLogInfo(@"<Fyber> MRAID ad will resize;");
+    MPLogInfo(@"MRAID ad will resize;");
 }
 
 - (void)IAMRAIDContentController:(IAMRAIDContentController * _Nullable)contentController MRAIDAdDidResizeToFrame:(CGRect)frame {
-    MPLogInfo(@"<Fyber> MRAID ad did resize;");
+    MPLogInfo(@"MRAID ad did resize;");
 }
 
 - (void)IAMRAIDContentController:(IAMRAIDContentController * _Nullable)contentController MRAIDAdWillExpandToFrame:(CGRect)frame {
-    MPLogInfo(@"<Fyber> MRAID ad will expand;");
+    MPLogInfo(@"MRAID ad will expand;");
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
@@ -241,15 +229,15 @@
 }
 
 - (void)IAMRAIDContentController:(IAMRAIDContentController * _Nullable)contentController MRAIDAdDidExpandToFrame:(CGRect)frame {
-    MPLogInfo(@"<Fyber> MRAID ad did expand;");
+    MPLogInfo(@"MRAID ad did expand;");
 }
 
 - (void)IAMRAIDContentControllerMRAIDAdWillCollapse:(IAMRAIDContentController * _Nullable)contentController {
-    MPLogInfo(@"<Fyber> MRAID ad will collapse;");
+    MPLogInfo(@"MRAID ad will collapse;");
 }
 
 - (void)IAMRAIDContentControllerMRAIDAdDidCollapse:(IAMRAIDContentController * _Nullable)contentController {
-    MPLogInfo(@"<Fyber> MRAID ad did collapse;");
+    MPLogInfo(@"MRAID ad did collapse;");
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
@@ -263,8 +251,6 @@
 
 - (void)dealloc {
     [NSNotificationCenter.defaultCenter removeObserver:self];
-    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], _spotID);
-    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], _spotID);
     MPLogDebug(@"%@ deallocated", NSStringFromClass(self.class));
 }
 
