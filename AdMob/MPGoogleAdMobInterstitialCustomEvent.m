@@ -37,7 +37,7 @@
 }
 
 - (BOOL)hasAdAvailable {
-    return self.interstitial;
+    return self.interstitial != nil && [self.interstitial canPresentFromRootViewController:self error:nil];
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
@@ -86,7 +86,9 @@
                                 request:request
                       completionHandler:^(GADInterstitialAd *ad, NSError *error) {
       if (error) {
-        NSLog(@"Failed to load Google interstitial ad with error: %@", [error localizedDescription]);
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
+
         return;
       }
 
@@ -101,7 +103,7 @@
 - (void)presentAdFromViewController:(UIViewController *)viewController {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     
-    if (self.interstitial) {
+    if (self.interstitial && [self.interstitial canPresentFromRootViewController:viewController error:nil]) {
       [self.interstitial presentFromRootViewController:viewController];
     } else {
       NSError *mopubError = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Failed to show Google interstitial. An ad wasn't ready"];
@@ -114,6 +116,9 @@
 }
 
 #pragma mark - GADFullScreenContentDelegate
+- (void)adDidRecordImpression:(nonnull id<GADFullScreenPresentingAd>)ad {
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
+}
 
 - (void)adDidPresentFullScreenContent:(id)ad {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
@@ -122,10 +127,11 @@
     
     [self.delegate fullscreenAdAdapterAdWillAppear:self];
     [self.delegate fullscreenAdAdapterAdDidAppear:self];
-    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
 - (void)ad:(id)ad didFailToPresentFullScreenContentWithError:(NSError *)error {
+    self.interstitial = nil;
+
     NSString *failureReason = [NSString stringWithFormat: @"Google interstitial failed to show with error: %@", error.localizedDescription];
     NSError *mopubError = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:failureReason];
     
@@ -135,6 +141,8 @@
 }
 
 - (void)adDidDismissFullScreenContent:(id)ad {
+    self.interstitial = nil;
+    
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     [self.delegate fullscreenAdAdapterAdWillDismiss:self];

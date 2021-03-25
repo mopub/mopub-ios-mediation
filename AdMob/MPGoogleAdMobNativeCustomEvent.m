@@ -80,11 +80,10 @@ static GADAdChoicesPosition adChoicesPosition;
       [[GADNativeAdImageAdLoaderOptions alloc] init];
   nativeAdImageLoaderOptions.shouldRequestMultipleImages = NO;
     
-    GADNativeAdViewAdOptions *nativeAdMediaAdLoaderOptions =
-    [[GADNativeAdViewAdOptions alloc] init];
-    
-    // TODO
-    GADNativeAdMediaAdLoaderOptions.mediaAspectRatio = GADMediaAspectRatioAny;
+    GADNativeAdMediaAdLoaderOptions *nativeAdMediaAdLoaderOptions =
+          [[GADNativeAdMediaAdLoaderOptions alloc] init];
+      nativeAdMediaAdLoaderOptions.mediaAspectRatio =
+          GADNativeAdImageAdLoaderOptionsOrientationAny;
 
   // In GADNativeAdViewAdOptions, the default preferredAdChoicesPosition is
   // GADAdChoicesPositionTopRightCorner.

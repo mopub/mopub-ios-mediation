@@ -17,8 +17,8 @@ static NSString *const kGADMStoreKey = @"store";
 - (instancetype)initWithAdMobNativeAd:(GADNativeAd *)adMobNativeAd
                          nativeAdView:(GADNativeAdView *)adMobNativeAdView {
   if (self = [super init]) {
-    self.adMobNativeAd = adMobNativeAd;
-    self.adMobNativeAd.delegate = self;
+    self.googleNativeAd = adMobNativeAd;
+    self.googleNativeAd.delegate = self;
     self.adMobNativeAdView = adMobNativeAdView;
 
     NSMutableDictionary *properties = [NSMutableDictionary dictionary];

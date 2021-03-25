@@ -32,7 +32,7 @@
 }
 
 - (BOOL)hasAdAvailable {
-    return self.rewardedAd;
+    return self.rewardedAd != nil && [self.rewardedAd canPresentFromRootViewController:self error:nil];
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
@@ -110,7 +110,7 @@
 - (void)presentAdFromViewController:(UIViewController *)viewController {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     
-    if (self.rewardedAd) {
+    if (self.rewardedAd && [self.rewardedAd canPresentFromRootViewController:viewController error:nil]) {
         [self.rewardedAd presentFromRootViewController:viewController
                               userDidEarnRewardHandler:^ {
             GADAdReward *reward = self.rewardedAd.adReward;
@@ -149,6 +149,9 @@
 }
 
 #pragma mark - GADRewardedAdDelegate methods
+- (void)adDidRecordImpression:(nonnull id<GADFullScreenPresentingAd>)ad {
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
+}
 
 - (void)adDidPresentFullScreenContent:(id)ad {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
@@ -157,15 +160,18 @@
 
     [self.delegate fullscreenAdAdapterAdWillAppear:self];
     [self.delegate fullscreenAdAdapterAdDidAppear:self];
-    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
 - (void)ad:(id)ad didFailToPresentFullScreenContentWithError:(NSError *)error {
+    self.rewardedAd = nil;
+
     MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
 }
 
 - (void)adDidDismissFullScreenContent:(id)ad {
+    self.rewardedAd = nil;
+
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     

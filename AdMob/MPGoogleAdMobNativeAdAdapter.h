@@ -16,7 +16,7 @@
 @property(nonatomic, weak) id<MPNativeAdAdapterDelegate> delegate;
 
 /// Google Mobile Ads Native ad instance.
-@property(nonatomic, strong) GADNativeAd *adMobNativeAd;
+@property(nonatomic, strong) GADNativeAd *googleNativeAd;
 
 /// Google Mobile Ads adView to hold the native ad view.
 @property(nonatomic, strong) GADNativeAdView *adMobNativeAdView;
