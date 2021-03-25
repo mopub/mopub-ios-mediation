@@ -20,7 +20,7 @@ static ALSdk *__nullable AppLovinAdapterConfigurationSDK;
 
 static NSString *const kAppLovinSDKInfoPlistKey = @"AppLovinSdkKey";
 static NSString *const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-applovin-adapters";
-static NSString *const kAdapterVersion = @"6.15.2.1";
+static NSString *const kAdapterVersion = @"10.0.1.0";
 
 static NSString *gSdkKey = nil;
 
@@ -60,6 +60,8 @@ typedef NS_ENUM(NSInteger, AppLovinAdapterErrorCode)
     if ( sdk )
     {
         AppLovinAdapterConfigurationSDK = sdk;
+        sdk.mediationProvider = ALMediationProviderMoPub;
+        [sdk setPluginVersion: AppLovinAdapterConfiguration.pluginVersion];
     }
     // If SDK could not be retrieved, it means SDK key was missing from `configuration` (cached or not) AND the Info.plist
     else

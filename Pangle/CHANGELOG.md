@@ -1,4 +1,9 @@
 ## Changelog
+   * 3.4.4.3.0
+     * Change the SDK pod dependency from `Bytedance-UnionAD` to `Ads-Global`. No action required for publishers.
+     * Pangle iOS SDK was separated into Pangle China SDK and Pangle non-China SDK from the version 3.4.0.0. MoPub will only certify Pangle non-China SDK start from v3.4.4.3.
+     * This version of the adapters has been certified with Pangle 3.4.4.3 and MoPub SDK 5.16.2.
+
    * 3.3.6.2.2
      * Add support for `fullscreenAdAdapterAdWillDismiss` when a fullscreen creative is about to close. Publishers must use v5.16.1 of the MoPub SDK at the minimum.
      

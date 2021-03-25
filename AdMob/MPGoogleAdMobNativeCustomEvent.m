@@ -97,9 +97,6 @@ static GADAdChoicesPosition adChoicesPosition;
                                     options:@[ nativeAdImageLoaderOptions, nativeAdViewAdOptions, nativeAdMediaAdLoaderOptions ]];
   self.adLoader.delegate = self;
 
-  // Consent collected from the MoPub’s consent dialogue should not be used to set up
-  // Google's personalization preference. Publishers should work with Google to be GDPR-compliant.
-
   NSString *npaValue = GoogleAdMobAdapterConfiguration.npaString;
 
     if (npaValue.length > 0) {
