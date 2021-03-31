@@ -1,5 +1,9 @@
 
 ## Changelog
+
+* 3.7.1.0
+  * This version of the adapters has been certified with Unity Ads 3.7.1 and MoPub SDK 5.15.0.
+
 * 3.6.0.0
   * This version of the adapters has been certified with Unity Ads 3.6.0 and MoPub SDK 5.15.0.
 

@@ -7,7 +7,6 @@
 
 #import <Foundation/Foundation.h>
 #import <UnityAds/UnityAds.h>
-#import <UnityAds/UnityAdsExtendedDelegate.h>
 
 @class UnityAdsInstanceMediationSettings;
 
