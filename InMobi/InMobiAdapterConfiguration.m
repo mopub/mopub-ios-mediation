@@ -18,7 +18,7 @@
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"9.1.2.0";
+    return @"9.1.5.0";
 }
 
 - (NSString *)biddingToken {
@@ -29,7 +29,7 @@
 }
 
 - (NSString *)moPubNetworkName {
-    return @"inmobi";
+    return @"inmobi_sdk";
 }
 
 - (NSString *)networkSdkVersion {
@@ -37,8 +37,8 @@
 }
 
 NSString * const kIMErrorDomain = @"com.inmobi.mopubcustomevent.iossdk";
-NSString * const kIMPlacementIdKey = @"placementId";
-NSString * const kIMAccountIdKey   = @"accountId";
+NSString * const kIMPlacementIdKey = @"placementid";
+NSString * const kIMAccountIdKey   = @"accountid";
 
 static const NSString * IM_MPADAPTER_GDPR_CONSENT_AVAILABLE = @"gdpr_consent_available";
 static const NSString * IM_MPADAPTER_GDPR_CONSENT_APPLICABLE = @"gdpr";
@@ -93,7 +93,7 @@ static BOOL isInMobiSDKInitialized = false;
 
 + (NSError *)validateAccountId:(NSString *)accountId forOperation:(NSString *)operation {
     accountId = [accountId stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    if (accountId != nil && accountId.length > 0 && ([accountId length] == 32 || [accountId length] == 36)) {
+    if (accountId != nil && accountId.length <= 0) {
         return nil;
     }
     
