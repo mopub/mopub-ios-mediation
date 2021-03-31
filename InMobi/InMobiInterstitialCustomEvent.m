@@ -77,7 +77,11 @@
                                              dspName:nil], [self getAdNetworkId]);
 
     IMCompletionBlock completionBlock = ^{
-        [self.interstitialAd load:[adMarkup dataUsingEncoding:NSUTF8StringEncoding]];
+        if (adMarkup != nil && adMarkup <= 0) {
+            [self.interstitialAd load:[adMarkup dataUsingEncoding:NSUTF8StringEncoding]];
+        } else {
+            [self.interstitialAd load];
+        }
     };
     [InMobiAdapterConfiguration invokeOnMainThreadAsSynced:YES withCompletionBlock:completionBlock];
 }

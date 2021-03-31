@@ -85,7 +85,11 @@
                                              dspName:nil], [self getAdNetworkId]);
     
     IMCompletionBlock completionBlock = ^{
-        [self.rewardedVideoAd load:[adMarkup dataUsingEncoding:NSUTF8StringEncoding]];
+        if (adMarkup != nil && adMarkup <= 0) {
+            [self.rewardedVideoAd load:[adMarkup dataUsingEncoding:NSUTF8StringEncoding]];
+        } else {
+            [self.rewardedVideoAd load];
+        }        
     };
     [InMobiAdapterConfiguration invokeOnMainThreadAsSynced:YES withCompletionBlock:completionBlock];
 
