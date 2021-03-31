@@ -82,8 +82,8 @@ static GADAdChoicesPosition adChoicesPosition;
     
     GADNativeAdMediaAdLoaderOptions *nativeAdMediaAdLoaderOptions =
           [[GADNativeAdMediaAdLoaderOptions alloc] init];
-      nativeAdMediaAdLoaderOptions.mediaAspectRatio =
-          GADNativeAdImageAdLoaderOptionsOrientationAny;
+//      nativeAdMediaAdLoaderOptions.mediaAspectRatio =
+//          GADNativeAdImageAdLoaderOptionsOrientationAny;
 
   // In GADNativeAdViewAdOptions, the default preferredAdChoicesPosition is
   // GADAdChoicesPositionTopRightCorner.
@@ -207,8 +207,7 @@ static GADAdChoicesPosition adChoicesPosition;
 
 /// Checks the native ad has required assets or not.
 - (BOOL)isValidNativeAd:(GADNativeAd *)nativeAd {
-  return (nativeAd.headline && nativeAd.body && nativeAd.icon &&
-          nativeAd.images.count && nativeAd.callToAction);
+  return (nativeAd.headline && nativeAd.body && nativeAd.icon && nativeAd.callToAction);
 }
 
 @end

@@ -32,7 +32,7 @@
 }
 
 - (BOOL)hasAdAvailable {
-    return self.rewardedAd != nil && [self.rewardedAd canPresentFromRootViewController:self error:nil];
+    return self.rewardedAd != nil;
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
@@ -110,7 +110,7 @@
 - (void)presentAdFromViewController:(UIViewController *)viewController {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     
-    if (self.rewardedAd && [self.rewardedAd canPresentFromRootViewController:viewController error:nil]) {
+    if (self.rewardedAd) {
         [self.rewardedAd presentFromRootViewController:viewController
                               userDidEarnRewardHandler:^ {
             GADAdReward *reward = self.rewardedAd.adReward;
@@ -153,7 +153,7 @@
     [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
-- (void)adDidPresentFullScreenContent:(id)ad {
+- (void)adDidPresentFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
@@ -162,14 +162,14 @@
     [self.delegate fullscreenAdAdapterAdDidAppear:self];
 }
 
-- (void)ad:(id)ad didFailToPresentFullScreenContentWithError:(NSError *)error {
+- (void)ad:(nonnull id<GADFullScreenPresentingAd>)ad didFailToPresentFullScreenContentWithError:(NSError *)error {
     self.rewardedAd = nil;
 
     MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
 }
 
-- (void)adDidDismissFullScreenContent:(id)ad {
+- (void)adDidDismissFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
     self.rewardedAd = nil;
 
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);

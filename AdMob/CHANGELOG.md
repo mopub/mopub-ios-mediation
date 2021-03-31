@@ -1,6 +1,6 @@
 ## Changelog
-  * 8.1.0.0
-    * This version of the adapters has been certified with AdMob 8.1.0 and MoPub 5.16.1.
+  * 8.3.0.0
+    * This version of the adapters has been certified with AdMob 8.3.0 and MoPub 5.16.2.
     * Refactor banner, interstitial, rewarded video, and native based on new API guidelines from Google. No action items for publishers.
 
   * 7.69.0.3

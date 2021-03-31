@@ -37,7 +37,7 @@
 }
 
 - (BOOL)hasAdAvailable {
-    return self.interstitial != nil && [self.interstitial canPresentFromRootViewController:self error:nil];
+    return self.interstitial != nil;
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
@@ -103,7 +103,7 @@
 - (void)presentAdFromViewController:(UIViewController *)viewController {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     
-    if (self.interstitial && [self.interstitial canPresentFromRootViewController:viewController error:nil]) {
+    if (self.interstitial) {
       [self.interstitial presentFromRootViewController:viewController];
     } else {
       NSError *mopubError = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"Failed to show Google interstitial. An ad wasn't ready"];
@@ -120,7 +120,7 @@
     [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
-- (void)adDidPresentFullScreenContent:(id)ad {
+- (void)adDidPresentFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
@@ -129,7 +129,7 @@
     [self.delegate fullscreenAdAdapterAdDidAppear:self];
 }
 
-- (void)ad:(id)ad didFailToPresentFullScreenContentWithError:(NSError *)error {
+- (void)ad:(nonnull id<GADFullScreenPresentingAd>)ad didFailToPresentFullScreenContentWithError:(NSError *)error {
     self.interstitial = nil;
 
     NSString *failureReason = [NSString stringWithFormat: @"Google interstitial failed to show with error: %@", error.localizedDescription];
@@ -140,7 +140,7 @@
     [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:mopubError];
 }
 
-- (void)adDidDismissFullScreenContent:(id)ad {
+- (void)adDidDismissFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
     self.interstitial = nil;
     
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);

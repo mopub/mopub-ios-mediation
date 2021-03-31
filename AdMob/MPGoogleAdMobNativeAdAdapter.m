@@ -50,7 +50,7 @@ static NSString *const kGADMStoreKey = @"store";
       properties[kGADMStoreKey] = adMobNativeAd.store;
     }
 
-    if (adMobNativeAd.mediaContent) {
+    if (adMobNativeAdView.mediaView) {
       properties[kAdMainMediaViewKey] = self.adMobNativeAdView.mediaView;
     }
 
