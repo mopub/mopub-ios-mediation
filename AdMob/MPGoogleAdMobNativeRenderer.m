@@ -32,8 +32,8 @@
 /// Class of renderingViewClass.
 @property(nonatomic, strong) Class renderingViewClass;
 
-/// GADUnifiedNativeAdView instance.
-@property(nonatomic, strong) GADUnifiedNativeAdView *unifiedNativeAdView;
+/// GADNativeAdView instance.
+@property(nonatomic, strong) GADNativeAdView *nativeAdView;
 
 @end
 
@@ -80,19 +80,19 @@
   }
 
   self.adapter = (MPGoogleAdMobNativeAdAdapter *)adapter;
-  self.unifiedNativeAdView = self.adapter.adMobUnifiedNativeAdView;
-  self.unifiedNativeAdView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
+  self.nativeAdView = self.adapter.adMobNativeAdView;
+  self.nativeAdView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
 
   MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], nil);
   MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], nil);    
-  [self renderUnifiedAdViewWithAdapter:self.adapter];
-  return self.unifiedNativeAdView;
+  [self renderAdViewWithAdapter:self.adapter];
+  return self.nativeAdView;
 }
 
-/// Creates Unified Native AdView with adapter. We added GADUnifiedNativeAdView assets on
+/// Creates Native AdView with adapter. We added GADNativeAdView assets on
 /// top of MoPub's adView, to track impressions & clicks.
-- (void)renderUnifiedAdViewWithAdapter:(id<MPNativeAdAdapter>)adapter {
-  // We only load text here. We're creating the GADUnifiedNativeAdView and preparing text
+- (void)renderAdViewWithAdapter:(id<MPNativeAdAdapter>)adapter {
+  // We only load text here. We're creating the GADNativeAdView and preparing text
   // assets.
   if ([self.renderingViewClass respondsToSelector:@selector(nibForAd)]) {
     self.adView = (UIView<MPNativeAdRendering> *)[[[self.renderingViewClass nibForAd]
@@ -104,31 +104,31 @@
 
   self.adView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
 
-  [self.unifiedNativeAdView addSubview:self.adView];
+  [self.nativeAdView addSubview:self.adView];
   [self.adView gad_fillSuperview];
 
   if ([self.adView respondsToSelector:@selector(nativeTitleTextLabel)]) {
-    [self.adView.nativeTitleTextLabel addSubview:self.unifiedNativeAdView.headlineView];
+    [self.adView.nativeTitleTextLabel addSubview:self.nativeAdView.headlineView];
     self.adView.nativeTitleTextLabel.text = adapter.properties[kAdTitleKey];
-    [self.unifiedNativeAdView.headlineView gad_fillSuperview];
+    [self.nativeAdView.headlineView gad_fillSuperview];
   }
 
   if ([self.adView respondsToSelector:@selector(nativeMainTextLabel)]) {
-    [self.adView.nativeMainTextLabel addSubview:self.unifiedNativeAdView.bodyView];
+    [self.adView.nativeMainTextLabel addSubview:self.nativeAdView.bodyView];
     self.adView.nativeMainTextLabel.text = adapter.properties[kAdTextKey];
-    [self.unifiedNativeAdView.bodyView gad_fillSuperview];
+    [self.nativeAdView.bodyView gad_fillSuperview];
   }
 
   if ([self.adView respondsToSelector:@selector(nativeCallToActionTextLabel)] &&
       self.adView.nativeCallToActionTextLabel) {
-    [self.adView.nativeCallToActionTextLabel addSubview:self.unifiedNativeAdView.callToActionView];
-    [self.unifiedNativeAdView.callToActionView gad_fillSuperview];
+    [self.adView.nativeCallToActionTextLabel addSubview:self.nativeAdView.callToActionView];
+    [self.nativeAdView.callToActionView gad_fillSuperview];
     self.adView.nativeCallToActionTextLabel.text = adapter.properties[kAdCTATextKey];
   }
 
   if ([self.adView respondsToSelector:@selector(nativeIconImageView)]) {
-    [self.adView.nativeIconImageView addSubview:self.unifiedNativeAdView.iconView];
-    [self.unifiedNativeAdView.iconView gad_fillSuperview];
+    [self.adView.nativeIconImageView addSubview:self.nativeAdView.iconView];
+    [self.nativeAdView.iconView gad_fillSuperview];
   }
 
   // See if the ad contains a star rating and notify the view if it does.
@@ -145,14 +145,14 @@
   // as its subview if it does.
   if ([self.adView respondsToSelector:@selector(nativePrivacyInformationIconImageView)]) {
     [self.adView.nativePrivacyInformationIconImageView
-        addSubview:self.unifiedNativeAdView.adChoicesView];
-    [self.unifiedNativeAdView.adChoicesView gad_fillSuperview];
+        addSubview:self.nativeAdView.adChoicesView];
+    [self.nativeAdView.adChoicesView gad_fillSuperview];
   }
 
   // See if the ad contains the nativeMainImageView and add GADMediaView as its subview if it does.
   if ([self.adView respondsToSelector:@selector(nativeMainImageView)]) {
-    [self.adView.nativeMainImageView addSubview:self.unifiedNativeAdView.mediaView];
-    [self.unifiedNativeAdView.mediaView gad_fillSuperview];
+    [self.adView.nativeMainImageView addSubview:self.nativeAdView.mediaView];
+    [self.nativeAdView.mediaView gad_fillSuperview];
       
     self.adView.nativeMainImageView.userInteractionEnabled = YES;
   }

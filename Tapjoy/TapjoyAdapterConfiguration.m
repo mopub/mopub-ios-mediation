@@ -41,7 +41,7 @@ typedef NS_ENUM(NSInteger, TapjoyAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"12.7.1.3";
+    return @"12.8.0.0";
 }
 
 - (NSString *)biddingToken {

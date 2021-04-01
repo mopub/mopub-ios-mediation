@@ -1,4 +1,7 @@
 ## Changelog
+* 7.1.4.0.0
+    * This version of the adapters has been certified with ironSource 7.1.4.0 and MoPub SDK 5.16.2.
+
 * 7.1.2.0.0
     * This version of the adapters has been certified with ironSource 7.1.2.0 and MoPub SDK 5.16.1.
 

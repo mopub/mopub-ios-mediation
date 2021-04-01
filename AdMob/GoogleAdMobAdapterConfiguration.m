@@ -53,7 +53,7 @@ typedef NS_ENUM(NSInteger, AdMobAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"7.69.0.3";
+    return @"8.3.0.0";
 }
 
 - (NSString *)biddingToken {
