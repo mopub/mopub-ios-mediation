@@ -153,7 +153,7 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 }
 
 - (void)unityAdsShowComplete:(NSString *)placementId withFinishState:(UnityAdsShowCompletionState)state {
-  if (state == kUnityAdsFinishStateCompleted) {
+  if (state == kUnityShowCompletionStateCompleted) {
       MPReward *reward = [[MPReward alloc] initWithCurrencyType:kMPRewardCurrencyTypeUnspecified
                                                          amount:@(kMPRewardCurrencyAmountUnspecified)];
       [self.delegate fullscreenAdAdapter:self willRewardUser:reward];
