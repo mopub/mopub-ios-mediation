@@ -9,7 +9,6 @@
 
 NSString * const kIASDKMopubAdapterAppIDKey = @"appID";
 NSString * const kIASDKMoPubAdapterErrorDomain = @"com.mopub.IASDKAdapter";
-NSString * const kIASDKShouldUseMoPubGDPRConsentKey = @"IASDKShouldUseMopubGDPRConsentKey";
 NSNotificationName _Nonnull kIASDKInitCompleteNotification = @"kIASDKInitCompleteNotification";
 
 #pragma mark - Static members
@@ -97,11 +96,7 @@ static dispatch_queue_t sIASDKInitSyncQueue = nil;
 }
 
 + (void)collectConsentStatusFromMoPub {
-    BOOL shouldUseMoPubGDPRConsent =
-    [NSUserDefaults.standardUserDefaults boolForKey:kIASDKShouldUseMoPubGDPRConsentKey] ||
-    (IASDKCore.sharedInstance.GDPRConsent == IAGDPRConsentTypeUnknown);
-    
-    if (shouldUseMoPubGDPRConsent && (MoPub.sharedInstance.isGDPRApplicable == MPBoolYes)) {
+    if (MoPub.sharedInstance.isGDPRApplicable == MPBoolYes) {
         if (MoPub.sharedInstance.allowLegitimateInterest) {
             if ((MoPub.sharedInstance.currentConsentStatus == MPConsentStatusDenied) ||
                 (MoPub.sharedInstance.currentConsentStatus == MPConsentStatusDoNotTrack) ||
@@ -115,8 +110,6 @@ static dispatch_queue_t sIASDKInitSyncQueue = nil;
             
             IASDKCore.sharedInstance.GDPRConsent = (canCollectPersonalInfo) ? IAGDPRConsentTypeGiven : IAGDPRConsentTypeDenied;
         }
-        
-        [NSUserDefaults.standardUserDefaults setBool:YES forKey:kIASDKShouldUseMoPubGDPRConsentKey];
     }
 }
 
