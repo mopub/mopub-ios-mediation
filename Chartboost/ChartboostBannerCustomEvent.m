@@ -28,7 +28,7 @@
         MPLogAdEvent([MPLogEvent error:[NSError adRequestCalledTwiceOnSameEvent] message:nil], location);
     }
     
-    __weak typeof(self) weakSelf = self;
+    __weak __typeof(self) weakSelf = self;
     [ChartboostRouter startWithParameters:info completion:^(BOOL initialized) {
         if (!initialized) {
             NSError *error = [NSError adRequestFailedDueToSDKStartWithAdOfType:@"banner"];

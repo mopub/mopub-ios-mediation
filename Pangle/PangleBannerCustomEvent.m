@@ -32,14 +32,18 @@
         return;
     }
     
-    self.appId = [info objectForKey:kPangleAppIdKey];
-    if (BUCheckValidString(self.appId)) {
-        [PangleAdapterConfiguration pangleSDKInitWithAppId:self.appId];
+    NSString *appIdString = [info objectForKey:kPangleAppIdKey];
+    self.appId = appIdString;
+    
+    if (appIdString && [appIdString isKindOfClass:[NSString class]] && appIdString.length > 0) {
+        [PangleAdapterConfiguration pangleSDKInitWithAppId:appIdString];
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
     
-    self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
-    if (!BUCheckValidString(self.adPlacementId)) {
+    NSString *adPlacementId = [info objectForKey:kPanglePlacementIdKey];
+    self.adPlacementId = adPlacementId;
+    
+    if (!(adPlacementId && [adPlacementId isKindOfClass:[NSString class]] && adPlacementId.length > 0)) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty
                                          userInfo:@{NSLocalizedDescriptionKey:
@@ -75,7 +79,8 @@
 }
 
 - (NSString *) getAdNetworkId {
-    return (BUCheckValidString(self.adPlacementId)) ? self.adPlacementId : @"";
+    NSString *adPlacementId = self.adPlacementId;
+    return (adPlacementId && [adPlacementId isKindOfClass:[NSString class]]) ? adPlacementId : @"";
 }
 
 /**

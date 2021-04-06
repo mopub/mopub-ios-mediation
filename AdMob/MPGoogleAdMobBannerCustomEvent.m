@@ -18,14 +18,13 @@
 
 @property(nonatomic, strong) GADBannerView *adBannerView;
 
+@property(nonatomic) CGSize adSize;
+
 @end
 
 @implementation MPGoogleAdMobBannerCustomEvent
 @dynamic delegate;
 @dynamic localExtras;
-
-CGFloat adWidth;
-CGFloat adHeight;
 
 - (id)init {
   self = [super init];
@@ -45,10 +44,9 @@ CGFloat adHeight;
 }
 
 - (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-  adWidth = size.width;
-  adHeight = size.height;
+  self.adSize = size;
     
-  if (adWidth <= 0.0 || adHeight <= 0.0) {
+  if (self.adSize.width <= 0.0 || self.adSize.height <= 0.0) {
     NSString *failureReason = @"Google AdMob banner failed to load due to invalid ad width and/or height.";
     NSError *mopubError = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:failureReason];
 
@@ -58,7 +56,7 @@ CGFloat adHeight;
     return;
   }
     
-  self.adBannerView.frame = CGRectMake(0, 0, adWidth, adHeight);
+  self.adBannerView.frame = (CGRect){CGPointZero, self.adSize};
   self.adBannerView.adUnitID = [info objectForKey:@"adUnitID"];
   self.adBannerView.rootViewController = [self.delegate inlineAdAdapterViewControllerForPresentingModalView:self];
     
@@ -103,12 +101,12 @@ CGFloat adHeight;
 
 #pragma mark GADBannerViewDelegate methods
 
-- (void)adViewDidReceiveAd:(GADBannerView *)bannerView {
+- (void)bannerViewDidReceiveAd:(GADBannerView *)bannerView {
   CGFloat receivedWidth = bannerView.adSize.size.width;
   CGFloat receivedHeight = bannerView.adSize.size.height;
     
-  if (receivedWidth > adWidth || receivedHeight > adHeight) {
-    NSString *failureReason = [NSString stringWithFormat:@"Google served an ad but it was invalidated because its size of %.0f x %.0f exceeds the publisher-specified size of %.0f x %.0f", receivedWidth, receivedHeight, adWidth, adHeight];
+  if (receivedWidth > self.adSize.width || receivedHeight > self.adSize.height) {
+    NSString *failureReason = [NSString stringWithFormat:@"Google served an ad but it was invalidated because its size of %.0f x %.0f exceeds the publisher-specified size of %.0f x %.0f", receivedWidth, receivedHeight, self.adSize.width, self.adSize.height];
     NSError *mopubError = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:failureReason];
 
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:mopubError], [self getAdNetworkId]);
@@ -127,27 +125,21 @@ CGFloat adHeight;
     [self.delegate inlineAdAdapterDidTrackImpression:self];
 }
 
-- (void)adView:(GADBannerView *)bannerView didFailToReceiveAdWithError:(GADRequestError *)error {
- 
-  NSString *failureReason = [NSString stringWithFormat: @"Google AdMob Banner failed to load with error: %@", error.localizedDescription];
+- (void)bannerView:(GADBannerView *)bannerView didFailToReceiveAdWithError:(NSError *)error {
+
+  NSString *failureReason = [NSString stringWithFormat: @"Google AdMob Banner failed to load with error: %@", [error localizedDescription]];
   NSError *mopubError = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:failureReason];
 
   MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:mopubError], [self getAdNetworkId]);
   [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
 }
 
-- (void)adViewWillPresentScreen:(GADBannerView *)bannerView {
+- (void)bannerViewWillPresentScreen:(GADBannerView *)bannerView {
   [self.delegate inlineAdAdapterWillBeginUserAction:self];
 }
 
-- (void)adViewDidDismissScreen:(GADBannerView *)bannerView {
+- (void)bannerViewDidDismissScreen:(GADBannerView *)bannerView {
   [self.delegate inlineAdAdapterDidEndUserAction:self];
-}
-
-- (void)adViewWillLeaveApplication:(GADBannerView *)bannerView {
-  MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-
-  [self.delegate inlineAdAdapterDidTrackClick:self];
 }
 
 - (NSString *) getAdNetworkId {

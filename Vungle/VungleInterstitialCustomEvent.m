@@ -76,14 +76,6 @@
                 }
             }
             
-            NSString *flexViewAutoDismissSeconds = [self.localExtras objectForKey:kVungleFlexViewAutoDismissSeconds];
-            if (flexViewAutoDismissSeconds != nil) {
-                NSTimeInterval flexDismissTime = [flexViewAutoDismissSeconds floatValue];
-                if (flexDismissTime > 0) {
-                    options[VunglePlayAdOptionKeyFlexViewAutoDismissSeconds] = @(flexDismissTime);
-                }
-            }
-            
             NSString *muted = [self.localExtras objectForKey:kVungleStartMuted];
             if ( muted != nil) {
                 BOOL startMutedPlaceholder = [muted boolValue];
@@ -153,15 +145,20 @@
 
 - (void)vungleAdDidAppear
 {
-    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate fullscreenAdAdapterAdDidAppear:self];
+}
+
+- (void)vungleAdViewed
+{
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
 - (void)vungleAdWillDisappear
 {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
 }
 
@@ -169,12 +166,7 @@
 {
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
-    
-    // Signal that the fullscreen ad is closing and the state should be reset.
-    // `fullscreenAdAdapterAdDidDismiss:` was introduced in MoPub SDK 5.15.0.
-    if ([self.delegate respondsToSelector:@selector(fullscreenAdAdapterAdDidDismiss:)]) {
-        [self.delegate fullscreenAdAdapterAdDidDismiss:self];
-    }
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
     
     [self cleanUp];
     

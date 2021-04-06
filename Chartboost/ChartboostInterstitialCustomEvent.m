@@ -45,7 +45,7 @@
         MPLogAdEvent([MPLogEvent error:[NSError adRequestCalledTwiceOnSameEvent] message:nil], location);
     }
     
-    __weak typeof(self) weakSelf = self;
+    __weak __typeof(self) weakSelf = self;
     [ChartboostRouter startWithParameters:info completion:^(BOOL initialized) {
         if (!initialized) {
             NSError *error = [NSError adRequestFailedDueToSDKStartWithAdOfType:@"interstitial"];
@@ -91,7 +91,7 @@
     if (error) {
         NSError *nserror = [NSError errorWithShowEvent:event error:error];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:nserror], self.ad.location);
-        [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:nserror];
+        [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:nserror];
     } else {
         MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], event.ad.location);
         MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], event.ad.location);
@@ -116,16 +116,12 @@
 
 - (void)didDismissAd:(CHBDismissEvent *)event
 {
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], event.ad.location);
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], event.ad.location);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
-    
-    // Signal that the fullscreen ad is closing and the state should be reset.
-    // `fullscreenAdAdapterAdDidDismiss:` was introduced in MoPub SDK 5.15.0.
-    if ([self.delegate respondsToSelector:@selector(fullscreenAdAdapterAdDidDismiss:)]) {
-        [self.delegate fullscreenAdAdapterAdDidDismiss:self];
-    }
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
 }
 
 @end

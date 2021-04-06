@@ -146,10 +146,12 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 }
 
 - (void)unityAdsShowComplete:(NSString *)placementId withFinishState:(UnityAdsShowCompletionState)state {
+  [self.delegate fullscreenAdAdapterAdWillDismiss:self];
   [self.delegate fullscreenAdAdapterAdWillDisappear:self];
   MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], placementId);
 
   [self.delegate fullscreenAdAdapterAdDidDisappear:self];
+  [self.delegate fullscreenAdAdapterAdDidDismiss:self];  
   MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], placementId);
 
   // Signal that the fullscreen ad is closing and the state should be reset.

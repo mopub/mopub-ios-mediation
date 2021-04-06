@@ -30,8 +30,6 @@
 
 @property (nonatomic) NSUInteger ordinal;
 
-@property (nonatomic) NSTimeInterval flexViewAutoDismissSeconds;
-
 @property (nonatomic) BOOL startMuted;
 
 @property (nonatomic, assign) NSNumber *orientations;

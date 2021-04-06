@@ -8,9 +8,16 @@
 #import "MoPub.h"
 #endif
 
-// <MPNativeAdRendering> custom asset properties.
-extern NSString * const kVASDisclaimerKey;      // NSString *
-extern NSString * const kVASVideoViewKey;       // NSString *
+// VASNativeAd and component keys
+extern NSString * const kVASNativeAd;       // NSString *
+extern NSString * const kTitleCompId;       // NSString *
+extern NSString * const kBodyCompId;        // NSString *
+extern NSString * const kCTACompId;         // NSString *
+extern NSString * const kRatingCompId;      // NSString *
+extern NSString * const kDisclaimerCompId;  // NSString *
+extern NSString * const kMainImageCompId;   // NSString *
+extern NSString * const kIconImageCompId;   // NSString *
+extern NSString * const kVideoCompId;       // NSString *
 
 @interface MPVerizonNativeAdAdapter : NSObject <MPNativeAdAdapter, VASNativeAdDelegate>
 
