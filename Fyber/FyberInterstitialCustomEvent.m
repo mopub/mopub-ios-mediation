@@ -147,7 +147,9 @@
 }
 
 - (void)handleDidPlayAd {
-    //no-op
+    if (!self.hasAdAvailable) {
+        [self.delegate fullscreenAdAdapterDidExpire:self];
+    }
 }
 
 #pragma mark - Service
