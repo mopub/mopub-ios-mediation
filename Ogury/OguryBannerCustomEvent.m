@@ -26,7 +26,7 @@
 - (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
     self.banner = [[OguryAdsBanner alloc] initWithAdUnitID:info[kOguryConfigurationAdUnitId]];
 
-    OguryAdsBannerSize *sizeOguryBanner = [OguryAdsMoPubEventBanner getOgurySize:size];
+    OguryAdsBannerSize *sizeOguryBanner = [OguryBannerCustomEvent getOgurySize:size];
 
     if (!sizeOguryBanner) {
         NSError *error = [NSError errorWithCode:MOPUBErrorNoInventory];
@@ -41,11 +41,11 @@
 }
 
 + (OguryAdsBannerSize *)getOgurySize:(CGSize)size {
-    if ([OguryAdsMoPubEventBanner size:size canInclude:[[OguryAdsBannerSize small_banner_320x50] getSize]]) {
+    if ([OguryBannerCustomEvent size:size canInclude:[[OguryAdsBannerSize small_banner_320x50] getSize]]) {
         return [OguryAdsBannerSize small_banner_320x50];
     }
 
-    if ([OguryAdsMoPubEventBanner size:size canInclude:[[OguryAdsBannerSize mpu_300x250] getSize]]) {
+    if ([OguryBannerCustomEvent size:size canInclude:[[OguryAdsBannerSize mpu_300x250] getSize]]) {
         return [OguryAdsBannerSize mpu_300x250];
     }
 

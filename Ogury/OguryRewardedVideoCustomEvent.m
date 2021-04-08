@@ -2,7 +2,7 @@
 //  Copyright © 2019 Ogury Co. All rights reserved.
 //
 
-#import "OguryAdsMoPubEventOptin.h"
+#import "OguryRewardedVideoCustomEvent.h"
 #import <OguryAds/OguryAds.h>
 #import "OguryAdapterConfiguration.h"
 
