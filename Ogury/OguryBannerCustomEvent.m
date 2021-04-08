@@ -9,18 +9,22 @@
 
 @interface OguryBannerCustomEvent() <OguryAdsBannerDelegate>
 
+#pragma mark - Properties
+
 @property (nonatomic, strong) OguryAdsBanner *banner;
 
 @end
 
 @implementation OguryBannerCustomEvent
 
+#pragma mark - Methods
+
 - (void)dealloc {
     self.banner.bannerDelegate = nil;
 }
 
 - (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    self.banner = [[OguryAdsBanner alloc] initWithAdUnitID:info[OguryConfigurationAdUnitId]];
+    self.banner = [[OguryAdsBanner alloc] initWithAdUnitID:info[kOguryConfigurationAdUnitId]];
 
     OguryAdsBannerSize *sizeOguryBanner = [OguryAdsMoPubEventBanner getOgurySize:size];
 

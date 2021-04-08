@@ -8,18 +8,22 @@
 
 @interface OguryRewardedVideoCustomEvent() <OguryAdsOptinVideoDelegate>
 
+#pragma mark - Properties
+
 @property (nonatomic,strong) OguryAdsOptinVideo *optinVideo;
 
 @end
 
 @implementation OguryRewardedVideoCustomEvent
 
+#pragma mark - Methods
+
 - (void)dealloc {
     self.optinVideo.optInVideoDelegate = nil;
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    self.optinVideo = [[OguryAdsOptinVideo alloc] initWithAdUnitID:info[OguryConfigurationAdUnitId]];
+    self.optinVideo = [[OguryAdsOptinVideo alloc] initWithAdUnitID:info[kOguryConfigurationAdUnitId]];
     self.optinVideo.optInVideoDelegate = self;
 
     [self.optinVideo load];
@@ -52,6 +56,8 @@
 - (void)oguryAdsOptinVideoAdClosed {
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
 }
 
 - (void)oguryAdsOptinVideoAdDisplayed {

@@ -11,7 +11,10 @@
 
 #pragma mark - Constants
 
-NSString * const OguryConfigurationAdUnitId = @"ad_unit_id";
+NSString * const kOguryConfigurationAdUnitId = @"ad_unit_id";
+
+static NSString * const OguryErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-ogury-adapters";
+static int const OguryMissingAssetKeyErrorCode = 2006;
 
 static NSString * const OguryConfigurationMediationName = @"MoPub";
 static NSString * const OguryConfigurationAdapterVersion = @"2.2.4.0";
@@ -52,6 +55,24 @@ static NSString * const OguryConfigurationKeyAssetKey = @"asset-key";
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration complete:(void(^ _Nullable)(NSError * _Nullable))complete {
+    NSString *assetKey = configuration[OguryConfigurationKeyAssetKey];
+
+    if (!assetKey || [assetKey isEqualToString:@""]) {
+        NSError *error = [NSError errorWithDomain:OguryErrorDomain
+                                             code:OguryMissingAssetKeyErrorCode
+                                         userInfo:@{NSLocalizedDescriptionKey:@"OguryAdsAssetKeyNotValidError. An error occurred during the initialization of the SDK."}];
+                                         
+        MPLogEvent([MPLogEvent error:error message:nil]);
+        
+        if (complete != nil) {
+            complete(error);
+        }
+
+        return;
+    }
+
+    [[OguryAds shared] setupWithAssetKey:assetKey];
+
     MPLogInfo(@"Ogury SDK successfully initialized.");
 
     complete(nil);

@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Constants
 
-extern NSString * const OguryConfigurationAdUnitId;
+extern NSString * const kOguryConfigurationAdUnitId;
 
 @interface OguryAdapterConfiguration : MPBaseAdapterConfiguration
 

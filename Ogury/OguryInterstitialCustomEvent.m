@@ -8,18 +8,22 @@
 
 @interface OguryInterstitialCustomEvent() <OguryAdsInterstitialDelegate>
 
+#pragma mark - Properties
+
 @property (nonatomic, strong) OguryAdsInterstitial *interstitial;
 
 @end
 
 @implementation OguryInterstitialCustomEvent
 
+#pragma mark - Methods
+
 - (void)dealloc {
     self.interstitial.interstitialDelegate = nil;
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    self.interstitial = [[OguryAdsInterstitial alloc] initWithAdUnitID:info[OguryConfigurationAdUnitId]];
+    self.interstitial = [[OguryAdsInterstitial alloc] initWithAdUnitID:info[kOguryConfigurationAdUnitId]];
     self.interstitial.interstitialDelegate = self;
 
     [self.interstitial load];
@@ -53,6 +57,8 @@
 - (void)oguryAdsInterstitialAdClosed {
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
 }
 
 - (void)oguryAdsInterstitialAdDisplayed {
