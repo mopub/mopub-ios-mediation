@@ -1,20 +1,23 @@
 //
-//  Copyright © 2019 Ogury Co. All rights reserved.
+//  Copyright © 2019 Ogury Ltd. All rights reserved.
 //
 
 #import "OguryRewardedVideoCustomEvent.h"
 #import <OguryAds/OguryAds.h>
 #import "OguryAdapterConfiguration.h"
 
-@interface OguryRewardedVideoCustomEvent() <OguryAdsOptinVideoDelegate>
+@interface OguryRewardedVideoCustomEvent () <OguryAdsOptinVideoDelegate>
 
 #pragma mark - Properties
 
-@property (nonatomic,strong) OguryAdsOptinVideo *optinVideo;
+@property (nonatomic, copy) NSString *adUnitId;
+@property (nonatomic, strong) OguryAdsOptinVideo *optinVideo;
 
 @end
 
 @implementation OguryRewardedVideoCustomEvent
+
+@dynamic adUnitId;
 
 #pragma mark - Methods
 
@@ -23,7 +26,9 @@
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    self.optinVideo = [[OguryAdsOptinVideo alloc] initWithAdUnitID:info[kOguryConfigurationAdUnitId]];
+    self.adUnitId = info[kOguryConfigurationAdUnitId];
+
+    self.optinVideo = [[OguryAdsOptinVideo alloc] initWithAdUnitID:self.adUnitId];
     self.optinVideo.optInVideoDelegate = self;
 
     [self.optinVideo load];
@@ -66,7 +71,10 @@
 }
 
 - (void)oguryAdsOptinVideoAdError:(OguryAdsErrorType)errorType {
-    NSError *error = [NSError errorWithCode:MOPUBErrorNoInventory];
+    NSError *error = [NSError errorWithDomain:kOguryErrorDomain code:MOPUBErrorNoInventory userInfo:@{NSLocalizedDescriptionKey: @"Failed to display RewardedVideo."}];
+    
+    MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass([self class]) error:error], self.adUnitId);
+
     [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
 }
 

@@ -6,15 +6,18 @@
 #import <OguryAds/OguryAds.h>
 #import "OguryAdapterConfiguration.h"
 
-@interface OguryInterstitialCustomEvent() <OguryAdsInterstitialDelegate>
+@interface OguryInterstitialCustomEvent () <OguryAdsInterstitialDelegate>
 
 #pragma mark - Properties
 
+@property (nonatomic, copy) NSString *adUnitId;
 @property (nonatomic, strong) OguryAdsInterstitial *interstitial;
 
 @end
 
 @implementation OguryInterstitialCustomEvent
+
+@dynamic adUnitId;
 
 #pragma mark - Methods
 
@@ -23,7 +26,9 @@
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    self.interstitial = [[OguryAdsInterstitial alloc] initWithAdUnitID:info[kOguryConfigurationAdUnitId]];
+    self.adUnitId = info[kOguryConfigurationAdUnitId];
+
+    self.interstitial = [[OguryAdsInterstitial alloc] initWithAdUnitID:self.adUnitId];
     self.interstitial.interstitialDelegate = self;
 
     [self.interstitial load];
@@ -67,7 +72,10 @@
 }
 
 - (void)oguryAdsInterstitialAdError:(OguryAdsErrorType)errorType {
-    NSError *error = [NSError errorWithCode:MOPUBErrorNoInventory];
+    NSError *error = [NSError errorWithDomain:kOguryErrorDomain code:MOPUBErrorNoInventory userInfo:@{NSLocalizedDescriptionKey: @"Failed to display Interstitial."}];
+    
+    MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass([self class]) error:error], self.adUnitId);
+
     [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
 }
 

@@ -7,15 +7,18 @@
 #import <OguryAds/OguryAds.h>
 #import "OguryAdapterConfiguration.h"
 
-@interface OguryBannerCustomEvent() <OguryAdsBannerDelegate>
+@interface OguryBannerCustomEvent () <OguryAdsBannerDelegate>
 
 #pragma mark - Properties
 
+@property (nonatomic, copy) NSString *adUnitId;
 @property (nonatomic, strong) OguryAdsBanner *banner;
 
 @end
 
 @implementation OguryBannerCustomEvent
+
+@dynamic adUnitId;
 
 #pragma mark - Methods
 
@@ -24,7 +27,9 @@
 }
 
 - (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    self.banner = [[OguryAdsBanner alloc] initWithAdUnitID:info[kOguryConfigurationAdUnitId]];
+    self.adUnitId = info[kOguryConfigurationAdUnitId];
+
+    self.banner = [[OguryAdsBanner alloc] initWithAdUnitID:self.adUnitId];
 
     OguryAdsBannerSize *sizeOguryBanner = [OguryBannerCustomEvent getOgurySize:size];
 
@@ -89,7 +94,10 @@
 }
 
 - (void)oguryAdsBannerAdError:(OguryAdsErrorType)errorType forBanner:(OguryAdsBanner *)bannerAds {
-    NSError *error = [NSError errorWithCode:MOPUBErrorNoInventory];
+    NSError *error = [NSError errorWithDomain:kOguryErrorDomain code:MOPUBErrorNoInventory userInfo:@{NSLocalizedDescriptionKey: @"Failed to display Banner."}];
+
+    MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass([self class]) error:error], self.adUnitId);
+
     [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
 }
 

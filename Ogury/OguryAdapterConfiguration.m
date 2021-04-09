@@ -12,8 +12,7 @@
 #pragma mark - Constants
 
 NSString * const kOguryConfigurationAdUnitId = @"ad_unit_id";
-
-static NSString * const OguryErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-ogury-adapters";
+NSString * const kOguryErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-ogury-adapters";
 static int const OguryMissingAssetKeyErrorCode = 2006;
 
 static NSString * const OguryConfigurationMediationName = @"MoPub";
