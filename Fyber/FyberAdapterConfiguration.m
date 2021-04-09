@@ -96,6 +96,7 @@ static dispatch_queue_t sIASDKInitSyncQueue = nil;
 }
 
 + (void)collectConsentStatusFromMoPub {
+    
     if (MoPub.sharedInstance.isGDPRApplicable == MPBoolYes) {
         if (MoPub.sharedInstance.allowLegitimateInterest) {
             if ((MoPub.sharedInstance.currentConsentStatus == MPConsentStatusDenied) ||
@@ -107,7 +108,7 @@ static dispatch_queue_t sIASDKInitSyncQueue = nil;
             }
         } else {
             const BOOL canCollectPersonalInfo = MoPub.sharedInstance.canCollectPersonalInfo;
-            
+
             IASDKCore.sharedInstance.GDPRConsent = (canCollectPersonalInfo) ? IAGDPRConsentTypeGiven : IAGDPRConsentTypeDenied;
         }
     }

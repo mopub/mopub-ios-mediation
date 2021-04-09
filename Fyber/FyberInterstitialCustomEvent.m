@@ -202,6 +202,7 @@
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.spotID);
     [self.delegate fullscreenAdAdapterAdWillDismiss:self];
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
+    
 }
 
 - (void)IAUnitControllerDidDismissFullscreen:(IAUnitController * _Nullable)unitController {
@@ -218,7 +219,6 @@
 - (void)IAAdDidExpire:(IAUnitController * _Nullable)unitController {
     NSError *error = [NSError errorWithCode:MOPUBErrorVideoPlayerFailedToPlay
                        localizedDescription:@"Fyber ad is expired."];
-    
     MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.spotID);
     [self.delegate fullscreenAdAdapterDidExpire:self];
     [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];

@@ -27,6 +27,7 @@
 
 - (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
+    
     _isIABanner =
     ((size.width == kIADefaultIPhoneBannerWidth) && (size.height == kIADefaultIPhoneBannerHeight)) ||
     ((size.width == kIADefaultIPadBannerWidth) && (size.height == kIADefaultIPadBannerHeight));
@@ -37,7 +38,6 @@
     BOOL isMediumRectangleFormat = (format != nil ? [[format lowercaseString] containsString:@"medium_rectangle"] : NO);
     BOOL isBannerFormat = (format != nil ? [[format lowercaseString] containsString:@"banner"] : NO);
 
-     //Fyber only supports Medium Rectangle or Banner
     if (!isMediumRectangleFormat && !isBannerFormat) {
         MPLogInfo(@"Fyber only supports 300*250, 320*50 and 728*90 sized ads. Please ensure your MoPub adunit's format is Medium Rectangle or Banner.");
         NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid sizes received. Fyber only supports 300 x 250, 320 x 50 and 728 x 90 ads."];
@@ -186,6 +186,7 @@
 }
 
 - (void)IAUnitControllerWillPresentFullscreen:(IAUnitController * _Nullable)unitController {
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.spotID);
     MPLogInfo(@"ad will present fullscreen;");
 }
 
