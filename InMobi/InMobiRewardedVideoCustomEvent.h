@@ -1,5 +1,5 @@
 //
-//  InMobiRewardedCustomEvent.h
+//  InMobiRewardedVideoCustomEvent.h
 //  MoPub
 //
 //  Copyright © 2021 MoPub. All rights reserved.

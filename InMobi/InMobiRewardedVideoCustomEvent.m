@@ -1,11 +1,11 @@
 //
-//  InMobiRewardedCustomEvent.m
+//  InMobiRewardedVideoCustomEvent.m
 //  MoPub
 //
 //  Copyright © 2021 MoPub. All rights reserved.
 //
 
-#import "InMobiRewardedCustomEvent.h"
+#import "InMobiRewardedVideoCustomEvent.h"
 #import "InMobiAdapterConfiguration.h"
 #import <InMobiSDK/IMSdk.h>
 
