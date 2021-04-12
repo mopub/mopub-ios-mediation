@@ -1,5 +1,5 @@
 //
-//  Copyright © 2020 Ogury Ltd. All rights reserved.
+//  Copyright © 2021 Ogury Ltd. All rights reserved.
 //
 
 #import "OguryBannerCustomEvent.h"

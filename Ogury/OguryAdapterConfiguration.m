@@ -1,5 +1,5 @@
 //
-//  Copyright © 2019 Ogury Ltd. All rights reserved.
+//  Copyright © 2021 Ogury Ltd. All rights reserved.
 //
 
 #import "OguryAdapterConfiguration.h"
