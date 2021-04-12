@@ -13,7 +13,6 @@
 
 NSString * const kOguryConfigurationAdUnitId = @"ad_unit_id";
 NSString * const kOguryErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-ogury-adapters";
-static int const OguryMissingAssetKeyErrorCode = 2006;
 
 static NSString * const OguryConfigurationMediationName = @"MoPub";
 static NSString * const OguryConfigurationAdapterVersion = @"2.2.4.0";
@@ -44,21 +43,17 @@ static NSString * const OguryConfigurationKeyAssetKey = @"asset-key";
 #pragma mark - Methods
 
 + (void)updateInitializationParameters:(NSDictionary *)parameters {
-    [[OguryAds shared] defineMediationName:OguryConfigurationMediationName];
-
-    NSString *assetKey = parameters[OguryConfigurationKeyAssetKey];
-
-    if (assetKey != nil && ![assetKey isEqualToString:@""]) {
-        [[OguryAds shared] setupWithAssetKey:assetKey];
-    }
+    // Not implemented
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration complete:(void(^ _Nullable)(NSError * _Nullable))complete {
+    [[OguryAds shared] defineMediationName:OguryConfigurationMediationName];
+    
     NSString *assetKey = configuration[OguryConfigurationKeyAssetKey];
 
     if (!assetKey || [assetKey isEqualToString:@""]) {
-        NSError *error = [NSError errorWithDomain:OguryErrorDomain
-                                             code:OguryMissingAssetKeyErrorCode
+        NSError *error = [NSError errorWithDomain:kOguryErrorDomain
+                                             code:MOPUBErrorAdapterInvalid
                                          userInfo:@{NSLocalizedDescriptionKey:@"OguryAdsAssetKeyNotValidError. An error occurred during the initialization of the SDK."}];
                                          
         MPLogEvent([MPLogEvent error:error message:nil]);

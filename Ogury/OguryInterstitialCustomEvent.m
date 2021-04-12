@@ -5,6 +5,7 @@
 #import "OguryInterstitialCustomEvent.h"
 #import <OguryAds/OguryAds.h>
 #import "OguryAdapterConfiguration.h"
+#import "NSError+Ogury.h"
 
 @interface OguryInterstitialCustomEvent () <OguryAdsInterstitialDelegate>
 
@@ -72,7 +73,7 @@
 }
 
 - (void)oguryAdsInterstitialAdError:(OguryAdsErrorType)errorType {
-    NSError *error = [NSError errorWithDomain:kOguryErrorDomain code:MOPUBErrorNoInventory userInfo:@{NSLocalizedDescriptionKey: @"Failed to display Interstitial."}];
+    NSError *error = [NSError ogy_MoPubErrorFromOguryError:errorType];
     
     MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass([self class]) error:error], self.adUnitId);
 
@@ -89,7 +90,7 @@
 }
 
 - (void)oguryAdsInterstitialAdNotLoaded {
-    NSError *error = [NSError errorWithCode:MOPUBErrorNoInventory];
+    NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd];
     [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
 }
 
