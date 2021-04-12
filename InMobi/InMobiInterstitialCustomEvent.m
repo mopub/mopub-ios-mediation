@@ -60,9 +60,20 @@
     self.placementId = placementId;
     long long placementIdLong = [placementId longLongValue];
 
-    [InMobiAdapterConfiguration initializeInMobiSDK:accountId];
+    if (![InMobiAdapterConfiguration isInMobiSDKInitialized]) {
+        [self failLoadWithError: [InMobiAdapterConfiguration createInitializationError:@"interstitial ad request"]];
+        [InMobiAdapterConfiguration initializeInMobiSDK:accountId];
+        return;
+    }
 
     self.interstitialAd = [[IMInterstitial alloc] initWithPlacementId:placementIdLong delegate:self];
+    if (!self.interstitialAd) {
+        NSError * interstitialFailedToInitialize = [InMobiAdapterConfiguration createErrorWith:@"Aborting InMobi interstitial ad request"
+                                                                               andReason:@"InMobi SDK was unable to initialize an interstitial object"
+                                                                           andSuggestion:@""];
+        [self failLoadWithError:interstitialFailedToInitialize];
+        return;
+    }
     
     // Mandatory params to be set by the publisher to identify the supply source type
     NSMutableDictionary * mandatoryInMobiExtrasDict = [[NSMutableDictionary alloc] init];
@@ -91,9 +102,6 @@
                  [self getAdNetworkId]);
 
     if ([self hasAdAvailable]) {
-        MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-        [self.delegate fullscreenAdAdapterAdWillAppear:self];
-        
         IMCompletionBlock completionBlock = ^{
             [self.interstitialAd showFromViewController:viewController withAnimation:kIMInterstitialAnimationTypeCoverVertical];
         };

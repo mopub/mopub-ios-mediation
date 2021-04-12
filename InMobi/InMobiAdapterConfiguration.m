@@ -74,8 +74,10 @@ static BOOL isInMobiSDKInitialized = false;
                 if (error) {
                     [self createErrorWith:@"InMobi initialization encountered an error."
                                 andReason:error.description
-                            andSuggestion:@"Will attempt to initialize again on the first ad request."];
+                            andSuggestion:@"Will attempt to initialize again on the next possible first ad request to InMobi."];
+                    isInMobiSDKInitialized = false;
                 } else {
+                    isInMobiSDKInitialized = true;
                     MPLogInfo(@"InMobi initialization completed.");
                 }
             }];
@@ -83,7 +85,6 @@ static BOOL isInMobiSDKInitialized = false;
         
         [InMobiAdapterConfiguration invokeOnMainThreadAsSynced:YES withCompletionBlock:completionBlock];
         MPLogInfo(@"InMobi SDK initialized successfully.");
-        isInMobiSDKInitialized = true;
     } else {
         MPLogInfo(@"InMobi SDK already initialized, no need to reinitialize.");
     }
@@ -93,7 +94,7 @@ static BOOL isInMobiSDKInitialized = false;
 
 + (NSError *)validateAccountId:(NSString *)accountId forOperation:(NSString *)operation {
     accountId = [accountId stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    if (accountId != nil && accountId.length <= 0) {
+    if (accountId != nil && accountId.length > 0) {
         return nil;
     }
     
@@ -116,12 +117,22 @@ static BOOL isInMobiSDKInitialized = false;
     return nil;
 }
 
++ (NSError *)createInitializationError:(NSString *)operation {
+    NSString * description = [NSString stringWithFormat:@"Aborting InMobi %@", operation];
+    NSString * reason      = [NSString stringWithFormat:@"InMobi SDK is not initialized yet"];
+    NSString * suggestion  = [NSString stringWithFormat:@"Will attempt to initialize InMobi SDK now to have InMobi SDK ready for the next possible ad request."];
+    
+    return [InMobiAdapterConfiguration createErrorWith:description
+                                               andReason:reason
+                                           andSuggestion:suggestion];
+}
+
 + (NSError *)createErrorForOperation:(NSString *)operation forParameterName:(NSString *)parameterName {
     if (parameterName == nil) {
         parameterName = @"InMobi Account Id and/or Placement Id";
     }
     
-    NSString * description = [NSString stringWithFormat:@"InMobi adapter unable to proceed with %@", operation];
+    NSString * description = [NSString stringWithFormat:@"InMobi adapter unable to proceed with InMobi %@", operation];
     NSString * reason      = [NSString stringWithFormat:@"%@ is nil/empty", parameterName];
     NSString * suggestion  = [NSString stringWithFormat:@"Make sure the InMobi's %@ is configured on the MoPub UI.", parameterName];
     

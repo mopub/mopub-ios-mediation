@@ -65,12 +65,13 @@
     }
     CGRect bannerAdFrame = CGRectMake(0, 0, size.width, size.height);
         
-    [InMobiAdapterConfiguration initializeInMobiSDK:accountId];
-        
-    self.bannerAd = [[IMBanner alloc] initWithFrame:bannerAdFrame
-                                        placementId:placementIdLong
-                                           delegate:self];
+    if (![InMobiAdapterConfiguration isInMobiSDKInitialized]) {
+        [self failLoadWithError: [InMobiAdapterConfiguration createInitializationError:@"interstitial ad request"]];
+        [InMobiAdapterConfiguration initializeInMobiSDK:accountId];
+        return;
+    }
     
+    self.bannerAd = [[IMBanner alloc] initWithFrame:bannerAdFrame placementId:placementIdLong delegate:self];
     if (!self.bannerAd) {
         NSError * bannerFailedToInitialize = [InMobiAdapterConfiguration createErrorWith:@"Aborting InMobi banner ad request"
                                                                                andReason:@"InMobi SDK was unable to initialize a banner object"

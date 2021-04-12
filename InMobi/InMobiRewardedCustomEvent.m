@@ -17,7 +17,7 @@
 #endif
 
 
-@interface InMobiRewardedCustomEvent () <IMInterstitialDelegate>
+@interface InMobiRewardedVideoCustomEvent () <IMInterstitialDelegate>
 
 @property (nonatomic, strong) IMInterstitial * rewardedVideoAd;
 @property (nonatomic, copy)   NSString       * placementId;
@@ -25,7 +25,7 @@
 
 @end
 
-@implementation InMobiRewardedCustomEvent
+@implementation InMobiRewardedVideoCustomEvent
 
 - (NSString *) getAdNetworkId {
     return _placementId;
@@ -46,32 +46,39 @@
     return NO;
 }
 
-- (void)initializeSdkWithParameters:(NSDictionary *)parameters {
-    NSString * const accountId   = parameters[kIMAccountIdKey];
-    NSString * const placementId = parameters[kIMPlacementIdKey];
+- (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
+    NSString * const accountId   = info[kIMAccountIdKey];
+    NSString * const placementId = info[kIMPlacementIdKey];
 
     NSError * accountIdError = [InMobiAdapterConfiguration validateAccountId:accountId forOperation:@"rewarded video ad request"];
     if (accountIdError) {
         [self failLoadWithError:accountIdError];
         return;
     }
-    self.accountId = accountId;
 
     NSError * placementIdError = [InMobiAdapterConfiguration validatePlacementId:placementId forOperation:@"rewarded video ad request"];
     if (placementIdError) {
         [self failLoadWithError:placementIdError];
         return;
     }
+    
     self.placementId = placementId;
+    long long placementIdLong = [placementId longLongValue];
 
-    [InMobiAdapterConfiguration initializeInMobiSDK:accountId];
-}
+    if (![InMobiAdapterConfiguration isInMobiSDKInitialized]) {
+        [self failLoadWithError: [InMobiAdapterConfiguration createInitializationError:@"rewarded video ad request"]];
+        [InMobiAdapterConfiguration initializeInMobiSDK:accountId];
+        return;
+    }
 
-- (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    NSMutableDictionary *inMobiParameters = [NSMutableDictionary dictionaryWithDictionary:info];
-    [self initializeSdkWithParameters:inMobiParameters];
-
-    self.rewardedVideoAd = [[IMInterstitial alloc] initWithPlacementId:[self.placementId longLongValue] delegate:self];
+    self.rewardedVideoAd = [[IMInterstitial alloc] initWithPlacementId:placementIdLong delegate:self];
+    if (!self.rewardedVideoAd) {
+        NSError * rewardedVideoFailedToInitialize = [InMobiAdapterConfiguration createErrorWith:@"Aborting InMobi rewarded video ad request"
+                                                                               andReason:@"InMobi SDK was unable to initialize a rewarded video object"
+                                                                           andSuggestion:@""];
+        [self failLoadWithError:rewardedVideoFailedToInitialize];
+        return;
+    }
     
     // Mandatory params to be set by the publisher to identify the supply source type
     NSMutableDictionary * mandatoryInMobiExtrasDict = [[NSMutableDictionary alloc] init];
@@ -100,9 +107,6 @@
                  [self getAdNetworkId]);
     
     if ([self hasAdAvailable]) {
-        MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-        [self.delegate fullscreenAdAdapterAdWillAppear:self];
-
         IMCompletionBlock completionBlock = ^{
             [self.rewardedVideoAd showFromViewController:viewController withAnimation:kIMInterstitialAnimationTypeCoverVertical];
         };

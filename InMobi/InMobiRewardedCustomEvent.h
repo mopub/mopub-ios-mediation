@@ -15,6 +15,6 @@
 
 #import <InMobiSDK/IMInterstitial.h>
 
-@interface InMobiRewardedCustomEvent : MPFullscreenAdAdapter <IMInterstitialDelegate>
+@interface InMobiRewardedVideoCustomEvent : MPFullscreenAdAdapter <IMInterstitialDelegate>
 
 @end

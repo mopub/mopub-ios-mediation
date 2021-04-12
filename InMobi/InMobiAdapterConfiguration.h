@@ -43,6 +43,8 @@ extern NSString * const kIMAccountIdKey;
 
 + (NSError *)validatePlacementId:(NSString *)placementId forOperation:(NSString *)operation;
 
++ (NSError *)createInitializationError:(NSString *)operation;
+
 + (NSError *)createErrorForOperation:(NSString *)operation forParameterName:(NSString *)parameterName;
 
 + (NSError *)createErrorWith:(NSString *)description andReason:(NSString *)reason andSuggestion:(NSString *)suggestion;
