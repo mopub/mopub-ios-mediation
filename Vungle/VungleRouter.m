@@ -129,8 +129,6 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
             NSError * error = nil;
             // Disable refresh functionality for all banners
             [[VungleSDK sharedSDK] disableBannerRefresh];
-            // Enable background downloading
-            [VungleSDK enableBackgroundDownload:YES];
             BOOL started = [[VungleSDK sharedSDK] startWithAppId:appId options:initOptions error:&error];
             if (!started && error.code == VungleSDKErrorSDKAlreadyInitializing) {
                 MPLogInfo(@"Vungle:SDK already has been initialized.");
