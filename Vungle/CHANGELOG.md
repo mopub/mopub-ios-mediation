@@ -1,4 +1,7 @@
 ## Changelog
+* 6.9.2.0
+  * This version of the adapters has been certified with Vungle 6.9.2.
+  
 * 6.9.1.2
   * Address Vungle SDK v6.9.1 deadlock issue.
   
