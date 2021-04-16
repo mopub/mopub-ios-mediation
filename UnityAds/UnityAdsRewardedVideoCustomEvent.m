@@ -11,6 +11,7 @@
 #import "UnityRouter.h"
 #if __has_include("MoPub.h")
     #import "MPError.h"
+    #import "MPRewardedAdsError.h"
     #import "MPReward.h"
     #import "MPLogging.h"
 #endif
