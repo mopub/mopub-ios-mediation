@@ -15,6 +15,7 @@
     #import <MoPubSDK/MoPub.h>
 #else
     #import "MoPub.h"
+    #import "MPRewardedAds.h"
 #endif
 
 @interface UnityAdsAdapterInitializationDelegate : NSObject<UnityAdsInitializationDelegate>
