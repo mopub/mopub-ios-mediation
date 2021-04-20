@@ -11,6 +11,7 @@
 #import "MPNativeAdConstants.h"
 #import "MPNativeAdRendererConfiguration.h"
 #import "MPStaticNativeAdRendererSettings.h"
+#import "MPNativeAdRendererImageHandler.h"
 #endif
 
 @interface ReferenceNativeAdRenderer() <MPNativeAdRendererImageHandlerDelegate>
