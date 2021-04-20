@@ -7,6 +7,10 @@
 
 #import "ReferenceNativeAdRenderer.h"
 #import "ReferenceToMoPubNativeAdAdapter.h"
+#if __has_include("MoPub.h")
+#import "MPNativeAdRendererConfiguration.h"
+#import "MPStaticNativeAdRendererSettings.h"
+#endif
 
 @interface ReferenceNativeAdRenderer() <MPNativeAdRendererImageHandlerDelegate>
 @property (nonatomic, strong) ReferenceToMoPubNativeAdAdapter *adapter;
