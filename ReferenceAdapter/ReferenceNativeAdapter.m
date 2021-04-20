@@ -7,6 +7,7 @@
 
 #import "ReferenceNativeAdapter.h"
 #import "ReferenceToMoPubNativeAdAdapter.h"
+#import "MPNativeAd.h"
 
 // Network SDK imports
 #import "ReferenceNetworkNativeAd.h"
