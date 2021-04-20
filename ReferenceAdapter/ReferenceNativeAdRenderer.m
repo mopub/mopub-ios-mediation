@@ -8,6 +8,7 @@
 #import "ReferenceNativeAdRenderer.h"
 #import "ReferenceToMoPubNativeAdAdapter.h"
 #if __has_include("MoPub.h")
+#import "MPNativeAdConstants.h"
 #import "MPNativeAdRendererConfiguration.h"
 #import "MPStaticNativeAdRendererSettings.h"
 #endif
