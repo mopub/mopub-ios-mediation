@@ -4,6 +4,7 @@
 
 #import "OguryAdapterConfiguration.h"
 #import <OguryAds/OguryAds.h>
+#import <OguryChoiceManager/OguryChoiceManager.h>
 
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
@@ -63,6 +64,11 @@ static NSString * const OguryConfigurationKeyAssetKey = @"asset-key";
         }
 
         return;
+    }
+
+    MPConsentStatus mopubConsentStatus = [MoPub sharedInstance].currentConsentStatus;
+    if (mopubConsentStatus != MPConsentStatusUnknown) {
+        [OguryChoiceManagerExternal setTransparencyAndConsentStatus:(mopubConsentStatus == MPConsentStatusConsented) origin:OguryConfigurationMediationName assetKey:assetKey];
     }
 
     [[OguryAds shared] setupWithAssetKey:assetKey];
