@@ -14,8 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Constants
 
+extern NSString * const kOguryConfigurationMediationName;
 extern NSString * const kOguryConfigurationAdUnitId;
 extern NSString * const kOguryErrorDomain;
+extern NSString * const kOguryConfigurationKeyAssetKey;
 
 @interface OguryAdapterConfiguration : MPBaseAdapterConfiguration
 

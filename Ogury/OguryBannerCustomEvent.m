@@ -5,6 +5,7 @@
 #import "OguryBannerCustomEvent.h"
 #import <Foundation/Foundation.h>
 #import <OguryAds/OguryAds.h>
+#import <OguryChoiceManager/OguryChoiceManager.h>
 #import "OguryAdapterConfiguration.h"
 #import "NSError+Ogury.h"
 
@@ -28,10 +29,6 @@
 }
 
 - (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    self.adUnitId = info[kOguryConfigurationAdUnitId];
-
-    self.banner = [[OguryAdsBanner alloc] initWithAdUnitID:self.adUnitId];
-
     OguryAdsBannerSize *sizeOguryBanner = [OguryBannerCustomEvent getOgurySize:size];
 
     if (!sizeOguryBanner) {
@@ -39,6 +36,15 @@
         return;
     }
 
+    NSString *assetKey = info[kOguryConfigurationKeyAssetKey];
+    MPConsentStatus mopubConsentStatus = MoPub.sharedInstance.currentConsentStatus;
+    if (mopubConsentStatus != MPConsentStatusUnknown && assetKey) {
+        [OguryChoiceManagerExternal setTransparencyAndConsentStatus:(mopubConsentStatus == MPConsentStatusConsented) origin:kOguryConfigurationMediationName assetKey:assetKey];
+    }
+
+    self.adUnitId = info[kOguryConfigurationAdUnitId];
+
+    self.banner = [[OguryAdsBanner alloc] initWithAdUnitID:self.adUnitId];
     self.banner.bannerDelegate = self;
     self.banner.frame = CGRectMake(0, 0, size.width, size.height);
 

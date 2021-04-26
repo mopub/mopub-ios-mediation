@@ -12,14 +12,13 @@
 
 #pragma mark - Constants
 
+NSString * const kOguryConfigurationMediationName = @"MoPub";
 NSString * const kOguryConfigurationAdUnitId = @"ad_unit_id";
 NSString * const kOguryErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-ogury-adapters";
+NSString * const kOguryConfigurationKeyAssetKey = @"asset-key";
 
-static NSString * const OguryConfigurationMediationName = @"MoPub";
 static NSString * const OguryConfigurationAdapterVersion = @"2.2.4.0";
 static NSString * const OguryConfigurationNetworkName = @"ogury";
-
-static NSString * const OguryConfigurationKeyAssetKey = @"asset-key";
 
 @implementation OguryAdapterConfiguration
 
@@ -48,9 +47,9 @@ static NSString * const OguryConfigurationKeyAssetKey = @"asset-key";
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration complete:(void(^ _Nullable)(NSError * _Nullable))complete {
-    [[OguryAds shared] defineMediationName:OguryConfigurationMediationName];
+    [[OguryAds shared] defineMediationName:kOguryConfigurationMediationName];
     
-    NSString *assetKey = configuration[OguryConfigurationKeyAssetKey];
+    NSString *assetKey = configuration[kOguryConfigurationKeyAssetKey];
 
     if (!assetKey || [assetKey isEqualToString:@""]) {
         NSError *error = [NSError errorWithDomain:kOguryErrorDomain
@@ -66,9 +65,9 @@ static NSString * const OguryConfigurationKeyAssetKey = @"asset-key";
         return;
     }
 
-    MPConsentStatus mopubConsentStatus = [MoPub sharedInstance].currentConsentStatus;
+    MPConsentStatus mopubConsentStatus = MoPub.sharedInstance.currentConsentStatus;
     if (mopubConsentStatus != MPConsentStatusUnknown) {
-        [OguryChoiceManagerExternal setTransparencyAndConsentStatus:(mopubConsentStatus == MPConsentStatusConsented) origin:OguryConfigurationMediationName assetKey:assetKey];
+        [OguryChoiceManagerExternal setTransparencyAndConsentStatus:(mopubConsentStatus == MPConsentStatusConsented) origin:kOguryConfigurationMediationName assetKey:assetKey];
     }
 
     [[OguryAds shared] setupWithAssetKey:assetKey];
