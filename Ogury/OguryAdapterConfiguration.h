@@ -14,10 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Constants
 
-extern NSString * const kOguryConfigurationMediationName;
 extern NSString * const kOguryConfigurationAdUnitId;
 extern NSString * const kOguryErrorDomain;
-extern NSString * const kOguryConfigurationKeyAssetKey;
 
 @interface OguryAdapterConfiguration : MPBaseAdapterConfiguration
 
@@ -25,6 +23,10 @@ extern NSString * const kOguryConfigurationKeyAssetKey;
 @property (nonatomic, copy, readonly) NSString *biddingToken;
 @property (nonatomic, copy, readonly) NSString *moPubNetworkName;
 @property (nonatomic, copy, readonly) NSString *networkSdkVersion;
+
+#pragma mark - Methods
+
++ (void)applyTransparencyAndConsentStatusWithParameters:(NSDictionary *)parameters;
 
 @end
 

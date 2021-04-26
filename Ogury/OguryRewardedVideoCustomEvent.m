@@ -4,7 +4,6 @@
 
 #import "OguryRewardedVideoCustomEvent.h"
 #import <OguryAds/OguryAds.h>
-#import <OguryChoiceManager/OguryChoiceManager.h>
 #import "OguryAdapterConfiguration.h"
 #import "NSError+Ogury.h"
 
@@ -28,11 +27,7 @@
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
-    NSString *assetKey = info[kOguryConfigurationKeyAssetKey];
-    MPConsentStatus mopubConsentStatus = MoPub.sharedInstance.currentConsentStatus;
-    if (mopubConsentStatus != MPConsentStatusUnknown && assetKey) {
-        [OguryChoiceManagerExternal setTransparencyAndConsentStatus:(mopubConsentStatus == MPConsentStatusConsented) origin:kOguryConfigurationMediationName assetKey:assetKey];
-    }
+    [OguryAdapterConfiguration applyTransparencyAndConsentStatusWithParameters:info];
 
     self.adUnitId = info[kOguryConfigurationAdUnitId];
     self.optinVideo = [[OguryAdsOptinVideo alloc] initWithAdUnitID:self.adUnitId];

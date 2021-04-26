@@ -12,11 +12,11 @@
 
 #pragma mark - Constants
 
-NSString * const kOguryConfigurationMediationName = @"MoPub";
 NSString * const kOguryConfigurationAdUnitId = @"ad_unit_id";
 NSString * const kOguryErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-ogury-adapters";
-NSString * const kOguryConfigurationKeyAssetKey = @"asset-key";
 
+static NSString * const OguryConfigurationMediationName = @"MoPub";
+static NSString * const OguryConfigurationKeyAssetKey = @"asset-key";
 static NSString * const OguryConfigurationAdapterVersion = @"2.2.4.0";
 static NSString * const OguryConfigurationNetworkName = @"ogury";
 
@@ -47,9 +47,9 @@ static NSString * const OguryConfigurationNetworkName = @"ogury";
 }
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration complete:(void(^ _Nullable)(NSError * _Nullable))complete {
-    [[OguryAds shared] defineMediationName:kOguryConfigurationMediationName];
+    [[OguryAds shared] defineMediationName:OguryConfigurationMediationName];
     
-    NSString *assetKey = configuration[kOguryConfigurationKeyAssetKey];
+    NSString *assetKey = configuration[OguryConfigurationKeyAssetKey];
 
     if (!assetKey || [assetKey isEqualToString:@""]) {
         NSError *error = [NSError errorWithDomain:kOguryErrorDomain
@@ -65,16 +65,25 @@ static NSString * const OguryConfigurationNetworkName = @"ogury";
         return;
     }
 
-    MPConsentStatus mopubConsentStatus = MoPub.sharedInstance.currentConsentStatus;
-    if (mopubConsentStatus != MPConsentStatusUnknown) {
-        [OguryChoiceManagerExternal setTransparencyAndConsentStatus:(mopubConsentStatus == MPConsentStatusConsented) origin:kOguryConfigurationMediationName assetKey:assetKey];
-    }
+    [OguryAdapterConfiguration applyTransparencyAndConsentStatusWithParameters:configuration];
 
     [[OguryAds shared] setupWithAssetKey:assetKey];
 
     MPLogInfo(@"Ogury SDK successfully initialized.");
 
     complete(nil);
+}
+
++ (void)applyTransparencyAndConsentStatusWithParameters:(NSDictionary *)parameters {
+    NSString *assetKey = parameters[OguryConfigurationKeyAssetKey];
+
+    if (MoPub.sharedInstance.isGDPRApplicable == MPBoolYes && assetKey) {
+        MPConsentStatus mopubConsentStatus = MoPub.sharedInstance.currentConsentStatus;
+
+        if (mopubConsentStatus != MPConsentStatusUnknown) {
+            [OguryChoiceManagerExternal setTransparencyAndConsentStatus:(mopubConsentStatus == MPConsentStatusConsented) origin:OguryConfigurationMediationName assetKey:assetKey];
+        }
+    }
 }
 
 @end
