@@ -13,8 +13,8 @@
 #pragma mark - Constants
 
 NSString * const kOguryConfigurationAdUnitId = @"ad_unit_id";
-NSString * const kOguryErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-ogury-adapters";
 
+static NSString * const OguryErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-ogury-adapters";
 static NSString * const OguryConfigurationMediationName = @"MoPub";
 static NSString * const OguryConfigurationKeyAssetKey = @"asset-key";
 static NSString * const OguryConfigurationAdapterVersion = @"2.2.4.0";
@@ -48,14 +48,28 @@ static NSString * const OguryConfigurationNetworkName = @"ogury";
 
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *, id> * _Nullable)configuration complete:(void(^ _Nullable)(NSError * _Nullable))complete {
     [[OguryAds shared] defineMediationName:OguryConfigurationMediationName];
+
+    if (!configuration) {
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"An error occurred during the initialization of the SDK. Configuration is missing."];
+
+        MPLogEvent([MPLogEvent error:error message:nil]);
+
+        if (complete != nil) {
+            complete(error);
+        }
+
+        return;
+    }
     
     NSString *assetKey = configuration[OguryConfigurationKeyAssetKey];
 
     if (!assetKey || [assetKey isEqualToString:@""]) {
-        NSError *error = [NSError errorWithDomain:kOguryErrorDomain
-                                             code:MOPUBErrorAdapterInvalid
-                                         userInfo:@{NSLocalizedDescriptionKey:@"OguryAdsAssetKeyNotValidError. An error occurred during the initialization of the SDK."}];
-                                         
+        NSError *error = [NSError errorWithDomain:OguryErrorDomain code:MOPUBErrorAdapterInvalid userInfo:@{
+            NSLocalizedDescriptionKey: @"An error occurred during the initialization of the SDK. Asset key might be missing or invalid.",
+            NSLocalizedRecoverySuggestionErrorKey: @"Please verify the supplied asset key from the Ogury dashboard."
+
+        }];
+
         MPLogEvent([MPLogEvent error:error message:nil]);
         
         if (complete != nil) {
@@ -84,6 +98,62 @@ static NSString * const OguryConfigurationNetworkName = @"ogury";
             [OguryChoiceManagerExternal setTransparencyAndConsentStatus:(mopubConsentStatus == MPConsentStatusConsented) origin:OguryConfigurationMediationName assetKey:assetKey];
         }
     }
+}
+
++ (NSError *)MoPubErrorFromOguryError:(OguryAdsErrorType)oguryError {
+    NSNumber *mopubErrorCode;
+    NSString *localizedDescription;
+
+    switch (oguryError) {
+
+        case OguryAdsErrorLoadFailed:
+            mopubErrorCode = @(MOPUBErrorAdapterFailedToLoadAd);
+            localizedDescription = @"The ad failed to load for an unknown reason.";
+            break;
+
+        case OguryAdsErrorNoInternetConnection:
+            mopubErrorCode = @(MOPUBErrorAdapterFailedToLoadAd);
+            localizedDescription = @"The device has no Internet connection. Try again when the device is connected to Internet again.";
+            break;
+
+        case OguryAdsErrorAdDisable:
+            mopubErrorCode = @(MOPUBErrorAdapterFailedToLoadAd);
+            localizedDescription = @"Ad serving has been disabled for this placement/application.";
+            break;
+
+        case OguryAdsErrorProfigNotSynced:
+            mopubErrorCode = @(MOPUBErrorSDKNotInitialized);
+            localizedDescription = @"An internal SDK error occurred.";
+            break;
+
+        case OguryAdsErrorAdExpired:
+            mopubErrorCode = @(MOPUBErrorAdapterFailedToLoadAd);
+            localizedDescription = @"The loaded ad is expired. You must call the show method within 4 hours after the load";
+            break;
+
+        case OguryAdsErrorSdkInitNotCalled:
+            mopubErrorCode = @(MOPUBErrorSDKNotInitialized);
+            localizedDescription = @"The setup method has not been called before a call to the load or show methods.";
+            break;
+
+        case OguryAdsErrorAnotherAdAlreadyDisplayed:
+            mopubErrorCode = @(MOPUBErrorFullScreenAdAlreadyOnScreen);
+            localizedDescription = @"Another ad is already displayed on the screen.";
+            break;
+
+        case OguryAdsErrorCantShowAdsInPresentingViewController:
+            mopubErrorCode = @(MOPUBErrorFullScreenAdAlreadyOnScreen);
+            localizedDescription = @"Currently a ViewController is being presented and it is preventing the ad from displaying.";
+            break;
+
+        case OguryAdsErrorUnknown:
+        default:
+            mopubErrorCode = @(MOPUBErrorUnknown);
+            localizedDescription = @"Unkown error type.";
+            break;
+    }
+
+    return [NSError errorWithDomain:OguryErrorDomain code:mopubErrorCode.integerValue userInfo:@{NSLocalizedDescriptionKey:localizedDescription}];
 }
 
 @end

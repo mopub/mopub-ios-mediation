@@ -2,6 +2,8 @@
 //  Copyright © 2021 Ogury Ltd. All rights reserved.
 //
 
+#import <OguryAds/OguryAds.h>
+
 #if __has_include(<MoPub/MoPub.h>)
     #import <MoPub/MoPub.h>
 #elif __has_include(<MoPubSDK/MoPub.h>)
@@ -15,7 +17,6 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Constants
 
 extern NSString * const kOguryConfigurationAdUnitId;
-extern NSString * const kOguryErrorDomain;
 
 @interface OguryAdapterConfiguration : MPBaseAdapterConfiguration
 
@@ -25,6 +26,8 @@ extern NSString * const kOguryErrorDomain;
 @property (nonatomic, copy, readonly) NSString *networkSdkVersion;
 
 #pragma mark - Methods
+
++ (NSError *)MoPubErrorFromOguryError:(OguryAdsErrorType)oguryError;
 
 + (void)applyTransparencyAndConsentStatusWithParameters:(NSDictionary *)parameters;
 

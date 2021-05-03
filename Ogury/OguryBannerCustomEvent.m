@@ -6,7 +6,6 @@
 #import <Foundation/Foundation.h>
 #import <OguryAds/OguryAds.h>
 #import "OguryAdapterConfiguration.h"
-#import "NSError+Ogury.h"
 
 @interface OguryBannerCustomEvent () <OguryAdsBannerDelegate>
 
@@ -28,20 +27,34 @@
 }
 
 - (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
+    self.adUnitId = info[kOguryConfigurationAdUnitId];
+    if (!self.adUnitId || [self.adUnitId isEqualToString:@""]) {
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"An error occurred while loading the ad. Invalid ad unit identifier."];
+
+        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass([self class]) error:error], @"");
+
+        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
+        return;
+    }
+
     OguryAdsBannerSize *sizeOguryBanner = [OguryBannerCustomEvent getOgurySize:size];
 
     if (!sizeOguryBanner) {
-        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:[NSError errorWithCode:MOPUBErrorNoInventory]];
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterInvalid localizedDescription:@"An error occurred while loading the ad. Invalid width | height."];
+
+        MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass([self class]) error:error], self.adUnitId);
+
+        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
         return;
     }
 
     [OguryAdapterConfiguration applyTransparencyAndConsentStatusWithParameters:info];
 
-    self.adUnitId = info[kOguryConfigurationAdUnitId];
-
     self.banner = [[OguryAdsBanner alloc] initWithAdUnitID:self.adUnitId];
     self.banner.bannerDelegate = self;
     self.banner.frame = CGRectMake(0, 0, size.width, size.height);
+
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass([self class]) dspCreativeId:nil dspName:nil], self.adUnitId);
 
     [self.banner loadWithSize:sizeOguryBanner];
 }
@@ -91,11 +104,14 @@
 }
 
 - (void)oguryAdsBannerAdDisplayed:(OguryAdsBanner *)bannerAds {
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass([self class])], self.adUnitId);
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass([self class])], self.adUnitId);
+    
      [self.delegate inlineAdAdapterDidTrackImpression:self];
 }
 
 - (void)oguryAdsBannerAdError:(OguryAdsErrorType)errorType forBanner:(OguryAdsBanner *)bannerAds {
-    NSError *error = [NSError ogy_MoPubErrorFromOguryError:errorType];
+    NSError *error = [OguryAdapterConfiguration MoPubErrorFromOguryError:errorType];
 
     MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass([self class]) error:error], self.adUnitId);
 
@@ -103,16 +119,24 @@
 }
 
 - (void)oguryAdsBannerAdLoaded:(OguryAdsBanner *)bannerAds {
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass([self class])], self.adUnitId);
+
     [self.delegate inlineAdAdapter:self didLoadAdWithAdView:bannerAds];
 }
 
 - (void)oguryAdsBannerAdNotAvailable:(OguryAdsBanner *)bannerAds {
     NSError *error = [NSError errorWithCode:MOPUBErrorNoInventory];
+
+    MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass([self class]) error:error], self.adUnitId);
+
     [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
 }
 
 - (void)oguryAdsBannerAdNotLoaded:(OguryAdsBanner *)bannerAds {
     NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd];
+
+    MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass([self class]) error:error], self.adUnitId);
+
     [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
 }
 
