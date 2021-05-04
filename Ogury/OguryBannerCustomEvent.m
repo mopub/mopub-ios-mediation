@@ -140,4 +140,8 @@
     [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
 }
 
+- (void)oguryAdsBannerAdOnAdImpression {
+    [self.delegate inlineAdAdapterDidTrackImpression:self];
+}
+
 @end

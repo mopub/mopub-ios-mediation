@@ -122,4 +122,8 @@
     [self.delegate fullscreenAdAdapterDidTrackClick:self];
 }
 
+- (void)oguryAdsInterstitialAdOnAdImpression {
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
+}
+
 @end
