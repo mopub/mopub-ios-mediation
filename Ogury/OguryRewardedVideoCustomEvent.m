@@ -149,4 +149,8 @@
     [self.delegate fullscreenAdAdapterDidTrackClick:self];
 }
 
+- (void)oguryAdsOptinVideoAdOnAdImpression {
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
+}
+
 @end
