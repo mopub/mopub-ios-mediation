@@ -156,9 +156,11 @@
 
 - (void)contentDidDisappear:(TJPlacement *)placement {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.placementName);
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.placementName);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
 }
 
 - (void)didClick:(TJPlacement*)placement

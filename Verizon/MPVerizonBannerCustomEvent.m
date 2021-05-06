@@ -71,8 +71,6 @@
     [VerizonAdapterConfiguration setCachedInitializationParameters:info];
     VASInlineAdSize *requestedSize = [[VASInlineAdSize alloc] initWithWidth:size.width height:size.height];
     
-    [VASAds sharedInstance].locationEnabled = [MoPub sharedInstance].locationUpdatesEnabled;
-    
     self.inlineFactory = [[VASInlineAdFactory alloc] initWithPlacementId:placementId adSizes:@[requestedSize] vasAds:[VASAds sharedInstance] delegate:self];
     
     VASBid *bid = [MPVerizonBidCache.sharedInstance bidForPlacementId:placementId];
@@ -110,10 +108,6 @@
 
 #pragma mark - VASInlineAdFactoryDelegate
 
-- (void)inlineAdFactory:(nonnull VASInlineAdFactory *)adFactory cacheLoadedNumRequested:(NSInteger)numRequested numReceived:(NSInteger)numReceived {}
-
-- (void)inlineAdFactory:(nonnull VASInlineAdFactory *)adFactory cacheUpdatedWithCacheSize:(NSInteger)cacheSize {}
-
 - (void)inlineAdFactory:(nonnull VASInlineAdFactory *)adFactory didFailWithError:(nonnull VASErrorInfo *)errorInfo
 {
     __weak __typeof__(self) weakSelf = self;
@@ -139,11 +133,8 @@
             
             inlineAd.frame = CGRectMake(0, 0, inlineAd.adSize.width, inlineAd.adSize.height);
             [strongSelf.delegate inlineAdAdapter:strongSelf didLoadAdWithAdView:inlineAd];
-            [strongSelf.delegate inlineAdAdapterDidTrackImpression:strongSelf];
             
             MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-            MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-            MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
         }
     });
     
@@ -223,7 +214,22 @@
     return [self.delegate inlineAdAdapterViewControllerForPresentingModalView:self];
 }
 
-- (void)inlineAd:(nonnull VASInlineAdView *)inlineAd event:(nonnull NSString *)eventId source:(nonnull NSString *)source arguments:(nonnull NSDictionary<NSString *,id> *)arguments {}
+- (void)inlineAd:(nonnull VASInlineAdView *)inlineAd event:(nonnull NSString *)eventId source:(nonnull NSString *)source arguments:(nonnull NSDictionary<NSString *,id> *)arguments
+{
+    MPLogTrace(@"VAS inlineAdEvent: %@, source: %@, eventId: %@, arguments: %@", inlineAd, source, eventId, arguments);
+    if ([eventId isEqualToString:kMoPubVASAdImpressionEventId]) {
+        __weak __typeof__(self) weakSelf = self;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            __strong __typeof__(self) strongSelf = weakSelf;
+            if (strongSelf != nil)
+            {
+                [strongSelf.delegate inlineAdAdapterDidTrackImpression:strongSelf];
+                MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(strongSelf.class)], [strongSelf getAdNetworkId]);
+                MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(strongSelf.class)], [strongSelf getAdNetworkId]);
+            }
+        });
+    }
+}
 
 - (void)inlineAdDidRefresh:(nonnull VASInlineAdView *)inlineAd {}
 

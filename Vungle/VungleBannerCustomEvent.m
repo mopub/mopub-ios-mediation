@@ -20,6 +20,7 @@
 @property (nonatomic, assign) NSDictionary *bannerInfo;
 @property (nonatomic, assign) NSTimer *timeOutTimer;
 @property (nonatomic) BOOL isAdCached;
+@property (nonatomic) BOOL isAdLoaded;
 @property (nonatomic) CGSize bannerSize;
 
 @end
@@ -97,6 +98,12 @@
 
 - (void)vungleAdDidLoad
 {
+    if (self.isAdLoaded) {
+        // Already invoked an ad load callback.
+        return;
+    }
+    self.isAdLoaded = YES;
+    
     if (self.options) {
         self.options = nil;
     }
@@ -104,15 +111,7 @@
     NSMutableDictionary *options = [NSMutableDictionary dictionary];
     
     if (self.localExtras != nil && [self.localExtras count] > 0) {
-        NSString *userId = [self.localExtras objectForKey:kVungleUserId];
-        if (userId != nil) {
-            NSString *userID = userId;
-            if (userID.length > 0) {
-                options[VunglePlayAdOptionKeyUser] = userID;
-            }
-        }
-        
-        NSString *ordinal = [self.localExtras objectForKey:kVungleUserId];
+        NSString *ordinal = [self.localExtras objectForKey:kVungleOrdinal];
         if (ordinal != nil) {
             NSNumber *ordinalPlaceholder = [NSNumber numberWithLongLong:[ordinal longLongValue]];
             NSUInteger ordinal = ordinalPlaceholder.unsignedIntegerValue;
@@ -144,8 +143,6 @@
         MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.getPlacementID);
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.getPlacementID);
         [self.delegate inlineAdAdapter:self didLoadAdWithAdView:bannerAdView];
-        [self.delegate inlineAdAdapterDidTrackImpression:self];
-        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.getPlacementID);
         self.isAdCached = YES;
     } else {
         [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:nil];
@@ -163,6 +160,11 @@
 
 - (void)vungleAdDidFailToLoad:(NSError *)error
 {
+    if (self.isAdLoaded) {
+        // Already invoked an ad load callback.
+        return;
+    }
+    
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getPlacementID]);
     NSError *loadFailError = nil;
     if (error) {
@@ -201,6 +203,15 @@
 - (void)vungleAdDidAppear
 {
     MPLogInfo(@"Vungle video banner did appear");
+}
+
+- (void)vungleAdViewed
+{
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.getPlacementID);
+    __weak VungleBannerCustomEvent *weakself = self;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [weakself.delegate inlineAdAdapterDidTrackImpression:weakself];
+    });
 }
 
 - (void)vungleAdDidDisappear {

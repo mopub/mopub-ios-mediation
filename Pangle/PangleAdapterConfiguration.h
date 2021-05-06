@@ -2,8 +2,8 @@
 #import <BUFoundation/BUCommonMacros.h>
 #if __has_include(<MoPub/MoPub.h>)
     #import <MoPub/MoPub.h>
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-    #import <MoPubSDKFramework/MoPub.h>
+#elif __has_include(<MoPubSDK/MoPub.h>)
+    #import <MoPubSDK/MoPub.h>
 #else
     #import "MoPub.h"
 #endif
@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)updateInitializationParameters:(NSDictionary *)parameters;
 
 @property (nonatomic, copy, readonly) NSString * adapterVersion;
+@property (nonatomic, copy, readonly) NSString * biddingToken;
 @property (nonatomic, copy, readonly) NSString * moPubNetworkName;
 @property (nonatomic, copy, readonly) NSString * networkSdkVersion;
 
@@ -41,6 +42,8 @@ extern NSString * const kPanglePlacementIdKey;
 + (NSInteger)rewardAmount;
 + (void)setMediaExtra:(NSString *)extra;
 + (NSString *)mediaExtra;
+
++ (void)pangleSDKInitWithAppId:(NSString *)appId;
 
 @end
 

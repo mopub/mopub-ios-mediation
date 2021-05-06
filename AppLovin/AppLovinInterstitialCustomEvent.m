@@ -236,6 +236,9 @@ static NSObject *ALGlobalInterstitialAdsLock;
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
     
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
+    
     self.interstitialAd = nil;
 }
 

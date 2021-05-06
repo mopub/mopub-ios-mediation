@@ -1,4 +1,37 @@
 ## Changelog
+  * 4.6.0.1
+    * Remove deprecated usage of Rewarded Video APIs.
+
+  * 4.6.0.0
+    * This version of the adapters has been certified with AdColony 4.6.0 and MoPub SDK 5.16.2.
+
+  * 4.5.0.2
+    * Service release. No new features or code changes.
+
+  * 4.5.0.1
+    * Add support for `fullscreenAdAdapterAdWillDismiss` when a fullscreen creative is about to close. Publishers must use v5.16.1 of the MoPub SDK at the minimum.
+
+  * 4.5.0.0
+    * This version of the adapters has been certified with AdColony 4.5.0 and MoPub SDK 5.15.0.
+
+  * 4.4.1.1.3
+    * Replace imports using `MoPubSDKFramework` with `MoPubSDK`. No external impacts to publishers.
+
+  * 4.4.1.1.2
+    * Add support for `fullscreenAdAdapterAdDidDismiss:` to signal that the fullscreen ad is closing and the state should be reset. To use this adapter version, you need v5.15.0 of the MoPub iOS SDK at the minimum.
+
+  * 4.4.1.1.1
+    * Add functionality on AdColony banner adapters to forward contents of `adm` field in the bid request to AdColony Advanced Bidding requests.
+
+  * 4.4.1.1.0
+    * This version of the adapters has been certified with AdColony 4.4.1.1 and MoPub SDK 5.14.1.
+
+  * 4.4.0.0
+    * This version of the adapters has been certified with AdColony 4.4.0 and MoPub SDK 5.13.1.
+
+  * 4.3.1.0
+    * This version of the adapters has been certified with AdColony 4.3.1 and MoPub SDK 5.13.1.
+
   * 4.3.0.2
     * Add support for AdColony `Collect Signal` API for Advance Bidding.
 
@@ -9,6 +42,8 @@
     * Convert `allZoneIds` parameter for AdColony network configuration from `JSONObject` to `NSArray`. 
     * To pass zone IDs (i.e. via the `allZoneIds` parameter) on `mediatedNetworkConfigurations` during MoPub initialization, starting with this adapter versions, please pass `allZoneIds` entries as an NSArray, like `allZoneIds: ["zone_1", "zone_2"]`. This is mandatory for AdColony Advanced Bidding. More details [here](https://developers.mopub.com/publishers/mediation/networks/adcolony/).
     * This version of the adapters has been certified with AdColony 4.3.0 and MoPub SDK 5.13.1.
+    * Note that, while AdColony 4.3.0 supports iOS 14, this adapter version is not certified using iOS 14.
+    For iOS 14 compatibility, expect an upcoming adapter release.
 
   * 4.2.0.2
     * Fix adapter compiler warnings.

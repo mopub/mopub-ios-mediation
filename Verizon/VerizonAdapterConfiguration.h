@@ -1,8 +1,8 @@
 #import <Foundation/Foundation.h>
 #if __has_include(<MoPub/MoPub.h>)
 #import <MoPub/MoPub.h>
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-#import <MoPubSDKFramework/MoPub.h>
+#elif __has_include(<MoPubSDK/MoPub.h>)
+#import <MoPubSDK/MoPub.h>
 #else
 #import "MoPub.h"
 #endif
@@ -27,6 +27,11 @@ extern NSString * const kMoPubServerExtrasAdContent;
 extern NSString * const kMoPubRequestMetadataAdContent;
 
 extern NSTimeInterval kMoPubVASAdapterSATimeoutInterval;
+extern NSString * const kMoPubVASAdImpressionEventId;
+
+extern NSString * const kVASConfigDomain;
+extern NSString * const kVASConfigEditionNameKey;
+extern NSString * const kVASConfigEditionVersionKey;
 
 @interface VerizonAdapterConfiguration : MPBaseAdapterConfiguration
 + (NSString *)mediator;

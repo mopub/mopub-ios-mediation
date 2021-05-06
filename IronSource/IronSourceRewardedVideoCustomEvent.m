@@ -88,11 +88,11 @@
         MPLogInfo(@"IronSource Rewarded Video initialization with appkey %@", appKey);
         // Cache the initialization parameters
         [IronSourceAdapterConfiguration updateInitializationParameters:info];
-        [[IronSourceManager sharedManager] initIronSourceSDKWithAppKey:appKey forAdUnits:[NSSet setWithObject:@[IS_REWARDED_VIDEO]]];
+        [[IronSourceManager sharedManager] initIronSourceSDKWithAppKey:appKey forAdUnits:[NSSet setWithObject:IS_REWARDED_VIDEO]];
         [self loadRewardedVideo: self.instanceID WithAdMarkup: adMarkup];
     } @catch (NSException *exception) {
         MPLogInfo(@"IronSource Rewarded Video initialization with error: %@", exception);
-        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MOPUBErrorAdapterInvalid userInfo:@{NSLocalizedDescriptionKey: @"Custom event class Rewarded Video error.", NSLocalizedRecoverySuggestionErrorKey: @"Native Network or Custom Event adapter was configured incorrectly."}];
+        NSError *error = [NSError errorWithDomain:MoPubRewardedAdsSDKDomain code:MOPUBErrorAdapterInvalid userInfo:@{NSLocalizedDescriptionKey: @"Custom event class Rewarded Video error.", NSLocalizedRecoverySuggestionErrorKey: @"Native Network or Custom Event adapter was configured incorrectly."}];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error: error], self.instanceID);
         [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     }
@@ -153,9 +153,11 @@
     MPLogInfo(@"IronSource RewardedVideo did close for instance %@ (current instance %@)",
               instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], instanceId);
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], instanceId);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
 }
 
 - (void)rewardedVideoAdRewarded:(NSString *)instanceId {

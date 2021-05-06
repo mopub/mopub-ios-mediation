@@ -1,6 +1,5 @@
 #import "PangleNativeAdAdapter.h"
 #import <BUAdSDK/BUNativeAdRelatedView.h>
-#import <BUFoundation/UIImageView+BUWebCache.h>
 #if __has_include("MoPub.h")
     #import "MPNativeAd.h"
     #import "MPNativeAdConstants.h"
@@ -9,6 +8,7 @@
 
 @interface PangleNativeAdAdapter () <BUNativeAdDelegate>
 @property (nonatomic, strong) UIView *mediaView;
+@property (nonatomic, strong) UIImageView *iconView;
 @property (nonatomic, strong) BUNativeAdRelatedView *relatedView;
 @property (nonatomic, strong) BUNativeAd *nativeAd;
 @property (nonatomic, copy) NSString *placementId;
@@ -18,52 +18,79 @@
 
 - (instancetype)initWithBUNativeAd:(BUNativeAd *)nativeAd placementId:(NSString *)placementId {
     if (self = [super init]) {
-        self.properties = [self nativeAdToDictionary:nativeAd];
+        self.nativeAd = nativeAd;
+        self.nativeAd.delegate = self;
+        [self initViews];
+        self.properties = [self nativeAdToDictionary];
         self.placementId = placementId;
     }
     return self;
 }
 
-- (NSDictionary *)nativeAdToDictionary:(BUNativeAd *)nativeAd {
-    self.nativeAd = nativeAd;
-    self.nativeAd.delegate = self;
-    
-    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
-    [dictionary setValue:nativeAd.data.AdTitle forKey:kAdTitleKey];
-    [dictionary setValue:nativeAd.data.AdDescription forKey:kAdTextKey];
-    [dictionary setValue:nativeAd.data.buttonText forKey:kAdCTATextKey];
-    [dictionary setValue:nativeAd.data.icon.imageURL forKey:kAdIconImageKey];
-    [dictionary setValue:@(nativeAd.data.score) forKey:kAdStarRatingKey];
-    
-    if (nativeAd.data.imageAry.count > 0) {
-        [dictionary setValue:nativeAd.data.imageAry.firstObject.imageURL forKey:kAdMainImageKey];
-    }
+- (void)initViews {
+    self.iconView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, self.nativeAd.data.icon.width, self.nativeAd.data.icon.height)];
+    self.iconView.userInteractionEnabled = YES;
+    [self setImageViewImage:self.iconView urlString:self.nativeAd.data.icon.imageURL];
     
     self.mediaView = nil;
     self.relatedView = [[BUNativeAdRelatedView alloc] init];
-    [self.relatedView refreshData:nativeAd];
+    [self.relatedView refreshData:self.nativeAd];
     
-    if (nativeAd.data.imageMode == BUFeedVideoAdModeImage) {
+    if (self.nativeAd.data.imageMode == BUFeedVideoAdModeImage ||
+        self.nativeAd.data.imageMode == BUFeedVideoAdModePortrait ||
+        self.nativeAd.data.imageMode == BUFeedADModeSquareVideo
+        ) {
         self.mediaView = self.relatedView.videoAdView;
+        self.mediaView.frame = CGRectMake(0, 0, self.nativeAd.data.videoResolutionWidth, self.nativeAd.data.videoResolutionHeight);
     } else {
         UIImageView *imageView = [[UIImageView alloc] init];
-        self.mediaView = imageView;
-        
-        if (nativeAd.data.imageAry.count > 0) {
-            BUImage *img = nativeAd.data.imageAry.firstObject;
+        if (self.nativeAd.data.imageAry.count > 0) {
+            BUImage *img = self.nativeAd.data.imageAry.firstObject;
             if (img.imageURL.length > 0) {
-                [imageView sdBu_setImageWithURL:[NSURL URLWithString:img.imageURL] placeholderImage:nil];
+                imageView.frame = CGRectMake(0, 0, img.width, img.height);
+                [self setImageViewImage:imageView urlString:img.imageURL];
             }
         } else {
-            if (nativeAd.data.icon.imageURL.length > 0) {
-                [imageView sdBu_setImageWithURL:[NSURL URLWithString:nativeAd.data.icon.imageURL] placeholderImage:nil];
+            if (self.nativeAd.data.icon.imageURL.length > 0) {
+                imageView.frame = CGRectMake(0, 0, self.nativeAd.data.icon.width, self.nativeAd.data.icon.height);
+                [self setImageViewImage:imageView urlString:self.nativeAd.data.icon.imageURL];
             }
         }
+        self.mediaView = imageView;
     }
+}
+
+- (NSDictionary *)nativeAdToDictionary {
     
+    NSMutableDictionary *dictionary = [[NSMutableDictionary alloc] init];
+    [dictionary setValue:self.nativeAd.data.AdTitle forKey:kAdTitleKey];
+    [dictionary setValue:self.nativeAd.data.AdDescription forKey:kAdTextKey];
+    [dictionary setValue:self.nativeAd.data.buttonText forKey:kAdCTATextKey];
+    [dictionary setValue:self.nativeAd.data.icon.imageURL forKey:kAdIconImageKey];
+    [dictionary setValue:@(self.nativeAd.data.score) forKey:kAdStarRatingKey];
+    if (self.nativeAd.data.imageAry.count > 0) {
+        [dictionary setValue:self.nativeAd.data.imageAry.firstObject.imageURL forKey:kAdMainImageKey];
+    }
     [dictionary setValue:self.mediaView forKey:kAdMainMediaViewKey];
-    [dictionary setValue:nativeAd forKey:@"bu_nativeAd"];
+    [dictionary setValue:self.nativeAd forKey:@"bu_nativeAd"];
     return [dictionary copy];
+}
+
+- (void)setImageViewImage:(UIImageView *)imageView urlString:(NSString *)urlString {
+    if (urlString.length > 0) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            UIImage *image = [self loadImage:[NSURL URLWithString:urlString]];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [imageView setImage:image];
+            });
+        });
+    }
+}
+
+- (UIImage *)loadImage:(NSURL *)url {
+    NSData *data = [NSData dataWithContentsOfURL:url];
+    UIImage *image = [UIImage imageWithData: data];
+    return image;
 }
 
 #pragma mark - BUNativeAdDelegate
@@ -130,7 +157,7 @@
 }
 
 - (UIView *)iconMediaView {
-    return self.relatedView.logoImageView;
+    return self.iconView;
 }
 
 - (UIView *)privacyInformationIconView {

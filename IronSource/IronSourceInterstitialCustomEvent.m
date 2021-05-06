@@ -73,7 +73,7 @@
             MPLogInfo(@"IronSource Interstitial initialization with appkey %@", appKey);
             // Cache the initialization parameters
             [IronSourceAdapterConfiguration updateInitializationParameters:info];
-            [[IronSourceManager sharedManager] initIronSourceSDKWithAppKey:appKey forAdUnits:[NSSet setWithObject:@[IS_INTERSTITIAL]]];
+            [[IronSourceManager sharedManager] initIronSourceSDKWithAppKey:appKey forAdUnits:[NSSet setWithObject:IS_INTERSTITIAL]];
             [self loadInterstitial:self.instanceId WithAdMarkup:adMarkup];
         } else {
             MPLogInfo(@"IronSource Interstitial initialization with empty or nil appKey for instance %@",
@@ -157,10 +157,12 @@
     MPLogInfo(@"IronSource interstitial did close for instance %@ (current instance %@)",
               instanceId, [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], instanceId);
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], instanceId);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
 }
 
 /*!

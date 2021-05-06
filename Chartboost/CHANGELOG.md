@@ -1,4 +1,37 @@
 ## Changelog
+  * 8.4.1.0
+      * This version of the adapters has been certified with Chartboost 8.4.1 and MoPub SDK 5.16.1.
+
+  * 8.4.0.1
+      * Add support for `fullscreenAdAdapterAdWillDismiss` when a fullscreen creative is about to close. Publishers must use v5.16.1 of the MoPub SDK at the minimum.
+
+  * 8.4.0.0
+      * This version of the adapters has been certified with Chartboost 8.4.0 and MoPub SDK 5.15.0.
+
+  * 8.3.1.1.2
+      * Replace imports using `MoPubSDKFramework` with `MoPubSDK`. No external impacts to publishers.
+
+  * 8.3.1.1.1
+      * Add support for `fullscreenAdAdapterAdDidDismiss:` to signal that the fullscreen ad is closing and the state should be reset. To use this adapter version, you need v5.15.0 of the MoPub iOS SDK at the minimum.
+
+  * 8.3.1.1.0
+      * This version of the adapters has been certified with Chartboost 8.3.1.1 and MoPub SDK 5.14.1.
+
+  * 8.3.1.1
+      * This version of the adapters has been certified with Chartboost 8.3.1 and MoPub SDK 5.14.1.
+
+  * 8.3.1.0
+      * Re-enable passing of `CBLoggingLevelVerbose` on Chartboost log level settings.
+      * This version of the adapters has been certified with Chartboost 8.3.1 and MoPub SDK 5.13.1.
+      * Note that, while Chartboost 8.3.1 supports iOS 14, this adapter version is not certified using iOS 14.
+      For iOS 14 compatibility, expect an upcoming adapter release.
+
+  * 8.2.1.0
+      * This version of the adapters has been certified with Chartboost 8.2.1 and MoPub SDK 5.13.1.
+
+  * 8.2.0.3
+      * Disable passing `CBLoggingLevelVerbose` to prevent app crashes caused by Chartboost SDK 8.2.0 and 8.2.1
+
   * 8.2.0.2
       * Fix adapter compiler warnings.
 

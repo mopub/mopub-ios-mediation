@@ -1,4 +1,56 @@
 ## Changelog
+  * 8.4.0.0
+    * This version of the adapters has been certified with AdMob 8.4.0 and MoPub 5.16.2.
+
+  * 8.3.0.2
+    * Fix impression tracking and auto refresh for banner ads.
+
+  * 8.3.0.1
+    * Remove deprecated usage of Rewarded Video APIs.
+
+  * 8.3.0.0
+    * This version of the adapters has been certified with AdMob 8.3.0 and MoPub 5.16.2.
+    * Refactor banner, interstitial, rewarded video, and native based on new API guidelines from Google. No action items for publishers.
+
+  * 7.69.0.3
+    * Fix static banner size leaking to subsequent adapter instances.
+
+  * 7.69.0.2
+    * Add support for `fullscreenAdAdapterAdWillDismiss` when a fullscreen creative is about to close. Publishers must use v5.16.1 of the MoPub SDK at the minimum.
+
+  * 7.69.0.1
+    * Fix a bug where native video playback controls were not responsive to user gestures.
+
+  * 7.69.0.0
+    * This version of the adapters has been certified with AdMob 7.69.0 and MoPub 5.15.0.
+
+  * 7.68.0.2
+    * Replace imports using `MoPubSDKFramework` with `MoPubSDK`. No external impacts to publishers.
+
+  * 7.68.0.1
+    * Add support for `fullscreenAdAdapterAdDidDismiss:` to signal that the fullscreen ad is closing and the state should be reset. To use this adapter version, you need v5.15.0 of the MoPub iOS SDK at the minimum.
+    * Remove `nativeVideoView` as part of MoPub's native video code removal. This does not impact AdMob. No external changes or actions rerquired for publishers. 
+
+  * 7.68.0.0
+    * This version of the adapters has been certified with AdMob 7.68.0 and MoPub 5.14.1.
+    * MoPub now tracks banner impressions via Google's `adViewDidRecordImpression` callback.
+
+  * 7.66.0.1
+    * Prevent oversized banner ads from serving by failing the ad request if the creative's width or height is greater than the publishers-specified width or height.
+
+  * 7.66.0.0
+    * This version of the adapters has been certified with AdMob 7.66.0 and MoPub 5.14.0.
+
+  * 7.65.0.0
+    * This version of the adapters has been certified with AdMob 7.65.0 and MoPub 5.13.1.
+
+  * 7.64.0.1
+    * Remove unnecessary `VALID_ARCHS` declaration.
+
+  * 7.64.0.0
+    * This version of the adapters has been certified with AdMob 7.64.0 and MoPub 5.13.1. 
+    * Note that, while AdMob 7.64.0 supports iOS 14, this adapter version is not certified using iOS 14. For iOS 14 compatibility, expect an upcoming adapter release.
+
   * 7.63.0.0
     * This version of the adapters has been certified with AdMob 7.63.0 and MoPub 5.13.1.
 

@@ -18,7 +18,7 @@
 
 @interface VungleInterstitialCustomEvent () <VungleRouterDelegate>
 
-@property (nonatomic) BOOL handledAdAvailable;
+@property (nonatomic) BOOL isAdLoaded;
 @property (nonatomic, copy) NSString *placementId;
 @property (nonatomic, copy) NSDictionary *options;
 
@@ -47,8 +47,6 @@
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     self.placementId = [info objectForKey:kVunglePlacementIdKey];
-
-    self.handledAdAvailable = NO;
     
     // Cache the initialization parameters
     [VungleAdapterConfiguration updateInitializationParameters:info];
@@ -78,14 +76,6 @@
                 }
             }
             
-            NSString *flexViewAutoDismissSeconds = [self.localExtras objectForKey:kVungleFlexViewAutoDismissSeconds];
-            if (flexViewAutoDismissSeconds != nil) {
-                NSTimeInterval flexDismissTime = [flexViewAutoDismissSeconds floatValue];
-                if (flexDismissTime > 0) {
-                    options[VunglePlayAdOptionKeyFlexViewAutoDismissSeconds] = @(flexDismissTime);
-                }
-            }
-            
             NSString *muted = [self.localExtras objectForKey:kVungleStartMuted];
             if ( muted != nil) {
                 BOOL startMutedPlaceholder = [muted boolValue];
@@ -94,17 +84,13 @@
             
             NSString *supportedOrientation = [self.localExtras objectForKey:kVungleSupportedOrientations];
             if ( supportedOrientation != nil) {
-                int appOrientation = [supportedOrientation intValue];
-                NSNumber *orientations = @(UIInterfaceOrientationMaskAll);
-                
-                if (appOrientation == 1) {
-                    orientations = @(UIInterfaceOrientationMaskLandscape);
-                } else if (appOrientation == 2) {
-                    orientations = @(UIInterfaceOrientationMaskPortrait);
-                }
-                
-                options[VunglePlayAdOptionKeyOrientations] = orientations;
+                [self setOrientationOptions:options supportedOrientation:supportedOrientation];
+            } else if ([VungleAdapterConfiguration orientations] != nil) {
+                [self setOrientationOptions:options supportedOrientation:[VungleAdapterConfiguration orientations]];
             }
+            
+        } else if ([VungleAdapterConfiguration orientations] != nil) {
+            [self setOrientationOptions:options supportedOrientation:[VungleAdapterConfiguration orientations]];
         }
 
         self.options = options.count ? options : nil;
@@ -118,7 +104,21 @@
     }
 }
 
-- (void)dealloc
+- (void)setOrientationOptions:(NSMutableDictionary *)options supportedOrientation:(NSString *)supportedOrientation
+{
+    int appOrientation = [supportedOrientation intValue];
+    NSNumber *orientations = @(UIInterfaceOrientationMaskAll);
+    
+    if (appOrientation == 1) {
+        orientations = @(UIInterfaceOrientationMaskLandscape);
+    } else if (appOrientation == 2) {
+        orientations = @(UIInterfaceOrientationMaskPortrait);
+    }
+    
+    options[VunglePlayAdOptionKeyOrientations] = orientations;
+}
+
+- (void)cleanUp
 {
     [[VungleRouter sharedRouter] clearDelegateForPlacementId:self.placementId];
 }
@@ -127,11 +127,14 @@
 
 - (void)vungleAdDidLoad
 {
-    if (!self.handledAdAvailable) {
-        self.handledAdAvailable = YES;
-        MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
-        [self.delegate fullscreenAdAdapterDidLoadAd:self];
+    if (self.isAdLoaded) {
+        return;
     }
+    
+    self.isAdLoaded = YES;
+    
+    MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
+    [self.delegate fullscreenAdAdapterDidLoadAd:self];
 }
 
 - (void)vungleAdWillAppear
@@ -142,15 +145,20 @@
 
 - (void)vungleAdDidAppear
 {
-    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate fullscreenAdAdapterAdDidAppear:self];
+}
+
+- (void)vungleAdViewed
+{
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
 - (void)vungleAdWillDisappear
 {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
 }
 
@@ -158,6 +166,10 @@
 {
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getPlacementID]);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
+    
+    [self cleanUp];
+    
 }
 
 - (void)vungleAdTrackClick
@@ -175,14 +187,20 @@
 
 - (void)vungleAdDidFailToLoad:(NSError *)error
 {
+    if (self.isAdLoaded) {
+        return;
+    }
+    
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getPlacementID]);
     [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
+    [self cleanUp];
 }
 
 - (void)vungleAdDidFailToPlay:(NSError *)error
 {
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getPlacementID]);
     [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
+    [self cleanUp];
 }
 
 - (NSString *)getPlacementID

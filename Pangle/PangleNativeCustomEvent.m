@@ -21,6 +21,7 @@
 @implementation PangleNativeCustomEvent
 
 - (void)requestAdWithCustomEventInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
+    BOOL hasAdMarkup = adMarkup.length > 0;
     
     if (info.count == 0) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
@@ -33,13 +34,16 @@
         return;
     }
     
-    self.appId = [info objectForKey:kPangleAppIdKey];
-    
-    if (BUCheckValidString(self.appId)){
+    NSString *appId = [info objectForKey:kPangleAppIdKey];
+    self.appId = appId;
+    if (appId && [appId isKindOfClass:[NSString class]] && appId.length > 0) {
+        [PangleAdapterConfiguration pangleSDKInitWithAppId:self.appId];
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
-    self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
-    if (!BUCheckValidString(self.adPlacementId)) {
+    
+    NSString *adPlacementId = [info objectForKey:kPanglePlacementIdKey];
+    self.adPlacementId = adPlacementId;
+    if (!(adPlacementId && [adPlacementId isKindOfClass:[NSString class]] && adPlacementId.length > 0)) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty
                                          userInfo:@{NSLocalizedDescriptionKey: @"Incorrect or missing Pangle placement ID. Failing ad request. Ensure the ad placement ID is correct on the MoPub dashboard."}];
@@ -51,9 +55,7 @@
     
     BUAdSlot *slot = [[BUAdSlot alloc] init];
     slot.AdType = BUAdSlotAdTypeFeed;
-    slot.position = BUAdSlotPositionTop;
     slot.imgSize = [BUSize sizeBy:BUProposalSize_Feed690_388];
-    slot.isSupportDeepLink = YES;
     self.nativeAd = [[BUNativeAd alloc] initWithSlot:slot];
     self.nativeAd.delegate = self;
     
@@ -66,18 +68,21 @@
     }
     self.nativeAd.rootViewController = rootViewController;
     
-    MPLogInfo(@"Load Pangle native ad");
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
     
-    [self.nativeAd loadAdData];
+    if (hasAdMarkup) {
+        MPLogInfo(@"Loading Pangle native ad markup for Advanced Bidding");
+
+        [self.nativeAd setMopubAdMarkUp:adMarkup];
+    } else {
+        MPLogInfo(@"Loading Pangle native ad");
+
+        [self.nativeAd loadAdData];
+    }
 }
 
 - (void)requestAdWithCustomEventInfo:(NSDictionary *)info {
     [self.nativeAd loadAdData];
-}
-
-- (void)updateAppId{
-    [BUAdSDKManager setAppID:self.appId];
 }
 
 #pragma mark - BUNativeAdDelegate
@@ -86,9 +91,6 @@
     MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     
     [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
-    if (BUCheckValidString(self.appId) && error.code == BUUnionAppSiteRelError) {
-        [self updateAppId];
-    }
 }
 
 - (void)nativeAdDidLoad:(BUNativeAd *)nativeAd {
@@ -100,7 +102,8 @@
 }
 
 - (NSString *) getAdNetworkId {
-    return BUCheckValidString(self.adPlacementId) ? self.adPlacementId : @"";
+    NSString *adPlacementId = self.adPlacementId;
+    return (adPlacementId && [adPlacementId isKindOfClass:[NSString class]]) ? adPlacementId : @"";
 }
 
 @end

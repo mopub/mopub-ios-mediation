@@ -1,4 +1,38 @@
 ## Changelog
+* 6.4.1.0
+    * This version of the adapters has been certified with Facebook Audience Network 6.4.1 and MoPub 5.16.2.
+
+* 6.4.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 6.4.0 and MoPub 5.16.2.
+    * **Update**: Facebook has retroactively withdrawn this SDK version from production. Publishers should use v6.4.1.0 of the adapters and get v6.4.1 of the Facbook Audience Network.
+
+* 6.3.1.0
+    * This version of the adapters has been certified with Facebook Audience Network 6.3.1 and MoPub 5.16.2.
+
+* 6.3.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 6.3.0 and MoPub 5.16.1.
+
+* 6.2.1.1
+    * Add support for `fullscreenAdAdapterAdWillDismiss` when a fullscreen creative is about to close. Publishers must use v5.16.1 of the MoPub SDK at the minimum.
+
+* 6.2.1.0
+    * This version of the adapters has been certified with Facebook Audience Network 6.2.1 and MoPub 5.15.0.
+
+* 6.2.0.2
+    * Replace imports using `MoPubSDKFramework` with `MoPubSDK`. No external impacts to publishers.
+
+* 6.2.0.1
+    * Add support for `fullscreenAdAdapterAdDidDismiss:` to signal that the fullscreen ad is closing and the state should be reset. To use this adapter version, you need v5.15.0 of the MoPub iOS SDK at the minimum.
+
+* 6.2.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 6.2.0 and MoPub 5.14.1.
+
+* 6.0.0.1
+    * This version of the adapters has been certified with Facebook Audience Network 6.0.0 and MoPub 5.14.0.
+
+* 6.0.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 6.0.0 and MoPub 5.13.1.
+
 * 5.10.1.1
     * Fix adapter compiler warnings.
 

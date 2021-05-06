@@ -137,13 +137,13 @@
     
     if (self.ad) {
         if (![self.ad showWithPresentingViewController:viewController]) {
-            NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorUnknown userInfo:nil];
+            NSError *error = [NSError errorWithDomain:MoPubRewardedAdsSDKDomain code:MPRewardedAdErrorUnknown userInfo:nil];
             MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class)
                                                       error:error], [self getAdNetworkId]);
             [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
         }
     } else {
-        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
+        NSError *error = [NSError errorWithDomain:MoPubRewardedAdsSDKDomain code:MPRewardedAdErrorNoAdsAvailable userInfo:nil];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class)
                                                   error:error], [self getAdNetworkId]);
         [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
@@ -190,10 +190,12 @@
 
 - (void)adColonyInterstitialDidClose:(AdColonyInterstitial * _Nonnull)interstitial {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
 }
 
 - (void)adColonyInterstitialExpired:(AdColonyInterstitial * _Nonnull)interstitial {

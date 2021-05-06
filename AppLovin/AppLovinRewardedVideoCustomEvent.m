@@ -234,10 +234,12 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
         [self.delegate fullscreenAdAdapter:self willRewardUser:self.reward];
     }
     
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
-    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
     
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
     
     self.incent = nil;
 }

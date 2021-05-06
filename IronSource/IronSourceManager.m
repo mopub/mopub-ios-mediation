@@ -47,22 +47,22 @@ NSMapTable<NSString *, id<IronSourceInterstitialDelegate>>
 }
 
 - (void)initIronSourceSDKWithAppKey:(NSString *)appKey forAdUnits:(NSSet *)adUnits {
-    if([adUnits member:@[IS_INTERSTITIAL]] != nil){
+    if([adUnits member:IS_INTERSTITIAL] != nil) {
         static dispatch_once_t onceTokenIS;
 
         dispatch_once(&onceTokenIS, ^{
             [IronSource setISDemandOnlyInterstitialDelegate:self];
-            [IronSource initISDemandOnly:appKey adUnits:@[IS_INTERSTITIAL]];
         });
     }
-    if([adUnits member:@[IS_REWARDED_VIDEO]] != nil){
+    if([adUnits member:IS_REWARDED_VIDEO] != nil){
         static dispatch_once_t onceTokenRV;
 
         dispatch_once(&onceTokenRV, ^{
             [IronSource setISDemandOnlyRewardedVideoDelegate:self];
-            [IronSource initISDemandOnly:appKey adUnits:@[IS_REWARDED_VIDEO]];
         });
     }
+    
+    [IronSource initISDemandOnly:appKey adUnits:[adUnits allObjects]];
 }
 
 - (void)loadRewardedAdWithDelegate:

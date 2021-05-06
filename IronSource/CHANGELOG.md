@@ -1,10 +1,51 @@
 ## Changelog
+* 7.1.5.0.1
+    * Remove deprecated usage of Rewarded Video APIs.
+
+* 7.1.5.0.0
+    * This version of the adapters has been certified with ironSource 7.1.5.0 and MoPub SDK 5.16.2.
+
+* 7.1.4.0.0
+    * This version of the adapters has been certified with ironSource 7.1.4.0 and MoPub SDK 5.16.2.
+
+* 7.1.2.0.0
+    * This version of the adapters has been certified with ironSource 7.1.2.0 and MoPub SDK 5.16.1.
+
+* 7.1.0.0.1
+    * Add support for `fullscreenAdAdapterAdWillDismiss` when a fullscreen creative is about to close. Publishers must use v5.16.1 of the MoPub SDK at the minimum.
+
+* 7.1.0.0.0
+    * This version of the adapters has been certified with ironSource 7.1.0.0 and MoPub SDK 5.15.0.
+
+* 7.0.4.0.0
+    * This version of the adapters has been certified with ironSource 7.0.4.0 and MoPub SDK 5.15.0.
+
+* 7.0.3.0.3
+    * Replace imports using `MoPubSDKFramework` with `MoPubSDK`. No external impacts to publishers.
+
+* 7.0.3.0.2
+    * Add support for `fullscreenAdAdapterAdDidDismiss:` to signal that the fullscreen ad is closing and the state should be reset. To use this adapter version, you need v5.15.0 of the MoPub iOS SDK at the minimum.
+
+* 7.0.3.0.1
+    * Fix a bug in `IronSourceAdapterConfiguration.m ` to correctly parse `interstitialStatus`.
+
+* 7.0.3.0.0
+    * This version of the adapters has been certified with ironSource 7.0.3.0 and MoPub SDK 5.14.1.
+
+* 7.0.2.0.0
+    * This version of the adapters has been certified with ironSource 7.0.2.0 and MoPub SDK 5.14.1.
+
+* 7.0.1.0.0
+    * This version of the adapters has been certified with ironSource 7.0.1.0 and MoPub SDK 5.13.1.
+    * Note that, while ironSource 7.0.1.0 supports iOS 14, this adapter version is not certified using iOS 14.
+    For iOS 14 compatibility, expect an upcoming adapter release.
+
 * 6.18.0.2.0
     * This version of the adapters has been certified with ironSource 6.18.0.2 and MoPub SDK 5.13.1.
 
 * 6.18.0.1.0
     * This version of the adapters has been certified with ironSource 6.18.0.1 and MoPub SDK 5.13.1.
-    * Support for Advanced Bidding.
+    * Service release. No new features.
 
 * 6.18.0.0.1
     * Fix adapter compiler warnings.

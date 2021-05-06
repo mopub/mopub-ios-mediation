@@ -14,44 +14,44 @@ static NSString *const kGADMStoreKey = @"store";
 
 @synthesize properties = _properties;
 
-- (instancetype)initWithAdMobUnifiedNativeAd:(GADUnifiedNativeAd *)adMobUnifiedNativeAd
-                         unifiedNativeAdView:(GADUnifiedNativeAdView *)adMobUnifiedNativeAdView {
+- (instancetype)initWithAdMobNativeAd:(GADNativeAd *)adMobNativeAd
+                         nativeAdView:(GADNativeAdView *)adMobNativeAdView {
   if (self = [super init]) {
-    self.adMobUnifiedNativeAd = adMobUnifiedNativeAd;
-    self.adMobUnifiedNativeAd.delegate = self;
-    self.adMobUnifiedNativeAdView = adMobUnifiedNativeAdView;
+    self.googleNativeAd = adMobNativeAd;
+    self.googleNativeAd.delegate = self;
+    self.adMobNativeAdView = adMobNativeAdView;
 
     NSMutableDictionary *properties = [NSMutableDictionary dictionary];
-    if (adMobUnifiedNativeAd.headline) {
-      properties[kAdTitleKey] = adMobUnifiedNativeAd.headline;
+    if (adMobNativeAd.headline) {
+      properties[kAdTitleKey] = adMobNativeAd.headline;
     }
 
-    if ([adMobUnifiedNativeAd.icon.imageURL absoluteString]) {
-      properties[kAdIconImageKey] = adMobUnifiedNativeAd.icon.imageURL.absoluteString;
+    if ([adMobNativeAd.icon.imageURL absoluteString]) {
+      properties[kAdIconImageKey] = adMobNativeAd.icon.imageURL.absoluteString;
     }
 
-    if (adMobUnifiedNativeAd.body) {
-      properties[kAdTextKey] = adMobUnifiedNativeAd.body;
+    if (adMobNativeAd.body) {
+      properties[kAdTextKey] = adMobNativeAd.body;
     }
 
-    if (adMobUnifiedNativeAd.starRating) {
-      properties[kAdStarRatingKey] = adMobUnifiedNativeAd.starRating;
+    if (adMobNativeAd.starRating) {
+      properties[kAdStarRatingKey] = adMobNativeAd.starRating;
     }
 
-    if (adMobUnifiedNativeAd.callToAction) {
-      properties[kAdCTATextKey] = adMobUnifiedNativeAd.callToAction;
+    if (adMobNativeAd.callToAction) {
+      properties[kAdCTATextKey] = adMobNativeAd.callToAction;
     }
 
-    if (adMobUnifiedNativeAd.price) {
-      properties[kGADMPriceKey] = adMobUnifiedNativeAd.price;
+    if (adMobNativeAd.price) {
+      properties[kGADMPriceKey] = adMobNativeAd.price;
     }
 
-    if (adMobUnifiedNativeAd.store) {
-      properties[kGADMStoreKey] = adMobUnifiedNativeAd.store;
+    if (adMobNativeAd.store) {
+      properties[kGADMStoreKey] = adMobNativeAd.store;
     }
 
-    if (adMobUnifiedNativeAdView.mediaView) {
-      properties[kAdMainMediaViewKey] = self.adMobUnifiedNativeAdView.mediaView;
+    if (adMobNativeAdView.mediaView) {
+      properties[kAdMainMediaViewKey] = self.adMobNativeAdView.mediaView;
     }
 
     _properties = properties;
@@ -60,16 +60,16 @@ static NSString *const kGADMStoreKey = @"store";
   return self;
 }
 
-#pragma mark - <GADUnifiedNativeAdDelegate>
+#pragma mark - <GADNativeAdDelegate>
 
-- (void)nativeAdDidRecordImpression:(GADUnifiedNativeAd *)nativeAd {
+- (void)nativeAdDidRecordImpression:(GADNativeAd *)nativeAd {
   // Sending impression to MoPub SDK.
   [self.delegate nativeAdWillLogImpression:self];
   MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], nil);
   MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], nil);
 }
 
-- (void)nativeAdDidRecordClick:(GADUnifiedNativeAd *)nativeAd {
+- (void)nativeAdDidRecordClick:(GADNativeAd *)nativeAd {
   // Sending click to MoPub SDK.
   [self.delegate nativeAdDidClick:self];
   MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], nil);
@@ -78,11 +78,11 @@ static NSString *const kGADMStoreKey = @"store";
 #pragma mark - <MPNativeAdAdapter>
 
 - (UIView *)privacyInformationIconView {
-  return self.adMobUnifiedNativeAdView.adChoicesView;
+  return self.adMobNativeAdView.adChoicesView;
 }
 
 - (UIView *)mainMediaView {
-  return self.adMobUnifiedNativeAdView.mediaView;
+  return self.adMobNativeAdView.mediaView;
 }
 
 - (NSURL *)defaultActionURL {

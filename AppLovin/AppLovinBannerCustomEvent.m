@@ -82,14 +82,29 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
     self.sdk.mediationProvider = ALMediationProviderMoPub;
     [self.sdk setPluginVersion: AppLovinAdapterConfiguration.pluginVersion];
     
+    zoneIdentifier = ZONE_FROM_INFO(info);
+    
+    MPLogInfo(@"Requesting AppLovin banner with zoneIdentifier: %@", zoneIdentifier);
+    
+    NSString *format = [info objectForKey:@"adunit_format"];
+    BOOL isBannerFormat = (format != nil ? [[format lowercaseString] containsString:@"banner"] : NO);
+    
+    if (!isBannerFormat) {
+        MPLogInfo(@"AppLovin only supports 320*50 and 728*90 sized ads. Please ensure your MoPub adunit's format is Banner.");
+        NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd
+                           localizedDescription:@"Unsupported sizes received. AppLovin only supports 320 x 50 and 728 x 90 ads. Please ensure your adunit's format is Banner in MoPub UI."];
+        MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], zoneIdentifier);
+        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
+        
+        return;
+    }
+    
     [AppLovinAdapterConfiguration setCachedInitializationParameters: info];
     // Convert requested size to AppLovin Ad Size
     ALAdSize *adSize = [self appLovinAdSizeFromRequestedSize: size];
     BOOL hasAdMarkup = adMarkup.length > 0;
     
-    MPLogInfo(@"Requesting AppLovin banner of size %@ with info: %@ and with ad markup: %d", NSStringFromCGSize(size), info, hasAdMarkup);
-    
-    zoneIdentifier = ZONE_FROM_INFO(info);
+    MPLogInfo(@"Requesting AppLovin banner of size %@ and with ad markup: %d", NSStringFromCGSize(size), hasAdMarkup);
     
     // Create adview based off of zone (if any)
     self.bannerView = [[self class] adViewForFrame: [self rectFromAppLovinAdSize: adSize]
@@ -125,32 +140,12 @@ static NSMutableDictionary<NSString *, ALAdView *> *ALGlobalAdViews;
 
 - (ALAdSize *)appLovinAdSizeFromRequestedSize:(CGSize)size
 {
-    // Default to standard banner size
-    ALAdSize * adSize = ALAdSize.banner;
-    
-    // Size can contain an AppLovin leaderboard ad size of 728x90
-    if (size.width >= 728 && size.height >= 90) {
-        adSize = ALAdSize.leader;
-    } else if (size.width >= 300 && size.height >= 250) {
-        // Size can contain an AppLovin medium rectangle
-        adSize = ALAdSize.mrec;
-    }
-    
-    return adSize;
+    return (size.width >= 728 && size.height >= 90) ? ALAdSize.leader : ALAdSize.banner;
 }
 
 - (CGRect)rectFromAppLovinAdSize:(ALAdSize *)alAdSize
 {
-    // Default to standard banner size
-    CGRect adRect = CGRectMake(0, 0, 320, 50);
-    
-    if (alAdSize == ALAdSize.leader) {
-        adRect = CGRectMake(0, 0, 728, 90);
-    } else if (alAdSize == ALAdSize.mrec) {
-        adRect = CGRectMake(0, 0, 300, 250);
-    }
-    
-    return adRect;
+    return alAdSize == ALAdSize.leader ? CGRectMake(0, 0, 728, 90) : CGRectMake(0, 0, 320, 50);
 }
 
 - (MOPUBErrorCode)toMoPubErrorCode:(int)appLovinErrorCode

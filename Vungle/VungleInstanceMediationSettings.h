@@ -9,8 +9,8 @@
 
 #if __has_include(<MoPub/MoPub.h>)
     #import <MoPub/MoPub.h>
-#elif __has_include(<MoPubSDKFramework/MoPub.h>)
-    #import <MoPubSDKFramework/MoPub.h>
+#elif __has_include(<MoPubSDK/MoPub.h>)
+    #import <MoPubSDK/MoPub.h>
 #else
     #import "MPMediationSettingsProtocol.h"
 #endif
@@ -29,8 +29,6 @@
 @property (nonatomic, copy) NSString *userIdentifier;
 
 @property (nonatomic) NSUInteger ordinal;
-
-@property (nonatomic) NSTimeInterval flexViewAutoDismissSeconds;
 
 @property (nonatomic) BOOL startMuted;
 
