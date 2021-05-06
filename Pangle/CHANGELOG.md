@@ -1,4 +1,13 @@
 ## Changelog
+   * 3.5.1.2.0
+     * This version of the adapters has been certified with Pangle 3.5.1.2 and MoPub SDK 5.16.2.
+
+   * 3.5.1.0.1
+     * Remove deprecated usage of Rewarded Video APIs.
+
+   * 3.5.1.0.0
+     * This version of the adapters has been certified with Pangle 3.5.1.0 and MoPub SDK 5.16.2.
+
    * 3.4.4.3.0
      * Change the SDK pod dependency from `Bytedance-UnionAD` to `Ads-Global`. No action required for publishers.
      * Pangle iOS SDK was separated into Pangle China SDK and Pangle non-China SDK from the version 3.4.0.0. MoPub will only certify Pangle non-China SDK start from v3.4.4.3.

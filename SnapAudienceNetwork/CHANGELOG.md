@@ -1,4 +1,10 @@
 ## Changelog
+* 1.0.8.1
+  * Remove deprecated usage of Rewarded Video APIs.
+
+* 1.0.8.0
+  * This version of the adapters has been certified with SnapAudienceNetwork 1.0.8 and MoPub SDK 5.16.2.
+
 * 1.0.7.2
   * Add support for `fullscreenAdAdapterAdWillDismiss` when a fullscreen creative is about to close. Publishers must use v5.16.1 of the MoPub SDK at the minimum.
 

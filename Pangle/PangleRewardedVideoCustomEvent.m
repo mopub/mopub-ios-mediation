@@ -2,7 +2,6 @@
     #import <BUAdSDK/BUAdSDK.h>
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
-    #import "MPRewardedVideoError.h"
     #import "MPReward.h"
 #endif
 #import "PangleAdapterConfiguration.h"
@@ -113,7 +112,7 @@
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     } else {
         NSError *error = [NSError
-                          errorWithDomain:MoPubRewardedVideoAdsSDKDomain
+                          errorWithDomain:MoPubRewardedAdsSDKDomain
                           code:BUErrorCodeNERenderResultError
                           userInfo:@{NSLocalizedDescriptionKey : @"Failed to show Pangle rewarded video."}];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
@@ -179,7 +178,7 @@
     if (verify) {
         NSString *rewardName = rewardedVideoAd.rewardedVideoModel.rewardName;
         NSString *currencyType = (rewardName && [rewardName isKindOfClass:[NSString class]] && rewardName.length > 0) ? rewardName :kMPRewardCurrencyTypeUnspecified;
-        MPRewardedVideoReward *reward = [[MPRewardedVideoReward alloc] initWithCurrencyType:currencyType amount: @(rewardedVideoAd.rewardedVideoModel.rewardAmount)];
+        MPReward *reward = [[MPReward alloc] initWithCurrencyType:currencyType amount: @(rewardedVideoAd.rewardedVideoModel.rewardAmount)];
         
         MPLogEvent([MPLogEvent adShouldRewardUserWithReward:reward]);
         

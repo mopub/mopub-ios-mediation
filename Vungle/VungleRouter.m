@@ -8,8 +8,6 @@
 #import <VungleSDK/VungleSDKHeaderBidding.h>
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
-    #import "MPRewardedVideo.h"
-    #import "MPRewardedVideoError.h"
     #import "MoPub.h"
 #endif
 #import "VungleAdapterConfiguration.h"
@@ -131,6 +129,8 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
             NSError * error = nil;
             // Disable refresh functionality for all banners
             [[VungleSDK sharedSDK] disableBannerRefresh];
+            // Enable background downloading
+            [VungleSDK enableBackgroundDownload:YES];
             BOOL started = [[VungleSDK sharedSDK] startWithAppId:appId options:initOptions error:&error];
             if (!started && error.code == VungleSDKErrorSDKAlreadyInitializing) {
                 MPLogInfo(@"Vungle:SDK already has been initialized.");
@@ -225,7 +225,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
             [self requestAdWithCustomEventInfo:info delegate:delegate];
         }
     } else {
-        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorUnknown userInfo:nil];
+        NSError *error = [NSError errorWithDomain:MoPubRewardedAdsSDKDomain code:MPRewardedAdErrorUnknown userInfo:nil];
         [delegate vungleAdDidFailToLoad:error];
     }
 }
@@ -401,7 +401,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
             self.isAdPlaying = NO;
         }
     } else {
-        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
+        NSError *error = [NSError errorWithDomain:MoPubRewardedAdsSDKDomain code:MPRewardedAdErrorNoAdsAvailable userInfo:nil];
         [[self.delegatesDict objectForKey:placementId] vungleAdDidFailToPlay:error];
     }
 }

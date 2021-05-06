@@ -92,7 +92,7 @@
         [self loadRewardedVideo: self.instanceID WithAdMarkup: adMarkup];
     } @catch (NSException *exception) {
         MPLogInfo(@"IronSource Rewarded Video initialization with error: %@", exception);
-        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MOPUBErrorAdapterInvalid userInfo:@{NSLocalizedDescriptionKey: @"Custom event class Rewarded Video error.", NSLocalizedRecoverySuggestionErrorKey: @"Native Network or Custom Event adapter was configured incorrectly."}];
+        NSError *error = [NSError errorWithDomain:MoPubRewardedAdsSDKDomain code:MOPUBErrorAdapterInvalid userInfo:@{NSLocalizedDescriptionKey: @"Custom event class Rewarded Video error.", NSLocalizedRecoverySuggestionErrorKey: @"Native Network or Custom Event adapter was configured incorrectly."}];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error: error], self.instanceID);
         [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     }

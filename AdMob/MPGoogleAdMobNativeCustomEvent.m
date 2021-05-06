@@ -14,7 +14,7 @@
 /// Holds the preferred location of the AdChoices icon.
 static GADAdChoicesPosition adChoicesPosition;
 
-@interface MPGoogleAdMobNativeCustomEvent () <GADAdLoaderDelegate, GADUnifiedNativeAdLoaderDelegate>
+@interface MPGoogleAdMobNativeCustomEvent () <GADAdLoaderDelegate, GADNativeAdLoaderDelegate>
 
 /// GADAdLoader instance.
 @property(nonatomic, strong) GADAdLoader *adLoader;
@@ -82,8 +82,8 @@ static GADAdChoicesPosition adChoicesPosition;
     
   GADNativeAdMediaAdLoaderOptions *nativeAdMediaAdLoaderOptions =
       [[GADNativeAdMediaAdLoaderOptions alloc] init];
-  nativeAdMediaAdLoaderOptions.mediaAspectRatio =
-      GADNativeAdImageAdLoaderOptionsOrientationAny;
+
+  nativeAdMediaAdLoaderOptions.mediaAspectRatio = GADMediaAspectRatioAny;
 
   // In GADNativeAdViewAdOptions, the default preferredAdChoicesPosition is
   // GADAdChoicesPositionTopRightCorner.
@@ -93,7 +93,7 @@ static GADAdChoicesPosition adChoicesPosition;
   self.adLoader =
       [[GADAdLoader alloc] initWithAdUnitID:self.admobAdUnitId
                          rootViewController:rootViewController
-                                    adTypes:@[ kGADAdLoaderAdTypeUnifiedNative ]
+                                    adTypes:@[ kGADAdLoaderAdTypeNative ]
                                     options:@[ nativeAdImageLoaderOptions, nativeAdViewAdOptions, nativeAdMediaAdLoaderOptions ]];
   self.adLoader.delegate = self;
 
@@ -113,7 +113,7 @@ static GADAdChoicesPosition adChoicesPosition;
 
 #pragma mark GADAdLoaderDelegate implementation
 
-- (void)adLoader:(GADAdLoader *)adLoader didFailToReceiveAdWithError:(GADRequestError *)error {
+- (void)adLoader:(nonnull GADAdLoader *)adLoader didFailToReceiveAdWithError:(nonnull NSError *)error {
   MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.admobAdUnitId);
   [self.delegate nativeCustomEvent:self didFailToLoadAdWithError:error];
 }
@@ -121,59 +121,59 @@ static GADAdChoicesPosition adChoicesPosition;
 #pragma mark GADUnifiedNativeAdLoaderDelegate implementation
 
 - (void)adLoader:(nonnull GADAdLoader *)adLoader
-    didReceiveUnifiedNativeAd:(nonnull GADUnifiedNativeAd *)nativeAd {
-  if (![self isValidUnifiedNativeAd:nativeAd]) {
-    MPLogInfo(@"Unified native ad is missing one or more required assets, failing the request");
+    didReceiveNativeAd:(nonnull GADNativeAd *)nativeAd {
+  if (![self isValidNativeAd:nativeAd]) {
+    MPLogInfo(@"Native ad is missing one or more required assets, failing the request");
     [self.delegate nativeCustomEvent:self
             didFailToLoadAdWithError:MPNativeAdNSErrorForInvalidAdServerResponse(
                                          @"Missing one or more required assets.")];
     return;
   }
 
-  GADUnifiedNativeAdView *gadUnifiedNativeAdView = [[GADUnifiedNativeAdView alloc] init];
+  GADNativeAdView *gadNativeAdView = [[GADNativeAdView alloc] init];
 
   GADAdChoicesView *adChoicesView = [[GADAdChoicesView alloc] initWithFrame:CGRectZero];
   adChoicesView.userInteractionEnabled = NO;
-  [gadUnifiedNativeAdView addSubview:adChoicesView];
-  gadUnifiedNativeAdView.adChoicesView = adChoicesView;
+  [gadNativeAdView addSubview:adChoicesView];
+  gadNativeAdView.adChoicesView = adChoicesView;
 
   GADMediaView *mediaView = [[GADMediaView alloc] initWithFrame:CGRectZero];
-  [gadUnifiedNativeAdView addSubview:mediaView];
-  gadUnifiedNativeAdView.mediaView = mediaView;
+  [gadNativeAdView addSubview:mediaView];
+  gadNativeAdView.mediaView = mediaView;
 
-  gadUnifiedNativeAdView.nativeAd = nativeAd;
+  gadNativeAdView.nativeAd = nativeAd;
 
   UILabel *headlineView = [[UILabel alloc] initWithFrame:CGRectZero];
   headlineView.text = nativeAd.headline;
   headlineView.textColor = [UIColor clearColor];
-  [gadUnifiedNativeAdView addSubview:headlineView];
-  gadUnifiedNativeAdView.headlineView = headlineView;
+  [gadNativeAdView addSubview:headlineView];
+  gadNativeAdView.headlineView = headlineView;
 
   UILabel *bodyView = [[UILabel alloc] initWithFrame:CGRectZero];
   bodyView.text = nativeAd.body;
   bodyView.textColor = [UIColor clearColor];
-  [gadUnifiedNativeAdView addSubview:bodyView];
-  gadUnifiedNativeAdView.bodyView = bodyView;
+  [gadNativeAdView addSubview:bodyView];
+  gadNativeAdView.bodyView = bodyView;
 
   UILabel *callToActionView = [[UILabel alloc] initWithFrame:CGRectZero];
   callToActionView.text = nativeAd.callToAction;
   callToActionView.textColor = [UIColor clearColor];
-  [gadUnifiedNativeAdView addSubview:callToActionView];
-  gadUnifiedNativeAdView.callToActionView = callToActionView;
+  [gadNativeAdView addSubview:callToActionView];
+  gadNativeAdView.callToActionView = callToActionView;
 
   UIImageView *mainMediaImageView = [[UIImageView alloc] initWithFrame:CGRectZero];
   mainMediaImageView.image = nativeAd.images.firstObject.image;
-  [gadUnifiedNativeAdView addSubview:mainMediaImageView];
-  gadUnifiedNativeAdView.imageView = mainMediaImageView;
+  [gadNativeAdView addSubview:mainMediaImageView];
+  gadNativeAdView.imageView = mainMediaImageView;
 
   UIImageView *iconView = [[UIImageView alloc] initWithFrame:CGRectZero];
   iconView.image = nativeAd.icon.image;
-  [gadUnifiedNativeAdView addSubview:iconView];
-  gadUnifiedNativeAdView.iconView = iconView;
+  [gadNativeAdView addSubview:iconView];
+  gadNativeAdView.iconView = iconView;
 
   MPGoogleAdMobNativeAdAdapter *adapter =
-      [[MPGoogleAdMobNativeAdAdapter alloc] initWithAdMobUnifiedNativeAd:nativeAd
-                                                     unifiedNativeAdView:gadUnifiedNativeAdView];
+      [[MPGoogleAdMobNativeAdAdapter alloc] initWithAdMobNativeAd:nativeAd
+                                                     nativeAdView:gadNativeAdView];
   MPNativeAd *moPubNativeAd = [[MPNativeAd alloc] initWithAdAdapter:adapter];
 
   NSMutableArray *imageURLs = [NSMutableArray array];
@@ -202,10 +202,9 @@ static GADAdChoicesPosition adChoicesPosition;
 
 #pragma mark - Private Methods
 
-/// Checks the unified native ad has required assets or not.
-- (BOOL)isValidUnifiedNativeAd:(GADUnifiedNativeAd *)unifiedNativeAd {
-  return (unifiedNativeAd.headline && unifiedNativeAd.body && unifiedNativeAd.icon &&
-          unifiedNativeAd.images.count && unifiedNativeAd.callToAction);
+/// Checks the native ad has required assets or not.
+- (BOOL)isValidNativeAd:(GADNativeAd *)nativeAd {
+  return (nativeAd.headline && nativeAd.body && nativeAd.icon && nativeAd.callToAction);
 }
 
 @end

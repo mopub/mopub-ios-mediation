@@ -1,4 +1,11 @@
 ## Changelog
+* 6.4.1.0
+    * This version of the adapters has been certified with Facebook Audience Network 6.4.1 and MoPub 5.16.2.
+
+* 6.4.0.0
+    * This version of the adapters has been certified with Facebook Audience Network 6.4.0 and MoPub 5.16.2.
+    * **Update**: Facebook has retroactively withdrawn this SDK version from production. Publishers should use v6.4.1.0 of the adapters and get v6.4.1 of the Facbook Audience Network.
+
 * 6.3.1.0
     * This version of the adapters has been certified with Facebook Audience Network 6.3.1 and MoPub 5.16.2.
 

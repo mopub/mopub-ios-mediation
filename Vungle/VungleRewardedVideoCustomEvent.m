@@ -11,7 +11,6 @@
     #import "MPLogging.h"
     #import "MoPub.h"
     #import "MPReward.h"
-    #import "MPRewardedVideoError.h"
 #endif
 #import "VungleAdapterConfiguration.h"
 #import "VungleInstanceMediationSettings.h"
@@ -73,7 +72,7 @@
                                                                      settings:settings
                                                                forPlacementId:self.placementId];
     } else {
-        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:@{ NSLocalizedDescriptionKey: @"Failed to show Vungle rewarded video: Vungle now claims that there is no available video ad."}];
+        NSError *error = [NSError errorWithDomain:MoPubRewardedAdsSDKDomain code:MPRewardedAdErrorNoAdsAvailable userInfo:@{ NSLocalizedDescriptionKey: @"Failed to show Vungle rewarded video: Vungle now claims that there is no available video ad."}];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getPlacementID]);
         [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
     }

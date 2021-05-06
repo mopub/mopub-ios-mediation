@@ -1,4 +1,11 @@
 ## Changelog
+* 6.9.2.0
+  * This version of the adapters has been certified with Vungle 6.9.2 and MoPub SDK 5.16.2.
+  * Remove deprecated usage of Rewarded Video APIs.
+
+* 6.9.1.2
+  * Address Vungle SDK v6.9.1 deadlock issue.
+  
 * 6.9.1.1
   * Add support for `fullscreenAdAdapterAdWillDismiss` when a fullscreen creative is about to close. Publishers must use v5.16.1 of the MoPub SDK at the minimum.
   
