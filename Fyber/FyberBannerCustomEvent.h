@@ -6,6 +6,11 @@
 #import <MoPub.h>
 #endif
 
+/**
+ *  @brief Banner Custom Event Class for MoPub SDK.
+ *
+ *  @discussion Use in order to implement mediation with Inneractive Banner Ads.
+ */
 @interface FyberBannerCustomEvent : MPInlineAdAdapter <MPThirdPartyInlineAdAdapter>
 
 @end

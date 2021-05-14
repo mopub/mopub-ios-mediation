@@ -4,7 +4,7 @@
 #import <MoPubSDK/MoPub.h>
 #else
 #import <MoPub.h>
-#endif // special endif
+#endif
 
 /**
  *  @brief Interstitial Custom Event Class for MoPub SDK.

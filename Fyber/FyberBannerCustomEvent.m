@@ -28,8 +28,7 @@
 - (void)requestAdWithSize:(CGSize)size adapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     
-    _isIABanner =
-    ((size.width == kIADefaultIPhoneBannerWidth) && (size.height == kIADefaultIPhoneBannerHeight)) ||
+    _isIABanner = ((size.width == kIADefaultIPhoneBannerWidth) && (size.height == kIADefaultIPhoneBannerHeight)) ||
     ((size.width == kIADefaultIPadBannerWidth) && (size.height == kIADefaultIPadBannerHeight));
     
     NSString *spotID = @"";
@@ -37,16 +36,15 @@
     
     BOOL isMediumRectangleFormat = (format != nil ? [[format lowercaseString] containsString:@"medium_rectangle"] : NO);
     BOOL isBannerFormat = (format != nil ? [[format lowercaseString] containsString:@"banner"] : NO);
-
-     //Fyber only supports Medium Rectangle or Banner
+    
     if (!isMediumRectangleFormat && !isBannerFormat) {
         MPLogInfo(@"Fyber only supports 300*250, 320*50 and 728*90 sized ads. Please ensure your MoPub adunit's format is Medium Rectangle or Banner.");
         NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid sizes received. Fyber only supports 300 x 250, 320 x 50 and 728 x 90 ads."];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.spotID);
-         [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
-         
+        [self.delegate inlineAdAdapter:self didFailToLoadAdWithError:error];
+        
         return;
-     }
+    }
     
     if (info && [info isKindOfClass:NSDictionary.class] && info.count) {
         NSString *receivedSpotID = info[@"spotID"];
@@ -63,42 +61,42 @@
     }];
     
     self.spotID = spotID;
-	IAAdRequest *request = [IAAdRequest build:^(id<IAAdRequestBuilder>  _Nonnull builder) {
+    IAAdRequest *request = [IAAdRequest build:^(id<IAAdRequestBuilder>  _Nonnull builder) {
         builder.spotID = spotID;
-		builder.timeout = BANNER_TIMEOUT_INTERVAL - 1;
-		builder.userData = userData;
-
+        builder.timeout = BANNER_TIMEOUT_INTERVAL - 1;
+        builder.userData = userData;
+        
         builder.keywords = self.localExtras[@"keywords"];
-	}];
-
-	self.MRAIDContentController = [IAMRAIDContentController build:^(id<IAMRAIDContentControllerBuilder>  _Nonnull builder) {
-		builder.MRAIDContentDelegate = self;
-        builder.contentAwareBackground = YES;
-	}];
-
-	self.bannerUnitController = [IAViewUnitController build:^(id<IAViewUnitControllerBuilder>  _Nonnull builder) {
-		builder.unitDelegate = self;
-		[builder addSupportedContentController:self.MRAIDContentController];
-	}];
-
-	self.adSpot = [IAAdSpot build:^(id<IAAdSpotBuilder>  _Nonnull builder) {
-		builder.adRequest = request;
-		[builder addSupportedUnitController:self.bannerUnitController];
-		builder.mediationType = [IAMediationMopub new];
-	}];
+    }];
     
-	MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.spotID);
+    self.MRAIDContentController = [IAMRAIDContentController build:^(id<IAMRAIDContentControllerBuilder>  _Nonnull builder) {
+        builder.MRAIDContentDelegate = self;
+        builder.contentAwareBackground = YES;
+    }];
+    
+    self.bannerUnitController = [IAViewUnitController build:^(id<IAViewUnitControllerBuilder>  _Nonnull builder) {
+        builder.unitDelegate = self;
+        [builder addSupportedContentController:self.MRAIDContentController];
+    }];
+    
+    self.adSpot = [IAAdSpot build:^(id<IAAdSpotBuilder>  _Nonnull builder) {
+        builder.adRequest = request;
+        [builder addSupportedUnitController:self.bannerUnitController];
+        builder.mediationType = [IAMediationMopub new];
+    }];
+    
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.spotID);
     
     __weak __typeof__(self) weakSelf = self;
     
     self.fetchAdBlock = ^void() {
         [weakSelf.adSpot fetchAdWithCompletion:^(IAAdSpot * _Nullable adSpot, IAAdModel * _Nullable adModel, NSError * _Nullable error) {
             if (error) {
-                [weakSelf treatError:error.localizedDescription];
+                [weakSelf handleError:error.localizedDescription];
             } else {
                 if (adSpot.activeUnitController == weakSelf.bannerUnitController) {
                     if ([weakSelf.delegate inlineAdAdapterViewControllerForPresentingModalView:weakSelf].presentedViewController != nil) {
-                        [weakSelf treatError:@"view hierarchy inconsistency"];
+                        [weakSelf handleError:@"view hierarchy inconsistency"];
                     } else {
                         [MPLogging logEvent:[MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(weakSelf.class)] source:weakSelf.spotID fromClass:weakSelf.class];
                         [MPLogging logEvent:[MPLogEvent adShowAttemptForAdapter:NSStringFromClass(weakSelf.class)] source:weakSelf.spotID fromClass:weakSelf.class];
@@ -107,7 +105,7 @@
                         [weakSelf.delegate inlineAdAdapter:weakSelf didLoadAdWithAdView:weakSelf.bannerUnitController.adView];
                     }
                 } else {
-                    [weakSelf treatError:@"mismatched ad object entities"];
+                    [weakSelf handleError:@"active unit controller is not the current banner ad object."];
                 }
             }
         }];
@@ -157,7 +155,7 @@
 
 #pragma mark - Service
 
-- (void)treatError:(NSString * _Nullable)reason {
+- (void)handleError:(NSString * _Nullable)reason {
     if (!reason.length) {
         reason = @"internal error";
     }
@@ -187,6 +185,7 @@
 }
 
 - (void)IAUnitControllerWillPresentFullscreen:(IAUnitController * _Nullable)unitController {
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.spotID);
     MPLogInfo(@"ad will present fullscreen;");
 }
 
@@ -199,7 +198,6 @@
 }
 
 - (void)IAUnitControllerDidDismissFullscreen:(IAUnitController * _Nullable)unitController {
-    
     MPLogAdEvent([MPLogEvent adDidDismissModalForAdapter:NSStringFromClass(self.class)], self.spotID);
     [self.delegate inlineAdAdapterDidEndUserAction:self];
 }
@@ -221,7 +219,7 @@
 
 - (void)IAMRAIDContentController:(IAMRAIDContentController * _Nullable)contentController MRAIDAdWillExpandToFrame:(CGRect)frame {
     MPLogInfo(@"MRAID ad will expand;");
-
+    
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
     if ([self.delegate respondsToSelector:@selector(inlineAdAdapterWillExpand:)]) {
@@ -240,7 +238,7 @@
 
 - (void)IAMRAIDContentControllerMRAIDAdDidCollapse:(IAMRAIDContentController * _Nullable)contentController {
     MPLogInfo(@"MRAID ad did collapse;");
-
+    
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
     if ([self.delegate respondsToSelector:@selector(inlineAdAdapterDidCollapse:)]) {

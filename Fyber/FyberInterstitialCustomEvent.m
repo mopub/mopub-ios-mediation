@@ -49,48 +49,48 @@
     }];
     
     self.spotID = spotID;
-	IAAdRequest *request = [IAAdRequest build:^(id<IAAdRequestBuilder>  _Nonnull builder) {
-		builder.spotID = spotID;
-		builder.timeout = 15;
+    IAAdRequest *request = [IAAdRequest build:^(id<IAAdRequestBuilder>  _Nonnull builder) {
+        builder.spotID = spotID;
+        builder.timeout = 15;
         builder.userData = userData;
-
+        
         builder.keywords = self.localExtras[@"keywords"];
-	}];
-
-	self.videoContentController = [IAVideoContentController build:^(id<IAVideoContentControllerBuilder>  _Nonnull builder) {
-		builder.videoContentDelegate = self;
-	}];
-	
-	self.MRAIDContentController = [IAMRAIDContentController build:^(id<IAMRAIDContentControllerBuilder>  _Nonnull builder) {
-		builder.MRAIDContentDelegate = self;
-	}];
-	
-	self.interstitialUnitController = [IAFullscreenUnitController build:^(id<IAFullscreenUnitControllerBuilder>  _Nonnull builder) {
-		builder.unitDelegate = self;
-		
-		[builder addSupportedContentController:self.videoContentController];
-		[builder addSupportedContentController:self.MRAIDContentController];
-	}];
-	
+    }];
+    
+    self.videoContentController = [IAVideoContentController build:^(id<IAVideoContentControllerBuilder>  _Nonnull builder) {
+        builder.videoContentDelegate = self;
+    }];
+    
+    self.MRAIDContentController = [IAMRAIDContentController build:^(id<IAMRAIDContentControllerBuilder>  _Nonnull builder) {
+        builder.MRAIDContentDelegate = self;
+    }];
+    
+    self.interstitialUnitController = [IAFullscreenUnitController build:^(id<IAFullscreenUnitControllerBuilder>  _Nonnull builder) {
+        builder.unitDelegate = self;
+        
+        [builder addSupportedContentController:self.videoContentController];
+        [builder addSupportedContentController:self.MRAIDContentController];
+    }];
+    
     self.adSpot = [IAAdSpot build:^(id<IAAdSpotBuilder>  _Nonnull builder) {
-		builder.adRequest = request;
-		[builder addSupportedUnitController:self.interstitialUnitController];
-		builder.mediationType = [IAMediationMopub new];
-	}];
-	MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.spotID);
+        builder.adRequest = request;
+        [builder addSupportedUnitController:self.interstitialUnitController];
+        builder.mediationType = [IAMediationMopub new];
+    }];
+    MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.spotID);
     
     __weak __typeof__(self) weakSelf = self;
     
     self.fetchAdBlock = ^void() {
         [weakSelf.adSpot fetchAdWithCompletion:^(IAAdSpot * _Nullable adSpot, IAAdModel * _Nullable adModel, NSError * _Nullable error) {
             if (error) {
-                [weakSelf treatLoadOrShowError:error.localizedDescription isLoad:YES];
+                [weakSelf handleLoadOrShowError:error.localizedDescription isLoad:YES];
             } else {
                 if (adSpot.activeUnitController == weakSelf.interstitialUnitController) {
                     [MPLogging logEvent:[MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(weakSelf.class)] source:weakSelf.spotID fromClass:weakSelf.class];
                     [weakSelf.delegate fullscreenAdAdapterDidLoadAd:weakSelf];
                 } else {
-                    [weakSelf treatLoadOrShowError:nil isLoad:YES];
+                    [weakSelf handleLoadOrShowError:nil isLoad:YES];
                 }
             }
         }];
@@ -127,7 +127,7 @@
     }
     
     if (errorString) {
-        [self treatLoadOrShowError:errorString isLoad:NO];
+        [self handleLoadOrShowError:errorString isLoad:NO];
     } else {
         self.interstitialRootViewController = rootViewController;
         [self.interstitialUnitController showAdAnimated:YES completion:nil];
@@ -147,12 +147,14 @@
 }
 
 - (void)handleDidPlayAd {
-    //no-op
+    if (!self.hasAdAvailable) {
+        [self.delegate fullscreenAdAdapterDidExpire:self];
+    }
 }
 
 #pragma mark - Service
 
-- (void)treatLoadOrShowError:(NSString * _Nullable)reason isLoad:(BOOL)isLoad {
+- (void)handleLoadOrShowError:(NSString * _Nullable)reason isLoad:(BOOL)isLoad {
     if (!reason.length) {
         reason = @"internal error";
     }
@@ -172,7 +174,7 @@
 #pragma mark - IAViewUnitControllerDelegate
 
 - (UIViewController * _Nonnull)IAParentViewControllerForUnitController:(IAUnitController * _Nullable)unitController {
-	return self.interstitialRootViewController;
+    return self.interstitialRootViewController;
 }
 
 - (void)IAAdDidReceiveClick:(IAUnitController * _Nullable)unitController {
@@ -188,12 +190,12 @@
 
 - (void)IAUnitControllerWillPresentFullscreen:(IAUnitController * _Nullable)unitController {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.spotID);
-	[self.delegate fullscreenAdAdapterAdWillAppear:self];
+    [self.delegate fullscreenAdAdapterAdWillPresent:self];
 }
 
 - (void)IAUnitControllerDidPresentFullscreen:(IAUnitController * _Nullable)unitController {
-	MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.spotID);
-	[self.delegate fullscreenAdAdapterAdDidAppear:self];
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.spotID);
+    [self.delegate fullscreenAdAdapterAdDidPresent:self];
 }
 
 - (void)IAUnitControllerWillDismissFullscreen:(IAUnitController * _Nullable)unitController {
@@ -211,7 +213,7 @@
 
 - (void)IAUnitControllerWillOpenExternalApp:(IAUnitController * _Nullable)unitController {
     MPLogAdEvent([MPLogEvent adWillLeaveApplicationForAdapter:NSStringFromClass(self.class)], self.spotID);
-	[self.delegate fullscreenAdAdapterWillLeaveApplication:self];
+    [self.delegate fullscreenAdAdapterWillLeaveApplication:self];
 }
 
 - (void)IAAdDidExpire:(IAUnitController * _Nullable)unitController {

@@ -4,6 +4,7 @@
 #elif __has_include(<MoPubSDK/MoPub.h>)
 #import <MoPubSDK/MoPub.h>
 #else
+#import <MoPub.h>
 #import "MPBaseAdapterConfiguration.h"
 #import "MPLogging.h"
 #endif
