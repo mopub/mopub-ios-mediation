@@ -44,34 +44,34 @@
     
     IAUserData *userData = [IAUserData build:^(id<IAUserDataBuilder>  _Nonnull builder) {}];
     
-	IAAdRequest *request = [IAAdRequest build:^(id<IAAdRequestBuilder>  _Nonnull builder) {
-		builder.spotID = spotID;
-		builder.timeout = 15;
-		builder.userData = userData;
-
+    IAAdRequest *request = [IAAdRequest build:^(id<IAAdRequestBuilder>  _Nonnull builder) {
+        builder.spotID = spotID;
+        builder.timeout = 15;
+        builder.userData = userData;
+        
         builder.keywords = self.localExtras[@"keywords"];
-	}];
+    }];
     
     self.MRAIDContentController = [IAMRAIDContentController build:^(id<IAMRAIDContentControllerBuilder>  _Nonnull builder) {
         builder.MRAIDContentDelegate = self;
     }];
-	
+    
     self.videoContentController = [IAVideoContentController build:^(id<IAVideoContentControllerBuilder>  _Nonnull builder) {
-		builder.videoContentDelegate = self;
-	}];
-
-	self.interstitialUnitController = [IAFullscreenUnitController build:^(id<IAFullscreenUnitControllerBuilder>  _Nonnull builder) {
-		builder.unitDelegate = self;
-		
+        builder.videoContentDelegate = self;
+    }];
+    
+    self.interstitialUnitController = [IAFullscreenUnitController build:^(id<IAFullscreenUnitControllerBuilder>  _Nonnull builder) {
+        builder.unitDelegate = self;
+        
         [builder addSupportedContentController:self.MRAIDContentController];
-		[builder addSupportedContentController:self.videoContentController];
-	}];
-
-	self.adSpot = [IAAdSpot build:^(id<IAAdSpotBuilder>  _Nonnull builder) {
-		builder.adRequest = request;
-		[builder addSupportedUnitController:self.interstitialUnitController];
+        [builder addSupportedContentController:self.videoContentController];
+    }];
+    
+    self.adSpot = [IAAdSpot build:^(id<IAAdSpotBuilder>  _Nonnull builder) {
+        builder.adRequest = request;
+        [builder addSupportedUnitController:self.interstitialUnitController];
         builder.mediationType = [IAMediationMopub new];
-	}];
+    }];
     
     self.spotID = spotID;
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], self.spotID);
@@ -81,14 +81,14 @@
     self.fetchAdBlock = ^void() {
         [weakSelf.adSpot fetchAdWithCompletion:^(IAAdSpot * _Nullable adSpot, IAAdModel * _Nullable adModel, NSError * _Nullable error) { // 'self' should not be used in this block;
             if (error) {
-                [weakSelf treatLoadOrShowError:error.localizedDescription isLoad:YES];
+                [weakSelf handleLoadOrShowError:error.localizedDescription isLoad:YES];
             } else {
                 if (adSpot.activeUnitController == weakSelf.interstitialUnitController) {
                     weakSelf.isVideoAvailable = YES;
                     [MPLogging logEvent:[MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(weakSelf.class)] source:weakSelf.spotID fromClass:weakSelf.class];
                     [weakSelf.delegate fullscreenAdAdapterDidLoadAd:weakSelf];
                 } else {
-                    [weakSelf treatLoadOrShowError:nil isLoad:YES];
+                    [weakSelf handleLoadOrShowError:nil isLoad:YES];
                 }
             }
         }];
@@ -129,9 +129,9 @@
     } else if (!self.interstitialUnitController.isReady) {
         errorString = @"ad did expire;";
     }
-
+    
     if (errorString) {
-        [self treatLoadOrShowError:errorString isLoad:NO];
+        [self handleLoadOrShowError:errorString isLoad:NO];
     } else {
         self.viewControllerForPresentingModalView = viewController;
         [self.interstitialUnitController showAdAnimated:YES completion:nil];
@@ -154,7 +154,7 @@
 
 #pragma mark - Service
 
-- (void)treatLoadOrShowError:(NSString * _Nullable)reason isLoad:(BOOL)isLoad {
+- (void)handleLoadOrShowError:(NSString * _Nullable)reason isLoad:(BOOL)isLoad {
     if (!reason.length) {
         reason = @"internal error";
     }
@@ -178,7 +178,7 @@
 
 - (void)IAAdDidReceiveClick:(IAUnitController * _Nullable)unitController {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.spotID);
-	[self.delegate fullscreenAdAdapterDidReceiveTap:self];
+    [self.delegate fullscreenAdAdapterDidReceiveTap:self];
     [self.delegate fullscreenAdAdapterDidTrackClick:self];
 }
 
@@ -189,19 +189,19 @@
 
 - (void)IAAdDidReward:(IAUnitController * _Nullable)unitController {
     MPReward *reward = [[MPReward alloc] initWithCurrencyType:kMPRewardCurrencyTypeUnspecified
-                                                                                 amount:@(kMPRewardCurrencyAmountUnspecified)];
+                                                       amount:@(kMPRewardCurrencyAmountUnspecified)];
     MPLogAdEvent([MPLogEvent adShouldRewardUserWithReward:reward], self.spotID);
     [self.delegate fullscreenAdAdapter:self willRewardUser:reward];
 }
 
 - (void)IAUnitControllerWillPresentFullscreen:(IAUnitController * _Nullable)unitController {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.spotID);
-    [self.delegate fullscreenAdAdapterAdWillAppear:self];
+    [self.delegate fullscreenAdAdapterAdWillPresent:self];
 }
 
 - (void)IAUnitControllerDidPresentFullscreen:(IAUnitController * _Nullable)unitController {
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.spotID);
-    [self.delegate fullscreenAdAdapterAdDidAppear:self];
+    [self.delegate fullscreenAdAdapterAdDidPresent:self];
 }
 
 - (void)IAUnitControllerWillDismissFullscreen:(IAUnitController * _Nullable)unitController {
