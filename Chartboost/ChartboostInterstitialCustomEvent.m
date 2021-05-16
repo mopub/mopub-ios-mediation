@@ -83,7 +83,7 @@
 - (void)willShowAd:(CHBShowEvent *)event
 {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], event.ad.location);
-    [self.delegate fullscreenAdAdapterAdWillAppear:self];
+    [self.delegate fullscreenAdAdapterAdWillPresent:self];
 }
 
 - (void)didShowAd:(CHBShowEvent *)event error:(CHBShowError *)error
@@ -95,7 +95,7 @@
     } else {
         MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], event.ad.location);
         MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], event.ad.location);
-        [self.delegate fullscreenAdAdapterAdDidAppear:self];
+        [self.delegate fullscreenAdAdapterAdDidPresent:self];
         
         [self.delegate fullscreenAdAdapterDidTrackImpression:self];
     }

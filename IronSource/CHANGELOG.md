@@ -1,4 +1,8 @@
 ## Changelog
+* 7.1.5.0.2
+    * Add `fullscreenAdAdapterAdWillPresent` and `fullscreenAdAdapterAdDidPresent` to notify publishers of the fullscreen ad show event. Remove `fullscreenAdAdapterAdWillAppear` and  `fullscreenAdAdapterAdDidAppear` as they are now deprecated by the MoPub iOS SDK.
+    * Publishers must use v5.17.0 of the MoPub SDK at the minimum.
+
 * 7.1.5.0.1
     * Remove deprecated usage of Rewarded Video APIs.
 

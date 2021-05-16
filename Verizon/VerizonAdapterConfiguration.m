@@ -4,7 +4,7 @@
 #import "VerizonAdapterConfiguration.h"
 #import <zlib.h>
 
-NSString * const kMoPubVASAdapterVersion = @"1.9.0.1";
+NSString * const kMoPubVASAdapterVersion = @"1.9.0.2";
 NSString * const kMoPubVASAdapterErrorWho = @"MoPubVASAdapter";
 NSString * const kMoPubVASAdapterPlacementId = @"placementId";
 NSString * const kMoPubVASAdapterSiteId = @"siteId";

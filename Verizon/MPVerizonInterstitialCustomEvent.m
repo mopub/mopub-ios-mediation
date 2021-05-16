@@ -195,11 +195,10 @@
         if (strongSelf != nil)
         {
             MPLogInfo(@"VAS interstial %@ will display.", interstitialAd);
-            [self.delegate fullscreenAdAdapterAdWillAppear:self];
+            [self.delegate fullscreenAdAdapterAdWillPresent:self];
             MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
             
-            MPLogInfo(@"VAS interstitial %@ did appear.", interstitialAd);
-            [self.delegate fullscreenAdAdapterAdDidAppear:self];
+            [self.delegate fullscreenAdAdapterAdDidPresent:self];
             MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
             MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
         }

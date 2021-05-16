@@ -135,10 +135,10 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
 #pragma mark - UnityAdsShowDelegate Methods
 
 - (void)unityAdsShowStart:(nonnull NSString *)placementId {
-  [self.delegate fullscreenAdAdapterAdWillAppear:self];
   MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], placementId);
+  [self.delegate fullscreenAdAdapterAdWillPresent:self];
 
-  [self.delegate fullscreenAdAdapterAdDidAppear:self];
+  [self.delegate fullscreenAdAdapterAdDidPresent:self];
   [self.delegate fullscreenAdAdapterDidTrackImpression:self];
   MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], placementId);
   MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], placementId);

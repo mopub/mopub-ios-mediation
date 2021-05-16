@@ -147,7 +147,7 @@
 -(void)interstitialWillPresent:(IMInterstitial*)interstitial {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)],
                  [self getAdNetworkId]);
-    [self.delegate fullscreenAdAdapterAdWillAppear:self];
+    [self.delegate fullscreenAdAdapterAdWillPresent:self];
 }
 
 -(void)interstitialDidPresent:(IMInterstitial *)interstitial {
@@ -155,7 +155,7 @@
                  [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)],
                  [self getAdNetworkId]);
-    [self.delegate fullscreenAdAdapterAdDidAppear:self];
+    [self.delegate fullscreenAdAdapterAdDidPresent:self];
     [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 

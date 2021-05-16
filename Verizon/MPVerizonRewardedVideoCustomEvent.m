@@ -130,7 +130,7 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.siteId);
         MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.siteId);
         
-        [self.delegate fullscreenAdAdapterAdWillAppear:self];
+        [self.delegate fullscreenAdAdapterAdWillPresent:self];
     }
     else
     {
@@ -221,7 +221,7 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.siteId);
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.delegate fullscreenAdAdapterAdDidAppear:self];
+        [self.delegate fullscreenAdAdapterAdDidPresent:self];
     });
 }
 

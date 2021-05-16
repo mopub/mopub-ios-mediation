@@ -130,7 +130,7 @@ static NSString *const kSAKSlotId = @"slotId";
 {
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.slotId);
     
-    [self.delegate fullscreenAdAdapterAdDidAppear:self];
+    [self.delegate fullscreenAdAdapterAdDidPresent:self];
     [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
@@ -177,7 +177,7 @@ static NSString *const kSAKSlotId = @"slotId";
 - (void)rewardedAdWillAppear:(nonnull SAKRewardedAd *)ad
 {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.slotId);
-    [self.delegate fullscreenAdAdapterAdWillAppear:self];
+    [self.delegate fullscreenAdAdapterAdWillPresent:self];
 }
 
 - (void)rewardedAdWillDisappear:(nonnull SAKRewardedAd *)ad

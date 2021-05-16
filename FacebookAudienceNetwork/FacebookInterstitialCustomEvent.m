@@ -93,12 +93,12 @@
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
 
         MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
-        [self.delegate fullscreenAdAdapterAdWillAppear:self];
+        [self.delegate fullscreenAdAdapterAdWillPresent:self];
 
         [self.fbInterstitialAd showAdFromRootViewController:viewController];
         
         MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.fbPlacementId);
-        [self.delegate fullscreenAdAdapterAdDidAppear:self];
+        [self.delegate fullscreenAdAdapterAdDidPresent:self];
         
         [self cancelExpirationTimer];
     }

@@ -11,7 +11,7 @@ static NSString *mRewardName;
 static NSInteger mRewardAmount;
 static NSString *mMediaExtra;
 
-static NSString * const kAdapterVersion = @"3.5.1.2.0";
+static NSString * const kAdapterVersion = @"3.5.1.2.1";
 static NSString * const kAdapterErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-pangle-adapters";
 
 typedef NS_ENUM(NSInteger, PangleAdapterErrorCode) {

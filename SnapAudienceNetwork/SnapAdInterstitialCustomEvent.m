@@ -186,13 +186,13 @@ static NSString * const kSAKSlotId = @"slotId";
 - (void)interstitialWillAppear:(SAKInterstitial *)ad
 {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate fullscreenAdAdapterAdWillAppear:self];
+    [self.delegate fullscreenAdAdapterAdWillPresent:self];
 }
 
 - (void)interstitialDidAppear:(SAKInterstitial *)ad
 {
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate fullscreenAdAdapterAdDidAppear:self];
+    [self.delegate fullscreenAdAdapterAdDidPresent:self];
 }
 
 - (void)interstitialWillDisappear:(SAKInterstitial *)ad

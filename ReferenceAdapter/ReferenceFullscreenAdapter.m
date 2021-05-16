@@ -109,11 +109,7 @@
 
 /// Fullscreen ad presented to the user.
 - (void)fullscreenAdDidPresent {
-    // Uncomment the line below when MoPub SDK version 5.17.0 is released.
-    //[self.delegate fullscreenAdAdapterAdDidPresent:self];
-
-    // Remove this line when MoPub SDK version 5.17.0 is released.
-    [self.delegate fullscreenAdAdapterAdDidAppear:self];
+    [self.delegate fullscreenAdAdapterAdDidPresent:self];
 }
 
 /// Impression fired.
@@ -128,11 +124,7 @@
 
 /// Fullscreen ad will be presented to the user.
 - (void)fullscreenAdWillPresent {
-    // Uncomment the line below when MoPub SDK version 5.17.0 is released.
-    //[self.delegate fullscreenAdAdapterAdWillPresent:self];
-
-    // Remove this line when MoPub SDK version 5.17.0 is released.
-    [self.delegate fullscreenAdAdapterAdWillAppear:self];
+    [self.delegate fullscreenAdAdapterAdWillPresent:self];
 }
 
 /// Fullscreen ad will reward user.
