@@ -19,11 +19,8 @@
 #endif
 #if __has_include(<MoPubSDKFramework/MPRewardedVideoReward.h>)
     #import <MoPubSDKFramework/MPReward.h>
-<<<<<<< HEAD
 #elif __has_include(<MoPub/MoPub.h>)
     #import <MoPub/MPReward.h>
-=======
->>>>>>> 1a8793f7e0476a164abc643f02d364de3f718c26
 #else
     #import "MPReward.h"
 #endif
