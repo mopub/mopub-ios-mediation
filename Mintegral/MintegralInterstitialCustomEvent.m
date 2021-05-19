@@ -127,11 +127,22 @@
 - (void)onInterstitialVideoShowSuccess:(MTGInterstitialVideoAdManager *_Nonnull)adManager
 {
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
-    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
     [self.delegate fullscreenAdAdapterDidTrackImpression:self];
+
+    
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
     [self.delegate fullscreenAdAdapterAdWillAppear:self];
+    // Add support for `fullscreenAdAdapterAdWillPresent:` event if publishers use v5.17.0 of the MoPub SDK or later.
+    if ([self.delegate respondsToSelector:@selector(fullscreenAdAdapterAdWillPresent:)]) {
+        [self.delegate performSelector:@selector(fullscreenAdAdapterAdWillPresent:) withObject:self];
+    }
+    
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
     [self.delegate fullscreenAdAdapterAdDidAppear:self];
+    // Add support for `fullscreenAdAdapterAdDidPresent:` event if publishers use v5.17.0 of the MoPub SDK or later.
+    if ([self.delegate respondsToSelector:@selector(fullscreenAdAdapterAdDidPresent:)]) {
+        [self.delegate performSelector:@selector(fullscreenAdAdapterAdDidPresent:) withObject:self];
+    }
 }
 
 - (void)onInterstitialVideoShowFail:(nonnull NSError *)error adManager:(MTGInterstitialVideoAdManager *_Nonnull)adManager
