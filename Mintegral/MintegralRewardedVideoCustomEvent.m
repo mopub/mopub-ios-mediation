@@ -5,17 +5,17 @@
 #import "MintegralAdapterConfiguration.h"
 
 #if __has_include("MoPub.h")
-    #import "MoPub.h"
-    #import "MPReward.h"
-    #import "MPError.h"
-    #import "MPLogging.h"
+#import "MoPub.h"
+#import "MPReward.h"
+#import "MPError.h"
+#import "MPLogging.h"
 #endif
 
 @interface MintegralRewardedVideoCustomEvent () <MTGRewardAdLoadDelegate,MTGRewardAdShowDelegate>
 
-@property (nonatomic, copy) NSString *mintegralAdUnitId;
-@property (nonatomic, copy) NSString *adPlacementId;
 @property (nonatomic, copy) NSString *adm;
+@property (nonatomic, copy) NSString *adPlacementId;
+@property (nonatomic, copy) NSString *mintegralAdUnitId;
 
 @end
 
@@ -67,14 +67,15 @@
     self.adm = adMarkup;
     
     [MintegralAdapterConfiguration initializeMintegral:info setAppID:appId appKey:appKey];
-    
+    [MintegralAdapterConfiguration updateInitializationParameters:info];
+
     if (self.adm) {
         MPLogInfo(@"Loading Mintegral rewarded ad markup for Advanced Bidding");
         [MTGBidRewardAdManager sharedInstance].playVideoMute = [MintegralAdapterConfiguration isMute];
-        
         [[MTGBidRewardAdManager sharedInstance] loadVideoWithBidToken:self.adm placementId:placementId unitId:unitId delegate:self];
     } else {
         MPLogInfo(@"Loading Mintegral rewarded ad");
+        
         [MTGRewardAdManager sharedInstance].playVideoMute = [MintegralAdapterConfiguration isMute];
         [[MTGRewardAdManager sharedInstance] loadVideoWithPlacementId:placementId unitId:unitId delegate:self];
     }
@@ -85,11 +86,9 @@
 - (void)presentAdFromViewController:(UIViewController *)viewController
 {
     if ([self hasAdAvailable]) {
-        
         NSString *customerId = [self.delegate customerIdForAdapter:self];
         
         if ([[MTGRewardAdManager sharedInstance] respondsToSelector:@selector(showVideoWithPlacementId:unitId:withRewardId:userId:delegate:viewController:)]) {
-            
             MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
             MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
             
@@ -120,7 +119,7 @@
         [self.delegate fullscreenAdAdapterDidExpire:self];
     }
 }
-    
+
 #pragma mark GADRewardBasedVideoAdDelegate
 - (void)onVideoAdLoadSuccess:(NSString *)placementId unitId:(NSString *)unitId {
     MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
@@ -134,21 +133,10 @@
 
 - (void)onVideoAdShowSuccess:(NSString *)placementId unitId:(NSString *)unitId {
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+    
+    [self.delegate fullscreenAdAdapterAdWillPresent:self];
     [self.delegate fullscreenAdAdapterDidTrackImpression:self];
-    
-    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
-    [self.delegate fullscreenAdAdapterAdWillAppear:self];
-    // Add support for `fullscreenAdAdapterAdWillPresent:` event if publishers use v5.17.0 of the MoPub SDK or later.
-    if ([self.delegate respondsToSelector:@selector(fullscreenAdAdapterAdWillPresent:)]) {
-        [self.delegate performSelector:@selector(fullscreenAdAdapterAdWillPresent:) withObject:self];
-    }
-    
-    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
-    [self.delegate fullscreenAdAdapterAdDidAppear:self];
-    // Add support for `fullscreenAdAdapterAdDidPresent:` event if publishers use v5.17.0 of the MoPub SDK or later.
-    if ([self.delegate respondsToSelector:@selector(fullscreenAdAdapterAdDidPresent:)]) {
-        [self.delegate performSelector:@selector(fullscreenAdAdapterAdDidPresent:) withObject:self];
-    }
+    [self.delegate fullscreenAdAdapterAdDidPresent:self];
 }
 
 - (void)onVideoAdShowFailed:(NSString *)placementId unitId:(NSString *)unitId withError:(NSError *)error {
@@ -157,7 +145,6 @@
 }
 
 - (void)onVideoAdClicked:(NSString *)placementId unitId:(NSString *)unitId {
-    MPLogInfo(@"onVideoAdClicked");
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
     
     [self.delegate fullscreenAdAdapterDidTrackClick:self];
@@ -174,14 +161,16 @@
     } else {
         MPLogInfo(@"The rewarded video was not watched until completion. The user will not get rewarded.");
     }
-        
+    
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+    
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     [self.delegate fullscreenAdAdapterAdWillDismiss:self];
 }
 
 - (void)onVideoAdDidClosed:(NSString *)placementId unitId:(NSString *)unitId {
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+    
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
     [self.delegate fullscreenAdAdapterAdDidDismiss:self];
 }

@@ -5,17 +5,17 @@
 #import "MintegralAdapterConfiguration.h"
 
 #if __has_include("MoPub.h")
-    #import "MoPub.h"
-    #import "MPError.h"
-    #import "MPLogging.h"
+#import "MoPub.h"
+#import "MPError.h"
+#import "MPLogging.h"
 #endif
 
 @interface MintegralInterstitialCustomEvent()<MTGInterstitialVideoDelegate, MTGBidInterstitialVideoDelegate>
 
-@property (nonatomic, copy) NSString *mintegralAdUnitId;
-@property (nonatomic, copy) NSString *adPlacementId;
-@property (nonatomic, strong) NSTimer *queryTimer;
 @property (nonatomic, copy) NSString *adm;
+@property (nonatomic, copy) NSString *adPlacementId;
+@property (nonatomic, copy) NSString *mintegralAdUnitId;
+@property (nonatomic, strong) NSTimer *queryTimer;
 
 @property (nonatomic, readwrite, strong) MTGInterstitialVideoAdManager *mtgInterstitialVideoAdManager;
 @property (nonatomic,strong) MTGBidInterstitialVideoAdManager *ivBidAdManager;
@@ -30,10 +30,12 @@
 
 - (BOOL)hasAdAvailable {
     if (self.adm != nil) {
-        return [self.ivBidAdManager isVideoReadyToPlayWithPlacementId:self.adPlacementId unitId:self.mintegralAdUnitId];
+        return [self.ivBidAdManager isVideoReadyToPlayWithPlacementId:self.adPlacementId
+                                                               unitId:self.mintegralAdUnitId];
     }
     
-    return [self.mtgInterstitialVideoAdManager isVideoReadyToPlayWithPlacementId:self.adPlacementId unitId:self.mintegralAdUnitId];
+    return [self.mtgInterstitialVideoAdManager isVideoReadyToPlayWithPlacementId:self.adPlacementId
+                                                                          unitId:self.mintegralAdUnitId];
 }
 
 - (BOOL)isRewardExpected {
@@ -67,12 +69,15 @@
     self.adm = adMarkup;
     
     [MintegralAdapterConfiguration initializeMintegral:info setAppID:appId appKey:appKey];
-    
+    [MintegralAdapterConfiguration updateInitializationParameters:info];
+
     if (self.adm) {
         MPLogInfo(@"Loading Mintegral interstitial ad markup for Advanced Bidding");
         
         if (!_ivBidAdManager ) {
-            _ivBidAdManager = [[MTGBidInterstitialVideoAdManager alloc] initWithPlacementId:placementId unitId:unitId delegate:self];
+            _ivBidAdManager = [[MTGBidInterstitialVideoAdManager alloc] initWithPlacementId:placementId
+                                                                                     unitId:unitId
+                                                                                   delegate:self];
             _ivBidAdManager.delegate = self;
         }
         
@@ -82,7 +87,9 @@
         MPLogInfo(@"Loading Mintegral interstitial ad");
         
         if (!_mtgInterstitialVideoAdManager) {
-            _mtgInterstitialVideoAdManager = [[MTGInterstitialVideoAdManager alloc] initWithPlacementId:placementId unitId:unitId delegate:self];
+            _mtgInterstitialVideoAdManager = [[MTGInterstitialVideoAdManager alloc] initWithPlacementId:placementId
+                                                                                                 unitId:unitId
+                                                                                               delegate:self];
         }
         
         _mtgInterstitialVideoAdManager.playVideoMute = [MintegralAdapterConfiguration isMute];
@@ -100,14 +107,14 @@
 - (void)presentAdFromViewController:(UIViewController *)viewController
 {
     if (self.adm) {
-        MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
         _ivBidAdManager.playVideoMute = [MintegralAdapterConfiguration isMute];
         [_ivBidAdManager showFromViewController:viewController];
     } else {
-        MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
         _mtgInterstitialVideoAdManager.playVideoMute = [MintegralAdapterConfiguration isMute];
         [_mtgInterstitialVideoAdManager showFromViewController:viewController];
     }
+    
+    MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
 }
 
 #pragma mark - MVInterstitialVideoAdLoadDelegate
@@ -126,22 +133,10 @@
 - (void)onInterstitialVideoShowSuccess:(MTGInterstitialVideoAdManager *_Nonnull)adManager
 {
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
-    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 
-    
-    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
-    [self.delegate fullscreenAdAdapterAdWillAppear:self];
-    // Add support for `fullscreenAdAdapterAdWillPresent:` event if publishers use v5.17.0 of the MoPub SDK or later.
-    if ([self.delegate respondsToSelector:@selector(fullscreenAdAdapterAdWillPresent:)]) {
-        [self.delegate performSelector:@selector(fullscreenAdAdapterAdWillPresent:) withObject:self];
-    }
-    
-    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
-    [self.delegate fullscreenAdAdapterAdDidAppear:self];
-    // Add support for `fullscreenAdAdapterAdDidPresent:` event if publishers use v5.17.0 of the MoPub SDK or later.
-    if ([self.delegate respondsToSelector:@selector(fullscreenAdAdapterAdDidPresent:)]) {
-        [self.delegate performSelector:@selector(fullscreenAdAdapterAdDidPresent:) withObject:self];
-    }
+    [self.delegate fullscreenAdAdapterAdWillPresent:self];
+    [self.delegate fullscreenAdAdapterDidTrackImpression:self];
+    [self.delegate fullscreenAdAdapterAdDidPresent:self];
 }
 
 - (void)onInterstitialVideoShowFail:(nonnull NSError *)error adManager:(MTGInterstitialVideoAdManager *_Nonnull)adManager
@@ -152,6 +147,7 @@
 
 - (void)onInterstitialVideoAdClick:(MTGInterstitialVideoAdManager *_Nonnull)adManager{
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+    
     [self.delegate fullscreenAdAdapterDidReceiveTap:self];
     [self.delegate fullscreenAdAdapterDidTrackClick:self];
 }
@@ -159,13 +155,14 @@
 - (void)onInterstitialVideoAdDismissedWithConverted:(BOOL)converted adManager:(MTGInterstitialVideoAdManager *_Nonnull)adManager
 {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+    
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     [self.delegate fullscreenAdAdapterAdWillDismiss:self];
-  
 }
 
 - (void)onInterstitialVideoAdDidClosed:(MTGInterstitialVideoAdManager *_Nonnull)adManager {
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.mintegralAdUnitId);
+    
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
     [self.delegate fullscreenAdAdapterAdDidDismiss:self];
 }

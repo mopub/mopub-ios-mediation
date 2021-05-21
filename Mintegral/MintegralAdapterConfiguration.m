@@ -3,7 +3,7 @@
 #import <MTGSDK/MTGSDK.h>
 #import <MTGSDKBidding/MTGBiddingSDK.h>
 #if __has_include("MoPub.h")
-    #import "MoPub.h"
+#import "MoPub.h"
 #endif
 
 @interface MintegralAdapterConfiguration()
@@ -14,9 +14,12 @@ static BOOL mintegralSDKInitialized = NO;
 static BOOL mute = NO;
 
 NSString *const kMintegralErrorDomain = @"com.mintegral.iossdk.mopub";
-static NSString *const kPluginNumber = @"Y+H6DFttYrPQYcIA+F2F+F5/Hv==";
-static NSString *const kNetworkName = @"mintegral";
-static NSString *const kAdapterVersion = @"6.9.1.0.0";
+
+static NSString * const MintegralConfigurationKeyAppIdKey = @"appId";
+static NSString * const MintegralConfigurationKeyAppKey = @"appKey";
+static NSString * const kAdapterVersion = @"6.9.1.0.0";
+static NSString * const kPluginNumber = @"Y+H6DFttYrPQYcIA+F2F+F5/Hv==";
+static NSString * const kNetworkName = @"mintegral";
 
 @implementation MintegralAdapterConfiguration
 
@@ -38,35 +41,51 @@ static NSString *const kAdapterVersion = @"6.9.1.0.0";
     return MTGSDK.sdkVersion;
 }
 
++ (void)updateInitializationParameters:(NSDictionary *)parameters {
+    // These should correspond to the required parameters checked in
+    // `initializeNetworkWithConfiguration:complete:`
+    NSString * appId = parameters[MintegralConfigurationKeyAppIdKey];
+    NSString * appKey = parameters[MintegralConfigurationKeyAppKey];
+
+    if (appId != nil && appKey != nil) {
+        NSDictionary * configuration = @{ MintegralConfigurationKeyAppIdKey: appId, MintegralConfigurationKeyAppKey: appKey };
+        
+        [MintegralAdapterConfiguration setCachedInitializationParameters:configuration];
+    }
+}
+
+
 - (void)initializeNetworkWithConfiguration:(NSDictionary<NSString *,id> *)configuration complete:(void (^)(NSError * _Nullable))complete {
-    MPLogInfo(@"initializeNetworkWithConfiguration for Mintegral");
+    MPLogInfo(@"Attempting to initialize Mintegral");
     
     NSString *errorMsg = @"";
     NSString *appId = nil;
     NSString *appKey = nil;
     
     if (configuration == nil) {
-        errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appId and appKey"];
-     } else {
+        errorMsg = [errorMsg stringByAppendingString: @"Mintegral initialization skipped because of invalid/missing appId and appKey"];
+    } else {
         appId = [configuration objectForKey:@"appId"];
         appKey = [configuration objectForKey:@"appKey"];
-
+        
         if (appId == nil) {
-            errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appId"];
+            errorMsg = [errorMsg stringByAppendingString: @"Mintegral initialization skipped because of invalid/missing appId"];
         }
-         
+        
         if (appKey == nil) {
-            errorMsg = [errorMsg stringByAppendingString: @"Invalid or missing Mintegral appKey"];
+            errorMsg = [errorMsg stringByAppendingString: @"Mintegral initialization skipped because of invalid/missing appKey"];
         }
     }
     
     if (errorMsg.length > 0) {
-        NSError *error = [NSError errorWithDomain:kMintegralErrorDomain code:MPErrorNetworkConnectionFailed userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
+        NSError *error = [NSError errorWithDomain:kMintegralErrorDomain
+                                             code:MPErrorNetworkConnectionFailed
+                                         userInfo:@{NSLocalizedDescriptionKey : errorMsg}];
         
         if (complete != nil) {
             complete(error);
         }
-
+        
         return;
     }
     
@@ -81,6 +100,7 @@ static NSString *const kAdapterVersion = @"6.9.1.0.0";
     if (![MintegralAdapterConfiguration isSDKInitialized]) {
         [[MTGSDK sharedInstance] setConsentStatus:[[MoPub sharedInstance] canCollectPersonalInfo]];
         [[MTGSDK sharedInstance] setAppID:appId ApiKey:appKey];
+        
         [MintegralAdapterConfiguration sdkInitialized];
     }
 }
@@ -99,11 +119,11 @@ static NSString *const kAdapterVersion = @"6.9.1.0.0";
     }
 #pragma clang diagnostic pop
     mintegralSDKInitialized = YES;
-    MPLogInfo(@"Mintegral sdkInitialized");
+    MPLogInfo(@"Mintegral SDK initialized");
 }
 
 +(void)setTargeting:(NSInteger)age gender:(MTGGender)gender latitude:(NSString *)latitude longitude:(NSString *)longitude pay:(MTGUserPayType)pay {
-    MTGUserInfo  *user = [[MTGUserInfo alloc]init];
+    MTGUserInfo *user = [[MTGUserInfo alloc]init];
     
     user.age = age;
     user.gender = gender;

@@ -4,31 +4,32 @@
 #import <MTGSDK/MTGCampaign.h>
 #import <MTGSDK/MTGMediaView.h>
 #import <MTGSDK/MTGAdChoicesView.h>
+
 #if __has_include("MoPub.h")
-    #import "MPNativeAdConstants.h"
-    #import "MPLogging.h"
+#import "MPNativeAdConstants.h"
+#import "MPLogging.h"
 #endif
 
 NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 
 @interface MintegralNativeAdAdapter () <MTGNativeAdManagerDelegate, MTGMediaViewDelegate, MTGBidNativeAdManagerDelegate>
 
-@property (nonatomic, readonly) MTGNativeAdManager *nativeAdManager;
-@property (nonatomic, strong) MTGBidNativeAdManager *nativeBidAdManager;
+@property (nonatomic, copy) NSString *adm;
 @property (nonatomic, readonly) MTGCampaign *campaign;
 @property (nonatomic) MTGMediaView *mediaView;
 @property (nonatomic, strong) NSDictionary *mtgAdProperties;
+@property (nonatomic, readonly) MTGNativeAdManager *nativeAdManager;
+@property (nonatomic, strong) MTGBidNativeAdManager *nativeBidAdManager;
 @property (nonatomic, readwrite, copy) NSString *unitId;
-@property (nonatomic, copy) NSString *adm;
 
 @end
 @implementation MintegralNativeAdAdapter
 
-- (instancetype)initWithNativeAds:(NSArray *)nativeAds nativeAdManager:(MTGNativeAdManager *)nativeAdManager bidAdManager:(MTGBidNativeAdManager *)bidAdManager withUnitId:(NSString *)unitId{
-    MPLogInfo(@"initWithNativeAds for Mintegral");
-    
+- (instancetype)initWithNativeAds:(NSArray *)nativeAds
+                  nativeAdManager:(MTGNativeAdManager *)nativeAdManager
+                     bidAdManager:(MTGBidNativeAdManager *)bidAdManager
+                       withUnitId:(NSString *)unitId{
     if (self = [super init]) {
-        
         if (nativeAdManager) {
             _nativeAdManager = nativeAdManager;
             _nativeAdManager.delegate = self;
@@ -75,12 +76,12 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
         _nativeAdManager.delegate = nil;
         _nativeAdManager = nil;
     }
-
+    
     if (_nativeBidAdManager) {
         _nativeBidAdManager.delegate = nil;
         _nativeBidAdManager = nil;
     }
-
+    
     _mediaView.delegate = nil;
     _mediaView = nil;
 }
@@ -89,9 +90,9 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 
 - (void)nativeAdDidClick:(nonnull MTGCampaign *)nativeAd nativeManager:(nonnull MTGNativeAdManager *)nativeManager
 {
-    MPLogInfo(@"Mintegral traditional nativeAdDidClick");
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.unitId);
+    
     if ([self.delegate respondsToSelector:@selector(nativeAdDidClick:)]) {
-        MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.unitId);
         [self.delegate nativeAdDidClick:self];
         [self.delegate nativeAdWillPresentModalForAdapter:self];
         [self.delegate nativeAdWillLeaveApplicationFromAdapter:self];
@@ -99,10 +100,9 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 }
 
 - (void)nativeAdDidClick:(MTGCampaign *)nativeAd bidNativeManager:(MTGBidNativeAdManager *)bidNativeManager{
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.unitId);
     
-    MPLogInfo(@"Mintegral bidding nativeAdDidClick");
     if ([self.delegate respondsToSelector:@selector(nativeAdDidClick:)]) {
-        MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.unitId);
         [self.delegate nativeAdDidClick:self];
         [self.delegate nativeAdWillPresentModalForAdapter:self];
         [self.delegate nativeAdWillLeaveApplicationFromAdapter:self];
@@ -110,9 +110,9 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 }
 
 - (void)nativeAdDidClick:(MTGCampaign *)nativeAd mediaView:(MTGMediaView *)mediaView{
-    MPLogInfo(@"Mintegral media nativeAdDidClick");
+    MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.unitId);
+    
     if ([self.delegate respondsToSelector:@selector(nativeAdDidClick:)]) {
-        MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.unitId);
         [self.delegate nativeAdDidClick:self];
         [self.delegate nativeAdWillPresentModalForAdapter:self];
         [self.delegate nativeAdWillLeaveApplicationFromAdapter:self];
@@ -121,30 +121,30 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
 
 - (void)nativeAdImpressionWithType:(MTGAdSourceType)type nativeManager:(nonnull MTGNativeAdManager *)nativeManager{
     if (type == MTGAD_SOURCE_API_OFFER) {
-        MPLogInfo(@"Mintegral traditional nativeAdImpression");
+        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.unitId);
+        MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.unitId);
+        
         if ([self.delegate respondsToSelector:@selector(nativeAdWillLogImpression:)]){
-            MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.unitId);
-            MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.unitId);
             [self.delegate nativeAdWillLogImpression:self];
         }
     }
 }
 
 - (void)nativeAdImpressionWithType:(MTGAdSourceType)type bidNativeManager:(MTGBidNativeAdManager *)bidNativeManager{
-    MPLogInfo(@"Mintegral bidding nativeAdsImpression");
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.unitId);
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.unitId);
+    
     if ([self.delegate respondsToSelector:@selector(nativeAdWillLogImpression:)]){
-        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.unitId);
-        MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.unitId);
         [self.delegate nativeAdWillLogImpression:self];
     }
 }
 
 - (void)nativeAdImpressionWithType:(MTGAdSourceType)type mediaView:(MTGMediaView *)mediaView{
     if (type == MTGAD_SOURCE_API_OFFER) {
-        MPLogInfo(@"Mintegral media nativeAdImpression");
+        MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.unitId);
+        MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.unitId);
+        
         if ([self.delegate respondsToSelector:@selector(nativeAdWillLogImpression:)]){
-            MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.unitId);
-            MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.unitId);
             [self.delegate nativeAdWillLogImpression:self];
         }
     }
@@ -170,7 +170,7 @@ NSString *const kMTGVideoAdsEnabledKey = @"video_enabled";
         UIView *sView = _mediaView.superview;
         [sView.superview bringSubviewToFront:sView];
     }
-
+    
     if (_nativeAdManager) {
         [self.nativeAdManager registerViewForInteraction:view withCampaign:_campaign];
     } else if (_nativeBidAdManager){
