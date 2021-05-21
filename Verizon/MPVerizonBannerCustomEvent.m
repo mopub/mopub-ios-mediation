@@ -1,5 +1,4 @@
 #import <VerizonAdsInlinePlacement/VerizonAdsInlinePlacement.h>
-#import <VerizonAdsStandardEdition/VerizonAdsStandardEdition.h>
 #import "MPVerizonBannerCustomEvent.h"
 #if __has_include("MoPub.h")
 #import "MPLogging.h"
@@ -55,7 +54,7 @@
     }
     
     if (![VASAds sharedInstance].initialized &&
-        ![VASStandardEdition initializeWithSiteId:siteId])
+        ![VASAds initializeWithSiteId:siteId])
     {
         NSError *error = [VASErrorInfo errorWithDomain:kMoPubVASAdapterErrorDomain
                                                   code:VASCoreErrorAdFetchFailure
