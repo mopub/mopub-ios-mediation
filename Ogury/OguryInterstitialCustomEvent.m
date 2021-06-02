@@ -3,8 +3,8 @@
 #import "OguryAdapterConfiguration.h"
 
 #if __has_include("MoPub.h")
-    #import "MPError.h"
-    #import "MPLogging.h"
+#import "MPError.h"
+#import "MPLogging.h"
 #endif
 
 @interface OguryInterstitialCustomEvent () <OguryAdsInterstitialDelegate>
