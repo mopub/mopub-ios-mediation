@@ -3,6 +3,11 @@
 #import <OguryAds/OguryAds.h>
 #import "OguryAdapterConfiguration.h"
 
+#if __has_include("MoPub.h")
+#import "MPError.h"
+#import "MPLogging.h"
+#endif
+
 @interface OguryBannerCustomEvent () <OguryAdsBannerDelegate>
 
 #pragma mark - Properties
