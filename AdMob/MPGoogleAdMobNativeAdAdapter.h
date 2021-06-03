@@ -8,22 +8,22 @@
 
 #import <GoogleMobileAds/GoogleMobileAds.h>
 
-/// This class implements the `MPNativeAdAdapter` and `GADUnifiedNativeAdDelegate` protocols, that
+/// This class implements the `MPNativeAdAdapter` and `GADNativeAdDelegate` protocols, that
 /// allow the MoPub SDK to interact with native ad objects obtained from Google Mobile Ads SDK.
-@interface MPGoogleAdMobNativeAdAdapter : NSObject <MPNativeAdAdapter, GADUnifiedNativeAdDelegate>
+@interface MPGoogleAdMobNativeAdAdapter : NSObject <MPNativeAdAdapter, GADNativeAdDelegate>
 
 /// MoPub native ad adapter delegate instance.
 @property(nonatomic, weak) id<MPNativeAdAdapterDelegate> delegate;
 
-/// Google Mobile Ads Unified Native ad instance.
-@property(nonatomic, strong) GADUnifiedNativeAd *adMobUnifiedNativeAd;
+/// Google Mobile Ads Native ad instance.
+@property(nonatomic, strong) GADNativeAd *googleNativeAd;
 
-/// Google Mobile Ads adView to hold the Unified native ad view.
-@property(nonatomic, strong) GADUnifiedNativeAdView *adMobUnifiedNativeAdView;
+/// Google Mobile Ads adView to hold the native ad view.
+@property(nonatomic, strong) GADNativeAdView *adMobNativeAdView;
 
-/// Returns an MPGoogleAdMobNativeAdAdapter with GADUnifiedNativeAd.
-- (instancetype)initWithAdMobUnifiedNativeAd:(GADUnifiedNativeAd *)adMobUnifiedNativeAd
-                         unifiedNativeAdView:(GADUnifiedNativeAdView *)adMobUnifiedNativeAdView;
+/// Returns an MPGoogleAdMobNativeAdAdapter with GADNativeAd.
+- (instancetype)initWithAdMobNativeAd:(GADNativeAd *)adMobNativeAd
+                         nativeAdView:(GADNativeAdView *)adMobNativeAdView;
 
 @end
 
