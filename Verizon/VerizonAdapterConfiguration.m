@@ -1,13 +1,16 @@
-#import <VerizonAdsStandardEdition/VerizonAdsStandardEdition.h>
 #import <VerizonAdsCore/VerizonAdsCore.h>
 #import <CoreTelephony/CTCarrier.h>
 #import "VerizonAdapterConfiguration.h"
 #import <zlib.h>
 
-NSString * const kMoPubVASAdapterVersion = @"1.9.0.2";
+NSString * const kMoPubVASAdapterVersion = @"1.13.0.0";
 NSString * const kMoPubVASAdapterErrorWho = @"MoPubVASAdapter";
 NSString * const kMoPubVASAdapterPlacementId = @"placementId";
 NSString * const kMoPubVASAdapterSiteId = @"siteId";
+
+NSString * const kMoPubVASConfigDomain = @"com.verizon.ads";
+NSString * const kMoPubVASConfigEditionNameKey = @"editionName";
+NSString * const kMoPubVASConfigEditionVersionKey = @"editionVersion";
 
 NSErrorDomain const kMoPubVASAdapterErrorDomain = @"com.verizon.ads.mopubvasadapter.ErrorDomain";
 NSTimeInterval kMoPubVASAdapterSATimeoutInterval = 600;
@@ -52,7 +55,7 @@ static NSString * biddingToken = nil;
     }
     if (siteId.length > 0) {
         dispatch_async(dispatch_get_main_queue(), ^{
-            if ([VASStandardEdition initializeWithSiteId:siteId]) {
+            if ([VASAds initializeWithSiteId:siteId]) {
                 MPLogInfo(@"VAS adapter version: %@", kMoPubVASAdapterVersion);
             }
             if (complete) {
@@ -99,7 +102,7 @@ static NSString * biddingToken = nil;
 - (NSString *)networkSdkVersion
 {
     NSString *editionName = [[[VASAds sharedInstance] configuration] stringForDomain:kDomainVASAds
-                                                                                 key:kVASEditionNameKey
+                                                                                 key:kMoPubVASConfigEditionNameKey
                                                                          withDefault:nil];
     
     NSString *editionVersion = [[[VASAds sharedInstance] configuration] stringForDomain:kDomainVASAds
@@ -117,8 +120,8 @@ static NSString * biddingToken = nil;
 
 - (NSString *)buildToken
 {
-    NSString *editionName = [[VASAds sharedInstance].configuration stringForDomain:kVASConfigDomain key:kVASConfigEditionNameKey withDefault:nil];
-    NSString *editionVersion = [[VASAds sharedInstance].configuration stringForDomain:kVASConfigDomain key:kVASConfigEditionVersionKey withDefault:nil];
+    NSString *editionName = [[VASAds sharedInstance].configuration stringForDomain:kMoPubVASConfigDomain key:kMoPubVASConfigEditionNameKey withDefault:nil];
+    NSString *editionVersion = [[VASAds sharedInstance].configuration stringForDomain:kMoPubVASConfigDomain key:kMoPubVASConfigEditionVersionKey withDefault:nil];
     
     NSString *editionId;
     if (editionName != nil && editionVersion != nil) {

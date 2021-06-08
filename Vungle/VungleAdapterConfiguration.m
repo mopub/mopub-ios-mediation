@@ -46,12 +46,12 @@ typedef NS_ENUM(NSInteger, VungleAdapterErrorCode) {
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"6.10.0.1";
+    return @"6.9.2.1";
 }
 
 - (NSString *)biddingToken {
     NSString *token = [[VungleRouter sharedRouter] currentSuperToken];
-    if (token.length) {
+    if (token.length > 0) {
         bidToken = token;
     }
     

@@ -1,5 +1,8 @@
 ## Changelog
- * 1.1.0.1
+* 1.1.1.0
+  * This version of the adapters has been certified with SnapAudienceNetwork 1.1.1 and MoPub SDK 5.17.0.
+
+* 1.1.0.1
   * Add `fullscreenAdAdapterAdWillPresent` and `fullscreenAdAdapterAdDidPresent` to notify publishers of the fullscreen ad show event. Remove `fullscreenAdAdapterAdWillAppear` and  `fullscreenAdAdapterAdDidAppear` as they are now deprecated by the MoPub iOS SDK.
   * Publishers must use v5.17.0 of the MoPub SDK at the minimum.
 
