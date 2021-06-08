@@ -14,7 +14,7 @@
 #import "MPConstants.h"
 #endif
 
-#define FACEBOOK_ADAPTER_VERSION             @"6.4.1.1"
+#define FACEBOOK_ADAPTER_VERSION             @"6.5.0.0"
 #define MOPUB_NETWORK_NAME                   @"facebook"
 
 static NSString * const kFacebookPlacementIDs = @"placement_ids";

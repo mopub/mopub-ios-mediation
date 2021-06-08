@@ -153,12 +153,6 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
   [self.delegate fullscreenAdAdapterAdDidDisappear:self];
   [self.delegate fullscreenAdAdapterAdDidDismiss:self];  
   MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], placementId);
-
-  // Signal that the fullscreen ad is closing and the state should be reset.
-  // `fullscreenAdAdapterAdDidDismiss:` was introduced in MoPub SDK 5.15.0.
-  if ([self.delegate respondsToSelector:@selector(fullscreenAdAdapterAdDidDismiss:)]) {
-      [self.delegate fullscreenAdAdapterAdDidDismiss:self];
-  }
 }
 
 - (void)unityAdsShowFailed:(NSString *)placementId withError:(UnityAdsShowError)error withMessage:(NSString *)message {
