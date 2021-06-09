@@ -178,7 +178,6 @@
     if (verify) {
         NSString *rewardName = rewardedVideoAd.rewardedVideoModel.rewardName;
         NSString *currencyType = (rewardName && [rewardName isKindOfClass:[NSString class]] && rewardName.length > 0) ? rewardName :kMPRewardCurrencyTypeUnspecified;
-        
         MPReward *reward = [[MPReward alloc] initWithCurrencyType:currencyType amount: @(rewardedVideoAd.rewardedVideoModel.rewardAmount)];
         
         MPLogEvent([MPLogEvent adShouldRewardUserWithReward:reward]);

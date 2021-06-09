@@ -90,21 +90,20 @@ Banner size mapping according to the incoming size in adapter and selected size 
     CGFloat width = size.width;
     CGFloat height = size.height;
     if (height >= floor(width * 450.0 / 600.0)) {
-        // banner 600*500
-        if (width/height > 600/500) {
-            return CGSizeMake(height/5*6, height);
+        // Banner 600*500
+        if (width / height > 600 / 500) {
+            return CGSizeMake(height / 5 * 6, height);
         }
         else {
-            return CGSizeMake(width, width/6*5);
+            return CGSizeMake(width, width / 6 * 5);
         }
-    }
-    else {
-        // banner 600*150
-        if (width/height > 640/100) {
-            return CGSizeMake(height/100*640, height);
+    } else {
+        // Banner 600*150
+        if (width / height > 640 / 100) {
+            return CGSizeMake(height / 100 * 640, height);
         }
         else {
-            return CGSizeMake(width, width/640*100);
+            return CGSizeMake(width, width / 640 * 100);
         }
     }
 }

@@ -1,4 +1,7 @@
 ## Changelog
+   * 3.6.1.5.0
+     * Optimize banner size mapping.
+     * This version of the adapters has been certified with Pangle 3.6.1.5 and MoPub SDK 5.17.0.
 
    * 3.5.1.2.1
      * Add `fullscreenAdAdapterAdWillPresent` and `fullscreenAdAdapterAdDidPresent` to notify publishers of the fullscreen ad show event. Remove `fullscreenAdAdapterAdWillAppear` and  `fullscreenAdAdapterAdDidAppear` as they are now deprecated by the MoPub iOS SDK.
