@@ -28,7 +28,7 @@ static dispatch_queue_t sIASDKInitSyncQueue = nil;
 #pragma mark - MPAdapterConfiguration
 
 - (NSString *)adapterVersion {
-    return @"7.8.5.0";
+    return @"7.8.6.0";
 }
 
 - (NSString *)biddingToken {
@@ -93,25 +93,6 @@ static dispatch_queue_t sIASDKInitSyncQueue = nil;
             } completionQueue:nil];
         }
     });
-}
-
-+ (void)collectConsentStatusFromMoPub {
-    
-    if (MoPub.sharedInstance.isGDPRApplicable == MPBoolYes) {
-        if (MoPub.sharedInstance.allowLegitimateInterest) {
-            if ((MoPub.sharedInstance.currentConsentStatus == MPConsentStatusDenied) ||
-                (MoPub.sharedInstance.currentConsentStatus == MPConsentStatusDoNotTrack) ||
-                (MoPub.sharedInstance.currentConsentStatus == MPConsentStatusPotentialWhitelist)) {
-                IASDKCore.sharedInstance.GDPRConsent = IAGDPRConsentTypeDenied;
-            } else {
-                IASDKCore.sharedInstance.GDPRConsent = IAGDPRConsentTypeGiven;
-            }
-        } else {
-            const BOOL canCollectPersonalInfo = MoPub.sharedInstance.canCollectPersonalInfo;
-
-            IASDKCore.sharedInstance.GDPRConsent = (canCollectPersonalInfo) ? IAGDPRConsentTypeGiven : IAGDPRConsentTypeDenied;
-        }
-    }
 }
 
 @end

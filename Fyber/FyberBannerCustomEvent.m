@@ -36,7 +36,7 @@
     
     BOOL isMediumRectangleFormat = (format != nil ? [[format lowercaseString] containsString:@"medium_rectangle"] : NO);
     BOOL isBannerFormat = (format != nil ? [[format lowercaseString] containsString:@"banner"] : NO);
-
+    
     if (!isMediumRectangleFormat && !isBannerFormat) {
         MPLogInfo(@"Fyber only supports 300*250, 320*50 and 728*90 sized ads. Please ensure your MoPub adunit's format is Medium Rectangle or Banner.");
         NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Invalid sizes received. Fyber only supports 300 x 250, 320 x 50 and 728 x 90 ads."];
@@ -55,7 +55,6 @@
         
         [FyberAdapterConfiguration configureIASDKWithInfo:info];
     }
-    [FyberAdapterConfiguration collectConsentStatusFromMoPub];
     
     IAUserData *userData = [IAUserData build:^(id<IAUserDataBuilder>  _Nonnull builder) {
     }];

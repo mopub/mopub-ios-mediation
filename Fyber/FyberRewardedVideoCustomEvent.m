@@ -40,7 +40,6 @@
         
         [FyberAdapterConfiguration configureIASDKWithInfo:info];
     }
-    [FyberAdapterConfiguration collectConsentStatusFromMoPub];
     
     IAUserData *userData = [IAUserData build:^(id<IAUserDataBuilder>  _Nonnull builder) {}];
     
