@@ -20,6 +20,9 @@ static NSString * const kSAKSlotId = @"slotId";
 
 @implementation SnapAdInterstitialCustomEvent
 
+@dynamic delegate;
+@dynamic localExtras;
+
 #pragma mark - MPFullscreenAdAdapter Override
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup

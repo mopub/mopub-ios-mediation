@@ -1,4 +1,7 @@
 ## Changelog
+* 1.1.1.1
+  * Fix the auto-property synthesis compiler warnings for `SnapAdIntersititalCustomEvent`.
+  
 * 1.1.1.0
   * This version of the adapters has been certified with SnapAudienceNetwork 1.1.1 and MoPub SDK 5.17.0.
 
