@@ -15,11 +15,10 @@
 #endif
 
 
-@interface InMobiBannerCustomEvent () <CLLocationManagerDelegate>
+@interface InMobiBannerCustomEvent ()
 
 @property (nonatomic, strong) IMBanner * bannerAd;
 @property (nonatomic, copy)   NSString * placementId;
-@property (nonatomic, strong) CLLocationManager * locationManager;
 
 @end
 
@@ -95,7 +94,7 @@
                                              dspName:nil], [self getAdNetworkId]);
     
     IMCompletionBlock completionBlock = ^{
-        if (adMarkup != nil && adMarkup <= 0) {
+        if ([adMarkup isKindOfClass:[NSString class]]) {
             [self.bannerAd load:[adMarkup dataUsingEncoding:NSUTF8StringEncoding]];
         } else {
             [self.bannerAd load];
