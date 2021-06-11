@@ -1,4 +1,20 @@
 ## Changelog
+  * 12.8.1.0
+    * This version of the adapters has been certified with Tapjoy 12.8.1 and MoPub SDK 5.17.0.
+
+  * 12.8.0.2
+    * Add `fullscreenAdAdapterAdWillPresent` and `fullscreenAdAdapterAdDidPresent` to notify publishers of the fullscreen ad show event. Remove `fullscreenAdAdapterAdWillAppear` and  `fullscreenAdAdapterAdDidAppear` as they are now deprecated by the MoPub iOS SDK.
+    * Publishers must use v5.17.0 of the MoPub SDK at the minimum.
+
+  * 12.8.0.1
+    * Remove deprecated usage of Rewarded Video APIs.
+
+  * 12.8.0.0
+    * This version of the adapters has been certified with Tapjoy 12.8.0 and MoPub SDK 5.16.2.
+
+  * 12.7.1.3
+    * Add support for `fullscreenAdAdapterAdWillDismiss` when a fullscreen creative is about to close. Publishers must use v5.16.1 of the MoPub SDK at the minimum.
+    
   * 12.7.1.2
     * Replace imports using `MoPubSDKFramework` with `MoPubSDK`. No external impacts to publishers.
 

@@ -5,7 +5,6 @@
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
     #import "MPError.h"
-    #import "MPRewardedVideoError.h"
     #import "MPReward.h"
 #endif
 
@@ -131,7 +130,7 @@ static NSString *const kSAKSlotId = @"slotId";
 {
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.slotId);
     
-    [self.delegate fullscreenAdAdapterAdDidAppear:self];
+    [self.delegate fullscreenAdAdapterAdDidPresent:self];
     [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
@@ -139,12 +138,7 @@ static NSString *const kSAKSlotId = @"slotId";
 {
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.slotId);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
-    
-    // Signal that the fullscreen ad is closing and the state should be reset.
-    // `fullscreenAdAdapterAdDidDismiss:` was introduced in MoPub SDK 5.15.0.
-    if ([self.delegate respondsToSelector:@selector(fullscreenAdAdapterAdDidDismiss:)]) {
-        [self.delegate fullscreenAdAdapterAdDidDismiss:self];
-    }
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
 }
 
 - (void)rewardedAdDidEarnReward:(nonnull SAKRewardedAd *)ad
@@ -183,12 +177,13 @@ static NSString *const kSAKSlotId = @"slotId";
 - (void)rewardedAdWillAppear:(nonnull SAKRewardedAd *)ad
 {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.slotId);
-    [self.delegate fullscreenAdAdapterAdWillAppear:self];
+    [self.delegate fullscreenAdAdapterAdWillPresent:self];
 }
 
 - (void)rewardedAdWillDisappear:(nonnull SAKRewardedAd *)ad
 {
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.slotId);
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
 }
 

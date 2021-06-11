@@ -1,5 +1,4 @@
 #import <VerizonAdsInterstitialPlacement/VerizonAdsInterstitialPlacement.h>
-#import <VerizonAdsStandardEdition/VerizonAdsStandardEdition.h>
 #import "MPVerizonInterstitialCustomEvent.h"
 #if __has_include("MoPub.h")
 #import "MPLogging.h"
@@ -70,7 +69,7 @@
     }
     
     if (![VASAds sharedInstance].initialized &&
-        ![VASStandardEdition initializeWithSiteId:siteId])
+        ![VASAds initializeWithSiteId:siteId])
     {
         NSError *error = [VASErrorInfo errorWithDomain:kMoPubVASAdapterErrorDomain
                                                   code:VASCoreErrorAdFetchFailure
@@ -194,12 +193,12 @@
         __strong __typeof__(self) strongSelf = weakSelf;
         if (strongSelf != nil)
         {
-            MPLogInfo(@"VAS interstial %@ will display.", interstitialAd);
-            [self.delegate fullscreenAdAdapterAdWillAppear:self];
+            MPLogInfo(@"VAS interstial %@ will present.", interstitialAd);
+            [self.delegate fullscreenAdAdapterAdWillPresent:self];
             MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
             
-            MPLogInfo(@"VAS interstitial %@ did appear.", interstitialAd);
-            [self.delegate fullscreenAdAdapterAdDidAppear:self];
+            MPLogInfo(@"VAS interstitial %@ did present.", interstitialAd);
+            [self.delegate fullscreenAdAdapterAdDidPresent:self];
             MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
             MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
         }
@@ -212,18 +211,14 @@
         MPLogInfo(@"VAS interstitial %@ will dismiss.", interstitialAd);
         MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
         
+        [self.delegate fullscreenAdAdapterAdWillDismiss:self];
         [self.delegate fullscreenAdAdapterAdWillDisappear:self];
         
         MPLogInfo(@"VAS interstitial %@ did dismiss.", interstitialAd);
         MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
         
         [self.delegate fullscreenAdAdapterAdDidDisappear:self];
-        
-        // Signal that the fullscreen ad is closing and the state should be reset.
-        // `fullscreenAdAdapterAdDidDismiss:` was introduced in MoPub SDK 5.15.0.
-        if ([self.delegate respondsToSelector:@selector(fullscreenAdAdapterAdDidDismiss:)]) {
-            [self.delegate fullscreenAdAdapterAdDidDismiss:self];
-        }
+        [self.delegate fullscreenAdAdapterAdDidDismiss:self];
         
         [self invalidate];
     });

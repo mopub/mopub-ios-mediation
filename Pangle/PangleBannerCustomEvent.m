@@ -32,14 +32,18 @@
         return;
     }
     
-    self.appId = [info objectForKey:kPangleAppIdKey];
-    if (BUCheckValidString(self.appId)) {
-        [PangleAdapterConfiguration pangleSDKInitWithAppId:self.appId];
+    NSString *appIdString = [info objectForKey:kPangleAppIdKey];
+    self.appId = appIdString;
+    
+    if (appIdString && [appIdString isKindOfClass:[NSString class]] && appIdString.length > 0) {
+        [PangleAdapterConfiguration pangleSDKInitWithAppId:appIdString];
         [PangleAdapterConfiguration updateInitializationParameters:info];
     }
     
-    self.adPlacementId = [info objectForKey:kPanglePlacementIdKey];
-    if (!BUCheckValidString(self.adPlacementId)) {
+    NSString *adPlacementId = [info objectForKey:kPanglePlacementIdKey];
+    self.adPlacementId = adPlacementId;
+    
+    if (!(adPlacementId && [adPlacementId isKindOfClass:[NSString class]] && adPlacementId.length > 0)) {
         NSError *error = [NSError errorWithDomain:NSStringFromClass([self class])
                                              code:BUErrorCodeAdSlotEmpty
                                          userInfo:@{NSLocalizedDescriptionKey:
@@ -52,7 +56,7 @@
     
     CGSize expressRequestSize = [self sizeForAdapterInfo:size];
     self.expressBannerView = [[BUNativeExpressBannerView alloc] initWithSlotID:self.adPlacementId
-                                                            rootViewController:[self.delegate inlineAdAdapterViewControllerForPresentingModalView:self] adSize:expressRequestSize IsSupportDeepLink:YES];
+                                                            rootViewController:[self.delegate inlineAdAdapterViewControllerForPresentingModalView:self] adSize:expressRequestSize];
     self.expressBannerView.frame = CGRectMake(0, 0, expressRequestSize.width, expressRequestSize.height);
     self.expressBannerView.delegate = self;
     
@@ -75,7 +79,8 @@
 }
 
 - (NSString *) getAdNetworkId {
-    return (BUCheckValidString(self.adPlacementId)) ? self.adPlacementId : @"";
+    NSString *adPlacementId = self.adPlacementId;
+    return (adPlacementId && [adPlacementId isKindOfClass:[NSString class]]) ? adPlacementId : @"";
 }
 
 /**
@@ -84,15 +89,22 @@ Banner size mapping according to the incoming size in adapter and selected size 
 - (CGSize)sizeForAdapterInfo:(CGSize)size {
     CGFloat width = size.width;
     CGFloat height = size.height;
-    CGFloat renderRatio = height * 1.0 / width;
-    
-    if (renderRatio >= [BUSize sizeBy:BUProposalSize_Banner600_500].height * 1.0 /
-        [BUSize sizeBy:BUProposalSize_Banner600_500].width) {
-        return CGSizeMake(width,
-                          width * [BUSize sizeBy:BUProposalSize_Banner600_500].height / [BUSize sizeBy:BUProposalSize_Banner600_500].width); //0.83
+    if (height >= floor(width * 450.0 / 600.0)) {
+        // Banner 600*500
+        if (width / height > 600 / 500) {
+            return CGSizeMake(height / 5 * 6, height);
+        }
+        else {
+            return CGSizeMake(width, width / 6 * 5);
+        }
     } else {
-        return CGSizeMake(width,
-                          width * [BUSize sizeBy:BUProposalSize_Banner640_100].height / [BUSize sizeBy:BUProposalSize_Banner640_100].width); //0.16
+        // Banner 600*150
+        if (width / height > 640 / 100) {
+            return CGSizeMake(height / 100 * 640, height);
+        }
+        else {
+            return CGSizeMake(width, width / 640 * 100);
+        }
     }
 }
 

@@ -4,7 +4,6 @@
 #import <Tapjoy/Tapjoy.h>
 #import <Tapjoy/TJPlacement.h>
 #if __has_include("MoPub.h")
-    #import "MPRewardedVideoError.h"
     #import "MPLogging.h"
     #import "MPReward.h"
     #import "MoPub.h"
@@ -139,7 +138,7 @@
         [self.placement showContentWithViewController:nil];
     }
     else {
-        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
+        NSError *error = [NSError errorWithDomain:MoPubRewardedAdsSDKDomain code:MPRewardedAdErrorNoAdsAvailable userInfo:nil];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementName);
         [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
     }
@@ -172,7 +171,7 @@
 
 - (void)requestDidSucceed:(TJPlacement *)placement {
     if (!placement.isContentAvailable) {
-        NSError *error = [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain code:MPRewardedVideoAdErrorNoAdsAvailable userInfo:nil];
+        NSError *error = [NSError errorWithDomain:MoPubRewardedAdsSDKDomain code:MPRewardedAdErrorNoAdsAvailable userInfo:nil];
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], self.placementName);
         [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
     }
@@ -191,25 +190,21 @@
 
 - (void)contentDidAppear:(TJPlacement *)placement {
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.placementName);
-    [self.delegate fullscreenAdAdapterAdWillAppear:self];
+    [self.delegate fullscreenAdAdapterAdWillPresent:self];
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.placementName);
     MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], self.placementName);
-    [self.delegate fullscreenAdAdapterAdDidAppear:self];
+    [self.delegate fullscreenAdAdapterAdDidPresent:self];
     [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
 - (void)contentDidDisappear:(TJPlacement *)placement {
     [Tapjoy setVideoAdDelegate:nil];
     MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], self.placementName);
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
     [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], self.placementName);
     [self.delegate fullscreenAdAdapterAdDidDisappear:self];
-    
-    // Signal that the fullscreen ad is closing and the state should be reset.
-    // `fullscreenAdAdapterAdDidDismiss:` was introduced in MoPub SDK 5.15.0.
-    if ([self.delegate respondsToSelector:@selector(fullscreenAdAdapterAdDidDismiss:)]) {
-        [self.delegate fullscreenAdAdapterAdDidDismiss:self];
-    }
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
 }
 
 - (void)didClick:(TJPlacement*)placement

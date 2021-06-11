@@ -4,6 +4,7 @@
 #import "MPNativeAdRendererConfiguration.h"
 #endif
 #import <VerizonAdsSupport/VerizonAdsSupport.h>
+#import <VerizonAdsVerizonNativeController/VerizonAdsVerizonNativeController.h>
 
 @interface MPVerizonNativeAdRenderer () <MPNativeAdRendererImageHandlerDelegate>
 
@@ -51,20 +52,40 @@
     
     [self initAdView];
     
+    // Preconditions for `prepareView:` each text component object must be a UILabel as required by <MPNativeAdRendering>,
+    // and the text components must conform to <VASNativeTextComponent>
+    
     if ([self.adView respondsToSelector:@selector(nativeTitleTextLabel)]) {
-        self.adView.nativeTitleTextLabel.text = [adapter.properties objectForKey:kAdTitleKey];
+        UILabel *titleTextLabel = [self.adView nativeTitleTextLabel];
+        id<VASNativeViewComponent> titleTextComponent  = adapter.properties[kTitleCompId];
+        if ([titleTextLabel isKindOfClass:[UILabel class]] && [titleTextComponent conformsToProtocol:@protocol(VASNativeTextComponent)]) {
+            [(id<VASNativeViewComponent>)titleTextComponent prepareView:titleTextLabel];
+        }
     }
     
     if ([self.adView respondsToSelector:@selector(nativeMainTextLabel)]) {
-        self.adView.nativeMainTextLabel.text = [adapter.properties objectForKey:kAdTextKey];
+        UILabel *nativeMainTextLabel = [self.adView nativeMainTextLabel];
+        id<VASNativeViewComponent> nativeMainTextComponent = adapter.properties[kBodyCompId];
+        if ([nativeMainTextLabel isKindOfClass:[UILabel class]] && [nativeMainTextComponent conformsToProtocol:@protocol(VASNativeTextComponent)]) {
+            [(id<VASNativeViewComponent>)nativeMainTextComponent prepareView:nativeMainTextLabel];
+        }
     }
     
     if ([self.adView respondsToSelector:@selector(nativeCallToActionTextLabel)]) {
-        self.adView.nativeCallToActionTextLabel.text = [adapter.properties objectForKey:kAdCTATextKey];
+        UILabel *nativeCallToActionTextLabel = [self.adView nativeCallToActionTextLabel];
+        id<VASNativeViewComponent> nativeCallToActionTextComponent = adapter.properties[kCTACompId];
+        if ([nativeCallToActionTextLabel isKindOfClass:[UILabel class]] && [nativeCallToActionTextComponent conformsToProtocol:@protocol(VASNativeTextComponent)]) {
+            [(id<VASNativeViewComponent>)nativeCallToActionTextComponent prepareView:nativeCallToActionTextLabel];
+        }
     }
     
-    if ([self.adView respondsToSelector:@selector(nativeCallToActionTextLabel)]) {
-        self.adView.nativeCallToActionTextLabel.text = [adapter.properties objectForKey:kAdCTATextKey];
+    // disclaimer is equivalent to sponsoredByCompany
+    if ([self.adView respondsToSelector:@selector(nativeSponsoredByCompanyTextLabel)]) {
+        UILabel *nativeSponsoredByCompanyTextLabel = [self.adView nativeSponsoredByCompanyTextLabel];
+        id<VASNativeViewComponent> nativeDisclaimerTextComponent = adapter.properties[kDisclaimerCompId];
+        if ([nativeSponsoredByCompanyTextLabel isKindOfClass:[UILabel class]] && [nativeDisclaimerTextComponent conformsToProtocol:@protocol(VASNativeTextComponent)]) {
+            [(id<VASNativeViewComponent>)nativeDisclaimerTextComponent prepareView:nativeSponsoredByCompanyTextLabel];
+        }
     }
     
     if ([self.adView respondsToSelector:@selector(layoutStarRating:)]) {
@@ -75,34 +96,33 @@
         }
     }
     
+    // Preconditions for `prepareView:` mainImageComponent and iconImageComponent must be a UIImageView as required by <MPNativeAdRendering>,
+    // and the iconImageComponent must conform to <VASNativeViewComponent>
+    
     if ([self.adView respondsToSelector:@selector(nativeMainImageView)]) {
-        UIView *mediaView = [adapter.properties objectForKey:kAdMainMediaViewKey];
-        UIView *mainImageView = [self.adView nativeMainImageView];
-        
-        mediaView.frame = mainImageView.bounds;
-        mediaView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        mediaView.userInteractionEnabled = YES;
-        mainImageView.userInteractionEnabled = YES;
-        
-        [mainImageView addSubview:mediaView];
+        UIImageView *mainImageView = [self.adView nativeMainImageView];
+        id<VASNativeViewComponent> mainImageComponent  = adapter.properties[kMainImageCompId];
+        if ([mainImageView isKindOfClass:[UIImageView class]] && [mainImageComponent conformsToProtocol:@protocol(VASNativeViewComponent)]) {
+            [(id<VASNativeViewComponent>)mainImageComponent prepareView:mainImageView];
+        }
     }
     
     if ([self.adView respondsToSelector:@selector(nativeIconImageView)]) {
-        UIView *iconView = [adapter.properties objectForKey:kAdIconImageViewKey];
-        UIView *iconImageView = [self.adView nativeIconImageView];
-        
-        iconView.frame = iconImageView.bounds;
-        iconView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        iconView.userInteractionEnabled = YES;
-        iconImageView.userInteractionEnabled = YES;
-        
-        [iconImageView addSubview:iconView];
+        UIImageView *iconImageView = [self.adView nativeIconImageView];
+        id<VASNativeViewComponent> iconImageComponent  = adapter.properties[kIconImageCompId];
+        if ([iconImageView isKindOfClass:[UIImageView class]] && [iconImageComponent conformsToProtocol:@protocol(VASNativeViewComponent)]) {
+            [(id<VASNativeViewComponent>)iconImageComponent prepareView:iconImageView];
+        }
     }
     
-    // Verizon native does not have privacy icon image, but does provide a disclaimer text under "disclaimer" key in the properties  dictionary which should be handled as custom assets and displayed with the "layoutCustomAssetsWithProperties:imageLoader:" function
-    
+    // Verizon native does not have privacy icon image
     self.adView.nativePrivacyInformationIconImageView.userInteractionEnabled = NO;
     self.adView.nativePrivacyInformationIconImageView.hidden = YES;
+    
+    // `registerContainerView: confirms that all required components have been attached to the container view,
+    // and enables viewability rules for firing the 'adImpression` event
+    VASNativeAd *nativeAd = adapter.properties[kVASNativeAd];
+    [nativeAd registerContainerView:self.adView];
     
     return self.adView;
 }

@@ -1,4 +1,19 @@
 ## Changelog
+* 1.13.0.0
+    * This version of the adapters has been certified with Verizon 1.13.0 and MoPub 5.17.0.
+
+* 1.9.0.2
+    * Add `fullscreenAdAdapterAdWillPresent` and `fullscreenAdAdapterAdDidPresent` to notify publishers of the fullscreen ad show event. Remove `fullscreenAdAdapterAdWillAppear` and  `fullscreenAdAdapterAdDidAppear` as they are now deprecated by the MoPub iOS SDK.
+    * Publishers must use v5.17.0 of the MoPub SDK at the minimum.
+
+* 1.9.0.1
+    * Add support for `fullscreenAdAdapterAdWillDismiss` when a fullscreen creative is about to close. Publishers must use v5.16.1 of the MoPub SDK at the minimum.
+
+* 1.9.0.0
+    * This version of the adapters has been certified with Verizon 1.9.0 and MoPub 5.15.0.
+    * Refactor native ad impression tracking logic. No external changes for publishers.
+    * Native ads now require a disclaimer/sponsored text view.
+
 * 1.8.1.2
     * Replace imports using `MoPubSDKFramework` with `MoPubSDK`. No external impacts to publishers.
 
