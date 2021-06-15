@@ -42,7 +42,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
 @interface VungleRouter () <VungleSDKDelegate, VungleSDKNativeAds, VungleSDKHBDelegate>
 
 @property (nonatomic, copy) NSString *vungleAppID;
-@property (nonatomic) BOOL isAdPlaying;
+@property (nonatomic, weak) id<VungleRouterDelegate> playingFullScreenAdDelegate;
 @property (nonatomic) SDKInitializeState sdkInitializeState;
 
 @property (nonatomic) NSMutableDictionary *waitingListDict;
@@ -62,7 +62,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
         self.waitingListDict = [NSMutableDictionary dictionary];
         self.bannerDelegates = [NSMapTable mapTableWithKeyOptions:NSPointerFunctionsStrongMemory
                                                      valueOptions:NSPointerFunctionsWeakMemory];
-        self.isAdPlaying = NO;
+        self.playingFullScreenAdDelegate = nil;
     }
     return self;
 }
@@ -340,13 +340,13 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
                                        delegate:(id<VungleRouterDelegate>)delegate
 {
     NSString *placementId = [delegate getPlacementID];
-    if (!self.isAdPlaying && [self isAdAvailableForDelegate:delegate]) {
-        self.isAdPlaying = YES;
+    if (!self.playingFullScreenAdDelegate && [self isAdAvailableForDelegate:delegate]) {
+        self.playingFullScreenAdDelegate = delegate;
         NSError *error = nil;
         BOOL success = [[VungleSDK sharedSDK] playAd:viewController options:options placementID:placementId adMarkup:[delegate getAdMarkup] error:&error];
         if (!success) {
             [delegate vungleAdDidFailToPlay:error ?: [NSError errorWithCode:MOPUBErrorVideoPlayerFailedToPlay localizedDescription:@"Failed to play Vungle Interstitial Ad."]];
-            self.isAdPlaying = NO;
+            self.playingFullScreenAdDelegate = nil;
         }
     } else {
         [delegate vungleAdDidFailToPlay:nil];
@@ -359,8 +359,8 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
                                         delegate:(id<VungleRouterDelegate>)delegate
 {
     NSString *placementId = [delegate getPlacementID];
-    if (!self.isAdPlaying && [self isAdAvailableForDelegate:delegate]) {
-        self.isAdPlaying = YES;
+    if (!self.playingFullScreenAdDelegate && [self isAdAvailableForDelegate:delegate]) {
+        self.playingFullScreenAdDelegate = delegate;
         NSMutableDictionary *options = [NSMutableDictionary dictionary];
         if (customerId.length > 0) {
             options[VunglePlayAdOptionKeyUser] = customerId;
@@ -393,7 +393,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
         
         if (!success) {
             [delegate vungleAdDidFailToPlay:error ?: [NSError errorWithCode:MOPUBErrorVideoPlayerFailedToPlay localizedDescription:@"Failed to play Vungle Rewarded Video Ad."]];
-            self.isAdPlaying = NO;
+            self.playingFullScreenAdDelegate = nil;
         }
     } else {
         NSError *error = [NSError errorWithDomain:MoPubRewardedAdsSDKDomain code:MPRewardedAdErrorNoAdsAvailable userInfo:nil];
@@ -519,9 +519,8 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
                     delegate:(id<VungleRouterDelegate>)delegate
 {
     NSString *key = [self getKeyFromDelegate:delegate];
-    if (![table objectForKey:key]) {
-        [table setObject:delegate forKey:key];
-    }
+    // Always set the latest delegate to be tracked
+    [table setObject:delegate forKey:key];
 }
 
 - (void)clearBannerDelegateWithState:(BannerRouterDelegateState)state
@@ -765,7 +764,9 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
 {
     NSString *message = nil;
     NSError *playabilityError = nil;
-    if (!isAdPlayable) {
+    if (isAdPlayable) {
+        MPLogInfo(@"Vungle: Ad playability update returned ad is playable for Placement ID: %@", placementID);
+    } else {
         message = error ? [NSString stringWithFormat:@"Vungle: Ad playability update returned error for Placement ID: %@, Error: %@", placementID, error.localizedDescription] : [NSString stringWithFormat:@"Vungle: Ad playability update returned Ad is not playable for Placement ID: %@.", placementID];
         playabilityError = error ? : [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:message];
     }
@@ -774,11 +775,15 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
                                                                               adMarkup:adMarkup];
     if (targetDelegate) {
         if (isAdPlayable) {
-            MPLogInfo(@"Vungle: Ad playability update returned ad is playable for Placement ID: %@", placementID);
             [targetDelegate vungleAdDidLoad];
         } else {
             MPLogInfo(@"%@", message);
-            if (!self.isAdPlaying) {
+            // Ignore any playability update if the delegate is the playing ad
+            // The SDK will fire playability updates during a successful playback
+            // to relay the status. We don't want to trigger the fail load if it
+            // is successfully playing. But don't block other placement load fails
+            if (!([[self.playingFullScreenAdDelegate getPlacementID] isEqualToString:placementID] &&
+                [[self.playingFullScreenAdDelegate getAdMarkup] isEqualToString:adMarkup])) {
                 [targetDelegate vungleAdDidFailToLoad:playabilityError];
             }
         }
@@ -790,7 +795,6 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
                                  withBannerState:BannerRouterDelegateStateRequesting];
             if (bannerDelegate) {
                 if (isAdPlayable) {
-                    MPLogInfo(@"Vungle: Ad playability update returned ad is playable for Placement ID: %@", placementID);
                     [bannerDelegate vungleAdDidLoad];
                     bannerDelegate.bannerState = BannerRouterDelegateStateCached;
                 } else {
@@ -855,7 +859,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     id<VungleRouterDelegate> targetDelegate = [self getFullScreenDelegateWithPlacement:placementID adMarkup:adMarkup];
     if ([targetDelegate respondsToSelector:@selector(vungleAdWillDisappear)]) {
         [targetDelegate vungleAdWillDisappear];
-        self.isAdPlaying = NO;
+        self.playingFullScreenAdDelegate = nil;
     }
 }
 
