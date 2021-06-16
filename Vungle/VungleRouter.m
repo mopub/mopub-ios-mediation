@@ -261,6 +261,7 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
     [self setDelegateIntoTable:self.delegatesDict delegate:delegate];
     
     if ([self isAdAvailableForDelegate:delegate]) {
+        MPLogDebug(@"Vungle: Placement ID is already cached. Trigger DidLoadAd delegate directly: %@", [delegate getPlacementID]);
         [delegate vungleAdDidLoad];
         return;
     }
@@ -339,17 +340,30 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
                                         options:(NSDictionary *)options
                                        delegate:(id<VungleRouterDelegate>)delegate
 {
-    NSString *placementId = [delegate getPlacementID];
-    if (!self.playingFullScreenAdDelegate && [self isAdAvailableForDelegate:delegate]) {
-        self.playingFullScreenAdDelegate = delegate;
-        NSError *error = nil;
-        BOOL success = [[VungleSDK sharedSDK] playAd:viewController options:options placementID:placementId adMarkup:[delegate getAdMarkup] error:&error];
-        if (!success) {
-            [delegate vungleAdDidFailToPlay:error ?: [NSError errorWithCode:MOPUBErrorVideoPlayerFailedToPlay localizedDescription:@"Failed to play Vungle Interstitial Ad."]];
-            self.playingFullScreenAdDelegate = nil;
+    if (self.playingFullScreenAdDelegate) {
+        if ([[self getKeyFromDelegate:self.playingFullScreenAdDelegate] isEqualToString:[self getKeyFromDelegate:delegate]]) {
+            MPLogDebug(@"Vungle: Attempting to play the same placement %@", [delegate getPlacementID]);
+            return;
         }
-    } else {
+        
+        MPLogDebug(@"Vungle: Another full screen ad is already playing: %@. Cannot display %@", [self getKeyFromDelegate:self.playingFullScreenAdDelegate], [self getKeyFromDelegate:delegate]);
         [delegate vungleAdDidFailToPlay:nil];
+        return;
+    }
+    
+    if (![self isAdAvailableForDelegate:delegate]) {
+        MPLogDebug(@"Vungle: Placement no longer available. Unable to display: %@", [delegate getPlacementID]);
+        [delegate vungleAdDidFailToPlay:nil];
+        return;
+    }
+    
+    NSString *placementId = [delegate getPlacementID];
+    self.playingFullScreenAdDelegate = delegate;
+    NSError *error = nil;
+    BOOL success = [[VungleSDK sharedSDK] playAd:viewController options:options placementID:placementId adMarkup:[delegate getAdMarkup] error:&error];
+    if (!success) {
+        [delegate vungleAdDidFailToPlay:error ?: [NSError errorWithCode:MOPUBErrorVideoPlayerFailedToPlay localizedDescription:@"Failed to play Vungle Interstitial Ad."]];
+        self.playingFullScreenAdDelegate = nil;
     }
 }
 
@@ -358,46 +372,59 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
                                         settings:(VungleInstanceMediationSettings *)settings
                                         delegate:(id<VungleRouterDelegate>)delegate
 {
-    NSString *placementId = [delegate getPlacementID];
-    if (!self.playingFullScreenAdDelegate && [self isAdAvailableForDelegate:delegate]) {
-        self.playingFullScreenAdDelegate = delegate;
-        NSMutableDictionary *options = [NSMutableDictionary dictionary];
-        if (customerId.length > 0) {
-            options[VunglePlayAdOptionKeyUser] = customerId;
-        } else if (settings && settings.userIdentifier.length > 0) {
-            options[VunglePlayAdOptionKeyUser] = settings.userIdentifier;
-        }
-        if (settings.ordinal > 0) {
-            options[VunglePlayAdOptionKeyOrdinal] = @(settings.ordinal);
-        }
-        if (settings.startMuted) {
-            options[VunglePlayAdOptionKeyStartMuted] = @(settings.startMuted);
+    if (self.playingFullScreenAdDelegate) {
+        if ([[self getKeyFromDelegate:self.playingFullScreenAdDelegate] isEqualToString:[self getKeyFromDelegate:delegate]]) {
+            MPLogDebug(@"Vungle: Attempting to play the same placement %@", [delegate getPlacementID]);
+            return;
         }
         
-        int appOrientation = [settings.orientations intValue];
-        if (appOrientation == 0 && [VungleAdapterConfiguration orientations] != nil) {
-            appOrientation = [[VungleAdapterConfiguration orientations] intValue];
-        }
-        
-        NSNumber *orientations = @(UIInterfaceOrientationMaskAll);
-        if (appOrientation == 1) {
-            orientations = @(UIInterfaceOrientationMaskLandscape);
-        } else if (appOrientation == 2) {
-            orientations = @(UIInterfaceOrientationMaskPortrait);
-        }
-        
-        options[VunglePlayAdOptionKeyOrientations] = orientations;
-        
-        NSError *error = nil;
-        BOOL success = [[VungleSDK sharedSDK] playAd:viewController options:options placementID:placementId adMarkup:[delegate getAdMarkup] error:&error];
-        
-        if (!success) {
-            [delegate vungleAdDidFailToPlay:error ?: [NSError errorWithCode:MOPUBErrorVideoPlayerFailedToPlay localizedDescription:@"Failed to play Vungle Rewarded Video Ad."]];
-            self.playingFullScreenAdDelegate = nil;
-        }
-    } else {
+        MPLogDebug(@"Vungle: Another full screen ad is already playing: %@. Cannot display %@", [self getKeyFromDelegate:self.playingFullScreenAdDelegate], [self getKeyFromDelegate:delegate]);
         NSError *error = [NSError errorWithDomain:MoPubRewardedAdsSDKDomain code:MPRewardedAdErrorNoAdsAvailable userInfo:nil];
         [delegate vungleAdDidFailToPlay:error];
+        return;
+    }
+    
+    if (![self isAdAvailableForDelegate:delegate]) {
+        MPLogDebug(@"Vungle: Placement no longer available. Unable to display: %@", [delegate getPlacementID]);
+        NSError *error = [NSError errorWithDomain:MoPubRewardedAdsSDKDomain code:MPRewardedAdErrorNoAdsAvailable userInfo:nil];
+        [delegate vungleAdDidFailToPlay:error];
+        return;
+    }
+    
+    NSString *placementId = [delegate getPlacementID];
+    self.playingFullScreenAdDelegate = delegate;
+    NSMutableDictionary *options = [NSMutableDictionary dictionary];
+    if (customerId.length > 0) {
+        options[VunglePlayAdOptionKeyUser] = customerId;
+    } else if (settings && settings.userIdentifier.length > 0) {
+        options[VunglePlayAdOptionKeyUser] = settings.userIdentifier;
+    }
+    if (settings.ordinal > 0) {
+        options[VunglePlayAdOptionKeyOrdinal] = @(settings.ordinal);
+    }
+    if (settings.startMuted) {
+        options[VunglePlayAdOptionKeyStartMuted] = @(settings.startMuted);
+    }
+    
+    int appOrientation = [settings.orientations intValue];
+    if (appOrientation == 0 && [VungleAdapterConfiguration orientations] != nil) {
+        appOrientation = [[VungleAdapterConfiguration orientations] intValue];
+    }
+    
+    NSNumber *orientations = @(UIInterfaceOrientationMaskAll);
+    if (appOrientation == 1) {
+        orientations = @(UIInterfaceOrientationMaskLandscape);
+    } else if (appOrientation == 2) {
+        orientations = @(UIInterfaceOrientationMaskPortrait);
+    }
+    
+    options[VunglePlayAdOptionKeyOrientations] = orientations;
+    
+    NSError *error = nil;
+    BOOL success = [[VungleSDK sharedSDK] playAd:viewController options:options placementID:placementId adMarkup:[delegate getAdMarkup] error:&error];
+    if (!success) {
+        [delegate vungleAdDidFailToPlay:error ?: [NSError errorWithCode:MOPUBErrorVideoPlayerFailedToPlay localizedDescription:@"Failed to play Vungle Rewarded Video Ad."]];
+        self.playingFullScreenAdDelegate = nil;
     }
 }
 
