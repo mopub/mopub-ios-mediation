@@ -94,7 +94,7 @@
                                              dspName:nil], [self getAdNetworkId]);
     
     IMCompletionBlock completionBlock = ^{
-        if ([adMarkup isKindOfClass:[NSString class]]) {
+        if ([adMarkup isKindOfClass:[NSString class]] && adMarkup.length > 0) {
             [self.bannerAd load:[adMarkup dataUsingEncoding:NSUTF8StringEncoding]];
         } else {
             [self.bannerAd load];
