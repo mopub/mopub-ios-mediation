@@ -1,4 +1,8 @@
 ## Changelog
+* 1.1.2.0
+  * This version of the adapters has been certified with SnapAudienceNetwork 1.1.2 and MoPub SDK 5.17.0.
+  * Implement `rootViewController` delegate property in `SnapAdBannerCustomEvent` instead of deprecated `[SAKAdView rootViewController]` property.
+
 * 1.1.1.1
   * Fix the auto-property synthesis compiler warnings for `SnapAdIntersititalCustomEvent`.
   

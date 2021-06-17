@@ -26,6 +26,7 @@ static NSString *const kSAKFormatMediumRectangle = @"medium_rectangle";
 
 @dynamic delegate;
 @dynamic localExtras;
+@dynamic rootViewController;
 
 #pragma mark - MPInlineAdAdapter Override
 
@@ -55,7 +56,6 @@ static NSString *const kSAKFormatMediumRectangle = @"medium_rectangle";
     _sakAdView.frame = CGRectMake(0, 0, size.width, size.height);
     _sakAdView.delegate = self;
     _sakAdView.translatesAutoresizingMaskIntoConstraints = NO;
-    _sakAdView.rootViewController = [self.delegate inlineAdAdapterViewControllerForPresentingModalView:self];
     
     SAKAdRequestConfigurationBuilder *configurationBuilder = [SAKAdRequestConfigurationBuilder new];
     [configurationBuilder withPublisherSlotId:self.slotId];
@@ -122,6 +122,11 @@ static NSString *const kSAKFormatMediumRectangle = @"medium_rectangle";
 {
     MPLogAdEvent([MPLogEvent adTappedForAdapter:NSStringFromClass(self.class)], self.slotId);
     [self.delegate inlineAdAdapterDidTrackClick:self];
+}
+
+- (UIViewController *)rootViewController
+{
+    return [self.delegate inlineAdAdapterViewControllerForPresentingModalView:self];
 }
 
 @end
