@@ -92,7 +92,7 @@
                                              dspName:nil], [self getAdNetworkId]);
     
     IMCompletionBlock completionBlock = ^{
-        if ([adMarkup isKindOfClass:[NSString class]]) {
+        if ([adMarkup isKindOfClass:[NSString class]] && adMarkup.length > 0) {
             [self.rewardedVideoAd load:[adMarkup dataUsingEncoding:NSUTF8StringEncoding]];
         } else {
             [self.rewardedVideoAd load];
@@ -195,7 +195,7 @@
 }
 
 -(void)interstitial:(IMInterstitial*)interstitial rewardActionCompletedWithRewards:(NSDictionary*)rewards {
-    MPReward* reward = [MPReward unspecifiedReward];
+    MPReward *reward = [MPReward unspecifiedReward];
     if (rewards != nil && [rewards count] > 0) {
         reward = [[MPReward alloc] initWithCurrencyType:kMPRewardCurrencyTypeUnspecified amount:[rewards allValues][0]];
     }
