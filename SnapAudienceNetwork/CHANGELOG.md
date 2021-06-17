@@ -1,4 +1,7 @@
 ## Changelog
+* 1.1.2.0
+  * Implement `rootViewController` delegate property in `SnapAdBannerCustomEvent` instead of relying on deprecated `[SAKAdView rootViewController]` property.
+
 * 1.1.1.1
   * Fix the auto-property synthesis compiler warnings for `SnapAdIntersititalCustomEvent`.
   
