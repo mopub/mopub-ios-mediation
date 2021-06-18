@@ -1,4 +1,8 @@
 ## Changelog
+* 9.1.7.3
+     * Fix bidding logic not being called when bidding ad response is returned.
+     * Publishers must use this adapter version at the minimum for Advanced Bidding.
+
 * 9.1.7.2
      * Replace `InMobiSDK` with `ImMobiSDK/Core` to exclude the Moat SDK in order to avoid UIWebView deprecation issues.
 

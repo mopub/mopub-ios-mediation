@@ -88,7 +88,7 @@
                                              dspName:nil], [self getAdNetworkId]);
 
     IMCompletionBlock completionBlock = ^{
-        if (adMarkup != nil && adMarkup <= 0) {
+        if ([adMarkup isKindOfClass:[NSString class]] && adMarkup.length > 0) {
             [self.interstitialAd load:[adMarkup dataUsingEncoding:NSUTF8StringEncoding]];
         } else {
             [self.interstitialAd load];
