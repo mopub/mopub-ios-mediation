@@ -17,7 +17,7 @@ NSString *const kMintegralErrorDomain = @"com.mintegral.iossdk.mopub";
 
 static NSString * const MintegralConfigurationKeyAppIdKey = @"appId";
 static NSString * const MintegralConfigurationKeyAppKey = @"appKey";
-static NSString * const kAdapterVersion = @"6.9.3.0.0";
+static NSString * const kAdapterVersion = @"6.9.4.0.0";
 static NSString * const kPluginNumber = @"Y+H6DFttYrPQYcIA+F2F+F5/Hv==";
 static NSString * const kNetworkName = @"mintegral";
 

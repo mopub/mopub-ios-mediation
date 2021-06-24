@@ -1,4 +1,7 @@
 ## Changelog
+* 6.9.4.0.0
+   * This version of the adapters has been certified with Mintegral 6.9.4.0 and MoPub 5.17.0.
+
 * 6.9.3.0.0
    * Service release. No new changes. CocoaPods-based integrations should get this version instead of the previous 6.9.3.0.
 
