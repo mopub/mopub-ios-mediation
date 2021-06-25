@@ -50,6 +50,8 @@
         [self failLoadWithError:accountIdError];
         return;
     }
+    
+    [InMobiAdapterConfiguration setCachedInitializationParameters: info];
 
     NSError * placementIdError = [InMobiAdapterConfiguration validatePlacementId:placementId forOperation:@"interstitial ad request"];
     if (placementIdError) {

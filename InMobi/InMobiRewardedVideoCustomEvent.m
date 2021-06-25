@@ -55,6 +55,8 @@
         [self failLoadWithError:accountIdError];
         return;
     }
+    
+    [InMobiAdapterConfiguration setCachedInitializationParameters: info];
 
     NSError * placementIdError = [InMobiAdapterConfiguration validatePlacementId:placementId forOperation:@"rewarded video ad request"];
     if (placementIdError) {

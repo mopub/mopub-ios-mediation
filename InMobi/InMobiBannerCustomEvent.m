@@ -44,6 +44,8 @@
         [self failLoadWithError:accountIdError];
         return;
     }
+    
+    [InMobiAdapterConfiguration setCachedInitializationParameters: info];
 
     NSError * placementIdError = [InMobiAdapterConfiguration validatePlacementId:placementId forOperation:@"banner ad request"];
     if (placementIdError) {
