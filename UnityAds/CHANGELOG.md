@@ -1,5 +1,19 @@
 
 ## Changelog
+* 3.7.2.0
+  * This version of the adapters has been certified with Unity Ads 3.7.2 and MoPub SDK 5.17.0.
+  * Remove duplicate `fullscreenAdAdapterAdDidDismiss` callback for interstitial ads.
+
+* 3.7.1.2
+  * Add `fullscreenAdAdapterAdWillPresent` and `fullscreenAdAdapterAdDidPresent` to notify publishers of the fullscreen ad show event. Remove `fullscreenAdAdapterAdWillAppear` and  `fullscreenAdAdapterAdDidAppear` as they are now deprecated by the MoPub iOS SDK.
+  * Publishers must use v5.17.0 of the MoPub SDK at the minimum.
+
+* 3.7.1.1
+  * Remove deprecated usage of Rewarded Video APIs.
+
+* 3.7.1.0
+  * This version of the adapters has been certified with Unity Ads 3.7.1 and MoPub SDK 5.16.2.
+
 * 3.6.0.1
   * Add support for `fullscreenAdAdapterAdWillDismiss` when a fullscreen creative is about to close. Publishers must use v5.16.1 of the MoPub SDK at the minimum.
 

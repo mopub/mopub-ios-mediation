@@ -1,5 +1,4 @@
 #import <VerizonAdsInterstitialPlacement/VerizonAdsInterstitialPlacement.h>
-#import <VerizonAdsStandardEdition/VerizonAdsStandardEdition.h>
 #import "MPVerizonInterstitialCustomEvent.h"
 #if __has_include("MoPub.h")
 #import "MPLogging.h"
@@ -70,7 +69,7 @@
     }
     
     if (![VASAds sharedInstance].initialized &&
-        ![VASStandardEdition initializeWithSiteId:siteId])
+        ![VASAds initializeWithSiteId:siteId])
     {
         NSError *error = [VASErrorInfo errorWithDomain:kMoPubVASAdapterErrorDomain
                                                   code:VASCoreErrorAdFetchFailure
@@ -194,12 +193,12 @@
         __strong __typeof__(self) strongSelf = weakSelf;
         if (strongSelf != nil)
         {
-            MPLogInfo(@"VAS interstial %@ will display.", interstitialAd);
-            [self.delegate fullscreenAdAdapterAdWillAppear:self];
+            MPLogInfo(@"VAS interstial %@ will present.", interstitialAd);
+            [self.delegate fullscreenAdAdapterAdWillPresent:self];
             MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
             
-            MPLogInfo(@"VAS interstitial %@ did appear.", interstitialAd);
-            [self.delegate fullscreenAdAdapterAdDidAppear:self];
+            MPLogInfo(@"VAS interstitial %@ did present.", interstitialAd);
+            [self.delegate fullscreenAdAdapterAdDidPresent:self];
             MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
             MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
         }

@@ -219,8 +219,8 @@ static NSMutableDictionary<NSString *, ALIncentivizedInterstitialAd *> *ALGlobal
 - (void)ad:(ALAd *)ad wasDisplayedIn:(UIView *)view
 {
     [self.delegate fullscreenAdAdapterDidTrackImpression:self];
-    [self.delegate fullscreenAdAdapterAdWillAppear:self];
-    [self.delegate fullscreenAdAdapterAdDidAppear:self];
+    [self.delegate fullscreenAdAdapterAdWillPresent:self];
+    [self.delegate fullscreenAdAdapterAdDidPresent:self];
     
     MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);

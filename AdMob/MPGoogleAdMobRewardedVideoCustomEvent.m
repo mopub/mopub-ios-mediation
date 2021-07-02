@@ -3,11 +3,10 @@
 #import <GoogleMobileAds/GoogleMobileAds.h>
 #if __has_include("MoPub.h")
 #import "MPLogging.h"
-#import "MPRewardedVideoError.h"
 #import "MPReward.h"
 #endif
 
-@interface MPGoogleAdMobRewardedVideoCustomEvent () <GADRewardedAdDelegate>
+@interface MPGoogleAdMobRewardedVideoCustomEvent () <GADFullScreenContentDelegate>
 @property(nonatomic, copy) NSString *admobAdUnitId;
 @property(nonatomic, strong) GADRewardedAd *rewardedAd;
 @end
@@ -32,7 +31,7 @@
 }
 
 - (BOOL)hasAdAvailable {
-    return self.rewardedAd.isReady;
+    return self.rewardedAd != nil;
 }
 
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup {
@@ -44,8 +43,8 @@
     self.admobAdUnitId = [info objectForKey:@"adunit"];
     if (self.admobAdUnitId == nil) {
         NSError *error =
-        [NSError errorWithDomain:MoPubRewardedVideoAdsSDKDomain
-                            code:MPRewardedVideoAdErrorInvalidAdUnitID
+        [NSError errorWithDomain:MoPubRewardedAdsSDKDomain
+                            code:MPRewardedAdErrorInvalidAdUnitID
                         userInfo:@{NSLocalizedDescriptionKey : @"Ad Unit ID cannot be nil."}];
         
         MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
@@ -75,10 +74,7 @@
             request.contentURL = contentUrl;
         }
     }
-    
-    // Consent collected from the MoPub’s consent dialogue should not be used to set up Google's
-    // personalization preference. Publishers should work with Google to be GDPR-compliant.
-    
+
     NSString *npaValue = GoogleAdMobAdapterConfiguration.npaString;
     
     if (npaValue.length > 0) {
@@ -87,29 +83,41 @@
         [request registerAdNetworkExtras:extras];
     }
 
-    self.rewardedAd = [[GADRewardedAd alloc] initWithAdUnitID:self.admobAdUnitId];
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass(self.class) dspCreativeId:nil dspName:nil], [self getAdNetworkId]);
-    [self.rewardedAd loadRequest:request completionHandler:^(GADRequestError *error){
-        if (error) {
-            MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
-            [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
-        } else {
-            MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-            [self.delegate fullscreenAdAdapterDidLoadAd:self];
-        }
+    
+    [GADRewardedAd loadWithAdUnitID:self.admobAdUnitId
+                            request:request
+                  completionHandler:^(GADRewardedAd *ad, NSError *error) {
+      if (error) {
+          MPLogAdEvent([MPLogEvent adLoadFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
+          [self.delegate fullscreenAdAdapter:self didFailToLoadAdWithError:error];
+        
+          return;
+      }
+        
+      self.rewardedAd = ad;
+      self.rewardedAd.fullScreenContentDelegate = self;
+        
+      MPLogAdEvent([MPLogEvent adLoadSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+      [self.delegate fullscreenAdAdapterDidLoadAd:self];
     }];
 }
 
 - (void)presentAdFromViewController:(UIViewController *)viewController {
     MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
     
-    if (self.rewardedAd.isReady) {
-        [self.rewardedAd presentFromRootViewController:viewController delegate:self];
+    if (self.rewardedAd) {
+        [self.rewardedAd presentFromRootViewController:viewController
+                              userDidEarnRewardHandler:^ {
+            GADAdReward *reward = self.rewardedAd.adReward;
+            
+            MPReward *moPubReward = [[MPReward alloc] initWithCurrencyType:reward.type amount:reward.amount];
+            [self.delegate fullscreenAdAdapter:self willRewardUser:moPubReward];
+        }];
     } else {
-        // We will send the error if the rewarded ad has already been presented.
         NSError *error = [NSError
-                          errorWithDomain:MoPubRewardedVideoAdsSDKDomain
-                          code:MPRewardedVideoAdErrorNoAdReady
+                          errorWithDomain:MoPubRewardedAdsSDKDomain
+                          code:MPRewardedAdErrorNoAdReady
                           userInfo:@{NSLocalizedDescriptionKey : @"Rewarded ad is not ready to be presented."}];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
         [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
@@ -131,42 +139,42 @@
 // and needs to load another ad. That event will be passed on to the publisher app, which can then
 // trigger another load.
 - (void)handleDidPlayAd {
-    if (!self.rewardedAd.isReady) {
+    if (!self.rewardedAd) {
         [self.delegate fullscreenAdAdapterDidExpire:self];
     }
 }
 
 #pragma mark - GADRewardedAdDelegate methods
-
-- (void)rewardedAd:(GADRewardedAd *)rewardedAd userDidEarnReward:(GADAdReward *)reward {
-    MPReward *moPubReward = [[MPReward alloc] initWithCurrencyType:reward.type amount:reward.amount];
-    [self.delegate fullscreenAdAdapter:self willRewardUser:moPubReward];
-}
-
-- (void)rewardedAdDidPresent:(GADRewardedAd *)rewardedAd {
-    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-    [self.delegate fullscreenAdAdapterAdWillAppear:self];
-    [self.delegate fullscreenAdAdapterAdDidAppear:self];
-    // Recording an impression after the reward-based video ad appears on the screen.
+- (void)adDidRecordImpression:(nonnull id<GADFullScreenPresentingAd>)ad {
     [self.delegate fullscreenAdAdapterDidTrackImpression:self];
 }
 
-- (void)rewardedAd:(GADRewardedAd *)rewardedAd didFailToPresentWithError:(NSError *)error {
+- (void)adDidPresentFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
+    MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    MPLogAdEvent([MPLogEvent adDidAppearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate fullscreenAdAdapterAdWillPresent:self];
+    [self.delegate fullscreenAdAdapterAdDidPresent:self];
+}
+
+- (void)ad:(nonnull id<GADFullScreenPresentingAd>)ad didFailToPresentFullScreenContentWithError:(NSError *)error {
+    self.rewardedAd = nil;
+
     MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getAdNetworkId]);
     [self.delegate fullscreenAdAdapter:self didFailToShowAdWithError:error];
 }
 
-- (void)rewardedAdDidDismiss:(GADRewardedAd *)rewardedAd {
-  MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-  [self.delegate fullscreenAdAdapterAdWillDisappear:self];
+- (void)adDidDismissFullScreenContent:(nonnull id<GADFullScreenPresentingAd>)ad {
+    self.rewardedAd = nil;
 
-  MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
-  [self.delegate fullscreenAdAdapterAdDidDisappear:self];
+    MPLogAdEvent([MPLogEvent adWillDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate fullscreenAdAdapterAdWillDisappear:self];
     
-  [self.delegate fullscreenAdAdapterAdWillDismiss:self];
-  [self.delegate fullscreenAdAdapterAdDidDismiss:self];
+    MPLogAdEvent([MPLogEvent adDidDisappearForAdapter:NSStringFromClass(self.class)], [self getAdNetworkId]);
+    [self.delegate fullscreenAdAdapterAdDidDisappear:self];
+    
+    [self.delegate fullscreenAdAdapterAdWillDismiss:self];
+    [self.delegate fullscreenAdAdapterAdDidDismiss:self];
 }
 
 - (NSString *) getAdNetworkId {

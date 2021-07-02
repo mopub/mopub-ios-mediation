@@ -1,4 +1,27 @@
 ## Changelog
+  * 8.6.0.0
+    * This version of the adapters has been certified with AdMob 8.6.0 and MoPub 5.17.0.
+
+  * 8.5.0.0
+    * This version of the adapters has been certified with AdMob 8.5.0 and MoPub 5.17.0.
+
+  * 8.4.0.1
+    * Add `fullscreenAdAdapterAdWillPresent` and `fullscreenAdAdapterAdDidPresent` to notify publishers of the fullscreen ad show event. Remove `fullscreenAdAdapterAdWillAppear` and  `fullscreenAdAdapterAdDidAppear` as they are now deprecated by the MoPub iOS SDK.
+    * Publishers must use v5.17.0 of the MoPub SDK at the minimum.
+
+  * 8.4.0.0
+    * This version of the adapters has been certified with AdMob 8.4.0 and MoPub 5.16.2.
+
+  * 8.3.0.2
+    * Fix impression tracking and auto refresh for banner ads.
+
+  * 8.3.0.1
+    * Remove deprecated usage of Rewarded Video APIs.
+
+  * 8.3.0.0
+    * This version of the adapters has been certified with AdMob 8.3.0 and MoPub 5.16.2.
+    * Refactor banner, interstitial, rewarded video, and native based on new API guidelines from Google. No action items for publishers.
+
   * 7.69.0.3
     * Fix static banner size leaking to subsequent adapter instances.
 

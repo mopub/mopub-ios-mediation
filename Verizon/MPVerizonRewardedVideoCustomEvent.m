@@ -3,7 +3,6 @@
 #if __has_include("MoPub.h")
 #import "MPLogging.h"
 #endif
-#import <VerizonAdsStandardEdition/VerizonAdsStandardEdition.h>
 #import <VerizonAdsInterstitialPlacement/VASInterstitialAd.h>
 #import <VerizonAdsInterstitialPlacement/VASInterstitialAdFactory.h>
 #import "VerizonAdapterConfiguration.h"
@@ -78,7 +77,7 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
     }
     
     if (![VASAds sharedInstance].initialized &&
-        ![VASStandardEdition initializeWithSiteId:self.siteId])
+        ![VASAds initializeWithSiteId:self.siteId])
     {
         NSError *error = [VASErrorInfo errorWithDomain:kMoPubVASAdapterErrorDomain
                                                   code:VASCoreErrorAdFetchFailure
@@ -130,7 +129,7 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.siteId);
         MPLogAdEvent([MPLogEvent adWillAppearForAdapter:NSStringFromClass(self.class)], self.siteId);
         
-        [self.delegate fullscreenAdAdapterAdWillAppear:self];
+        [self.delegate fullscreenAdAdapterAdWillPresent:self];
     }
     else
     {
@@ -221,7 +220,7 @@ static NSString *const kMoPubVASAdapterVideoCompleteEventId = @"onVideoComplete"
     MPLogAdEvent([MPLogEvent adShowSuccessForAdapter:NSStringFromClass(self.class)], self.siteId);
     
     dispatch_async(dispatch_get_main_queue(), ^{
-        [self.delegate fullscreenAdAdapterAdDidAppear:self];
+        [self.delegate fullscreenAdAdapterAdDidPresent:self];
     });
 }
 

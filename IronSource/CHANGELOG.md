@@ -1,4 +1,26 @@
 ## Changelog
+* 7.1.6.1.0
+    * This version of the adapters has been certified with ironSource 7.1.6.1 and MoPub SDK 5.17.0.
+
+* 7.1.5.1.0
+    * This version of the adapters has been certified with ironSource 7.1.5.1 and MoPub SDK 5.17.0.
+
+* 7.1.5.0.2
+    * Add `fullscreenAdAdapterAdWillPresent` and `fullscreenAdAdapterAdDidPresent` to notify publishers of the fullscreen ad show event. Remove `fullscreenAdAdapterAdWillAppear` and  `fullscreenAdAdapterAdDidAppear` as they are now deprecated by the MoPub iOS SDK.
+    * Publishers must use v5.17.0 of the MoPub SDK at the minimum.
+
+* 7.1.5.0.1
+    * Remove deprecated usage of Rewarded Video APIs.
+
+* 7.1.5.0.0
+    * This version of the adapters has been certified with ironSource 7.1.5.0 and MoPub SDK 5.16.2.
+
+* 7.1.4.0.0
+    * This version of the adapters has been certified with ironSource 7.1.4.0 and MoPub SDK 5.16.2.
+
+* 7.1.2.0.0
+    * This version of the adapters has been certified with ironSource 7.1.2.0 and MoPub SDK 5.16.1.
+
 * 7.1.0.0.1
     * Add support for `fullscreenAdAdapterAdWillDismiss` when a fullscreen creative is about to close. Publishers must use v5.16.1 of the MoPub SDK at the minimum.
 

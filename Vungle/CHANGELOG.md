@@ -1,4 +1,25 @@
 ## Changelog
+* 6.9.2.1
+  * Release adapter compatible with MoPub SDK v5.17.0.
+  * Add `fullscreenAdAdapterAdWillPresent` and `fullscreenAdAdapterAdDidPresent` to notify publishers of the fullscreen ad show event. Remove `fullscreenAdAdapterAdWillAppear` and  `fullscreenAdAdapterAdDidAppear` as they are now deprecated by the MoPub iOS SDK.
+  * Publishers must use v5.17.0 of the MoPub SDK at the minimum.
+
+* 6.10.0.1
+  * DO NOT INTEGRATE THIS VERSION as the corresponding Vungle SDK (v6.10.0) has been retracted from production.
+  * Add `fullscreenAdAdapterAdWillPresent` and `fullscreenAdAdapterAdDidPresent` to notify publishers of the fullscreen ad show event. Remove `fullscreenAdAdapterAdWillAppear` and  `fullscreenAdAdapterAdDidAppear` as they are now deprecated by the MoPub iOS SDK.
+  * Publishers must use v5.17.0 of the MoPub SDK at the minimum.
+  
+* 6.10.0.0
+  * DO NOT INTEGRATE THIS VERSION as the corresponding Vungle SDK (v6.10.0) has been retracted from production.
+  * This version of the adapters has been certified with Vungle 6.10.0 and MoPub SDK 5.16.2.
+
+* 6.9.2.0
+  * This version of the adapters has been certified with Vungle 6.9.2 and MoPub SDK 5.16.2.
+  * Remove deprecated usage of Rewarded Video APIs.
+
+* 6.9.1.2
+  * Address Vungle SDK v6.9.1 deadlock issue.
+  
 * 6.9.1.1
   * Add support for `fullscreenAdAdapterAdWillDismiss` when a fullscreen creative is about to close. Publishers must use v5.16.1 of the MoPub SDK at the minimum.
   

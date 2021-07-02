@@ -1,4 +1,30 @@
 ## Changelog
+   * 10.3.2.0
+     * This version of the adapters has been certified with AppLovin SDK 10.3.2 and MoPub SDK 5.17.0.
+
+   * 10.3.0.0
+     * This version of the adapters has been certified with AppLovin SDK 10.3.0 and MoPub SDK 5.17.0.
+
+   * 10.2.1.1
+    * Add `fullscreenAdAdapterAdWillPresent` and `fullscreenAdAdapterAdDidPresent` to notify publishers of the fullscreen ad show event. Remove `fullscreenAdAdapterAdWillAppear` and  `fullscreenAdAdapterAdDidAppear` as they are now deprecated by the MoPub iOS SDK.
+    * Publishers must use v5.17.0 of the MoPub SDK at the minimum.
+
+   * 10.2.1.0
+     * This version of the adapters has been certified with AppLovin SDK 10.2.1 and MoPub SDK 5.16.2.
+
+   * 10.2.0.0
+     * This version of the adapters has been certified with AppLovin SDK 10.2.0 and MoPub SDK 5.16.2.
+
+   * 10.1.1.0
+     * This version of the adapters has been certified with AppLovin SDK 10.1.1 and MoPub SDK 5.16.2.
+
+   * 10.1.0.0
+     * This version of the adapters has been certified with AppLovin SDK 10.1.0 and MoPub SDK 5.16.2.
+
+   * 10.0.1.0
+     * Pass `mediationProvider` data for AppLovin SDK to collect ad source information.
+     * This version of the adapters has been certified with AppLovin SDK 10.0.1 and MoPub SDK 5.16.1.
+
    * 6.15.2.1
      * Add support for `fullscreenAdAdapterAdWillDismiss` when a fullscreen creative is about to close. Publishers must use v5.16.1 of the MoPub SDK at the minimum.
 

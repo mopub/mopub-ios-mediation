@@ -7,7 +7,6 @@
 #import "MPVerizonBidCache.h"
 #import "VerizonAdapterConfiguration.h"
 #import <VerizonAdsNativePlacement/VerizonAdsNativePlacement.h>
-#import <VerizonAdsStandardEdition/VerizonAdsStandardEdition.h>
 
 @interface MPVerizonNativeCustomEvent() <VASNativeAdFactoryDelegate>
 
@@ -52,7 +51,7 @@
     }
     
     if (![VASAds sharedInstance].initialized &&
-        ![VASStandardEdition initializeWithSiteId:self.siteId])
+        ![VASAds initializeWithSiteId:self.siteId])
     {
         NSError *error = [VASErrorInfo errorWithDomain:kMoPubVASAdapterErrorDomain
                                                   code:MoPubVASAdapterErrorNotInitialized
