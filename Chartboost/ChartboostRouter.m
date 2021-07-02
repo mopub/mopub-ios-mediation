@@ -92,7 +92,6 @@ static NSString * const kChartboostMinimumOSVersion = @"10.0";
     }
        
     [ChartboostAdapterConfiguration updateInitializationParameters:parameters];
-    
     [Chartboost startWithAppId:appId appSignature:appSignature completion: ^(BOOL success) {
         dispatch_async(dispatch_get_main_queue(), ^{
             completion(success);
