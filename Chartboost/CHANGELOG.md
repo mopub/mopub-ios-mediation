@@ -1,5 +1,8 @@
 ## Changelog
- * 8.4.2.0
+  * 8.4.2.1
+     * Fx potential crash when requesting Chartboost ads.
+     
+  * 8.4.2.0
 	  * This version of the adapters has been certified with Chartboost 8.4.2 and MoPub SDK 5.17.0.
 
   * 8.4.1.1
