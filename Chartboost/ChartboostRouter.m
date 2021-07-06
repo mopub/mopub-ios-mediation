@@ -92,7 +92,12 @@ static NSString * const kChartboostMinimumOSVersion = @"10.0";
     }
        
     [ChartboostAdapterConfiguration updateInitializationParameters:parameters];
-    [Chartboost startWithAppId:appId appSignature:appSignature completion:completion];
+    //Patch for an internal issue of the Chartboost SDK, we will undo these changes with the next update of the Chartboost SDK 8.5.0
+    [Chartboost startWithAppId:appId appSignature:appSignature completion: ^(BOOL success) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completion(success);
+        });
+    }];
 }
 
 @end
