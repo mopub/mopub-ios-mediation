@@ -1,5 +1,8 @@
 
 ## Changelog
+* 3.7.2.1
+  * Cache network configuration from the MoPub dashboard for subsequent ad requests.
+  
 * 3.7.2.0
   * This version of the adapters has been certified with Unity Ads 3.7.2 and MoPub SDK 5.17.0.
   * Remove duplicate `fullscreenAdAdapterAdDidDismiss` callback for interstitial ads.

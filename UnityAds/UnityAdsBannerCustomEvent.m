@@ -8,6 +8,7 @@
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
 #endif
+#import "UnityAdsAdapterConfiguration.h"
 
 static NSString *const kMPUnityBannerGameId = @"gameId";
 static NSString *const kUnityAdsOptionPlacementIdKey = @"placementId";
@@ -73,6 +74,9 @@ static NSString *const kUnityAdsOptionZoneIdKey = @"zoneId";
         
         return;
     }
+
+    // Only need to cache game ID for SDK initialization
+    [UnityAdsAdapterConfiguration updateInitializationParameters:info];
     
     if (![UnityAds isInitialized]) {
         [[UnityRouter sharedRouter] initializeWithGameId:gameId withCompletionHandler:nil];
