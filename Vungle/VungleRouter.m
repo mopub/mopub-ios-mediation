@@ -546,8 +546,9 @@ typedef NS_ENUM(NSUInteger, SDKInitializeState) {
                     delegate:(id<VungleRouterDelegate>)delegate
 {
     NSString *key = [self getKeyFromDelegate:delegate];
-    // Always set the latest delegate to be tracked
-    [table setObject:delegate forKey:key];
+    if (![table objectForKey:key]) {
+        [table setObject:delegate forKey:key];
+    }
 }
 
 - (void)clearBannerDelegateWithState:(BannerRouterDelegateState)state
