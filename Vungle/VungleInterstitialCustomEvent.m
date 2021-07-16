@@ -5,7 +5,6 @@
 //  Copyright (c) 2013 MoPub. All rights reserved.
 //
 
-#import <VungleSDK/VungleSDK.h>
 #if __has_include("MoPub.h")
     #import "MPLogging.h"
     #import "MoPub.h"
@@ -13,6 +12,7 @@
 #import "VungleAdapterConfiguration.h"
 #import "VungleInterstitialCustomEvent.h"
 #import "VungleRouter.h"
+#import <VungleSDK/VungleSDK.h>
 
 // If you need to play ads with vungle options, you may modify playVungleAdFromRootViewController and create an options dictionary and call the playAd:withOptions: method on the vungle SDK.
 
@@ -20,6 +20,7 @@
 
 @property (nonatomic) BOOL isAdLoaded;
 @property (nonatomic, copy) NSString *placementId;
+@property (nonatomic, copy) NSString *adMarkup;
 @property (nonatomic, copy) NSDictionary *options;
 
 @end
@@ -32,7 +33,7 @@
 #pragma mark - MPFullscreenAdAdapter Override
 
 - (BOOL)hasAdAvailable {
-    return [[VungleRouter sharedRouter] isAdAvailableForPlacementId:self.placementId];
+    return [[VungleRouter sharedRouter] isAdAvailableForDelegate:self];
 }
 
 - (BOOL)isRewardExpected {
@@ -47,6 +48,7 @@
 - (void)requestAdWithAdapterInfo:(NSDictionary *)info adMarkup:(NSString *)adMarkup
 {
     self.placementId = [info objectForKey:kVunglePlacementIdKey];
+    self.adMarkup = adMarkup;
     
     // Cache the initialization parameters
     [VungleAdapterConfiguration updateInitializationParameters:info];
@@ -57,7 +59,7 @@
 
 - (void)presentAdFromViewController:(UIViewController *)viewController
 {
-    if ([[VungleRouter sharedRouter] isAdAvailableForPlacementId:self.placementId]) {
+    if ([[VungleRouter sharedRouter] isAdAvailableForDelegate:self]) {
         
         if (self.options) {
             // In the event that options have been updated
@@ -96,7 +98,7 @@
         self.options = options.count ? options : nil;
         
         MPLogAdEvent([MPLogEvent adShowAttemptForAdapter:NSStringFromClass(self.class)], self.placementId);
-        [[VungleRouter sharedRouter] presentInterstitialAdFromViewController:viewController options:self.options forPlacementId:self.placementId];
+        [[VungleRouter sharedRouter] presentInterstitialAdFromViewController:viewController options:self.options delegate:self];
     } else {
         NSError *error = [NSError errorWithCode:MOPUBErrorAdapterFailedToLoadAd localizedDescription:@"Failed to show Vungle video interstitial: Vungle now claims that there is no available video ad."];
         MPLogAdEvent([MPLogEvent adShowFailedForAdapter:NSStringFromClass(self.class) error:error], [self getPlacementID]);
@@ -120,7 +122,7 @@
 
 - (void)cleanUp
 {
-    [[VungleRouter sharedRouter] clearDelegateForPlacementId:self.placementId];
+    [[VungleRouter sharedRouter] cleanupFullScreenDelegate:self];
 }
 
 #pragma mark - VungleRouterDelegate
@@ -206,6 +208,11 @@
 - (NSString *)getPlacementID
 {
     return self.placementId;
+}
+
+- (NSString *)getAdMarkup
+{
+    return self.adMarkup;
 }
 
 @end
