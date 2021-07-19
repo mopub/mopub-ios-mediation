@@ -50,6 +50,7 @@
         return;
     }
     
+    [OguryAdapterConfiguration applyTransparencyAndConsentStatusWithParameters:info];
     [OguryAdapterConfiguration updateInitializationParameters:info];
 
     self.banner = [[OguryAdsBanner alloc] initWithAdUnitID:self.adUnitId];

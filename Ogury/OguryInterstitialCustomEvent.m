@@ -30,6 +30,7 @@
         
     [self.interstitial load];
     
+    [OguryAdapterConfiguration applyTransparencyAndConsentStatusWithParameters:info];
     [OguryAdapterConfiguration updateInitializationParameters:info];
 
     MPLogAdEvent([MPLogEvent adLoadAttemptForAdapter:NSStringFromClass([self class]) dspCreativeId:nil dspName:nil], self.adUnitId);

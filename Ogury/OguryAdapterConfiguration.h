@@ -31,6 +31,7 @@ extern NSString * const kOguryConfigurationAdUnitId;
 #pragma mark - Methods
 
 + (NSError *)MoPubErrorFromOguryError:(OguryAdsErrorType)oguryError;
++ (void)applyTransparencyAndConsentStatusWithParameters:(NSDictionary *)parameters;
 
 @end
 
