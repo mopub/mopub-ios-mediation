@@ -39,6 +39,7 @@
         return;
     }
     
+    [OguryAdapterConfiguration applyTransparencyAndConsentStatusWithParameters:info];
     [OguryAdapterConfiguration updateInitializationParameters:info];
 
     self.optInVideo = [[OguryAdsOptinVideo alloc] initWithAdUnitID:self.adUnitId];

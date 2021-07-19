@@ -14,7 +14,7 @@ NSString * const kOguryConfigurationAdUnitId = @"ad_unit_id";
 static NSString * const OguryErrorDomain = @"com.mopub.mopub-ios-sdk.mopub-ogury-adapters";
 static NSString * const OguryConfigurationMediationName = @"MoPub";
 static NSString * const OguryConfigurationKeyAssetKey = @"asset_key";
-static NSString * const OguryConfigurationAdapterVersion = @"1.3.5.0";
+static NSString * const OguryConfigurationAdapterVersion = @"1.3.5.1";
 static NSString * const OguryConfigurationNetworkName = @"ogury";
 
 @implementation OguryAdapterConfiguration
@@ -80,10 +80,19 @@ static NSString * const OguryConfigurationNetworkName = @"ogury";
         return;
     }
     
+    [OguryAdapterConfiguration applyTransparencyAndConsentStatusWithParameters:configuration];
     [[OguryAds shared] setupWithAssetKey:assetKey];
     MPLogInfo(@"Ogury SDK successfully initialized.");
     
     complete(nil);
+}
+
++ (void)applyTransparencyAndConsentStatusWithParameters:(NSDictionary *)parameters {
+    NSString *assetKey = parameters[OguryConfigurationKeyAssetKey];
+
+    if (assetKey) {
+        [OguryChoiceManagerExternal setTransparencyAndConsentStatus:[[MoPub sharedInstance] canCollectPersonalInfo] origin:OguryConfigurationMediationName assetKey:assetKey];
+    }
 }
 
 + (NSError *)MoPubErrorFromOguryError:(OguryAdsErrorType)oguryError {
